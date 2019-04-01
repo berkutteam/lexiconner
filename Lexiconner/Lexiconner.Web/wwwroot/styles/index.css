@@ -1,0 +1,105 @@
+
+body, html{
+    width: 100%;
+    height: 100%;
+    margin-bottom: 0%;
+    margin-left: 0%;
+    margin-right: 0%;
+    margin-top: 0%;
+}
+
+:root{
+    --background-color: #f7b633;
+    --card-color:#070d59;
+    --bottom-color: #4f9da6;
+    --example-color: #1f3c88;
+    --example-font-color: #e8e2db;
+    --block-bottom-width: 13%;
+    --block-bottom-height: 10%;
+}
+
+.main-block{
+    background-color: var(--background-color);
+    width: 100%;
+    height: 100%;
+  
+}
+
+.card-button {
+    /* background-color:var(--bottom-color); */
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    height: 60%;
+    width: 36%;
+    /* background-color: rgba(0,0,0,0.05); */
+    text-align: center;
+    border-radius: 14px;
+    cursor: pointer;
+    opacity: 0.75;
+    color: #fff;
+}
+.card-button:hover {
+    opacity: 1;
+}
+
+.card-button-icon {
+    font-size: 400%;
+}
+
+.card-block-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+}
+.card-block{
+    background-color: #101667;
+    color: #fff;
+    border-radius: 2%;
+    width: 28%;
+    height: 60%;
+    padding: 1%;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.title{
+    width: 100%;
+    border-bottom: 2px solid #fff;
+    text-align: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    text-overflow: ellipsis;
+    font-size: 200%;
+    height: 28%;
+    margin-bottom: 10px;
+}
+
+.description{
+    width: 100%;
+    height: 45%;
+    font-size: 115%;
+    border-bottom: 2px solid #fff;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+.example{
+    background-color: var(--example-color);
+    color: var(--example-font-color);
+    font-size: 90%;
+    width: 100%;
+    height: 20%;
+    border-radius: 0px 0px 14px 14px;
+    overflow: auto;
+}
