@@ -1,15 +1,21 @@
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    start();
+    httpGet('/config', function(config) {
+        start(config);
+    });
 });
 
 
-function start() {
+function start(config) {
 
-    var counter = 0;
+    var counter = -1;
+    var offset = 0;
+    var limit = 5;
+    var pages = 0;
+    var cardData = {};
 
-    function GetTestData(countOfElmenets) {
+    function getTestData(countOfElmenets) {
         var arrData = [];
         for (var i = 0; i < countOfElmenets; i++) {
             if (i % 3 === 0) {
@@ -29,60 +35,72 @@ function start() {
         }
         return arrData;
     }
-
-    function GetData(callBack2) {
-
-        httpGet('http://localhost:61414/api/v1/studyitems/', function (data) {
+    // /config
+    // {urls: {api: '........'}}
+    function getData(offset = 0, limit = 2, callBack = null) {
+        httpGet(config.urls.api + '/api/v2/studyitems' + '?' + 'offset=' + offset + '&' + 'limit=' + limit, function (data) {
             console.log(2, data);
-            callBack2(data);
+            if (callBack !== null) {
+                callBack(data);
+            }
         });
-
-        // return GetTestData(countOfElmenets);
     }
 
-    function ShowDataOnCard() {
+    function showNextCard(direction = 1) {
+        counter = counter + direction * 1;
+        
+        if (!cardData.items || (counter >= cardData.items.length || counter < 0)) {
+            if(cardData.items && direction === -1) {
+                offset = offset - limit;
+                offset = offset < 0 ? ((pages - 1) * limit): offset;
+            }
+            if(cardData.items && direction === 1) {
+                offset = offset + limit;
+                offset = offset > cardData.totalCount ? 0: offset;
+            }
+            getData(offset, limit, function (response) {
+                cardData = response.data;
+                counter = direction === 1 ? 0 : cardData.items.length - 1;
+               
+                pages = Math.ceil(cardData.totalCount / limit);
+                showDataOnCard(cardData.items[counter]);
+            });
+            
 
-        GetData(function (data) {
-
-            var item = data.data[counter];
-
-            var elem = document.getElementById("cardBlock");
-            var newTitle = document.createElement('div');
-            var newDescription = document.createElement('div');
-            var newExample = document.createElement('div');
-
-            newTitle.className = "title";
-            newTitle.innerHTML = item.title;
-
-            newDescription.className = " description";
-            newDescription.innerHTML = item.description;
-
-            newExample.className = "example";
-            newExample.innerHTML = item.example;
-
-            elem.replaceChild(newTitle, elem.childNodes[0]);
-            elem.replaceChild(newDescription, elem.childNodes[1]);
-            elem.replaceChild(newExample, elem.childNodes[2]);
-
-            counter = counter <= data.data.length - 2 ? counter + 1 : 0;
-        });
-
-
+        } else {
+            showDataOnCard(cardData.items[counter]);
+        }
     }
 
-    function know() {
-        ShowDataOnCard();
+    function showDataOnCard(card) {
+        var elem = document.getElementById("cardBlock");
+        var newTitle = document.createElement('div');
+        var newDescription = document.createElement('div');
+        var newExample = document.createElement('div');
+
+        newTitle.className = "title";
+        newTitle.innerHTML = card.title;
+
+        newDescription.className = " description";
+        newDescription.innerHTML = card.description || '';
+
+        newExample.className = "example";
+        newExample.innerHTML = card.exampleText || '';
+
+        elem.replaceChild(newTitle, elem.childNodes[0]);
+        elem.replaceChild(newDescription, elem.childNodes[1]);
+        elem.replaceChild(newExample, elem.childNodes[2]);
     }
 
     var leftButtonEl = document.getElementById("cardButtonLeft");
     var rightButtonEl = document.getElementById("cardButtonRight");
 
     leftButtonEl.addEventListener("click", function (e) {
-        know();
+        showNextCard(-1);
     });
 
     rightButtonEl.addEventListener("click", function (e) {
-        know();
+        showNextCard(1);
     });
 
     function httpGet(url, callBack) {
@@ -101,10 +119,7 @@ function start() {
                 console.error('Request failed.  Returned status of ' + xhr.status);
             }
         };
-
-
-
     }
-    filBlank();
-    httpGet('https://google.com');
+
+    showNextCard();
 }
