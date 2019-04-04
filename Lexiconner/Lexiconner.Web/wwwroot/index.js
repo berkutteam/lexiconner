@@ -1,11 +1,13 @@
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    start();
+    httpGet('/config', function(config) {
+        start(config);
+    });
 });
 
 
-function start() {
+function start(config) {
 
     var counter = -1;
     var offset = 0;
@@ -33,9 +35,10 @@ function start() {
         }
         return arrData;
     }
-
+    // /config
+    // {urls: {api: '........'}}
     function getData(offset = 0, limit = 2, callBack = null) {
-        httpGet('http://localhost:61414/api/v2/studyitems' + '?' + 'offset=' + offset + '&' + 'limit=' + limit, function (data) {
+        httpGet(config.urls.api + '/api/v2/studyitems' + '?' + 'offset=' + offset + '&' + 'limit=' + limit, function (data) {
             console.log(2, data);
             if (callBack !== null) {
                 callBack(data);
