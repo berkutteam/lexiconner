@@ -36,17 +36,17 @@ jobs:
           curl https://cli-assets.heroku.com/install.sh | sh
           heroku container:release web -a $HEROKU_APP_NAME_WEB
   
-  workflows:
-    version: 2
-    api_and_web:
-      - api:
-          filters:
-            branches:
-              only: master
-      - web:
-          requires: 
-            - api
-          filters:
-            branches:
-              only: master
+workflows:
+  version: 2
+  api_and_web:
+    - api:
+        filters:
+          branches:
+            only: master
+    - web:
+        requires: 
+          - api
+        filters:
+          branches:
+            only: master
 
