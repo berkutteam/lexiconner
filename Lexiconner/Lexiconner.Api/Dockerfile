@@ -1,14 +1,15 @@
 FROM microsoft/dotnet:2.2-aspnetcore-runtime AS base
 WORKDIR /app
-EXPOSE 80
+#EXPOSE 80
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
-COPY ["Lexiconner.Api/Lexiconner.Api.csproj", "Lexiconner.Api/"]
-COPY ["Lexiconner.Persistence/Lexiconner.Persistence.csproj", "Lexiconner.Persistence/"]
-COPY ["Lexiconner.Domain/Lexiconner.Domain.csproj", "Lexiconner.Domain/"]
+COPY ["Lexiconner/Lexiconner.Api/Lexiconner.Api.csproj", "Lexiconner.Api/"]
+COPY ["Lexiconner/Lexiconner.Persistence/Lexiconner.Persistence.csproj", "Lexiconner.Persistence/"]
+COPY ["Lexiconner/Lexiconner.Domain/Lexiconner.Domain.csproj", "Lexiconner.Domain/"]
 RUN dotnet restore "Lexiconner.Api/Lexiconner.Api.csproj"
-COPY . .
+#COPY "Lexiconner/Lexiconner.Api/"  .
+COPY "Lexiconner/"  .
 WORKDIR "/src/Lexiconner.Api"
 RUN dotnet build "Lexiconner.Api.csproj" -c Release -o /app
 
