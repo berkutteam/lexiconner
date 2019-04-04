@@ -17,8 +17,9 @@ namespace Lexiconner.Web
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            var builder = WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, configBuilder) =>
                 {
                     // load env variables from .env file
@@ -31,7 +32,16 @@ namespace Lexiconner.Web
                     configBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                     configBuilder.AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
                     configBuilder.AddEnvironmentVariables();
-                })
-                .UseStartup<Startup>();
+                });
+
+            if(Environment.GetEnvironmentVariable("RUNTIME_ENV") == "heroku")
+            {
+                builder.UseUrls($"http://+:{Environment.GetEnvironmentVariable("PORT")}");
+            }
+
+            builder.UseStartup<Startup>();
+
+            return builder;
+        }
     }
 }
