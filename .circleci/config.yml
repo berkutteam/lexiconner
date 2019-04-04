@@ -43,7 +43,7 @@ jobs:
           filters:
             branches:
               only: master
-      - web
+      - web:
           requires: 
             - api
           filters:
