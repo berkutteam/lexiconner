@@ -1,6 +1,24 @@
 version: 2
 jobs:
- build:
+ api:
+   machine: true
+   steps:
+     - checkout 
+
+     # build image
+     - run: |         
+         docker info
+         docker build -t lexiconner/api -f ./Lexiconner/Lexiconner.Api/Dockerfile .
+         
+     # deploy the image
+     - run: |         
+         docker login --username=$HEROKU_USERNAME --password=$HEROKU_API_KEY registry.heroku.com
+         docker tag lexiconner/api registry.heroku.com/$HEROKU_APP_NAME_API/api
+         docker push registry.heroku.com/$HEROKU_APP_NAME_API/api                
+         curl https://cli-assets.heroku.com/install.sh | sh
+         heroku container:release api -a $HEROKU_APP_NAME_API
+  
+  web:
    machine: true
    steps:
      - checkout 
@@ -13,7 +31,20 @@ jobs:
      # deploy the image
      - run: |         
          docker login --username=$HEROKU_USERNAME --password=$HEROKU_API_KEY registry.heroku.com
-         docker tag lexiconner/web registry.heroku.com/$HEROKU_APP_NAME/web
-         docker push registry.heroku.com/$HEROKU_APP_NAME/web                
+         docker tag lexiconner/web registry.heroku.com/$HEROKU_APP_NAME_WEB/web
+         docker push registry.heroku.com/$HEROKU_APP_NAME_WEB/web                
          curl https://cli-assets.heroku.com/install.sh | sh
-         heroku container:release web -a $HEROKU_APP_NAME
+         heroku container:release web -a $HEROKU_APP_NAME_WEB
+  
+  workflows:
+    version: 2
+    api_and_web:
+      - api
+        filters:
+            branches:
+              only: master
+      - web
+          requires: api
+          filters:
+            branches:
+              only: master
