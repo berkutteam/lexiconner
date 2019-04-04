@@ -10,4 +10,5 @@ Use these urls:
 - Each study word, card, etc named as 'StudyItem'.
 - Db is MongoDb. Used Atlas free tier with 0.5 GB storage.
 - Sensitive information is stored in .env file in Development (use DotNetEnv to load from file) and in env variables in Production
+- Hosted on Heriku with CircleCI
 
