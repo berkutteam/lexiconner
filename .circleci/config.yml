@@ -40,7 +40,7 @@ jobs:
     version: 2
     api_and_web:
       - api
-        filters:
+          filters:
             branches:
               only: master
       - web
