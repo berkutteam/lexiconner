@@ -1,9 +1,12 @@
 #!!!this dockerfile is changed manually
 FROM microsoft/dotnet:2.2-aspnetcore-runtime AS base
 WORKDIR /app
-#heroku fails on 80
+#heroku:
+#fails on 80
+#The web process must listen for HTTP traffic on $PORT, which is set by Heroku. EXPOSE in Dockerfile is not respected, but can be used for local testing. Only HTTP requests are supported.
 #EXPOSE 8080
 #ENV ASPNETCORE_URLS=http://*:8080
+ENV ASPNETCORE_URLS=http://*:$PORT
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
