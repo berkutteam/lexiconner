@@ -39,12 +39,13 @@ jobs:
   workflows:
     version: 2
     api_and_web:
-      - api
+      - api:
           filters:
             branches:
               only: master
       - web
-          requires: api
+          requires: 
+            - api
           filters:
             branches:
               only: master
