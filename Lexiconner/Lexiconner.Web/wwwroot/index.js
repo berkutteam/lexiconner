@@ -103,23 +103,25 @@ function start(config) {
         showNextCard(1);
     });
 
-    function httpGet(url, callBack) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url);
-        xhr.send();
-
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                //console.log('User\'s name is ' + xhr.responseText);
-                var data = JSON.parse(xhr.responseText);
-                callBack(data);
-                console.log(data);
-            }
-            else {
-                console.error('Request failed.  Returned status of ' + xhr.status);
-            }
-        };
-    }
+   
 
     showNextCard();
+}
+
+function httpGet(url, callBack) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.send();
+
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            //console.log('User\'s name is ' + xhr.responseText);
+            var data = JSON.parse(xhr.responseText);
+            callBack(data);
+            console.log(data);
+        }
+        else {
+            console.error('Request failed.  Returned status of ' + xhr.status);
+        }
+    };
 }
