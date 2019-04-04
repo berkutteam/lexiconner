@@ -1,40 +1,40 @@
 version: 2
 jobs:
- api:
-   machine: true
-   steps:
-     - checkout 
+  api:
+    machine: true
+    steps:
+      - checkout 
 
-     # build image
-     - run: |         
-         docker info
-         docker build -t lexiconner/api -f ./Lexiconner/Lexiconner.Api/Dockerfile .
+      # build image
+      - run: |         
+          docker info
+          docker build -t lexiconner/api -f ./Lexiconner/Lexiconner.Api/Dockerfile .
          
-     # deploy the image
-     - run: |         
-         docker login --username=$HEROKU_USERNAME --password=$HEROKU_API_KEY registry.heroku.com
-         docker tag lexiconner/api registry.heroku.com/$HEROKU_APP_NAME_API/api
-         docker push registry.heroku.com/$HEROKU_APP_NAME_API/api                
-         curl https://cli-assets.heroku.com/install.sh | sh
-         heroku container:release api -a $HEROKU_APP_NAME_API
+      # deploy the image
+      - run: |         
+          docker login --username=$HEROKU_USERNAME --password=$HEROKU_API_KEY registry.heroku.com
+          docker tag lexiconner/api registry.heroku.com/$HEROKU_APP_NAME_API/api
+          docker push registry.heroku.com/$HEROKU_APP_NAME_API/api                
+          curl https://cli-assets.heroku.com/install.sh | sh
+          heroku container:release api -a $HEROKU_APP_NAME_API
   
   web:
-   machine: true
-   steps:
-     - checkout 
+    machine: true
+    steps:
+      - checkout 
 
-     # build image
-     - run: |         
-         docker info
-         docker build -t lexiconner/web -f ./Lexiconner/Lexiconner.Web/Dockerfile .
+      # build image
+      - run: |         
+          docker info
+          docker build -t lexiconner/web -f ./Lexiconner/Lexiconner.Web/Dockerfile .
          
-     # deploy the image
-     - run: |         
-         docker login --username=$HEROKU_USERNAME --password=$HEROKU_API_KEY registry.heroku.com
-         docker tag lexiconner/web registry.heroku.com/$HEROKU_APP_NAME_WEB/web
-         docker push registry.heroku.com/$HEROKU_APP_NAME_WEB/web                
-         curl https://cli-assets.heroku.com/install.sh | sh
-         heroku container:release web -a $HEROKU_APP_NAME_WEB
+      # deploy the image
+      - run: |         
+          docker login --username=$HEROKU_USERNAME --password=$HEROKU_API_KEY registry.heroku.com
+          docker tag lexiconner/web registry.heroku.com/$HEROKU_APP_NAME_WEB/web
+          docker push registry.heroku.com/$HEROKU_APP_NAME_WEB/web                
+          curl https://cli-assets.heroku.com/install.sh | sh
+          heroku container:release web -a $HEROKU_APP_NAME_WEB
   
   workflows:
     version: 2
