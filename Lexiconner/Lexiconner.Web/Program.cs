@@ -19,6 +19,15 @@ namespace Lexiconner.Web
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, configBuilder) =>
+                {
+                    // load env variables from .env file
+                    DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
+
+                    configBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                    configBuilder.AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+                    configBuilder.AddEnvironmentVariables();
+                })
                 .UseStartup<Startup>();
     }
 }
