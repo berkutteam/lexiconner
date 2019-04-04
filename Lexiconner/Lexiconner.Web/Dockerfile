@@ -1,13 +1,14 @@
+#!!!this dockerfile is changed manually
 FROM microsoft/dotnet:2.2-aspnetcore-runtime AS base
 WORKDIR /app
 EXPOSE 80
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
-COPY ["Lexiconner.Web/Lexiconner.Web.csproj", "Lexiconner.Web/"]
+COPY ["Lexiconner/Lexiconner.Web/Lexiconner.Web.csproj", "Lexiconner.Web/"]
 RUN dotnet restore "Lexiconner.Web/Lexiconner.Web.csproj"
-COPY . .
 WORKDIR "/src/Lexiconner.Web"
+COPY "Lexiconner/Lexiconner.Web/" .
 RUN dotnet build "Lexiconner.Web.csproj" -c Release -o /app
 
 FROM build AS publish
