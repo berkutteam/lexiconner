@@ -17,3 +17,8 @@ Use these urls:
 The web process must listen for HTTP traffic on $PORT, which is set by Heroku. EXPOSE in Dockerfile is not respected, but can be used for local testing. Only HTTP requests are supported.
 - RUNTIME_ENV stores environment where app is running (local, heroku, azure, ...) 
 - in Program.cs use .UseUrls and $PORT to setup listening port
+
+## Resources:
+ - https://cloud.mongodb.com
+ - https://dashboard.heroku.com
+ - https://circleci.com
