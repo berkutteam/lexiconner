@@ -22,7 +22,11 @@ namespace Lexiconner.Web
                 .ConfigureAppConfiguration((hostingContext, configBuilder) =>
                 {
                     // load env variables from .env file
-                    DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
+                    string envFilePath = Path.Combine(Directory.GetCurrentDirectory(), ".env");
+                    if (File.Exists(envFilePath))
+                    {
+                        DotNetEnv.Env.Load(envFilePath);
+                    }
 
                     configBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                     configBuilder.AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
