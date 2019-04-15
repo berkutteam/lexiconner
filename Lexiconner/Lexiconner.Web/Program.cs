@@ -34,7 +34,12 @@ namespace Lexiconner.Web
                     configBuilder.AddEnvironmentVariables();
                 });
 
-            if(Environment.GetEnvironmentVariable("RUNTIME_ENV") == "heroku")
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                builder.UseUrls($"http://localhost:5007;https://localhost:5008");
+            }
+
+            if (Environment.GetEnvironmentVariable("RUNTIME_ENV") == "heroku")
             {
                 builder.UseUrls($"http://+:{Environment.GetEnvironmentVariable("PORT")}");
             }
