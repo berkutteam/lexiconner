@@ -1,11 +1,10 @@
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    httpGet('/config', function(config) {
+    httpGet('/config', function (config) {
         start(config);
     });
 });
-
 
 function start(config) {
 
@@ -35,8 +34,7 @@ function start(config) {
         }
         return arrData;
     }
-    // /config
-    // {urls: {api: '........'}}
+
     function getData(offset = 0, limit = 2, callBack = null) {
         httpGet(config.urls.api + '/api/v2/studyitems' + '?' + 'offset=' + offset + '&' + 'limit=' + limit, function (data) {
             console.log(2, data);
@@ -48,24 +46,24 @@ function start(config) {
 
     function showNextCard(direction = 1) {
         counter = counter + direction * 1;
-        
+
         if (!cardData.items || (counter >= cardData.items.length || counter < 0)) {
-            if(cardData.items && direction === -1) {
+            if (cardData.items && direction === -1) {
                 offset = offset - limit;
-                offset = offset < 0 ? ((pages - 1) * limit): offset;
+                offset = offset < 0 ? ((pages - 1) * limit) : offset;
             }
-            if(cardData.items && direction === 1) {
+            if (cardData.items && direction === 1) {
                 offset = offset + limit;
-                offset = offset > cardData.totalCount ? 0: offset;
+                offset = offset > cardData.totalCount ? 0 : offset;
             }
             getData(offset, limit, function (response) {
                 cardData = response.data;
                 counter = direction === 1 ? 0 : cardData.items.length - 1;
-               
+
                 pages = Math.ceil(cardData.totalCount / limit);
                 showDataOnCard(cardData.items[counter]);
             });
-            
+
 
         } else {
             showDataOnCard(cardData.items[counter]);
@@ -73,10 +71,12 @@ function start(config) {
     }
 
     function showDataOnCard(card) {
-        var elem = document.getElementById("cardBlock");
+        var elem = document.getElementById("mainBlockCard");
         var newTitle = document.createElement('div');
         var newDescription = document.createElement('div');
-        var newExample = document.createElement('div');
+        var newExampleBlock = document.createElement('div');
+        var newExampleText = document.createElement('div');
+        var newExamplePicture = document.createElement('div');
 
         newTitle.className = "title";
         newTitle.innerHTML = card.title;
@@ -84,12 +84,25 @@ function start(config) {
         newDescription.className = " description";
         newDescription.innerHTML = card.description || '';
 
-        newExample.className = "example";
-        newExample.innerHTML = card.exampleText || '';
+        newExampleText.className = "example-text";
+        newExampleText.innerHTML = card.exampleText || '';
+
+        newExamplePicture.className = "example-picture";
+
+        newExampleBlock.className = "example-block";
+
+        if ( !card.examplePicture ) {
+           // newExampleBlock.replaceChild(newExamplePicture, newExampleBlock.childNodes[1]);
+        } else {
+           // card.examplePicture
+        }
+
+        newExampleBlock.replaceChild(newExampleText, newExampleBlock.childNodes[0]);
+
 
         elem.replaceChild(newTitle, elem.childNodes[0]);
         elem.replaceChild(newDescription, elem.childNodes[1]);
-        elem.replaceChild(newExample, elem.childNodes[2]);
+        elem.replaceChild(newExampleBlock, elem.childNodes[2]);
     }
 
     var leftButtonEl = document.getElementById("cardButtonLeft");
@@ -103,8 +116,6 @@ function start(config) {
         showNextCard(1);
     });
 
-   
-
     showNextCard();
 }
 
@@ -115,7 +126,6 @@ function httpGet(url, callBack) {
 
     xhr.onload = function () {
         if (xhr.status === 200) {
-            //console.log('User\'s name is ' + xhr.responseText);
             var data = JSON.parse(xhr.responseText);
             callBack(data);
             console.log(data);

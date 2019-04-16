@@ -10,19 +10,62 @@ body, html{
 
 :root{
     --background-color: #f7b633;
+    --background-color-menu: #f3dd1c;
+    --background-color-menu-item: #43aac9;
     --card-color:#070d59;
     --bottom-color: #4f9da6;
     --example-color: #1f3c88;
     --example-font-color: #e8e2db;
+    --menu-item-font-color: #201f1e;
     --block-bottom-width: 13%;
     --block-bottom-height: 10%;
+}
+
+
+.main-block-menu{
+    background-color: var(--background-color-menu);
+    width: 100%;
+    height: 10%;
+    overflow-y: hidden;
+}
+
+.menu{
+    width: 100%;
+    height: 100%; 
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    padding: 0.5% 0% 0.5% 0%;
+    background-color: #2b4b9c;
+    overflow-y: auto;
+}
+.menu-item{
+    width: 100%;
+    height: 100%;
+    margin: 0% 0.5%  0% 0.5%;
+    padding: 0.9%;
+    background-color: var(--background-color-menu-item);
+    border-bottom: 2px solid #fff;
+    border-radius: 8px;
+    color: var(--menu-item-font-color);
+    box-sizing: border-box;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: auto;
+    font-size: 150%;
 }
 
 .main-block{
     background-color: var(--background-color);
     width: 100%;
+    height: 90%;
+}
+
+.main-block-card{
+    /* display: none; */
+    background-color: var(--background-color);
+    width: 100%;
     height: 100%;
-  
 }
 
 .card-button {
@@ -94,12 +137,26 @@ body, html{
     padding-bottom: 10px;
 }
 
-.example{
-    background-color: var(--example-color);
+.example-block{
+    /* background-color: var(--example-color); */
     color: var(--example-font-color);
     font-size: 90%;
     width: 100%;
     height: 20%;
     border-radius: 0px 0px 14px 14px;
     overflow: auto;
+    display: flex;
+    flex-direction: row;
 }
+
+.example-text{
+    background-color:#43aac9;
+    width: 80%;
+}
+
+.example-picture{
+    background-color:#2b4b9c;
+    width: 20%;
+}
+
+
