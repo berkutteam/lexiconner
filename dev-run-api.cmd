@@ -1,0 +1,1 @@
+dotnet run --project .\Lexiconner\Lexiconner.Api environment=development
