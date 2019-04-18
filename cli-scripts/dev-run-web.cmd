@@ -1,1 +1,1 @@
-dotnet run --project .\Lexiconner\Lexiconner.Web environment=development
+dotnet run --project ..\Lexiconner\Lexiconner.Web environment=development

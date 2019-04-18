@@ -1,1 +1,1 @@
-dotnet run --project .\Lexiconner\Lexiconner.Api environment=development
+dotnet run --project ..\Lexiconner\Lexiconner.Api environment=development
