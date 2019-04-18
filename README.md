@@ -22,3 +22,8 @@ The web process must listen for HTTP traffic on $PORT, which is set by Heroku. E
  - https://cloud.mongodb.com
  - https://dashboard.heroku.com
  - https://circleci.com
+
+# Azure Dev Ops
+- Set env variables in format: $(name), because $name, ${name} doesn't work
+- Name variables in uppercase
+- In string use $(name) format in code $name
