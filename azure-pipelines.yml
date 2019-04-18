@@ -1,0 +1,20 @@
+# Docker image
+# Build a Docker image to deploy, run, or push to a container registry.
+# Add steps that use Docker Compose, tag images, push to a registry, run an image, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+variables:
+  imageName1: 'api:$(build.buildId)'
+  imageName2: 'web:$(build.buildId)'
+
+steps:
+- script: docker build -f Lexiconner/Lexiconner.Api/Dockerfile.ci -t $(imageName1) .
+  displayName: 'docker build'
+- script: docker build -f Lexiconner/Lexiconner.Web/Dockerfile.ci -t $(imageName2) .
+  displayName: 'docker build'
