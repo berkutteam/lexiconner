@@ -35,6 +35,9 @@ namespace Lexiconner.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var config = Configuration.Get<ApplicationSettings>();
+
+            services.AddOptions();
             services.Configure<ApplicationSettings>(Configuration);
             services.AddTransient<IWordTxtImporter, WordTxtImporter>();
             services.AddTransient<ISeeder, MongoDbSeeder>(); // replace with other if needed
@@ -48,7 +51,7 @@ namespace Lexiconner.Api
              * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
              * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.
             */
-            services.AddTransient<MongoClient>(serviceProvider => new MongoClient(Configuration["MongoDbConnectionString"]));
+            services.AddTransient<MongoClient>(serviceProvider => new MongoClient(config.MongoDbConnectionString));
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             services.AddSwaggerGen();

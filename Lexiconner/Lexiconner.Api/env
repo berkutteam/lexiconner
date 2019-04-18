@@ -1,7 +1,0 @@
-﻿# do not commit this file to VCS
-
-# dev
-MongoDbConnectionString=mongodb+srv://lexiconner-dev:sdwe8S@personalcluster1-kstwc.mongodb.net?retryWrites=true
-
-# prod
-# MongoDbConnectionString=mongodb+srv://lexiconner-prod:sd74sAffd@personalcluster1-kstwc.mongodb.net?retryWrites=true
