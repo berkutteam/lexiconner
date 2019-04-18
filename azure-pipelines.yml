@@ -10,8 +10,8 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  imageName1: 'api:$(build.buildId)'
-  imageName2: 'web:$(build.buildId)'
+  imageName1: 'lexiconner/api:$(build.buildId)'
+  imageName2: 'lexiconner/web:$(build.buildId)'
 
 steps:
 - script: docker build -f Lexiconner/Lexiconner.Api/Dockerfile.ci -t $(imageName1) .
