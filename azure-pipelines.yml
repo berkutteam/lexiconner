@@ -14,7 +14,15 @@ variables:
   imageName2: 'lexiconner/web:$(build.buildId)'
 
 steps:
-- script: docker build -f Lexiconner/Lexiconner.Api/Dockerfile.ci -t $(imageName1) .
-  displayName: 'docker build'
-- script: docker build -f Lexiconner/Lexiconner.Web/Dockerfile.ci -t $(imageName2) .
-  displayName: 'docker build'
+- script: |
+    docker build -f Lexiconner/Lexiconner.Api/Dockerfile.ci -t $(imageName1) .
+    docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
+    docker tag $(imageName1) registry.heroku.com/$(HEROKU_APP_NAME_API)/web
+    docker push registry.heroku.com/$HEROKU_APP_NAME_API/web           
+  displayName: 'docker build Api'
+- script: |
+    docker build -f Lexiconner/Lexiconner.Web/Dockerfile.ci -t $(imageName2) .
+    docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
+    docker tag $(imageName2) registry.heroku.com/$(HEROKU_APP_NAME_WEB)/web
+    docker push registry.heroku.com/$HEROKU_APP_NAME_WEB/web
+  displayName: 'docker build Web'
