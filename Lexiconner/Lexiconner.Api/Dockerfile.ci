@@ -1,0 +1,24 @@
+﻿FROM microsoft/dotnet:2.2-aspnetcore-runtime AS base
+WORKDIR /app
+#EXPOSE 80
+
+FROM microsoft/dotnet:2.2-sdk AS build
+WORKDIR /src
+COPY ["Lexiconner/Lexiconner.Api/Lexiconner.Api.csproj", "Lexiconner.Api/"]
+COPY ["Lexiconner/Lexiconner.Persistence/Lexiconner.Persistence.csproj", "Lexiconner.Persistence/"]
+COPY ["Lexiconner/Lexiconner.Domain/Lexiconner.Domain.csproj", "Lexiconner.Domain/"]
+RUN dotnet restore "Lexiconner.Api/Lexiconner.Api.csproj"
+#COPY "Lexiconner/Lexiconner.Api/"  .
+COPY "Lexiconner/"  .
+WORKDIR "/src/Lexiconner.Api"
+RUN dotnet build "Lexiconner.Api.csproj" -c Release -o /app
+
+FROM build AS publish
+RUN dotnet publish "Lexiconner.Api.csproj" -c Release -o /app
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
+#ENTRYPOINT ["dotnet", "Lexiconner.Api.dll"]
+#Because Heroku doesn’t work nicely with ENTRYPOINT command we should change this
+CMD dotnet Lexiconner.Api.dll
