@@ -9,51 +9,23 @@ body, html{
 }
 
 :root{
-    --background-color: #f7b633;
-    --background-color-menu: #f3dd1c;
-    --background-color-menu-item: #43aac9;
-    --card-color:#070d59;
+     --background-color: #252323;
+    --text-color: #fff;
+    --menu-background-color: rgb(3, 3, 37);
+    --card-color: #070d59;
     --bottom-color: #4f9da6;
     --example-color: #1f3c88;
     --example-font-color: #e8e2db;
-    --menu-item-font-color: #201f1e;
+    --menu-item-font-color: #fff;
     --block-bottom-width: 13%;
     --block-bottom-height: 10%;
 }
 
-
-.main-block-menu{
-    background-color: var(--background-color-menu);
-    width: 100%;
-    height: 10%;
-    overflow-y: hidden;
+.app-container{
+    width:100%;
+    height:100%;
 }
 
-.menu{
-    width: 100%;
-    height: 100%; 
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: row;
-    padding: 0.5% 0% 0.5% 0%;
-    background-color: #2b4b9c;
-    overflow-y: auto;
-}
-.menu-item{
-    width: 100%;
-    height: 100%;
-    margin: 0% 0.5%  0% 0.5%;
-    padding: 0.9%;
-    background-color: var(--background-color-menu-item);
-    border-bottom: 2px solid #fff;
-    border-radius: 8px;
-    color: var(--menu-item-font-color);
-    box-sizing: border-box;
-    text-align: center;
-    text-overflow: ellipsis;
-    overflow: auto;
-    font-size: 150%;
-}
 
 .main-block{
     background-color: var(--background-color);
@@ -157,6 +129,58 @@ body, html{
 .example-picture{
     background-color:#2b4b9c;
     width: 20%;
+}
+
+.main-block-menu{
+    background-color: var(--background-color-menu);
+    width: 100%;
+    height: 10%;
+    overflow-y: hidden;
+}
+
+/* menu */
+
+.menu{
+  width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-y: auto;
+    background-color: var(--menu-background-color);
+}
+.menu-item{
+    height: 100%;
+    margin: 0;
+    padding: 0.9%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    background-color: var(--menu-background-color);
+    opacity: 1;
+    color: var(--menu-item-font-color);
+    box-sizing: border-box;
+    text-align: center;
+    text-overflow: ellipsis;
+    font-size: 100%;
+}
+
+.menu-item.active {
+    color: orangered;
+}
+
+.menu-page-container {
+    display: none;
+    width: 100%;
+    height: 100%;
+    padding: 1%;
+}
+
+.menu-page-container.active {
+    display: block;
 }
 
 

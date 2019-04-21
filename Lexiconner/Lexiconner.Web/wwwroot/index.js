@@ -84,18 +84,20 @@ function start(config) {
         newDescription.className = " description";
         newDescription.innerHTML = card.description || '';
 
-        newExampleText.className = "example-text";
-        newExampleText.innerHTML = card.exampleText || '';
-
-        newExamplePicture.className = "example-picture";
-
         newExampleBlock.className = "example-block";
 
-        if ( !card.examplePicture ) {
+         newExampleText.className = "example-text";
+         newExampleText.innerHTML = card.exampleText || '';
+
+         newExamplePicture.className = "example-picture";
+
+       
+
+         if ( !card.examplePicture ) {
            // newExampleBlock.replaceChild(newExamplePicture, newExampleBlock.childNodes[1]);
-        } else {
+         } else {
            // card.examplePicture
-        }
+         }
 
         newExampleBlock.replaceChild(newExampleText, newExampleBlock.childNodes[0]);
 

@@ -12,42 +12,55 @@
 
 <body>
 
-    <div class="main-block-menu" id="menu">
-        <div class="menu" id="menu">
-            <div class="menu-item" id="menuItem"> Menu</div>
-            <div class="menu-item" id="menuItem"> Card</div>
-            <div class="menu-item" id="menuItem"> Show All Word</div>
-            <div class="menu-item" id="menuItem"> Something</div>
+    <div class="app-container">
+
+        <div class="main-block-menu" id="menu">
+            <div class="menu" id="menu">
+                <a href="#" class="menu-item active" data-menu-link="page1">
+                    <span>Menu</span>
+                </a>
+                <a href="#" class="menu-item" data-menu-link="page2">
+                    <span>Card</span>
+                </a>
+                <a href="#" class="menu-item" data-menu-link="page2">
+                    <span>Show All Word</span>
+                </a>
+                <a href="#" class="menu-item" data-menu-link="page2">
+                    <span>Something</span>
+                </a>
+
+            </div>
         </div>
-    </div>
 
+        <div class="main-block" id="mainBlock">
 
-    <div class="main-block" id="mainBlock">
-        <div class="main-block-card" id="mainBlockCard">
-            <div class="card-block-container" id="cardBlockContainer">
-                <div class="card-button card-button-left" id="cardButtonLeft">
-                    <i class="fas fa-chevron-left card-button-icon"></i>
-                </div>
-
-                <div class="card-block" id="cardBlock">
-                    <div class="title" id=""></div>
-                    <div class="description" id=""></div>
-                    <div class="example-block" id="">
-                         <div class="example-text" id="exampleText">ss</div>
-                        <div class="example-picture" id="examplePicture">
-                            <img width="100%" height="100%">    
+            <div class="menu-page-container active" data-menu-page="page1">
+                <div class="main-block-card" id="mainBlockCard">
+                    <div class="card-block-container" id="cardBlockContainer">
+                        <div class="card-button card-button-left" id="cardButtonLeft">
+                            <i class="fas fa-chevron-left card-button-icon"></i>
+                        </div>
+                        <div class="card-block" id="cardBlock">
+                            <div class="title" id=""></div>
+                            <div class="description" id=""></div>
+                            <div class="example-block" id="">
+                                <div class="example-text" id="exampleText">ss</div>
+                                <div class="example-picture" id="examplePicture">
+                                    <img width="100%" height="100%">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-button card-button-right" id="cardButtonRight">
+                            <i class="fas fa-chevron-right card-button-icon"></i>
                         </div>
                     </div>
                 </div>
-
-                <div class="card-button card-button-right" id="cardButtonRight">
-                    <i class="fas fa-chevron-right card-button-icon"></i>
-                </div>
             </div>
 
+            <div class="menu-page-container" data-menu-page="page2">Show All Word</div>
+            <div class="menu-page-container" data-menu-page="page3">Something</div>
         </div>
     </div>
-
     <script src="index.js"> </script>
 </body>
 
