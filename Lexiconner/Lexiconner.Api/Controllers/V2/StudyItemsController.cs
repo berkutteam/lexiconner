@@ -7,12 +7,14 @@ using Lexiconner.Api.Models.RequestModels;
 using Lexiconner.Api.Models.ResponseModels;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lexiconner.Api.Controllers.V2
 {
     [ApiController]
+    [Authorize]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class StudyItemsController : ApiControllerBase
