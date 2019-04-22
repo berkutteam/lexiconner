@@ -24,7 +24,7 @@ namespace Lexiconner.Api.ImportAndExport
             string filePath = _configuration.GetValue<string>("Import:FilePath");
 
             // word - desc[ - example]
-            var regex = new Regex(@"([^-]+)\s?-\s?([^-]+)\s?-?\s?([^-]+)?", RegexOptions.IgnoreCase);
+            var regex = new Regex(@"(?<word>[^=]+)\s+===\s+(?<description>[^=]+)(?:\s{0,}(:?===)?\s{0,}(?<example>[^=]+)?)", RegexOptions.IgnoreCase);
             var tagRegex = new Regex(@"#([^\/]+)", RegexOptions.IgnoreCase);
             var endTagRegex = new Regex(@"#\/([^\/])*", RegexOptions.IgnoreCase);
             List<string> currentTags = new List<string>();
@@ -62,9 +62,9 @@ namespace Lexiconner.Api.ImportAndExport
 
                     result.Add(new WordImportModel
                     {
-                        Word = parts[0],
-                        Description = parts[1],
-                        ExampleText = parts.Count > 2 ? parts[2] : String.Empty,
+                        Word = match.Groups.FirstOrDefault(x => x.Name == "word")?.Value,
+                        Description = match.Groups.FirstOrDefault(x => x.Name == "description")?.Value,
+                        ExampleText = match.Groups.FirstOrDefault(x => x.Name == "example")?.Value,
                         Tags = currentTags.ToList()
                     });
                 }

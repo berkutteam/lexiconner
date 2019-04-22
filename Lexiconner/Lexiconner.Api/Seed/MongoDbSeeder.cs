@@ -24,7 +24,7 @@ namespace Lexiconner.Api.Seed
 
         public async Task Seed()
         {
-            if ((await _studyItemRepository.GetAll()).Count() == 0)
+            if (!(await _studyItemRepository.GetAll()).Any())
             {
                 Console.WriteLine($"Seeding db...");
                 var words = await _wordTxtImporter.Import();
