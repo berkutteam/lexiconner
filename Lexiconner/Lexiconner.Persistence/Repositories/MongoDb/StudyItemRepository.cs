@@ -15,16 +15,12 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
         private const string _mongoCollectionName = "studyItems";
         private const int _maxPageSize = 1000;
 
-        private readonly IConfiguration _configuration;
         private readonly MongoClient _mongoClient;
         private readonly IMongoDatabase _mongoDatabase;
         private readonly IMongoCollection<StudyItem> _mongoCollection;
 
-        public StudyItemRepository(IConfiguration configuration, MongoClient mongoClient)
+        public StudyItemRepository(MongoClient mongoClient, string database)
         {
-            string database = configuration["MongoDbDatabase"];
-
-            _configuration = configuration;
             _mongoClient = mongoClient;
             _mongoDatabase = mongoClient.GetDatabase(database); // db will be created if not exists
             _mongoCollection = _mongoDatabase.GetCollection<StudyItem>(_mongoCollectionName);

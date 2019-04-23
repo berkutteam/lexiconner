@@ -3,6 +3,7 @@ using Lexiconner.Api.Seed;
 using Lexiconner.Persistence.Repositories;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,7 @@ using MongoDB.Driver;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using ZNetCS.AspNetCore.Authentication.Basic;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
@@ -22,17 +24,19 @@ namespace Lexiconner.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             Configuration = configuration;
+            HostingEnvironment = hostingEnvironment;
         }
 
         public IConfiguration Configuration { get; }
+        public IHostingEnvironment HostingEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            ApplicationSettings config = Configuration.Get<ApplicationSettings>();
+            var config = Configuration.Get<ApplicationSettings>();
 
             services.AddOptions();
             services.Configure<ApplicationSettings>(Configuration);
@@ -42,48 +46,73 @@ namespace Lexiconner.Api
             {
                 return new StudyItemJsonRepository(Configuration.GetValue<string>("JsonStorePath"));
             });
-            services.AddTransient<IStudyItemRepository, StudyItemRepository>();
+            services.AddTransient<IStudyItemRepository, StudyItemRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                return new StudyItemRepository(mongoClient, config.MongoDb.Database);
+            });
 
             /*
              * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
              * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.
             */
-            services.AddTransient<MongoClient>(serviceProvider => new MongoClient(config.MongoDbConnectionString));
+            services.AddTransient<MongoClient>(serviceProvider => new MongoClient(config.MongoDb.ConnectionString));
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
-            services.AddAuthentication(BasicAuthenticationDefaults.AuthenticationScheme)
-                .AddBasicAuthentication(options =>
+            // setup Basic Http Auth
+            //services.AddAuthentication(BasicAuthenticationDefaults.AuthenticationScheme)
+            //    .AddBasicAuthentication(options =>
+            //    {
+            //        options.Realm = "My Api";
+            //        options.Events = new BasicAuthenticationEvents()
+            //        {
+            //            OnValidatePrincipal = (context) =>
+            //            {
+            //                if ((context.UserName.ToLower() == config.BasicAuth.Username) && (context.Password == config.BasicAuth.Password))
+            //                {
+            //                    List<Claim> claims = new List<Claim>
+            //                      {
+            //                        new Claim(ClaimTypes.Name,
+            //                                  context.UserName,
+            //                                  context.Options.ClaimsIssuer)
+            //                      };
+
+            //                    var principal = new ClaimsPrincipal(new ClaimsIdentity(
+            //                        claims,
+            //                        BasicAuthenticationDefaults.AuthenticationScheme));
+            //                    var ticket = new AuthenticationTicket(
+            //                        principal,
+            //                        new AuthenticationProperties(),
+            //                        BasicAuthenticationDefaults.AuthenticationScheme
+            //                    );
+
+            //                    context.Principal = principal;
+
+            //                    return Task.FromResult(AuthenticateResult.Success(ticket));
+            //                }
+
+            //                return Task.FromResult(AuthenticateResult.Fail("Authentication failed."));
+            //            }
+            //        };
+            //    });
+
+            services.AddAuthorization();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    options.Realm = "My Api";
-                    options.Events = new BasicAuthenticationEvents()
+                    options.Authority = config.JwtBearerAuth.Authority;
+                    options.RequireHttpsMetadata = true;
+                    options.Audience = config.JwtBearerAuth.Audience;
+                    options.Events = new JwtBearerEvents
                     {
-                        OnValidatePrincipal = (context) =>
+                        OnAuthenticationFailed = args =>
                         {
-                            if ((context.UserName.ToLower() == config.BasicAuth.Username) && (context.Password == config.BasicAuth.Password))
+                            if (HostingEnvironment.IsDevelopment())
                             {
-                                List<Claim> claims = new List<Claim>
-                                  {
-                                    new Claim(ClaimTypes.Name,
-                                              context.UserName,
-                                              context.Options.ClaimsIssuer)
-                                  };
-
-                                var principal = new ClaimsPrincipal(new ClaimsIdentity(
-                                    claims,
-                                    BasicAuthenticationDefaults.AuthenticationScheme));
-                                var ticket = new AuthenticationTicket(
-                                    principal,
-                                    new AuthenticationProperties(),
-                                    BasicAuthenticationDefaults.AuthenticationScheme
-                                );
-
-                                context.Principal = principal;
-
-                                return Task.FromResult(AuthenticateResult.Success(ticket));
+                                return AuthenticationFailed(args);
                             }
-
-                            return Task.FromResult(AuthenticateResult.Fail("Authentication failed."));
-                        }
+                            return Task.FromResult(0);
+                        },
                     };
                 });
 
@@ -118,7 +147,8 @@ namespace Lexiconner.Api
                 });
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -158,6 +188,15 @@ namespace Lexiconner.Api
                 ISeeder seeder = app.ApplicationServices.GetRequiredService<ISeeder>();
                 seeder.Seed().Wait();
             }
+        }
+
+        private Task AuthenticationFailed(AuthenticationFailedContext arg)
+        {
+            // For debugging purposes only!
+            var s = $"AuthenticationFailed: {arg.Exception.Message}";
+            arg.Response.ContentLength = s.Length;
+            arg.Response.Body.Write(Encoding.UTF8.GetBytes(s), 0, s.Length);
+            return Task.FromResult(0);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Lexiconner.Domain.Entitites.Base
             Id = Ulid.NewUlid().ToString();
         }
 
-
+        // [BsonId(IdGenerator = typeof(CombGuidGenerator))]
         public string Id { get; set; }
     }
 }

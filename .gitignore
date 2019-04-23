@@ -331,3 +331,6 @@ ASALocalRun/
 
 # .env files
 .env
+
+# Serilog local logs
+serilog-logs/
