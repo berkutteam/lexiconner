@@ -138,12 +138,13 @@ namespace Lexiconner.Api
 
             services.AddCors(options =>
             {
-                options.AddPolicy("js-client-policy", builder =>
+                options.AddPolicy("default", builder =>
                 {
-                    builder.AllowAnyMethod();
-                    builder.AllowAnyMethod();
-                    builder.AllowCredentials();
-                    builder.WithOrigins(Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>());
+                    builder
+                        .WithOrigins(config.Cors.AllowedOrigins.ToArray())
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                 });
             });
 
@@ -166,7 +167,7 @@ namespace Lexiconner.Api
 
             app.UseHttpsRedirection();
 
-            app.UseCors("js-client-policy");
+            app.UseCors("default");
             app.UseAuthentication();
             app.UseMvc();
 

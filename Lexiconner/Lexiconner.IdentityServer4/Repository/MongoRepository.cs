@@ -6,6 +6,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -68,6 +69,13 @@ namespace Lexiconner.IdentityServer4.Repository
             var totalCount = collection.Count(filter);
             return totalCount > 0;
 
+        }
+
+        public bool Exists<T>(Expression<Func<T, bool>> expression) where T : class, new()
+        {
+            var collection = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>());
+            var exixting = collection.FindAsync(expression).GetAwaiter().GetResult();
+            return exixting.Current != null;
         }
 
         public void Add<T>(T item) where T : class, new()

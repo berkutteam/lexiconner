@@ -7,6 +7,7 @@ using Lexiconner.IdentityServer4.Entities;
 using Lexiconner.IdentityServer4.Exceptions;
 using Lexiconner.IdentityServer4.Repository;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.MongoDB;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +34,7 @@ namespace Lexiconner.IdentityServer4.Extensions
         {
             using (var scope = app.ApplicationServices.CreateScope())
             {
+                var hostingEnvironment = app.ApplicationServices.GetService<IHostingEnvironment>();
                 var identityServerConfig = app.ApplicationServices.GetService<IdentityServerConfig>();
                 var repository = app.ApplicationServices.GetService<IRepository>();
                 var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
@@ -47,9 +49,12 @@ namespace Lexiconner.IdentityServer4.Extensions
                 {
                     foreach (var client in identityServerConfig.GetClients())
                     {
-                        repository.Add(client);
+                        if(!repository.Exists<Client>(x => x.ClientId == client.ClientId))
+                        {
+                            repository.Add(client);
+                            createdNewRepository = true;
+                        }
                     }
-                    createdNewRepository = true;
                 }
 
                 // IdentityResource
@@ -57,9 +62,12 @@ namespace Lexiconner.IdentityServer4.Extensions
                 {
                     foreach (var res in identityServerConfig.GetIdentityResources())
                     {
-                        repository.Add(res);
+                        if (!repository.Exists<IdentityResource>(x => x.Name == res.Name))
+                        {
+                            repository.Add(res);
+                            createdNewRepository = true;
+                        }
                     }
-                    createdNewRepository = true;
                 }
 
                 // ApiResource
@@ -67,9 +75,12 @@ namespace Lexiconner.IdentityServer4.Extensions
                 {
                     foreach (var api in identityServerConfig.GetApiResources())
                     {
-                        repository.Add(api);
+                        if (!repository.Exists<ApiResource>(x => x.Name == api.Name))
+                        {
+                            repository.Add(api);
+                            createdNewRepository = true;
+                        }
                     }
-                    createdNewRepository = true;
                 }
 
                 // Populate MongoDB with dummy users to enable test - e.g. Bob, Alice
@@ -141,6 +152,12 @@ namespace Lexiconner.IdentityServer4.Extensions
                 if (userDummyEmail == null)
                 {
                     throw new Exception("Could not locate user email from claims!");
+                }
+
+                var existing = userManager.FindByEmailAsync(userDummyEmail.Value).GetAwaiter().GetResult();
+                if(existing != null)
+                {
+                    userManager.DeleteAsync(existing).GetAwaiter().GetResult();
                 }
 
                 var user = new ApplicationUser()

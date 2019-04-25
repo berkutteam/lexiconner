@@ -2,14 +2,18 @@
 using IdentityServer4.Stores;
 using Lexiconner.IdentityServer4.Repository;
 using Lexiconner.IdentityServer4.Store;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.MongoDB;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using Serilog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace Lexiconner.IdentityServer4.Extensions
@@ -112,5 +116,63 @@ namespace Lexiconner.IdentityServer4.Extensions
             return builder;
         }
 
+        /// <summary>
+        /// Configures signing credentials
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static IIdentityServerBuilder AddSigningCredentialCustom(this IIdentityServerBuilder builder, IHostingEnvironment hostingEnvironment, ApplicationSettings config)
+        {
+            X509Certificate2 cert = null;
+
+            using (X509Store certStore = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+            {
+                certStore.Open(OpenFlags.ReadOnly);
+
+                // we use the My/Personal store of the CurrentUser registry. 
+                // this is where Azure will load the certificate when we upload it later.
+                var certCollection = certStore.Certificates.Find(X509FindType.FindByIssuerName, config.IdenitytServer4.SigningCredential.KeyStoreIssuer, false);
+
+                if (certCollection.Count > 0)
+                {
+                    cert = certCollection[0];
+                    builder.AddSigningCredential(cert);
+                    Log.Logger.Information($"Successfully loaded cert from registry: {cert.IssuerName.Name} / {cert.Thumbprint}");
+                }
+            }
+
+            // fallback to local file
+            if (cert == null)
+            {
+                var path = Path.Combine(hostingEnvironment.ContentRootPath, config.IdenitytServer4.SigningCredential.KeyFilePath);
+                if(File.Exists(path))
+                {
+                    cert = new X509Certificate2(path, config.IdenitytServer4.SigningCredential.KeyFilePassword);
+
+                    // check certificate works
+                    // should output: System.Security.Cryptography.RSACng
+                    // otherwise exception will be thrown
+                    Log.Logger.Information($"Certificate loaded: {cert.PrivateKey.ToString()}");
+
+                    builder.AddSigningCredential(cert);
+                    Log.Logger.Information($"Falling back to cert from file. Successfully loaded: {cert.IssuerName.Name} / {cert.Thumbprint}");
+                }
+            }
+
+            // fallback to generated developer local file for development
+            if(cert == null && hostingEnvironment.IsDevelopment())
+            {
+                builder.AddDeveloperSigningCredential(
+                    persistKey: true,
+                    filename: Path.Combine(hostingEnvironment.ContentRootPath, config.IdenitytServer4.SigningCredential.KeyFilePathDeveloper)
+                );
+            }
+            else if(cert == null)
+            {
+                throw new InvalidOperationException($"{nameof(AddSigningCredentialCustom)}: Can't find certificate both in store and file.");
+            }
+
+            return builder;
+        }
     }
 }

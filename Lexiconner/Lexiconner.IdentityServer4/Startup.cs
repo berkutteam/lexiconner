@@ -13,6 +13,8 @@ using System;
 using Lexiconner.IdentityServer4.Extensions;
 using Lexiconner.IdentityServer4.Entities;
 using Lexiconner.IdentityServer4.Services;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -46,17 +48,16 @@ namespace Lexiconner.IdentityServer4
             //})
             //.AddDefaultTokenProviders();
 
-            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
-
             // configure identity server with MONGO Repository for stores, keys, clients, scopes & Asp .Net Identity
-            services.AddIdentityServer(options =>
+            var identityServerBuilder = services.AddIdentityServer(options =>
             {
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
-            })
-            .AddConfig()
+            });
+            identityServerBuilder.AddSigningCredentialCustom(Environment, config);
+            identityServerBuilder.AddConfig()
             .AddMongoRepository()
             .AddMongoDbForAspIdentity<Lexiconner.IdentityServer4.Entities.ApplicationUser, Lexiconner.IdentityServer4.Entities.ApplicationRole>(config)
             .AddClients()
@@ -67,14 +68,28 @@ namespace Lexiconner.IdentityServer4
             //.AddProfileService<ProfileService>();
 
             services.AddAuthentication();
-                //.AddGoogle(options =>
-                //{
-                //    // register your IdentityServer with Google at https://console.developers.google.com
-                //    // enable the Google+ API
-                //    // set the redirect URI to http://localhost:5000/signin-google
-                //    options.ClientId = "copy client ID from Google here";
-                //    options.ClientSecret = "copy client secret from Google here";
-                //});
+            //.AddGoogle(options =>
+            //{
+            //    // register your IdentityServer with Google at https://console.developers.google.com
+            //    // enable the Google+ API
+            //    // set the redirect URI to http://localhost:5000/signin-google
+            //    options.ClientId = "copy client ID from Google here";
+            //    options.ClientSecret = "copy client secret from Google here";
+            //});
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("default", builder =>
+                {
+                    builder
+                        .WithOrigins(config.Cors.AllowedOrigins.ToArray())
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                });
+            });
+
+            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
         }
 
         public void Configure(IApplicationBuilder app)
@@ -91,9 +106,11 @@ namespace Lexiconner.IdentityServer4
 
             app.UseStaticFiles();
 
+            app.UseCors("default");
+
+            // UseIdentityServer includes a call to UseAuthentication, so it’s not necessary to have both.
             app.UseIdentityServer();
             app.UseMongoDbForIdentityServer();
-            app.UseAuthentication(); // app.UseIdentity();
 
             // Configure Google Auth
             //app.UseGoogleAuthentication(new GoogleOptions

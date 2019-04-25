@@ -7,9 +7,20 @@ namespace Lexiconner.Api
 {
     public class ApplicationSettings
     {
+        public CorsSettings Cors { get; set; }
         public MongoDbSettings MongoDb { get; set; }
         //public BasicAuthSettings BasicAuth { get; set; }
         public JwtBearerAuthSettings JwtBearerAuth { get; set; }
+    }
+
+    public class CorsSettings
+    {
+        public CorsSettings()
+        {
+            AllowedOrigins = new List<string>();
+        }
+
+        public List<string> AllowedOrigins { get; set; }
     }
 
     public class MongoDbSettings

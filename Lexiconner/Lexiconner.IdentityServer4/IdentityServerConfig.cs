@@ -3,8 +3,10 @@
 
 
 using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -13,11 +15,13 @@ namespace Lexiconner.IdentityServer4
 {
     public class IdentityServerConfig
     {
+        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ApplicationSettings _config;
 
-        public IdentityServerConfig(IOptions<ApplicationSettings> config)
+        public IdentityServerConfig(IHostingEnvironment hostingEnvironment, IOptions<ApplicationSettings> config)
         {
             _config = config.Value;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public IEnumerable<IdentityResource> GetIdentityResources()
@@ -26,6 +30,9 @@ namespace Lexiconner.IdentityServer4
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
+                new IdentityResources.Email(),
+                new IdentityResources.Phone(),
+                new IdentityResources.Address(),
             };
         }
 
@@ -33,13 +40,19 @@ namespace Lexiconner.IdentityServer4
         {
             return new ApiResource[]
             {
-                new ApiResource("webapi", "Lexiconner Web Api")
+                new ApiResource("webapi", "Lexiconner Web Api", new List<string> {
+                    //JwtClaimTypes.Name,
+                    //JwtClaimTypes.GivenName,
+                    //JwtClaimTypes.FamilyName,
+                    //JwtClaimTypes.Email,
+                    //JwtClaimTypes.WebSite,
+                })
             };
         }
 
         public IEnumerable<Client> GetClients()
         {
-            return new[]
+            var clients = new List<Client>
             {
                 // client credentials flow client
                 //new Client
@@ -91,9 +104,52 @@ namespace Lexiconner.IdentityServer4
                     PostLogoutRedirectUris = { $"{_config.Urls.WebSpa}/index.html" },
                     AllowedCorsOrigins = { $"{_config.Urls.WebSpa}" },
 
-                    AllowedScopes = { "openid", "profile", "webapi" }
-                }
+                    AllowedScopes = {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "webapi"
+                    }
+                },
             };
+
+            if(_hostingEnvironment.IsDevelopment())
+            {
+                // SPA client using implicit flow
+                clients.Add(new Client
+                {
+                    ClientId = "webtestspa",
+                    ClientName = "Lexiconner Web Test SPA Client",
+                    ClientUri = _config.Urls.WebTestSpa,
+
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true, // Proof Key for Code Exchange (PKCE)
+                    RequireClientSecret = false,
+
+                    RedirectUris =
+                    {
+                        $"{_config.Urls.WebTestSpa}/index.html",
+                        $"{_config.Urls.WebTestSpa}/callback.html",
+                        $"{_config.Urls.WebTestSpa}/silent.html",
+                        $"{_config.Urls.WebTestSpa}/popup.html",
+                    },
+
+                    PostLogoutRedirectUris = { $"{_config.Urls.WebTestSpa}/index.html" },
+                    AllowedCorsOrigins = { $"{_config.Urls.WebTestSpa}" },
+
+                    AllowedScopes = {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "webapi"
+                    },
+
+                    //Claims = new List<Claim>
+                    //{
+                    //    new Claim("test-set-in-client-config", "test")
+                    //},
+                });
+            }
+
+            return clients;
         }
 
         public List<TestUser> GetSampleUsers()

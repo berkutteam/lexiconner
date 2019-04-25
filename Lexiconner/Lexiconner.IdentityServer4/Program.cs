@@ -28,11 +28,11 @@ namespace Lexiconner.IdentityServer4
             }
             catch(HostRestartRequiredException ex)
             {
-                Log.Information("Restaring host... ({message})", ex.Message);
-                Thread.Sleep(5000);
-                var host = CreateWebHostBuilder(args).Build();
-                host.Run();
-                Log.Information("Host is running");
+                //Log.Information("Restaring host... ({message})", ex.Message);
+                //Thread.Sleep(5000);
+                //var host = CreateWebHostBuilder(args).Build();
+                //host.Run();
+                //Log.Information("Host is running");
             }
         }
 
