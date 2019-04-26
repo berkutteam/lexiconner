@@ -3,19 +3,27 @@
 
 
 using IdentityModel;
+using IdentityServer4.Configuration;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
+using IdentityServer4.Validation;
+using Lexiconner.IdentityServer4;
 using Lexiconner.IdentityServer4.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace IdentityServer4.Quickstart.UI
@@ -148,7 +156,121 @@ namespace IdentityServer4.Quickstart.UI
             return View(vm);
         }
 
-        
+        [HttpPost]
+        public async Task<IActionResult> LoginAs(
+            LoginInputModel model, 
+            [FromServices]IOptions<ApplicationSettings> config, 
+            [FromServices]IdentityServerConfig identityServerConfig, 
+            [FromServices]IdentityServerTools identityServerTools,
+            [FromServices] ITokenService tokenService,
+            [FromServices] IUserClaimsPrincipalFactory<ApplicationUser> principalFactory,
+            [FromServices] IdentityServerOptions options,
+            [FromServices] UserManager<ApplicationUser> userManager,
+            [FromServices] SignInManager<ApplicationUser> signInManager,
+            [FromServices] ITokenCreationService tokenCreationService
+        )
+        {
+            var issuer = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
+
+            ////
+            // The IssueJwtAsync method allows creating JWT tokens using the IdentityServer token creation engine
+            // DOESN'T contain info about user
+            var token1 = await identityServerTools.IssueJwtAsync(
+                 lifetime: System.Convert.ToInt32((new TimeSpan(24, 0, 0)).TotalMilliseconds),
+                 issuer: issuer,
+                 claims: new List<Claim>()
+                 {
+                     new Claim("loginas-test-claim", "test")
+                 }
+            );
+
+            ////
+            // The IssueClientJwtAsync is an easier version of that for creating tokens for server-to-server communication (e.g. when you have to call an IdentityServer protected API from your code)
+            // DOESN'T contain info about user
+            var token2 = await identityServerTools.IssueClientJwtAsync(
+                clientId: "webtestspa",
+                lifetime: System.Convert.ToInt32((new TimeSpan(24, 0, 0)).TotalMilliseconds),
+                scopes: new List<string>()
+                {
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    "webapi"
+                },
+                audiences: new List<string>()
+                {
+                    "webapi",
+                });
+
+
+            ////
+            var userEmail = "alice@test.com";
+            var userPassword = "Password_1";
+
+            var user = await userManager.FindByEmailAsync(userEmail);
+            var signinResult = await signInManager.CheckPasswordSignInAsync(user, userPassword, lockoutOnFailure: true);
+            if(!signinResult.Succeeded || signinResult.IsNotAllowed)
+            {
+                return new StatusCodeResult((int)HttpStatusCode.Unauthorized);
+            }
+
+            var tokenCreationRequest = new TokenCreationRequest();
+            var identityPricipal = await principalFactory.CreateAsync(user);
+            var identityUser = new IdentityServerUser(user.Id.ToString());
+
+            identityUser.AdditionalClaims = identityPricipal.Claims.ToArray();
+            identityUser.DisplayName = user.UserName;
+            identityUser.AuthenticationTime = DateTime.UtcNow;
+            identityUser.IdentityProvider = IdentityServerConstants.LocalIdentityProvider;
+
+            tokenCreationRequest.Subject = identityUser.CreatePrincipal();
+            tokenCreationRequest.IncludeAllIdentityClaims = true;
+            tokenCreationRequest.ValidatedRequest = new ValidatedRequest();
+            tokenCreationRequest.ValidatedRequest.Subject = tokenCreationRequest.Subject;
+            tokenCreationRequest.ValidatedRequest.SetClient(identityServerConfig.GetClients().First(x => x.ClientId == "webtestspa"));
+            tokenCreationRequest.Resources = new Resources(identityServerConfig.GetIdentityResources(), identityServerConfig.GetApiResources());
+            tokenCreationRequest.ValidatedRequest.Options = options;
+            tokenCreationRequest.ValidatedRequest.ClientClaims = identityUser.AdditionalClaims;
+
+            var token3Access = await tokenService.CreateAccessTokenAsync(tokenCreationRequest);
+            var token3Identity = await tokenService.CreateIdentityTokenAsync(tokenCreationRequest);
+            token3Access.Issuer = issuer;
+            token3Identity.Issuer = issuer;
+            var tokenValue3Access = await tokenService.CreateSecurityTokenAsync(token3Access);
+            var tokenValue3Identity = await tokenService.CreateSecurityTokenAsync(token3Identity);
+
+            ////
+            ///// DOESN'T contain info about user
+            var token4 = await tokenCreationService.CreateTokenAsync(new Token("Bearer")
+            {
+                AccessTokenType = AccessTokenType.Jwt,
+                Audiences = new List<string>()
+                {
+                    "webapi",
+                },
+                Claims = new List<Claim>()
+                {
+                    new Claim("loginas-test-claim", "test")
+                },
+                ClientId = "webtestspa",
+                CreationTime = DateTime.UtcNow,
+                Issuer = issuer,
+                Lifetime = System.Convert.ToInt32((new TimeSpan(24, 0, 0)).TotalMilliseconds),
+                //Type = "",
+                //Version = 1,
+            });
+
+            return Json(new {
+                token1,
+
+                token2,
+
+                tokenValue3Access,
+                tokenValue3Identity,
+
+                token4,
+            });
+        }
+
         /// <summary>
         /// Show logout page
         /// </summary>
