@@ -122,6 +122,7 @@ function start(config) {
 
 function httpGet(url, callBack) {
     var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true; // force to show browser's default auth dialog
     xhr.open('GET', url);
     xhr.send();
 
