@@ -13,6 +13,11 @@ function start(config) {
     var limit = 5;
     var pages = 0;
     var cardData = {};
+    var pictures = [];
+
+    for (var i = 0; i < 69; i++) { // add picture in array for random example picture
+        pictures.push(i + ".jpg");
+    }
 
     function getTestData(countOfElmenets) {
         var arrData = [];
@@ -71,40 +76,21 @@ function start(config) {
     }
 
     function showDataOnCard(card) {
-        var elem = document.getElementById("mainBlockCard");
-        var newTitle = document.createElement('div');
-        var newDescription = document.createElement('div');
-        var newExampleBlock = document.createElement('div');
-        var newExampleText = document.createElement('div');
-        var newExamplePicture = document.createElement('div');
 
-        newTitle.className = "title";
-        newTitle.innerHTML = card.title;
+        var ExampleText = document.getElementById('exampleText');
+        var exampleImage = document.getElementById('image');
+        var description = document.getElementById('description');
+        var title = document.getElementById('title');
 
-        newDescription.className = " description";
-        newDescription.innerHTML = card.description || '';
+        title.innerText = card.title || '';
+        description.innerText = card.description || '';
+        ExampleText.innerText = card.exampleText || '';
 
-        newExampleBlock.className = "example-block";
-
-         newExampleText.className = "example-text";
-         newExampleText.innerHTML = card.exampleText || '';
-
-         newExamplePicture.className = "example-picture";
-
-       
-
-         if ( !card.examplePicture ) {
-           // newExampleBlock.replaceChild(newExamplePicture, newExampleBlock.childNodes[1]);
-         } else {
-           // card.examplePicture
-         }
-
-        newExampleBlock.replaceChild(newExampleText, newExampleBlock.childNodes[0]);
-
-
-        elem.replaceChild(newTitle, elem.childNodes[0]);
-        elem.replaceChild(newDescription, elem.childNodes[1]);
-        elem.replaceChild(newExampleBlock, elem.childNodes[2]);
+        if (!card.examplePicture) {
+            exampleImage.src = "1600x900\\" + pictures[Math.floor(Math.random() * pictures.length)];
+        } else {
+            exampleImage.src = card.examplePicture;
+        }
     }
 
     var leftButtonEl = document.getElementById("cardButtonLeft");
@@ -118,6 +104,19 @@ function start(config) {
         showNextCard(1);
     });
 
+    function addBubleEventListener(sourceElSelector, targetElSelector, eventName, eventHandler){
+        
+    }
+
+    /**
+     * Inits app menu, enables menu links
+     */
+    function initAppMenu(){
+
+    }
+
+
+    initAppMenu();
     showNextCard();
 }
 

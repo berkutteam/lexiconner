@@ -21,6 +21,7 @@ function start() {
         sourceEl.addEventListener(eventName, function (e) {
             var actualEl = e.target; // element event fired on
             var desiredEl = e.target.closest(targetElSelector); // element we excpect event fired on
+            
 
             var matches = actualEl.matches(targetElSelector);
             var isChildEl = desiredEl !== null; // if this el is parent
