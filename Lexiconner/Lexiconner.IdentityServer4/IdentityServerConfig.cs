@@ -8,6 +8,7 @@ using IdentityServer4.Models;
 using IdentityServer4.Test;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 
@@ -108,7 +109,7 @@ namespace Lexiconner.IdentityServer4
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         "webapi"
-                    }
+                    },
                 },
             };
 
@@ -139,8 +140,17 @@ namespace Lexiconner.IdentityServer4
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OfflineAccess, // refresh token
                         "webapi"
                     },
+
+                    // refresh token settings
+                    // refresh tokens are supported for the following flows: authorization code, hybrid and resource owner password credential flow.
+                    AllowOfflineAccess = true,
+                    RefreshTokenUsage = TokenUsage.ReUse,
+                    RefreshTokenExpiration = TokenExpiration.Absolute,
+                    AbsoluteRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(30, 0, 0, 0)).TotalSeconds),
+                    SlidingRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(15, 0, 0, 0)).TotalSeconds),
 
                     //Claims = new List<Claim>
                     //{

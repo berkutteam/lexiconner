@@ -167,7 +167,8 @@ namespace IdentityServer4.Quickstart.UI
             [FromServices] IdentityServerOptions options,
             [FromServices] UserManager<ApplicationUser> userManager,
             [FromServices] SignInManager<ApplicationUser> signInManager,
-            [FromServices] ITokenCreationService tokenCreationService
+            [FromServices] ITokenCreationService tokenCreationService,
+            [FromServices] IRefreshTokenService refreshTokenService
         )
         {
             var issuer = HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
@@ -176,7 +177,7 @@ namespace IdentityServer4.Quickstart.UI
             // The IssueJwtAsync method allows creating JWT tokens using the IdentityServer token creation engine
             // DOESN'T contain info about user
             var token1 = await identityServerTools.IssueJwtAsync(
-                 lifetime: System.Convert.ToInt32((new TimeSpan(24, 0, 0)).TotalMilliseconds),
+                 lifetime: System.Convert.ToInt32((new TimeSpan(24, 0, 0)).TotalSeconds),
                  issuer: issuer,
                  claims: new List<Claim>()
                  {
@@ -189,7 +190,7 @@ namespace IdentityServer4.Quickstart.UI
             // DOESN'T contain info about user
             var token2 = await identityServerTools.IssueClientJwtAsync(
                 clientId: "webtestspa",
-                lifetime: System.Convert.ToInt32((new TimeSpan(24, 0, 0)).TotalMilliseconds),
+                lifetime: System.Convert.ToInt32((new TimeSpan(24, 0, 0)).TotalSeconds),
                 scopes: new List<string>()
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
@@ -237,6 +238,7 @@ namespace IdentityServer4.Quickstart.UI
             token3Identity.Issuer = issuer;
             var tokenValue3Access = await tokenService.CreateSecurityTokenAsync(token3Access);
             var tokenValue3Identity = await tokenService.CreateSecurityTokenAsync(token3Identity);
+            var tokenValue3Refresh = await refreshTokenService.CreateRefreshTokenAsync(tokenCreationRequest.Subject, token3Access, identityServerConfig.GetClients().First(x => x.ClientId == "webtestspa"));
 
             ////
             ///// DOESN'T contain info about user
@@ -254,7 +256,7 @@ namespace IdentityServer4.Quickstart.UI
                 ClientId = "webtestspa",
                 CreationTime = DateTime.UtcNow,
                 Issuer = issuer,
-                Lifetime = System.Convert.ToInt32((new TimeSpan(24, 0, 0)).TotalMilliseconds),
+                Lifetime = System.Convert.ToInt32((new TimeSpan(24, 0, 0)).TotalSeconds),
                 //Type = "",
                 //Version = 1,
             });
@@ -266,6 +268,7 @@ namespace IdentityServer4.Quickstart.UI
 
                 tokenValue3Access,
                 tokenValue3Identity,
+                tokenValue3Refresh,
 
                 token4,
             });
