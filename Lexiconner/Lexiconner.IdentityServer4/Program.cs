@@ -33,6 +33,8 @@ namespace Lexiconner.IdentityServer4
                 //var host = CreateWebHostBuilder(args).Build();
                 //host.Run();
                 //Log.Information("Host is running");
+
+                throw;
             }
         }
 

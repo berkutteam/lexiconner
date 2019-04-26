@@ -335,7 +335,7 @@ ASALocalRun/
 serilog-logs/
 
 # allow only .pfx certificates
-# ignore developer certificates (they are specific for machine and can be regenerated very often), .crt and .key (contains pricate key) files
+# ignore developer certificates (they are specific for machine and can be regenerated very often), .crt and .key (contains private key) files
 developer-cert.pfx
 *.crt
 *.key

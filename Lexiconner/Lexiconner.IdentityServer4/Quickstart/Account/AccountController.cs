@@ -159,9 +159,9 @@ namespace IdentityServer4.Quickstart.UI
         [HttpPost]
         public async Task<IActionResult> LoginAs(
             LoginInputModel model, 
-            [FromServices]IOptions<ApplicationSettings> config, 
-            [FromServices]IdentityServerConfig identityServerConfig, 
-            [FromServices]IdentityServerTools identityServerTools,
+            [FromServices] IOptions<ApplicationSettings> config, 
+            [FromServices] IdentityServerConfig identityServerConfig, 
+            [FromServices] IdentityServerTools identityServerTools,
             [FromServices] ITokenService tokenService,
             [FromServices] IUserClaimsPrincipalFactory<ApplicationUser> principalFactory,
             [FromServices] IdentityServerOptions options,
