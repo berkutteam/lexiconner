@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.Domain", "Lexico
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.IdentityServer4", "Lexiconner.IdentityServer4\Lexiconner.IdentityServer4.csproj", "{65E77D3C-A6D8-47EC-B687-3A7B5D9D36BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexiconner.WebSpaTest", "Lexiconner.WebSpaTest\Lexiconner.WebSpaTest.csproj", "{C60BB5F6-DCDE-43BA-B40E-63A97890E752}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.WebSpaTest", "Lexiconner.WebSpaTest\Lexiconner.WebSpaTest.csproj", "{C60BB5F6-DCDE-43BA-B40E-63A97890E752}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

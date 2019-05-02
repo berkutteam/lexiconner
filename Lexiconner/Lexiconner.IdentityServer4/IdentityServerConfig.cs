@@ -93,6 +93,7 @@ namespace Lexiconner.IdentityServer4
 
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
+                    RequireConsent = false,
 
                     RedirectUris =
                     {
@@ -125,6 +126,7 @@ namespace Lexiconner.IdentityServer4
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true, // Proof Key for Code Exchange (PKCE)
                     RequireClientSecret = false,
+                    RequireConsent = false,
 
                     RedirectUris =
                     {
