@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
-using Lexiconner.IdentityServer4.Repository;
+using Lexiconner.Persistence.Repositories.Base;
 
 namespace Lexiconner.IdentityServer4.Store
 {
@@ -20,16 +20,16 @@ namespace Lexiconner.IdentityServer4.Store
             _dbRepository = repository;
         }
 
-        public Task<IEnumerable<PersistedGrant>> GetAllAsync(string subjectId)
+        public async Task<IEnumerable<PersistedGrant>> GetAllAsync(string subjectId)
         {
-            var result = _dbRepository.Where<PersistedGrant>(i => i.SubjectId == subjectId);
-            return Task.FromResult(result.AsEnumerable());
+            var result = await _dbRepository.GetManyAsync<PersistedGrant>(i => i.SubjectId == subjectId);
+            return result;
         }
 
-        public Task<PersistedGrant> GetAsync(string key)
+        public async Task<PersistedGrant> GetAsync(string key)
         {
-            var result = _dbRepository.Single<PersistedGrant>(i => i.Key == key);
-            return Task.FromResult(result);
+            var result = await _dbRepository.GetOneAsync<PersistedGrant>(i => i.Key == key);
+            return result;
         }
 
         public async Task RemoveAllAsync(string subjectId, string clientId)
@@ -47,10 +47,9 @@ namespace Lexiconner.IdentityServer4.Store
             await _dbRepository.DeleteAsync<PersistedGrant>(i => i.Key == key);
         }
 
-        public Task StoreAsync(PersistedGrant grant)
+        public async Task StoreAsync(PersistedGrant grant)
         {
-            _dbRepository.Add<PersistedGrant>(grant);
-            return Task.FromResult(0);
+            await _dbRepository.AddAsync<PersistedGrant>(grant);
         }
     }
 }

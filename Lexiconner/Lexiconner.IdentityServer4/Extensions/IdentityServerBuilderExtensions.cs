@@ -1,12 +1,14 @@
 ﻿using IdentityServer4.Services;
 using IdentityServer4.Stores;
-using Lexiconner.IdentityServer4.Repository;
 using Lexiconner.IdentityServer4.Store;
+using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.MongoDB;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Serilog;
 using System;
@@ -38,7 +40,17 @@ namespace Lexiconner.IdentityServer4.Extensions
         /// <returns></returns>
         public static IIdentityServerBuilder AddMongoRepository(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddTransient<IMongoRepository, MongoRepository>();
+            // register repository if wasn't registred yet
+            if (!builder.Services.Any(x => x.ServiceType == typeof(IMongoRepository) && x.ImplementationType == typeof(MongoRepository)))
+            {
+                builder.Services.AddTransient<IMongoRepository, MongoRepository>(sp =>
+                {
+                    var config = sp.GetService<IOptions<ApplicationSettings>>().Value;
+                    var mongoClient = sp.GetService<MongoClient>();
+                    return new MongoRepository(mongoClient, config.MongoDb.Database);
+                });
+            }
+
             return builder;
         }
 

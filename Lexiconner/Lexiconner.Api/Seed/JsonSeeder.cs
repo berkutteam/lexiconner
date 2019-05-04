@@ -1,6 +1,7 @@
 ﻿using Lexiconner.Api.ImportAndExport;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
+using Lexiconner.Persistence.Repositories.Json;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -25,18 +26,18 @@ namespace Lexiconner.Api.Seed
         public async Task Seed()
         {
             var storePath = _configuration.GetValue<string>("JsonStorePath");
-            if((await _studyItemJsonRepository.GetAll()).Count() == 0)
+            if((await _studyItemJsonRepository.GetAllAsync<StudyItemEntity>()).Count() == 0)
             {
                 Console.WriteLine($"Seeding db...");
                 var words = await _wordTxtImporter.Import();
-                var entities = words.Select(x => new StudyItem
+                var entities = words.Select(x => new StudyItemEntity
                 {
                     Title = x.Word,
                     Description = x.Description,
                     ExampleText = x.ExampleText,
                     Tags = x.Tags,
                 });
-                await _studyItemJsonRepository.AddAll(entities);
+                await _studyItemJsonRepository.AddAsync(entities);
                 Console.WriteLine($"Seed finished.");
             }
             else

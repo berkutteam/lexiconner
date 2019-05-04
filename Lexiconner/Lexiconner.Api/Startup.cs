@@ -1,6 +1,8 @@
 ﻿using Lexiconner.Api.ImportAndExport;
 using Lexiconner.Api.Seed;
 using Lexiconner.Persistence.Repositories;
+using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories.Json;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -40,23 +42,27 @@ namespace Lexiconner.Api
 
             services.AddOptions();
             services.Configure<ApplicationSettings>(Configuration);
+
+            /*
+             * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
+             * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.
+            */
+            services.AddTransient<MongoClient>(serviceProvider => {
+                return new MongoClient(config.MongoDb.ConnectionString);
+            });
+
             services.AddTransient<IWordTxtImporter, WordTxtImporter>();
             services.AddTransient<ISeeder, MongoDbSeeder>(); // replace with other if needed
             services.AddTransient<IStudyItemJsonRepository, StudyItemJsonRepository>(serviceProvider =>
             {
                 return new StudyItemJsonRepository(Configuration.GetValue<string>("JsonStorePath"));
             });
-            services.AddTransient<IStudyItemRepository, StudyItemRepository>(sp =>
+            services.AddTransient<IMongoRepository, MongoRepository>(sp =>
             {
                 var mongoClient = sp.GetService<MongoClient>();
-                return new StudyItemRepository(mongoClient, config.MongoDb.Database);
+                return new MongoRepository(mongoClient, config.MongoDb.Database);
             });
 
-            /*
-             * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
-             * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.
-            */
-            services.AddTransient<MongoClient>(serviceProvider => new MongoClient(config.MongoDb.ConnectionString));
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             // setup Basic Http Auth
@@ -184,11 +190,8 @@ namespace Lexiconner.Api
                });
 
             // seed
-            if (env.IsDevelopment())
-            {
-                ISeeder seeder = app.ApplicationServices.GetRequiredService<ISeeder>();
-                seeder.Seed().Wait();
-            }
+            ISeeder seeder = app.ApplicationServices.GetRequiredService<ISeeder>();
+            seeder.Seed().Wait();
         }
 
         private Task AuthenticationFailed(AuthenticationFailedContext arg)

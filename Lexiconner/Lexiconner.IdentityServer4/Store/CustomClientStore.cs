@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
-using Lexiconner.IdentityServer4.Repository;
+using Lexiconner.Persistence.Repositories.Base;
 
 namespace Lexiconner.IdentityServer4.Store
 {
@@ -17,11 +17,10 @@ namespace Lexiconner.IdentityServer4.Store
             _dbRepository = repository;
         }
 
-        public Task<Client> FindClientByIdAsync(string clientId)
+        public async Task<Client> FindClientByIdAsync(string clientId)
         {
-            var client = _dbRepository.Single<Client>(c => c.ClientId == clientId);
-
-            return Task.FromResult(client);
+            var client = await _dbRepository.GetOneAsync<Client>(c => c.ClientId == clientId);
+            return client;
         }
     }
 }

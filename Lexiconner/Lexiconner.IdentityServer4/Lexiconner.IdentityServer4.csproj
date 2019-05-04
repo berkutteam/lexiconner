@@ -20,4 +20,9 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" PrivateAssets="All" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lexiconner.Domain\Lexiconner.Domain.csproj" />
+    <ProjectReference Include="..\Lexiconner.Persistence\Lexiconner.Persistence.csproj" />
+  </ItemGroup>
 </Project>

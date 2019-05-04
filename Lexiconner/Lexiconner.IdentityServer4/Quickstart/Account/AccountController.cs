@@ -10,8 +10,8 @@ using IdentityServer4.Models;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using IdentityServer4.Validation;
+using Lexiconner.Domain.Entitites;
 using Lexiconner.IdentityServer4;
-using Lexiconner.IdentityServer4.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -32,16 +32,16 @@ namespace IdentityServer4.Quickstart.UI
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUserEntity> _userManager;
+        private readonly SignInManager<ApplicationUserEntity> _signInManager;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
 
         public AccountController(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
+            UserManager<ApplicationUserEntity> userManager,
+            SignInManager<ApplicationUserEntity> signInManager,
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
@@ -163,10 +163,10 @@ namespace IdentityServer4.Quickstart.UI
             [FromServices] IdentityServerConfig identityServerConfig, 
             [FromServices] IdentityServerTools identityServerTools,
             [FromServices] ITokenService tokenService,
-            [FromServices] IUserClaimsPrincipalFactory<ApplicationUser> principalFactory,
+            [FromServices] IUserClaimsPrincipalFactory<ApplicationUserEntity> principalFactory,
             [FromServices] IdentityServerOptions options,
-            [FromServices] UserManager<ApplicationUser> userManager,
-            [FromServices] SignInManager<ApplicationUser> signInManager,
+            [FromServices] UserManager<ApplicationUserEntity> userManager,
+            [FromServices] SignInManager<ApplicationUserEntity> signInManager,
             [FromServices] ITokenCreationService tokenCreationService,
             [FromServices] IRefreshTokenService refreshTokenService
         )

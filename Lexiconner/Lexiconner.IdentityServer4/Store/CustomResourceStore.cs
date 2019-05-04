@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
-using Lexiconner.IdentityServer4.Repository;
+using Lexiconner.Persistence.Repositories.Base;
 
 namespace Lexiconner.IdentityServer4.Store
 {
@@ -17,45 +17,42 @@ namespace Lexiconner.IdentityServer4.Store
             _dbRepository = repository;
         }
 
-        private IEnumerable<ApiResource> GetAllApiResources()
+        private async Task<IEnumerable<ApiResource>> GetAllApiResources()
         {
-            return _dbRepository.All<ApiResource>();
+            return await _dbRepository.GetAllAsync<ApiResource>();
         }
 
-        private IEnumerable<IdentityResource> GetAllIdentityResources()
+        private async Task<IEnumerable<IdentityResource>> GetAllIdentityResources()
         {
-            return _dbRepository.All<IdentityResource>();
+            return await _dbRepository.GetAllAsync<IdentityResource>();
         }
 
-        public Task<ApiResource> FindApiResourceAsync(string name)
+        public async Task<ApiResource> FindApiResourceAsync(string name)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name));
 
-            return Task.FromResult(_dbRepository.Single<ApiResource>(a => a.Name == name));
+            return await _dbRepository.GetOneAsync<ApiResource>(a => a.Name == name);
         }
 
-        public Task<IEnumerable<ApiResource>> FindApiResourcesByScopeAsync(IEnumerable<string> scopeNames)
+        public async Task<IEnumerable<ApiResource>> FindApiResourcesByScopeAsync(IEnumerable<string> scopeNames)
         {
-            var list = _dbRepository.Where<ApiResource>(a => a.Scopes.Any(s => scopeNames.Contains(s.Name)));
-
-            return Task.FromResult(list.AsEnumerable());
+            return await _dbRepository.GetManyAsync<ApiResource>(a => a.Scopes.Any(s => scopeNames.Contains(s.Name)));
         }
 
-        public Task<IEnumerable<IdentityResource>> FindIdentityResourcesByScopeAsync(IEnumerable<string> scopeNames)
+        public async Task<IEnumerable<IdentityResource>> FindIdentityResourcesByScopeAsync(IEnumerable<string> scopeNames)
         {
-            var list = _dbRepository.Where<IdentityResource>(e => scopeNames.Contains(e.Name));
-            return Task.FromResult(list.AsEnumerable());
+            return await _dbRepository.GetManyAsync<IdentityResource>(e => scopeNames.Contains(e.Name));
         }
 
-        public Task<Resources> GetAllResources()
+        public async Task<Resources> GetAllResources()
         {
-            var result = new Resources(GetAllIdentityResources(), GetAllApiResources());
-            return Task.FromResult(result);
+            var result = new Resources(await GetAllIdentityResources(), await GetAllApiResources());
+            return result;
         }
 
-        public Task<Resources> GetAllResourcesAsync()
+        public async Task<Resources> GetAllResourcesAsync()
         {
-            return GetAllResources();
+            return await GetAllResources();
         }
     }
 }

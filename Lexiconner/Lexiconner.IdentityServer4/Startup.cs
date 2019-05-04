@@ -11,10 +11,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Lexiconner.IdentityServer4.Extensions;
-using Lexiconner.IdentityServer4.Entities;
 using Lexiconner.IdentityServer4.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
+using Lexiconner.Domain.Entitites;
+using MongoDB.Driver;
+using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories.MongoDb;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -36,7 +39,21 @@ namespace Lexiconner.IdentityServer4
             services.AddOptions();
             services.Configure<ApplicationSettings>(Configuration);
 
-            //services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            /*
+            * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
+            * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.
+           */
+            services.AddTransient<MongoClient>(serviceProvider => {
+                return new MongoClient(config.MongoDb.ConnectionString);
+            });
+
+            services.AddTransient<IMongoRepository, MongoRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                return new MongoRepository(mongoClient, config.MongoDb.Database);
+            });
+
+            //services.AddIdentity<ApplicationUserEntity, ApplicationRoleEntity>(options =>
             //{
             //    if (Environment.IsDevelopment())
             //    {
@@ -59,11 +76,11 @@ namespace Lexiconner.IdentityServer4
             identityServerBuilder.AddSigningCredentialCustom(Environment, config);
             identityServerBuilder.AddConfig()
             .AddMongoRepository()
-            .AddMongoDbForAspIdentity<Lexiconner.IdentityServer4.Entities.ApplicationUser, Lexiconner.IdentityServer4.Entities.ApplicationRole>(config)
+            .AddMongoDbForAspIdentity<ApplicationUserEntity, ApplicationRoleEntity>(config)
             .AddClients()
             .AddIdentityApiResources()
             .AddPersistedGrants()
-            .AddAspNetIdentity<Lexiconner.IdentityServer4.Entities.ApplicationUser>();
+            .AddAspNetIdentity<ApplicationUserEntity>();
             //.AddTestUsers(Config.GetUsers())
             //.AddProfileService<ProfileService>();
 

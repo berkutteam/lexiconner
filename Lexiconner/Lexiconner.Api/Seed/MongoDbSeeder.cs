@@ -1,6 +1,8 @@
 ﻿using Lexiconner.Api.ImportAndExport;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
+using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -13,35 +15,39 @@ namespace Lexiconner.Api.Seed
     {
         private readonly IConfiguration _configuration;
         private readonly IWordTxtImporter _wordTxtImporter;
-        private readonly IStudyItemRepository _studyItemRepository;
+        private readonly IMongoRepository _mongoRepository;
 
-        public MongoDbSeeder(IConfiguration configuration, IWordTxtImporter wordTxtImporter, IStudyItemRepository studyItemRepository)
+        public MongoDbSeeder(IConfiguration configuration, IWordTxtImporter wordTxtImporter, IMongoRepository mongoRepository)
         {
             _configuration = configuration;
             _wordTxtImporter = wordTxtImporter;
-            _studyItemRepository = studyItemRepository;
+            _mongoRepository = mongoRepository;
         }
 
         public async Task Seed()
         {
-            if (!(await _studyItemRepository.GetAll()).Any())
+            Console.WriteLine($"Seeding db...");
+
+            // seed imported data for marked users
+            var usersWithImport = await _mongoRepository.GetManyAsync<ApplicationUserEntity>(x => x.IsImportInitialData);
+            Parallel.ForEach(usersWithImport, user =>
             {
-                Console.WriteLine($"Seeding db...");
-                var words = await _wordTxtImporter.Import();
-                var entities = words.Select(x => new StudyItem
+                if(!_mongoRepository.AnyAsync<StudyItemEntity>(x => x.UserId == user.Id).GetAwaiter().GetResult())
                 {
-                    Title = x.Word,
-                    Description = x.Description,
-                    ExampleText = x.ExampleText,
-                    Tags = x.Tags,
-                });
-                await _studyItemRepository.AddAll(entities);
-                Console.WriteLine($"Seed finished.");
-            }
-            else
-            {
-                Console.WriteLine($"Db already contains data. Do not seed.");
-            }
+                    var words = _wordTxtImporter.Import().GetAwaiter().GetResult();
+                    var entities = words.Select(x => new StudyItemEntity
+                    {
+                        UserId = user.Id,
+                        Title = x.Word,
+                        Description = x.Description,
+                        ExampleText = x.ExampleText,
+                        Tags = x.Tags,
+                    });
+                    _mongoRepository.AddAsync(entities).GetAwaiter().GetResult();
+                }
+            });
+
+            Console.WriteLine($"Seed finished.");
         }
     }
 }

@@ -3,9 +3,9 @@ using System.Linq;
 using IdentityModel;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
-using Lexiconner.IdentityServer4.Entities;
+using Lexiconner.Domain.Entitites;
 using Lexiconner.IdentityServer4.Exceptions;
-using Lexiconner.IdentityServer4.Repository;
+using Lexiconner.Persistence.Repositories.Base;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -37,58 +37,58 @@ namespace Lexiconner.IdentityServer4.Extensions
                 var hostingEnvironment = app.ApplicationServices.GetService<IHostingEnvironment>();
                 var identityServerConfig = app.ApplicationServices.GetService<IdentityServerConfig>();
                 var repository = app.ApplicationServices.GetService<IMongoRepository>();
-                var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
-                var roleManager = scope.ServiceProvider.GetService<RoleManager<ApplicationRole>>();
+                var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUserEntity>>();
+                var roleManager = scope.ServiceProvider.GetService<RoleManager<ApplicationRoleEntity>>();
 
                 // Configure Classes to ignore Extra Elements (e.g. _Id) when deserializing
                 ConfigureMongoDriver2IgnoreExtraElements();
 
                 // Client
-                if (!repository.CollectionExists<Client>())
+                if (!repository.CollectionExistsAsync<Client>().GetAwaiter().GetResult())
                 {
                     foreach (var client in identityServerConfig.GetClients())
                     {
-                        if(!repository.Exists<Client>(x => x.ClientId == client.ClientId))
+                        if(!repository.ExistsAsync<Client>(x => x.ClientId == client.ClientId).GetAwaiter().GetResult())
                         {
-                            repository.Add(client);
+                            repository.AddAsync(client).GetAwaiter().GetResult();
                         }
                     }
                 }
 
                 // IdentityResource
-                if (!repository.CollectionExists<IdentityResource>())
+                if (!repository.CollectionExistsAsync<IdentityResource>().GetAwaiter().GetResult())
                 {
                     foreach (var res in identityServerConfig.GetIdentityResources())
                     {
-                        if (!repository.Exists<IdentityResource>(x => x.Name == res.Name))
+                        if (!repository.ExistsAsync<IdentityResource>(x => x.Name == res.Name).GetAwaiter().GetResult())
                         {
-                            repository.Add(res);
+                            repository.AddAsync(res).GetAwaiter().GetResult();
                         }
                     }
                 }
 
                 // ApiResource
-                if (!repository.CollectionExists<ApiResource>())
+                if (!repository.CollectionExistsAsync<ApiResource>().GetAwaiter().GetResult())
                 {
                     foreach (var api in identityServerConfig.GetApiResources())
                     {
-                        if (!repository.Exists<ApiResource>(x => x.Name == api.Name))
+                        if (!repository.ExistsAsync<ApiResource>(x => x.Name == api.Name).GetAwaiter().GetResult())
                         {
-                            repository.Add(api);
+                            repository.AddAsync(api).GetAwaiter().GetResult();
                         }
                     }
                 }
 
                 if(hostingEnvironment.IsDevelopment())
                 {
-                    repository.DeleteAllAsync<ApplicationRole>().GetAwaiter().GetResult();
-                    repository.DeleteAllAsync<ApplicationUser>().GetAwaiter().GetResult();
+                    repository.DeleteAllAsync<ApplicationRoleEntity>().GetAwaiter().GetResult();
+                    repository.DeleteAllAsync<ApplicationUserEntity>().GetAwaiter().GetResult();
                 }
-                if (!repository.CollectionExists<ApplicationRole>())
+                if (!repository.CollectionExistsAsync<ApplicationRoleEntity>().GetAwaiter().GetResult())
                 {
                     AddInitialRoles(identityServerConfig, roleManager);
                 }
-                if (!repository.CollectionExists<ApplicationUser>())
+                if (!repository.CollectionExistsAsync<ApplicationUserEntity>().GetAwaiter().GetResult())
                 {
                     AddInitialUsers(identityServerConfig, userManager);
                 }
@@ -145,7 +145,7 @@ namespace Lexiconner.IdentityServer4.Extensions
         ///   see Config.GetSampleUsers() for details.
         /// </summary>
         /// <param name="userManager"></param>
-        private static void AddSampleUsers(IdentityServerConfig identityServerConfig, UserManager<ApplicationUser> userManager)
+        private static void AddSampleUsers(IdentityServerConfig identityServerConfig, UserManager<ApplicationUserEntity> userManager)
         {
             var dummyUsers = identityServerConfig.GetSampleIdentityServerUsers();
 
@@ -164,7 +164,7 @@ namespace Lexiconner.IdentityServer4.Extensions
                     userManager.DeleteAsync(existing).GetAwaiter().GetResult();
                 }
 
-                var user = new ApplicationUser()
+                var user = new ApplicationUserEntity()
                 {
                     UserName = usrDummy.Username,
                     LockoutEnabled = false,
@@ -186,7 +186,7 @@ namespace Lexiconner.IdentityServer4.Extensions
             }
         }
 
-        private static void AddInitialRoles(IdentityServerConfig identityServerConfig, RoleManager<ApplicationRole> roleManager)
+        private static void AddInitialRoles(IdentityServerConfig identityServerConfig, RoleManager<ApplicationRoleEntity> roleManager)
         {
             var roles = identityServerConfig.GetInitialIdentityRoles();
 
@@ -207,7 +207,7 @@ namespace Lexiconner.IdentityServer4.Extensions
             }
         }
 
-        private static void AddInitialUsers(IdentityServerConfig identityServerConfig, UserManager<ApplicationUser> userManager)
+        private static void AddInitialUsers(IdentityServerConfig identityServerConfig, UserManager<ApplicationUserEntity> userManager)
         {
             var users = identityServerConfig.GetInitialdentityUsers();
 

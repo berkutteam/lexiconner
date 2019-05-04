@@ -6,7 +6,7 @@ using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
-using Lexiconner.IdentityServer4.Entities;
+using Lexiconner.Domain.Entitites;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.MongoDB;
 using Microsoft.Extensions.Options;
@@ -219,30 +219,30 @@ namespace Lexiconner.IdentityServer4
             };
         }
 
-        public List<ApplicationRole> GetInitialIdentityRoles()
+        public List<ApplicationRoleEntity> GetInitialIdentityRoles()
         {
-            return new List<ApplicationRole>
+            return new List<ApplicationRoleEntity>
             {
-                new ApplicationRole
+                new ApplicationRoleEntity
                 {
                     Name = "RootAdmin"
                 },
-                new ApplicationRole
+                new ApplicationRoleEntity
                 {
                     Name = "Admin"
                 },
-                 new ApplicationRole
+                 new ApplicationRoleEntity
                 {
                     Name = "User"
                 }
             };
         }
 
-        public List<ApplicationUser> GetInitialdentityUsers()
+        public List<ApplicationUserEntity> GetInitialdentityUsers()
         {
-            return new List<ApplicationUser>
+            return new List<ApplicationUserEntity>
             {
-                new ApplicationUser
+                new ApplicationUserEntity
                 {
                     Name = "Vadym Berkut",
                     UserName = "vadymberkut",
@@ -259,9 +259,10 @@ namespace Lexiconner.IdentityServer4
                     {
                         new IdentityUserClaim(new Claim(JwtClaimTypes.Name, "Vadym Berkut")),
                         new IdentityUserClaim(new Claim(JwtClaimTypes.Email, "vadimberkut8@gmail.com")),
-                    }
+                    },
+                    IsImportInitialData = true
                 },
-                new ApplicationUser
+                new ApplicationUserEntity
                 {
                     Name = "Bogdan Berkut",
                     UserName = "bogdanberkut",
@@ -278,7 +279,8 @@ namespace Lexiconner.IdentityServer4
                     {
                         new IdentityUserClaim(new Claim(JwtClaimTypes.Name, "Bogdan Berkut")),
                         new IdentityUserClaim(new Claim(JwtClaimTypes.Email, "bogdanberkut9@gmail.com")),
-                    }
+                    },
+                    IsImportInitialData = true
                 },
             };
         }
