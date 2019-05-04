@@ -17,7 +17,7 @@ using MongoDB.Driver;
 
 namespace Lexiconner.IdentityServer4.Extensions
 {
-    public static class MongoDbStartup
+    public static class IApplicationBuilderExtensions
     {
         private static string _newRepositoryMsg = $"Mongo Repository created/populated! Please restart your website, so Mongo driver will be configured  to ignore Extra Elements.";
 
@@ -36,13 +36,12 @@ namespace Lexiconner.IdentityServer4.Extensions
             {
                 var hostingEnvironment = app.ApplicationServices.GetService<IHostingEnvironment>();
                 var identityServerConfig = app.ApplicationServices.GetService<IdentityServerConfig>();
-                var repository = app.ApplicationServices.GetService<IRepository>();
+                var repository = app.ApplicationServices.GetService<IMongoRepository>();
                 var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
+                var roleManager = scope.ServiceProvider.GetService<RoleManager<ApplicationRole>>();
 
                 // Configure Classes to ignore Extra Elements (e.g. _Id) when deserializing
                 ConfigureMongoDriver2IgnoreExtraElements();
-
-                var createdNewRepository = false;
 
                 // Client
                 if (!repository.CollectionExists<Client>())
@@ -52,7 +51,6 @@ namespace Lexiconner.IdentityServer4.Extensions
                         if(!repository.Exists<Client>(x => x.ClientId == client.ClientId))
                         {
                             repository.Add(client);
-                            createdNewRepository = true;
                         }
                     }
                 }
@@ -65,7 +63,6 @@ namespace Lexiconner.IdentityServer4.Extensions
                         if (!repository.Exists<IdentityResource>(x => x.Name == res.Name))
                         {
                             repository.Add(res);
-                            createdNewRepository = true;
                         }
                     }
                 }
@@ -78,22 +75,29 @@ namespace Lexiconner.IdentityServer4.Extensions
                         if (!repository.Exists<ApiResource>(x => x.Name == api.Name))
                         {
                             repository.Add(api);
-                            createdNewRepository = true;
                         }
                     }
                 }
 
-                // Populate MongoDB with dummy users to enable test - e.g. Bob, Alice
-                if (createdNewRepository)
+                if(hostingEnvironment.IsDevelopment())
                 {
-                    AddSampleUsersToMongo(identityServerConfig, userManager);
+                    repository.DeleteAllAsync<ApplicationRole>().GetAwaiter().GetResult();
+                    repository.DeleteAllAsync<ApplicationUser>().GetAwaiter().GetResult();
+                }
+                if (!repository.CollectionExists<ApplicationRole>())
+                {
+                    AddInitialRoles(identityServerConfig, roleManager);
+                }
+                if (!repository.CollectionExists<ApplicationUser>())
+                {
+                    AddInitialUsers(identityServerConfig, userManager);
                 }
 
                 // If it's a new Repository (database), need to restart the website to configure Mongo to ignore Extra Elements.
-                if (createdNewRepository)
-                {
-                    throw new HostRestartRequiredException(_newRepositoryMsg);
-                }
+                //if (createdNewRepository)
+                //{
+                //    throw new HostRestartRequiredException(_newRepositoryMsg);
+                //}
             }
         }
 
@@ -141,9 +145,9 @@ namespace Lexiconner.IdentityServer4.Extensions
         ///   see Config.GetSampleUsers() for details.
         /// </summary>
         /// <param name="userManager"></param>
-        private static void AddSampleUsersToMongo(IdentityServerConfig identityServerConfig, UserManager<ApplicationUser> userManager)
+        private static void AddSampleUsers(IdentityServerConfig identityServerConfig, UserManager<ApplicationUser> userManager)
         {
-            var dummyUsers = identityServerConfig.GetSampleUsers();
+            var dummyUsers = identityServerConfig.GetSampleIdentityServerUsers();
 
             foreach (var usrDummy in dummyUsers)
             {
@@ -176,9 +180,50 @@ namespace Lexiconner.IdentityServer4.Extensions
                 var result = userManager.CreateAsync(user, usrDummy.Password);
                 if (!result.Result.Succeeded)
                 {
-                    // If we got an error, Make sure to drop all collections from Mongo before trying again. Otherwise sample users will NOT be populated
-                    var errorList = result.Result.Errors.ToArray();
-                    throw new Exception($"Error Adding sample users to MongoDB! Make sure to drop all collections from Mongo before trying again!");
+                    var errorList = result.Result.Errors.ToList();
+                    throw new Exception(string.Join("; ", errorList));
+                }
+            }
+        }
+
+        private static void AddInitialRoles(IdentityServerConfig identityServerConfig, RoleManager<ApplicationRole> roleManager)
+        {
+            var roles = identityServerConfig.GetInitialIdentityRoles();
+
+            foreach (var role in roles)
+            {
+                var existing = roleManager.FindByNameAsync(role.Name).GetAwaiter().GetResult();
+                if (existing != null)
+                {
+                    roleManager.DeleteAsync(existing).GetAwaiter().GetResult();
+                }
+
+                var result = roleManager.CreateAsync(role);
+                if (!result.Result.Succeeded)
+                {
+                    var errorList = result.Result.Errors.ToList();
+                    throw new Exception(string.Join("; ", errorList));
+                }
+            }
+        }
+
+        private static void AddInitialUsers(IdentityServerConfig identityServerConfig, UserManager<ApplicationUser> userManager)
+        {
+            var users = identityServerConfig.GetInitialdentityUsers();
+
+            foreach (var user in users)
+            {
+                var existing = userManager.FindByEmailAsync(user.Email).GetAwaiter().GetResult();
+                if (existing != null)
+                {
+                    userManager.DeleteAsync(existing).GetAwaiter().GetResult();
+                }
+
+                var result = userManager.CreateAsync(user, "Password_1");
+                if (!result.Result.Succeeded)
+                {
+                    var errorList = result.Result.Errors.ToList();
+                    throw new Exception(string.Join("; ", errorList));
                 }
             }
         }

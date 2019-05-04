@@ -16,7 +16,7 @@ namespace Lexiconner.IdentityServer4.Repository
     /// <summary>
     /// Provides functionality  to persist "IdentityServer4.Models" into a given MongoDB
     /// </summary>
-    public class MongoRepository : IRepository
+    public class MongoRepository : IMongoRepository
     {
         protected readonly IMongoClient _client;
         protected readonly IMongoDatabase _database;
@@ -48,16 +48,12 @@ namespace Lexiconner.IdentityServer4.Repository
             return _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).AsQueryable();
         }
 
-        public IQueryable<T> Where<T>(System.Linq.Expressions.Expression<Func<T, bool>> expression) where T : class, new()
+        public IQueryable<T> Where<T>(Expression<Func<T, bool>> expression) where T : class, new()
         {
             return All<T>().Where(expression);
         }
 
-        public void Delete<T>(System.Linq.Expressions.Expression<Func<T, bool>> predicate) where T : class, new()
-        {
-            _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).DeleteMany(predicate);
-        }
-        public T Single<T>(System.Linq.Expressions.Expression<Func<T, bool>> expression) where T : class, new()
+        public T Single<T>(Expression<Func<T, bool>> expression) where T : class, new()
         {
             return All<T>().Where(expression).SingleOrDefault();
         }
@@ -66,8 +62,8 @@ namespace Lexiconner.IdentityServer4.Repository
         {
             var collection = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>());
             var filter = new BsonDocument();
-            var totalCount = collection.Count(filter);
-            return totalCount > 0;
+            var totalCount = collection.CountDocuments(filter);
+            return totalCount != 0;
 
         }
 
@@ -88,7 +84,14 @@ namespace Lexiconner.IdentityServer4.Repository
             _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).InsertMany(items);
         }
 
+        public async Task DeleteAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new()
+        {
+            await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).DeleteManyAsync(predicate);
+        }
 
-
+        public async Task DeleteAllAsync<T>() where T : class, new()
+        {
+            await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).DeleteManyAsync(x => true);
+        }
     }
 }

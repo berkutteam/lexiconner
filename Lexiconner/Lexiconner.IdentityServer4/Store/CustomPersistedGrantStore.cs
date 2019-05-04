@@ -13,9 +13,9 @@ namespace Lexiconner.IdentityServer4.Store
     /// </summary>
     public class CustomPersistedGrantStore : IPersistedGrantStore
     {
-        protected IRepository _dbRepository;
+        protected IMongoRepository _dbRepository;
 
-        public CustomPersistedGrantStore(IRepository repository)
+        public CustomPersistedGrantStore(IMongoRepository repository)
         {
             _dbRepository = repository;
         }
@@ -32,22 +32,19 @@ namespace Lexiconner.IdentityServer4.Store
             return Task.FromResult(result);
         }
 
-        public Task RemoveAllAsync(string subjectId, string clientId)
+        public async Task RemoveAllAsync(string subjectId, string clientId)
         {
-            _dbRepository.Delete<PersistedGrant>(i => i.SubjectId == subjectId && i.ClientId == clientId);
-            return Task.FromResult(0);
+            await _dbRepository.DeleteAsync<PersistedGrant>(i => i.SubjectId == subjectId && i.ClientId == clientId);
         }
 
-        public Task RemoveAllAsync(string subjectId, string clientId, string type)
+        public async Task RemoveAllAsync(string subjectId, string clientId, string type)
         {
-            _dbRepository.Delete<PersistedGrant>(i => i.SubjectId == subjectId && i.ClientId == clientId && i.Type == type);
-            return Task.FromResult(0);
+            await _dbRepository.DeleteAsync<PersistedGrant>(i => i.SubjectId == subjectId && i.ClientId == clientId && i.Type == type);
         }
 
-        public Task RemoveAsync(string key)
+        public async Task RemoveAsync(string key)
         {
-            _dbRepository.Delete<PersistedGrant>(i => i.Key == key);
-            return Task.FromResult(0);
+            await _dbRepository.DeleteAsync<PersistedGrant>(i => i.Key == key);
         }
 
         public Task StoreAsync(PersistedGrant grant)

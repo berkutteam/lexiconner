@@ -38,7 +38,7 @@ namespace Lexiconner.IdentityServer4.Extensions
         /// <returns></returns>
         public static IIdentityServerBuilder AddMongoRepository(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddTransient<IRepository, MongoRepository>();
+            builder.Services.AddTransient<IMongoRepository, MongoRepository>();
             return builder;
         }
 

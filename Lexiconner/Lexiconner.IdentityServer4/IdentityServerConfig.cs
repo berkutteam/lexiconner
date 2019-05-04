@@ -6,7 +6,9 @@ using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
+using Lexiconner.IdentityServer4.Entities;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity.MongoDB;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -84,19 +86,21 @@ namespace Lexiconner.IdentityServer4
                 //    AllowedScopes = { "openid", "profile", "api1" }
                 //},
 
-                // SPA client using implicit flow
+                // SPA client using code flow
                 new Client
                 {
                     ClientId = "webspa",
                     ClientName = "Lexiconner Web SPA Client",
                     ClientUri = _config.Urls.WebSpa,
 
-                    AllowedGrantTypes = GrantTypes.Implicit,
-                    AllowAccessTokensViaBrowser = true,
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true, // Proof Key for Code Exchange (PKCE)
+                    RequireClientSecret = false,
                     RequireConsent = false,
 
                     RedirectUris =
                     {
+                        $"{_config.Urls.WebSpa}",
                         $"{_config.Urls.WebSpa}/index.html",
                         $"{_config.Urls.WebSpa}/callback.html",
                         $"{_config.Urls.WebSpa}/silent.html",
@@ -109,14 +113,23 @@ namespace Lexiconner.IdentityServer4
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OfflineAccess, // refresh token
                         "webapi"
                     },
+
+                    // refresh token settings
+                    // refresh tokens are supported for the following flows: authorization code, hybrid and resource owner password credential flow.
+                    AllowOfflineAccess = true,
+                    RefreshTokenUsage = TokenUsage.ReUse,
+                    RefreshTokenExpiration = TokenExpiration.Absolute,
+                    AbsoluteRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(30, 0, 0, 0)).TotalSeconds),
+                    SlidingRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(15, 0, 0, 0)).TotalSeconds),
                 },
             };
 
             if(_hostingEnvironment.IsDevelopment())
             {
-                // SPA client using implicit flow
+                // SPA client using code flow
                 clients.Add(new Client
                 {
                     ClientId = "webtestspa",
@@ -130,6 +143,7 @@ namespace Lexiconner.IdentityServer4
 
                     RedirectUris =
                     {
+                        $"{_config.Urls.WebTestSpa}",
                         $"{_config.Urls.WebTestSpa}/index.html",
                         $"{_config.Urls.WebTestSpa}/callback.html",
                         $"{_config.Urls.WebTestSpa}/silent.html",
@@ -164,7 +178,11 @@ namespace Lexiconner.IdentityServer4
             return clients;
         }
 
-        public List<TestUser> GetSampleUsers()
+        /// <summary>
+        /// For example only
+        /// </summary>
+        /// <returns></returns>
+        public List<TestUser> GetSampleIdentityServerUsers()
         {
             return new List<TestUser>
             {
@@ -200,5 +218,71 @@ namespace Lexiconner.IdentityServer4
                 }
             };
         }
+
+        public List<ApplicationRole> GetInitialIdentityRoles()
+        {
+            return new List<ApplicationRole>
+            {
+                new ApplicationRole
+                {
+                    Name = "RootAdmin"
+                },
+                new ApplicationRole
+                {
+                    Name = "Admin"
+                },
+                 new ApplicationRole
+                {
+                    Name = "User"
+                }
+            };
+        }
+
+        public List<ApplicationUser> GetInitialdentityUsers()
+        {
+            return new List<ApplicationUser>
+            {
+                new ApplicationUser
+                {
+                    Name = "Vadym Berkut",
+                    UserName = "vadymberkut",
+                    LockoutEnabled = false,
+                    EmailConfirmed = true,
+                    Email = "vadimberkut8@gmail.com",
+                    Roles = new List<string>
+                    {
+                        "RootAdmin",
+                        "Admin",
+                        "User",
+                    },
+                    Claims = new List<IdentityUserClaim>
+                    {
+                        new IdentityUserClaim(new Claim(JwtClaimTypes.Name, "Vadym Berkut")),
+                        new IdentityUserClaim(new Claim(JwtClaimTypes.Email, "vadimberkut8@gmail.com")),
+                    }
+                },
+                new ApplicationUser
+                {
+                    Name = "Bogdan Berkut",
+                    UserName = "bogdanberkut",
+                    LockoutEnabled = false,
+                    EmailConfirmed = true,
+                    Email = "bogdanberkut9@gmail.com",
+                    Roles = new List<string>
+                    {
+                        "RootAdmin",
+                        "Admin",
+                        "User",
+                    },
+                    Claims = new List<IdentityUserClaim>
+                    {
+                        new IdentityUserClaim(new Claim(JwtClaimTypes.Name, "Bogdan Berkut")),
+                        new IdentityUserClaim(new Claim(JwtClaimTypes.Email, "bogdanberkut9@gmail.com")),
+                    }
+                },
+            };
+        }
+
+        
     }
 }

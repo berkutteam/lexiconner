@@ -10,9 +10,9 @@ namespace Lexiconner.IdentityServer4.Store
 {
     public class CustomClientStore : IClientStore
     {
-        protected IRepository _dbRepository;
+        protected IMongoRepository _dbRepository;
 
-        public CustomClientStore(IRepository repository)
+        public CustomClientStore(IMongoRepository repository)
         {
             _dbRepository = repository;
         }
