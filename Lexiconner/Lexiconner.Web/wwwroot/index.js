@@ -120,40 +120,23 @@ function start(config) {
         }
 
         function showDataOnCard(card) {
-            var elem = document.getElementById("mainBlockCard");
-            var newTitle = document.createElement('div');
-            var newDescription = document.createElement('div');
-            var newExampleBlock = document.createElement('div');
-            var newExampleText = document.createElement('div');
-            var newExamplePicture = document.createElement('div');
-
-            newTitle.className = "title";
-            newTitle.innerHTML = card.title;
-
-            newDescription.className = " description";
-            newDescription.innerHTML = card.description || '';
-
-            newExampleBlock.className = "example-block";
-
-            newExampleText.className = "example-text";
-            newExampleText.innerHTML = card.exampleText || '';
-
-            newExamplePicture.className = "example-picture";
+            var cardEl = document.getElementById("mainBlockCard");
+            var cardTitleEl = cardEl.querySelector("#cardTitle");
+            var cardDescEl = cardEl.querySelector("#cardDesc");
+            var cardExampleTextEl = cardEl.querySelector("#cardExampleText");
+            var cardExampleImageEl = cardEl.querySelector("#cardExampleImage");
 
 
+            cardTitleEl.innerText = card.title;
+            cardDescEl.innerText = card.description;
+            cardExampleTextEl.innerText = card.exampleText;
 
             if (!card.examplePicture) {
-                // newExampleBlock.replaceChild(newExamplePicture, newExampleBlock.childNodes[1]);
+                // TODO: set image from the set of standart images
+                cardExampleImageEl.src = "";
             } else {
-                // card.examplePicture
+                cardExampleImageEl.src = card.exampleImageUrl;
             }
-
-            newExampleBlock.replaceChild(newExampleText, newExampleBlock.childNodes[0]);
-
-
-            elem.replaceChild(newTitle, elem.childNodes[0]);
-            elem.replaceChild(newDescription, elem.childNodes[1]);
-            elem.replaceChild(newExampleBlock, elem.childNodes[2]);
         }
 
         var leftButtonEl = document.getElementById("cardButtonLeft");
