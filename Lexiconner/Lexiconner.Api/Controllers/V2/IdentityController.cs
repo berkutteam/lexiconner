@@ -22,15 +22,11 @@ namespace Lexiconner.Api.Controllers.V2
     public class IdentityController : ApiControllerBase
     {
         [HttpGet]
-        public async Task<BaseApiResponseModel<object>> Get()
+        public async Task<BaseApiResponseModel<string>> Get()
         {
             ClaimsPrincipal currentUser = this.User;
             var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
-            //var sss1 = currentUser.FindFirst("name").Value;
-            //var sss2 = currentUser.FindFirst("email").Value;
-
-            object result = JsonConvert.SerializeObject(currentUserId);
-            return BaseJsonResponse(result);
+            return BaseJsonResponse(currentUserId);
         }
     }
 }
