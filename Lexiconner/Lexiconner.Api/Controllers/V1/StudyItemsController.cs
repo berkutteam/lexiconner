@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Lexiconner.Api.Models;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
+using Lexiconner.Persistence.Repositories.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,38 +26,38 @@ namespace Lexiconner.Api.Controllers.V1
         }
 
         [HttpGet]
-        public async Task<BaseApiResponseModel<IEnumerable<StudyItem>>> GetAll()
+        public async Task<BaseApiResponseModel<IEnumerable<StudyItemEntity>>> GetAll()
         {
-            var result = await _studyItemJsonRepository.GetAll();
+            var result = await _studyItemJsonRepository.GetAllAsync<StudyItemEntity>();
             return BaseJsonResponse(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<BaseApiResponseModel<StudyItem>> Get(string id)
+        public async Task<BaseApiResponseModel<StudyItemEntity>> Get(string id)
         {
-            var result = await _studyItemJsonRepository.GetById(id);
+            var result = await _studyItemJsonRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id);
             return BaseJsonResponse(result);
         }
 
         [HttpPost]
-        public async Task<BaseApiResponseModel<StudyItem>> Post([FromBody] StudyItem data)
+        public async Task<BaseApiResponseModel<StudyItemEntity>> Post([FromBody] StudyItemEntity data)
         {
-            await _studyItemJsonRepository.Add(data);
+            await _studyItemJsonRepository.AddAsync(data);
             return BaseJsonResponse(data);
         }
 
         [HttpPut("{id}")]
-        public async Task<BaseApiResponseModel<StudyItem>> Put(string id, [FromBody] StudyItem data)
+        public async Task<BaseApiResponseModel<StudyItemEntity>> Put(string id, [FromBody] StudyItemEntity data)
         {
-            await _studyItemJsonRepository.Update(data);
+            await _studyItemJsonRepository.UpdateAsync(data);
             return BaseJsonResponse(data);
         }
 
         [HttpDelete("{id}")]
         public async Task Delete(string id)
         {
-            var existing = await _studyItemJsonRepository.GetById(id);
-            await _studyItemJsonRepository.Delete(existing);
+            var existing = await _studyItemJsonRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id);
+            await _studyItemJsonRepository.DeleteAsync<StudyItemEntity>(x => x.Id == existing.Id);
         }
     }
 }

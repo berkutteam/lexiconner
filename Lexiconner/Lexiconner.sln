@@ -3,15 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.489
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexiconner.Api", "Lexiconner.Api\Lexiconner.Api.csproj", "{1F8F68C2-EDFA-4D37-A36B-274A7F71FFD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.Api", "Lexiconner.Api\Lexiconner.Api.csproj", "{1F8F68C2-EDFA-4D37-A36B-274A7F71FFD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexiconner.Web", "Lexiconner.Web\Lexiconner.Web.csproj", "{547F3DFD-FAF6-4167-91E3-B36954B3E3A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.Web", "Lexiconner.Web\Lexiconner.Web.csproj", "{547F3DFD-FAF6-4167-91E3-B36954B3E3A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexiconner.Application", "Lexiconner.Application\Lexiconner.Application.csproj", "{A69D91B0-5037-4AF7-96DF-6566ECDE69E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.Application", "Lexiconner.Application\Lexiconner.Application.csproj", "{A69D91B0-5037-4AF7-96DF-6566ECDE69E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexiconner.Persistence", "Lexiconner.Persistence\Lexiconner.Persistence.csproj", "{8FF47015-BCBC-4F80-8E6B-CFE2E1CED684}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.Persistence", "Lexiconner.Persistence\Lexiconner.Persistence.csproj", "{8FF47015-BCBC-4F80-8E6B-CFE2E1CED684}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexiconner.Domain", "Lexiconner.Domain\Lexiconner.Domain.csproj", "{13A5CA22-B9B5-443D-B5B4-F6B09F57652B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.Domain", "Lexiconner.Domain\Lexiconner.Domain.csproj", "{13A5CA22-B9B5-443D-B5B4-F6B09F57652B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.IdentityServer4", "Lexiconner.IdentityServer4\Lexiconner.IdentityServer4.csproj", "{65E77D3C-A6D8-47EC-B687-3A7B5D9D36BB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.WebSpaTest", "Lexiconner.WebSpaTest\Lexiconner.WebSpaTest.csproj", "{C60BB5F6-DCDE-43BA-B40E-63A97890E752}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +43,14 @@ Global
 		{13A5CA22-B9B5-443D-B5B4-F6B09F57652B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13A5CA22-B9B5-443D-B5B4-F6B09F57652B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13A5CA22-B9B5-443D-B5B4-F6B09F57652B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65E77D3C-A6D8-47EC-B687-3A7B5D9D36BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65E77D3C-A6D8-47EC-B687-3A7B5D9D36BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65E77D3C-A6D8-47EC-B687-3A7B5D9D36BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65E77D3C-A6D8-47EC-B687-3A7B5D9D36BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C60BB5F6-DCDE-43BA-B40E-63A97890E752}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C60BB5F6-DCDE-43BA-B40E-63A97890E752}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C60BB5F6-DCDE-43BA-B40E-63A97890E752}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C60BB5F6-DCDE-43BA-B40E-63A97890E752}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
