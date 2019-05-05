@@ -62,26 +62,27 @@ function start(config) {
         var limit = 5;
         var pages = 0;
         var cardData = {};
+        var pictures = [];
 
-    for (var i = 0; i < 69; i++) { // add picture in array for random example picture
-        pictures.push(i + ".jpg");
-    }
+        for (var i = 0; i < 69; i++) { // add picture in array for random example picture
+            pictures.push(i + ".jpg");
+        }
 
-    function getTestData(countOfElmenets) {
-        var arrData = [];
-        for (var i = 0; i < countOfElmenets; i++) {
-            if (i % 3 === 0) {
-                arrData.push({
-                    title: "title asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad f" + i,
-                    description: " itle asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad  " + i,
-                    example: "itle asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad  " + i
-                });
-            } else {
-                arrData.push({
-                    title: "title " + i,
-                    description: " description " + i,
-                    example: "example " + i
-                });
+        function getTestData(countOfElmenets) {
+            var arrData = [];
+            for (var i = 0; i < countOfElmenets; i++) {
+                if (i % 3 === 0) {
+                    arrData.push({
+                        title: "title asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad f" + i,
+                        description: " itle asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad  " + i,
+                        example: "itle asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad  " + i
+                    });
+                } else {
+                    arrData.push({
+                        title: "title " + i,
+                        description: " description " + i,
+                        example: "example " + i
+                    });
 
                 }
             }
@@ -136,8 +137,8 @@ function start(config) {
             cardExampleTextEl.innerText = card.exampleText;
 
             if (!card.examplePicture) {
-                // TODO: set image from the set of standart images
-                cardExampleImageEl.src = "";
+                
+                cardExampleImageEl.src = "1600x900\\" + pictures[Math.floor(Math.random() * pictures.length)];
             } else {
                 cardExampleImageEl.src = card.exampleImageUrl;
             }
