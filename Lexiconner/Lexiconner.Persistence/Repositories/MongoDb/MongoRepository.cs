@@ -74,6 +74,15 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             return result;
         }
 
+        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit, string search = "") where T : class, new()
+        {
+            var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).Find(predicate);
+            var result = await query.Skip(offset)
+                .Limit(limit > _maxPageSize ? _maxPageSize : limit)
+                .ToListAsync();
+            return result;
+        }
+
         public async Task AddAsync<T>(T entity) where T : class, new()
         {
             await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).InsertOneAsync(entity);
@@ -135,9 +144,9 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             return existing.Current != null && existing.Current.Any();
         }
 
-        public async Task<long> CountAllAsync<T>() where T : class, new()
+        public async Task<long> CountAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new()
         {
-            var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).Find(x => true);
+            var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).Find(predicate);
             return await query.CountDocumentsAsync();
         }
     }

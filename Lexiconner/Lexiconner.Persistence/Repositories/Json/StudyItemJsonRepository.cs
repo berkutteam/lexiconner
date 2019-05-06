@@ -46,6 +46,11 @@ namespace Lexiconner.Persistence.Repositories.Json
             throw new NotImplementedException();
         }
 
+        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit, string search = "") where T : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<T> GetOneAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new()
         {
             throw new NotImplementedException();
@@ -103,7 +108,7 @@ namespace Lexiconner.Persistence.Repositories.Json
             throw new NotImplementedException();
         }
 
-        public async Task<long> CountAllAsync<T>() where T : class, new()
+        public async Task<long> CountAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new()
         {
             throw new NotImplementedException();
         }

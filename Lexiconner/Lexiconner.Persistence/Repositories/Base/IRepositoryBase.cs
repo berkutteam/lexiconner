@@ -13,6 +13,7 @@ namespace Lexiconner.Persistence.Repositories.Base
         Task<IEnumerable<T>> GetAllAsync<T>() where T : class, new();
         Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit, string search = "") where T : class, new();
         Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new();
+        Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit, string search = "") where T : class, new();
         Task<T> GetOneAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new();
         Task AddAsync<T>(T entity) where T : class, new();
         Task AddAsync<T>(IEnumerable<T> entities) where T : class, new();
@@ -22,6 +23,6 @@ namespace Lexiconner.Persistence.Repositories.Base
         Task DeleteAllAsync<T>() where T : class, new();
         Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new();
         Task<bool> AnyAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new();
-        Task<long> CountAllAsync<T>() where T : class, new();
+        Task<long> CountAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new();
     }
 }

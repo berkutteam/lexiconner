@@ -30,8 +30,8 @@ namespace Lexiconner.Api.Controllers.V2
         [HttpGet]
         public async Task<BaseApiResponseModel<GetAllResponseModel<StudyItemEntity>>> GetAll([FromQuery] GetAllRequestModel data)
         {
-            var itemsTask = _mongoRepository.GetAllAsync<StudyItemEntity>(data.Offset.GetValueOrDefault(0), data.Limit.GetValueOrDefault(10), data.Search);
-            var totalTask = _mongoRepository.CountAllAsync<StudyItemEntity>();
+            var itemsTask = _mongoRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == GetUserId(), data.Offset.GetValueOrDefault(0), data.Limit.GetValueOrDefault(10), data.Search);
+            var totalTask = _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == GetUserId());
             await Task.WhenAll(itemsTask, totalTask);
             var result = new GetAllResponseModel<StudyItemEntity>
             {
@@ -44,13 +44,14 @@ namespace Lexiconner.Api.Controllers.V2
         [HttpGet("{id}")]
         public async Task<BaseApiResponseModel<StudyItemEntity>> Get(string id)
         {
-            var result = await _mongoRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id);
+            var result = await _mongoRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
             return BaseJsonResponse(result);
         }
 
         [HttpPost]
         public async Task<BaseApiResponseModel<StudyItemEntity>> Post([FromBody] StudyItemEntity data)
         {
+            data.UserId = GetUserId();
             await _mongoRepository.AddAsync(data);
             return BaseJsonResponse(data);
         }
@@ -58,6 +59,7 @@ namespace Lexiconner.Api.Controllers.V2
         [HttpPut("{id}")]
         public async Task<BaseApiResponseModel<StudyItemEntity>> Put(string id, [FromBody] StudyItemEntity data)
         {
+            data.UserId = GetUserId();
             await _mongoRepository.UpdateAsync(data);
             return BaseJsonResponse(data);
         }
@@ -65,7 +67,7 @@ namespace Lexiconner.Api.Controllers.V2
         [HttpDelete("{id}")]
         public async Task Delete(string id)
         {
-            var existing = await _mongoRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id);
+            var existing = await _mongoRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
             await _mongoRepository.DeleteAsync<StudyItemEntity>(x => x.Id == existing.Id);
         }
     }

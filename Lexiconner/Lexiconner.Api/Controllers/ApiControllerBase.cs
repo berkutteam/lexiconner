@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Lexiconner.Api.Controllers
@@ -16,6 +17,13 @@ namespace Lexiconner.Api.Controllers
             {
                 Data = data,
             };
+        }
+
+        protected string GetUserId()
+        {
+            ClaimsPrincipal currentUser = this.User;
+            var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+            return currentUserId;
         }
     }
 }
