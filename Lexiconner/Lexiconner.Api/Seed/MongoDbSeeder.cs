@@ -16,12 +16,19 @@ namespace Lexiconner.Api.Seed
         private readonly IConfiguration _configuration;
         private readonly IWordTxtImporter _wordTxtImporter;
         private readonly IMongoRepository _mongoRepository;
+        private readonly IIdentityRepository _identityRepository;
 
-        public MongoDbSeeder(IConfiguration configuration, IWordTxtImporter wordTxtImporter, IMongoRepository mongoRepository)
+        public MongoDbSeeder(
+            IConfiguration configuration, 
+            IWordTxtImporter wordTxtImporter, 
+            IMongoRepository mongoRepository,
+            IIdentityRepository identityRepository
+        )
         {
             _configuration = configuration;
             _wordTxtImporter = wordTxtImporter;
             _mongoRepository = mongoRepository;
+            _identityRepository = identityRepository;
         }
 
         public async Task Seed()
@@ -29,7 +36,7 @@ namespace Lexiconner.Api.Seed
             Console.WriteLine($"Seeding db...");
 
             // seed imported data for marked users
-            var usersWithImport = await _mongoRepository.GetManyAsync<ApplicationUserEntity>(x => x.IsImportInitialData);
+            var usersWithImport = await _identityRepository.GetManyAsync<ApplicationUserEntity>(x => x.IsImportInitialData);
             Parallel.ForEach(usersWithImport, user =>
             {
                 if(!_mongoRepository.AnyAsync<StudyItemEntity>(x => x.UserId == user.Id).GetAwaiter().GetResult())

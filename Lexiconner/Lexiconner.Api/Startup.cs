@@ -62,6 +62,11 @@ namespace Lexiconner.Api
                 var mongoClient = sp.GetService<MongoClient>();
                 return new MongoRepository(mongoClient, config.MongoDb.Database);
             });
+            services.AddTransient<IIdentityRepository, IdentityRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                return new IdentityRepository(mongoClient, config.MongoDb.DatabaseIdentity);
+            });
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
