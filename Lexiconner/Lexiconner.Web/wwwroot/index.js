@@ -62,6 +62,11 @@ function start(config) {
         var limit = 5;
         var pages = 0;
         var cardData = {};
+        var pictures = [];
+
+        for (var i = 0; i < 69; i++) { // add picture in array for random example picture
+            pictures.push(i + ".jpg");
+        }
 
         function getTestData(countOfElmenets) {
             var arrData = [];
@@ -132,8 +137,8 @@ function start(config) {
             cardExampleTextEl.innerText = card.exampleText;
 
             if (!card.examplePicture) {
-                // TODO: set image from the set of standart images
-                cardExampleImageEl.src = "";
+                
+                cardExampleImageEl.src = "1600x900\\" + pictures[Math.floor(Math.random() * pictures.length)];
             } else {
                 cardExampleImageEl.src = card.exampleImageUrl;
             }
