@@ -74,8 +74,8 @@ body, html{
     align-items: center;
 }
 .card-block{
-    background-color: #101667;
-    color: #fff;
+    background-color:var(--card-color);
+    color:var( --text-color);
     border-radius: 2%;
     width: 28%;
     height: 60%;
@@ -135,6 +135,8 @@ body, html{
     width: 20%;
 }
 
+/* menu */
+
 .main-block-menu{
     background-color: var(--background-color-menu);
     width: 100%;
@@ -142,7 +144,6 @@ body, html{
     overflow-y: hidden;
 }
 
-/* menu */
 
 .menu{
   width: 100%;
@@ -180,12 +181,77 @@ body, html{
     display: none;
     width: 100%;
     height: 100%;
+    padding: 1% 0 1% 0;
     box-sizing: border-box;
-    padding: 1%;
 }
 
 .menu-page-container.active {
     display: block;
 }
 
+#cardExampleImage{
+    width: 100%;
+    height: 100%
+}
 
+
+/* all data items review*/
+
+.all-data-items-container{
+    height: 85%;
+    width: 100%;
+    
+}
+
+.data-items-block-row-direction{
+   width: 98%;
+   height: 7%;
+   margin: 0 1% 0 1%;
+   padding: 1% 0 1% 0;
+   display: flex;
+   flex-direction: row;
+   background: #000;
+}
+
+.data-items-block{
+    width: 19%;
+    height: 100%;
+    margin:0 1% 0 1%;
+    border-radius: 10px;
+    background-color:var(--card-color);
+    color:var( --text-color);
+    border-bottom: 2px solid #fff;
+    text-align: center;
+    overflow: auto;
+    font-size: 100%;
+
+}
+
+.data-items-button-block{
+    display: none;
+    flex-direction: row;
+}
+
+.data-items-button{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    height: 60%;
+    width: 50%;
+    margin: 2% 0 0 0;
+    text-align: center;
+    border-radius: 14px;
+    cursor: pointer;
+    opacity: 0.75;
+    color: #fff;
+}
+
+.data-items-button:hover {
+    opacity: 1;
+}
+
+.data-items-button-icon {
+    font-size: 400%;
+}

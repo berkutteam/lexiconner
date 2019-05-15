@@ -57,6 +57,62 @@ function start(config) {
     }
 
     function runApp(user) {
+
+        /**
+                       * Listens to all events inside source element
+                       * @param {any} sourceElSelector
+                       * @param {any} targetElSelector
+                       * @param {any} eventName
+                       * @param {any} eventHandler
+                       */
+        function addBubleEventListener(sourceElSelector, targetElSelector, eventName, eventHandler) {
+            var sourceEl = document.querySelector(sourceElSelector);
+            sourceEl.addEventListener(eventName, function (e) {
+                var actualEl = e.target; // element event fired on
+                var desiredEl = e.target.closest(targetElSelector); // element we excpect event fired on
+
+
+                var matches = actualEl.matches(targetElSelector);
+                var isChildEl = desiredEl !== null; // if this el is parent
+
+                if (matches || isChildEl) {
+                    eventHandler(e, actualEl, desiredEl || actualEl);
+                }
+            });
+        }
+
+        /**
+         * Inits app menu, enables menu links
+         */
+        function initAppMenu() {
+            addBubleEventListener('body', '[data-menu-link]', 'click', function (e, actualEl, desiredEl) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // hide all menu links and all menu pages
+                var linkEls = document.querySelectorAll('[data-menu-link]');
+                var pageEls = document.querySelectorAll('[data-menu-page]');
+
+                linkEls.forEach(function (item) {
+                    item.classList.remove('active');
+                });
+                pageEls.forEach(function (item) {
+                    item.classList.remove('active');
+                });
+
+                // show clicked page
+                var targetLinkEl = desiredEl;
+                var targetPageEls = document.querySelectorAll(`[data-menu-page='${targetLinkEl.dataset.menuLink}']`);
+                targetLinkEl.classList.add('active');
+                targetPageEls.forEach(function (item) {
+                    item.classList.add('active');
+                });
+            });
+        }
+
+        initAppMenu();
+
+
         var counter = -1;
         var offset = 0;
         var limit = 5;
@@ -137,7 +193,7 @@ function start(config) {
             cardExampleTextEl.innerText = card.exampleText;
 
             if (!card.examplePicture) {
-                
+
                 cardExampleImageEl.src = "1600x900\\" + pictures[Math.floor(Math.random() * pictures.length)];
             } else {
                 cardExampleImageEl.src = card.exampleImageUrl;
@@ -156,7 +212,63 @@ function start(config) {
         });
 
         showNextCard();
+
+        function showDataItems(datas) {
+
+            var elRows = 0;
+            var elCols = 0;
+            //console.log(4, data);
+            var mainBlockAllDataItems = document.getElementById('allDataItemsContainer');
+            var dataItemsBlockRowDirection = document.createElement('div');
+            var itemBlock = null;
+
+            dataItemsBlockRowDirection.classList.add('data-items-block-row-direction');
+            dataItemsButtonBlock.style.display = " flex";
+
+            datas.forEach(function (item) {
+                if (elCols < 5 && elRows < 8) {
+                    itemBlock = document.createElement('div');
+                    itemBlock.classList.add('data-items-block');
+                    itemBlock.innerText = item.title;
+                    dataItemsBlockRowDirection.appendChild(itemBlock);
+                    elCols++;
+                } else if( elRows < 8) {
+                    mainBlockAllDataItems.appendChild(dataItemsBlockRowDirection);
+                    dataItemsBlockRowDirection = document.createElement('div');
+                    dataItemsBlockRowDirection.classList.add('data-items-block-row-direction');
+                    elCols = 0;
+                    elRows++;
+                }
+               
+            });
+
+           
+        }
+
+        var offset1 = 0;
+        var counter1 = 0;
+
+        function showNextPageDataItems(direction = 1) {
+            var datas = getTestData(100);
+            showDataItems(datas)
+
+        }
+
+        var dataItemsButtonLeftEl = document.getElementById('dataItemsButtonLeft');
+        var dataItemsButtonRightEl = document.getElementById('dataItemsButtonRight');
+
+        dataItemsButtonRightEl.addEventListener('click', function (e) {
+            showNextPageDataItems(1);
+        });
+
+        dataItemsButtonLeftEl.addEventListener('click', function (e) {
+            showNextPageDataItems(-1);
+        });
+
+        showNextPageDataItems();
+
     }
+
 }
 
 function httpGet(url, callBack, authToken = null) {
@@ -168,7 +280,7 @@ function httpGet(url, callBack, authToken = null) {
         if (xhr.status === 200) {
             var data = JSON.parse(xhr.responseText);
             callBack(data);
-            console.log(data);
+            console.log(1, data);
         }
         else {
             console.error('Request failed.  Returned status of ' + xhr.status);
