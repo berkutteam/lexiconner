@@ -197,38 +197,38 @@ body, html{
 
 /* all data items review*/
 
-.all-data-items-container{
-    height: 85%;
-    width: 100%;
-    
+.item-list-container {
+    height: 84%;
 }
 
-.data-items-block-row-direction{
-   width: 98%;
-   height: 7%;
-   margin: 0 1% 0 1%;
-   padding: 1% 0 1% 0;
-   display: flex;
-   flex-direction: row;
-   background: #000;
+.item-list {
+    margin: 0 1% 0 1%;
+    padding: 1% 0 0% 0;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    background: #000;
 }
 
-.data-items-block{
-    width: 19%;
-    height: 100%;
+
+.list-item {
+    width: 18%;
+    height: 8%;
     margin:0 1% 0 1%;
-    border-radius: 10px;
     background-color:var(--card-color);
     color:var( --text-color);
-    border-bottom: 2px solid #fff;
     text-align: center;
     overflow: auto;
     font-size: 100%;
 
 }
 
-.data-items-button-block{
+.list-item--hidden {
     display: none;
+}
+
+.data-items-button-block{
+    display: flex;
     flex-direction: row;
 }
 
@@ -240,9 +240,8 @@ body, html{
     background: none;
     height: 60%;
     width: 50%;
-    margin: 2% 0 0 0;
+    margin: 1% 0 0 0;
     text-align: center;
-    border-radius: 14px;
     cursor: pointer;
     opacity: 0.75;
     color: #fff;

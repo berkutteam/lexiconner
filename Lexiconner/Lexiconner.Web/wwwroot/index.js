@@ -102,47 +102,14 @@ function start(config) {
 
                 // show clicked page
                 var targetLinkEl = desiredEl;
-                var targetPageEls = document.querySelectorAll(`[data-menu-page='${targetLinkEl.dataset.menuLink}']`);
+                var targetPageEls = document.querySelectorAll("[data-menu-page='" + targetLinkEl.dataset.menuLink + "']");
                 targetLinkEl.classList.add('active');
                 targetPageEls.forEach(function (item) {
                     item.classList.add('active');
+                    window.pageHandlers[targetLinkEl.dataset.menuLink](item);
                 });
             });
-        }
 
-        initAppMenu();
-
-
-        var counter = -1;
-        var offset = 0;
-        var limit = 5;
-        var pages = 0;
-        var cardData = {};
-        var pictures = [];
-
-        for (var i = 0; i < 69; i++) { // add picture in array for random example picture
-            pictures.push(i + ".jpg");
-        }
-
-        function getTestData(countOfElmenets) {
-            var arrData = [];
-            for (var i = 0; i < countOfElmenets; i++) {
-                if (i % 3 === 0) {
-                    arrData.push({
-                        title: "title asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad f" + i,
-                        description: " itle asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad  " + i,
-                        example: "itle asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad  " + i
-                    });
-                } else {
-                    arrData.push({
-                        title: "title " + i,
-                        description: " description " + i,
-                        example: "example " + i
-                    });
-
-                }
-            }
-            return arrData;
         }
 
         function getData(offset = 0, limit = 2, callBack = null) {
@@ -153,123 +120,172 @@ function start(config) {
                 }
             }, user.access_token);
         }
+        
+        initAppMenu();
 
-        function showNextCard(direction = 1) {
-            counter = counter + direction * 1;
+        window.pageHandlers = {};
+        window.pageHandlers['page2'] =  function () {
+            var counter = -1;
+            var offset = 0;
+            var limit = 5;
+            var pages = 0;
+            var cardData = {};
+            var pictures = [];
 
-            if (!cardData.items || (counter >= cardData.items.length || counter < 0)) {
-                if (cardData.items && direction === -1) {
-                    offset = offset - limit;
-                    offset = offset < 0 ? ((pages - 1) * limit) : offset;
-                }
-                if (cardData.items && direction === 1) {
-                    offset = offset + limit;
-                    offset = offset > cardData.totalCount ? 0 : offset;
-                }
-                getData(offset, limit, function (response) {
-                    cardData = response.data;
-                    counter = direction === 1 ? 0 : cardData.items.length - 1;
-
-                    pages = Math.ceil(cardData.totalCount / limit);
-                    showDataOnCard(cardData.items[counter]);
-                });
-
-
-            } else {
-                showDataOnCard(cardData.items[counter]);
+            for (var i = 0; i < 69; i++) { // add picture in array for random example picture
+                pictures.push(i + ".jpg");
             }
-        }
 
-        function showDataOnCard(card) {
-            var cardEl = document.getElementById("mainBlockCard");
-            var cardTitleEl = cardEl.querySelector("#cardTitle");
-            var cardDescEl = cardEl.querySelector("#cardDesc");
-            var cardExampleTextEl = cardEl.querySelector("#cardExampleText");
-            var cardExampleImageEl = cardEl.querySelector("#cardExampleImage");
+            function getTestData(countOfElmenets, testOffset = 0) {
+                var arrData = [];
+                for (var i = 0 + testOffset; i < countOfElmenets + testOffset; i++) {
+                    if (i % 3 === 0) {
+                        arrData.push({
+                            title: "title asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad f" + i,
+                            description: " itle asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad  " + i,
+                            example: "itle asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad  " + i
+                        });
+                    } else {
+                        arrData.push({
+                            title: "title " + i,
+                            description: " description " + i,
+                            example: "example " + i
+                        });
 
-
-            cardTitleEl.innerText = card.title;
-            cardDescEl.innerText = card.description;
-            cardExampleTextEl.innerText = card.exampleText;
-
-            if (!card.examplePicture) {
-
-                cardExampleImageEl.src = "1600x900\\" + pictures[Math.floor(Math.random() * pictures.length)];
-            } else {
-                cardExampleImageEl.src = card.exampleImageUrl;
-            }
-        }
-
-        var leftButtonEl = document.getElementById("cardButtonLeft");
-        var rightButtonEl = document.getElementById("cardButtonRight");
-
-        leftButtonEl.addEventListener("click", function (e) {
-            showNextCard(-1);
-        });
-
-        rightButtonEl.addEventListener("click", function (e) {
-            showNextCard(1);
-        });
-
-        showNextCard();
-
-        function showDataItems(datas) {
-
-            var elRows = 0;
-            var elCols = 0;
-            //console.log(4, data);
-            var mainBlockAllDataItems = document.getElementById('allDataItemsContainer');
-            var dataItemsBlockRowDirection = document.createElement('div');
-            var itemBlock = null;
-
-            dataItemsBlockRowDirection.classList.add('data-items-block-row-direction');
-            dataItemsButtonBlock.style.display = " flex";
-
-            datas.forEach(function (item) {
-                if (elCols < 5 && elRows < 8) {
-                    itemBlock = document.createElement('div');
-                    itemBlock.classList.add('data-items-block');
-                    itemBlock.innerText = item.title;
-                    dataItemsBlockRowDirection.appendChild(itemBlock);
-                    elCols++;
-                } else if( elRows < 8) {
-                    mainBlockAllDataItems.appendChild(dataItemsBlockRowDirection);
-                    dataItemsBlockRowDirection = document.createElement('div');
-                    dataItemsBlockRowDirection.classList.add('data-items-block-row-direction');
-                    elCols = 0;
-                    elRows++;
+                    }
                 }
-               
-            });
+                return arrData;
+            }
 
            
+
+            function showNextCard(direction = 1) {
+                counter = counter + direction * 1;
+
+                if (!cardData.items || (counter >= cardData.items.length || counter < 0)) {
+                    if (cardData.items && direction === -1) {
+                        offset = offset - limit;
+                        offset = offset < 0 ? ((pages - 1) * limit) : offset;
+                    }
+                    if (cardData.items && direction === 1) {
+                        offset = offset + limit;
+                        offset = offset > cardData.totalCount ? 0 : offset;
+                    }
+                    getData(offset, limit, function (response) {
+                        cardData = response.data;
+                        counter = direction === 1 ? 0 : cardData.items.length - 1;
+
+                        pages = Math.ceil(cardData.totalCount / limit);
+                        showDataOnCard(cardData.items[counter]);
+                    });
+
+
+                } else {
+                    showDataOnCard(cardData.items[counter]);
+                }
+            }
+
+            function showDataOnCard(card) {
+                var cardEl = document.getElementById("mainBlockCard");
+                var cardTitleEl = cardEl.querySelector("#cardTitle");
+                var cardDescEl = cardEl.querySelector("#cardDesc");
+                var cardExampleTextEl = cardEl.querySelector("#cardExampleText");
+                var cardExampleImageEl = cardEl.querySelector("#cardExampleImage");
+
+
+                cardTitleEl.innerText = card.title;
+                cardDescEl.innerText = card.description;
+                cardExampleTextEl.innerText = card.exampleText;
+
+                if (!card.examplePicture) {
+
+                    cardExampleImageEl.src = "1600x900\\" + pictures[Math.floor(Math.random() * pictures.length)];
+                } else {
+                    cardExampleImageEl.src = card.exampleImageUrl;
+                }
+            }
+
+            var leftButtonEl = document.getElementById("cardButtonLeft");
+            var rightButtonEl = document.getElementById("cardButtonRight");
+
+            leftButtonEl.addEventListener("click", function (e) {
+                showNextCard(-1);
+            });
+
+            rightButtonEl.addEventListener("click", function (e) {
+                showNextCard(1);
+            });
+
+            showNextCard();
         }
+        // Show all data
 
-        var offset1 = 0;
-        var counter1 = 0;
+        window.pageHandlers.page3 = function (pageEl) {
 
-        function showNextPageDataItems(direction = 1) {
-            var datas = getTestData(100);
-            showDataItems(datas)
+            function addDataItemsBlock(item) {
+                var itemListContainerEl = pageEl.querySelector('.js-item-list-container');
+                var itemListEl = pageEl.querySelector('.js-item-list');
+                var listItemTemplateEl = itemListContainerEl.querySelector('.js-list-item-template');
 
+                var clone = listItemTemplateEl.cloneNode(false);
+                clone.innerText = item.title;
+                clone.classList.remove('list-item--hidden');
+                itemListEl.appendChild(clone);
+            }
+
+            function showPageData(items) {
+                var itemListContainerEl = pageEl.querySelector('.js-item-list-container');
+                var itemListEl = pageEl.querySelector('.js-item-list');
+                
+                // remove all childs
+                while (itemListEl.firstChild) {
+                    itemListEl.removeChild(itemListEl.firstChild);
+                }
+
+                items.forEach(function (item, i) {
+                    addDataItemsBlock(item);
+                });
+            }
+
+            var totalCount = 0;
+            var page = 0;
+            var limit = 40;
+
+            function getPageData(page = 0, limit = 40, callBack) {
+                var pages = Math.ceil(totalCount / limit);
+                page = page < 0 ? 0 : page;
+                page = page > pages ? 0 : page;
+                var offset = page * limit;
+
+                getData(offset, limit, callBack);
+            }
+
+            function showPage(page, limit) {
+                getPageData(page, limit, function(response) {
+                    totalCount = response.data.totalCount;
+                    showPageData(response.data.items);
+                });
+            }
+
+            var dataItemsButtonLeftEl = document.getElementById('dataItemsButtonLeft');
+            var dataItemsButtonRightEl = document.getElementById('dataItemsButtonRight');
+
+            dataItemsButtonRightEl.addEventListener('click', function (e) {
+                page = page + 1;
+                showPage(page, limit);
+            });
+
+            dataItemsButtonLeftEl.addEventListener('click', function (e) {
+                page = page - 1;
+                showPage(page, limit);
+            });
+
+            showPage(page, limit);
         }
-
-        var dataItemsButtonLeftEl = document.getElementById('dataItemsButtonLeft');
-        var dataItemsButtonRightEl = document.getElementById('dataItemsButtonRight');
-
-        dataItemsButtonRightEl.addEventListener('click', function (e) {
-            showNextPageDataItems(1);
-        });
-
-        dataItemsButtonLeftEl.addEventListener('click', function (e) {
-            showNextPageDataItems(-1);
-        });
-
-        showNextPageDataItems();
-
     }
-
 }
+
+
 
 function httpGet(url, callBack, authToken = null) {
     var xhr = new XMLHttpRequest();
