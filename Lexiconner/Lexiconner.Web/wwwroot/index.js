@@ -105,7 +105,7 @@ function start(config) {
         initAppMenu();
 
         window.pageHandlers = {};
-        window.pageHandlers['home'] =  function () {
+        window.pageHandlers['dashboard'] =  function () {
 
         }
 

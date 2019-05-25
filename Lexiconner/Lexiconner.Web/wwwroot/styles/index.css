@@ -44,6 +44,35 @@ body, html{
     height: auto;
 }
 
+.dashboard-container {
+    color: var(--text-color);
+}
+
+.dashboard-container .main-title {
+    text-align: center;
+    font-size: 2em;
+    margin: 0 0 1em 0;
+}
+
+.info-container .info-row {
+    margin: 0 0 0.5em;
+    font-size: 1.75em;
+    text-align: center;
+}
+.info-container .info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-container .info-image {
+    width: auto;
+    height: auto;
+    max-height: 7em;
+}
+.info-container .info-image--top {
+    max-height: 13em;
+}
+
+
 .main-block-card{
     /* display: none; */
     background-color: var(--background-color);
@@ -196,7 +225,7 @@ body, html{
     display: none;
     width: 100%;
     height: auto;
-    padding: 1% 0 1% 0;
+       padding: 1em 0 1em 0;
     box-sizing: border-box;
 }
 
