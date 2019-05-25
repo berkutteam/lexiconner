@@ -106,7 +106,12 @@ function start(config) {
                 targetLinkEl.classList.add('active');
                 targetPageEls.forEach(function (item) {
                     item.classList.add('active');
-                    window.pageHandlers[targetLinkEl.dataset.menuLink](item);
+                    var pageHandler = window.pageHandlers[targetLinkEl.dataset.menuLink];
+                    if(!pageHandler) {
+                        console.error(`Can't find handler for page: ${targetLinkEl.dataset.menuLink}`);
+                    } else {
+                        pageHandler(item);
+                    }
                 });
             });
 
@@ -195,7 +200,12 @@ function start(config) {
 
                 cardTitleEl.innerText = card.title;
                 cardDescEl.innerText = card.description;
-                cardExampleTextEl.innerText = card.exampleText;
+                if(!card.exampleText) {
+                    cardExampleTextEl.classList.add('hidden');
+                } else {
+                    cardExampleTextEl.innerText = card.exampleText;
+                    cardExampleTextEl.classList.remove('hidden');
+                }
 
                 if (!card.examplePicture) {
 
@@ -221,22 +231,19 @@ function start(config) {
         // Show all data
 
         window.pageHandlers.page3 = function (pageEl) {
+            var itemListContainerEl = pageEl.querySelector('.js-item-list-container');
+            var itemListEl = pageEl.querySelector('.js-item-list');
+            var listItemTemplateEl = itemListContainerEl.querySelector('.js-list-item-template');
 
             function addDataItemsBlock(item) {
-                var itemListContainerEl = pageEl.querySelector('.js-item-list-container');
-                var itemListEl = pageEl.querySelector('.js-item-list');
-                var listItemTemplateEl = itemListContainerEl.querySelector('.js-list-item-template');
-
-                var clone = listItemTemplateEl.cloneNode(false);
-                clone.innerText = item.title;
+                var clone = listItemTemplateEl.cloneNode(true);
+                var textEl = clone.querySelector('.js-item-text');
+                textEl.innerText = item.title;
                 clone.classList.remove('list-item--hidden');
                 itemListEl.appendChild(clone);
             }
 
             function showPageData(items) {
-                var itemListContainerEl = pageEl.querySelector('.js-item-list-container');
-                var itemListEl = pageEl.querySelector('.js-item-list');
-                
                 // remove all childs
                 while (itemListEl.firstChild) {
                     itemListEl.removeChild(itemListEl.firstChild);
@@ -250,11 +257,14 @@ function start(config) {
             var totalCount = 0;
             var page = 0;
             var limit = 40;
+            var calcPagesCount = function() {
+                return Math.ceil(totalCount / limit);
+            }
 
             function getPageData(page = 0, limit = 40, callBack) {
                 var pages = Math.ceil(totalCount / limit);
                 page = page < 0 ? 0 : page;
-                page = page > pages ? 0 : page;
+                page = page > pages ? pages : page;
                 var offset = page * limit;
 
                 getData(offset, limit, callBack);
@@ -267,16 +277,26 @@ function start(config) {
                 });
             }
 
-            var dataItemsButtonLeftEl = document.getElementById('dataItemsButtonLeft');
-            var dataItemsButtonRightEl = document.getElementById('dataItemsButtonRight');
+            var firstButtonEl = itemListContainerEl.querySelector('.js-first-page-button');
+            var prevButtonEl = itemListContainerEl.querySelector('.js-prev-page-button');
+            var currentButtonEl = itemListContainerEl.querySelector('.js-current-page-button');
+            var nextButtonEl = itemListContainerEl.querySelector('.js-next-page-button');
+            var lastButtonEl = itemListContainerEl.querySelector('.js-last-page-button');
 
-            dataItemsButtonRightEl.addEventListener('click', function (e) {
+            firstButtonEl.addEventListener('click', function (e) {
+                page = 0;
+                showPage(page, limit);
+            });
+            prevButtonEl.addEventListener('click', function (e) {
+                page = page - 1;
+                showPage(page, limit);
+            });
+            nextButtonEl.addEventListener('click', function (e) {
                 page = page + 1;
                 showPage(page, limit);
             });
-
-            dataItemsButtonLeftEl.addEventListener('click', function (e) {
-                page = page - 1;
+            lastButtonEl.addEventListener('click', function (e) {
+                page = calcPagesCount();
                 showPage(page, limit);
             });
 
