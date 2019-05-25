@@ -236,7 +236,7 @@ function start(config) {
 
             var totalCount = 0;
             var page = 0;
-            var limit = 40;
+            var limit = 50;
             var calcPagesCount = function() {
                 return Math.ceil(totalCount / limit);
             }
