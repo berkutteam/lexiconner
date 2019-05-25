@@ -59,18 +59,17 @@ function start(config) {
     function runApp(user) {
 
         /**
-                       * Listens to all events inside source element
-                       * @param {any} sourceElSelector
-                       * @param {any} targetElSelector
-                       * @param {any} eventName
-                       * @param {any} eventHandler
-                       */
+         * Listens to all events inside source element
+         * @param {any} sourceElSelector
+         * @param {any} targetElSelector
+         * @param {any} eventName
+         * @param {any} eventHandler
+         */
         function addBubleEventListener(sourceElSelector, targetElSelector, eventName, eventHandler) {
             var sourceEl = document.querySelector(sourceElSelector);
             sourceEl.addEventListener(eventName, function (e) {
                 var actualEl = e.target; // element event fired on
                 var desiredEl = e.target.closest(targetElSelector); // element we excpect event fired on
-
 
                 var matches = actualEl.matches(targetElSelector);
                 var isChildEl = desiredEl !== null; // if this el is parent
@@ -85,36 +84,13 @@ function start(config) {
          * Inits app menu, enables menu links
          */
         function initAppMenu() {
-            addBubleEventListener('body', '[data-menu-link]', 'click', function (e, actualEl, desiredEl) {
+            addBubleEventListener('body', '[data-route-link]', 'click', function (e, actualEl, desiredEl) {
                 e.preventDefault();
                 e.stopPropagation();
 
-                // hide all menu links and all menu pages
-                var linkEls = document.querySelectorAll('[data-menu-link]');
-                var pageEls = document.querySelectorAll('[data-menu-page]');
-
-                linkEls.forEach(function (item) {
-                    item.classList.remove('active');
-                });
-                pageEls.forEach(function (item) {
-                    item.classList.remove('active');
-                });
-
-                // show clicked page
                 var targetLinkEl = desiredEl;
-                var targetPageEls = document.querySelectorAll("[data-menu-page='" + targetLinkEl.dataset.menuLink + "']");
-                targetLinkEl.classList.add('active');
-                targetPageEls.forEach(function (item) {
-                    item.classList.add('active');
-                    var pageHandler = window.pageHandlers[targetLinkEl.dataset.menuLink];
-                    if(!pageHandler) {
-                        console.error(`Can't find handler for page: ${targetLinkEl.dataset.menuLink}`);
-                    } else {
-                        pageHandler(item);
-                    }
-                });
+                goToRoute(targetLinkEl.dataset.routeLink);
             });
-
         }
 
         function getData(offset = 0, limit = 2, callBack = null) {
@@ -129,7 +105,11 @@ function start(config) {
         initAppMenu();
 
         window.pageHandlers = {};
-        window.pageHandlers['page2'] =  function () {
+        window.pageHandlers['home'] =  function () {
+
+        }
+
+        window.pageHandlers['cards'] =  function () {
             var counter = -1;
             var offset = 0;
             var limit = 5;
@@ -230,7 +210,7 @@ function start(config) {
         }
         // Show all data
 
-        window.pageHandlers.page3 = function (pageEl) {
+        window.pageHandlers['word-list'] = function (pageEl) {
             var itemListContainerEl = pageEl.querySelector('.js-item-list-container');
             var itemListEl = pageEl.querySelector('.js-item-list');
             var listItemTemplateEl = itemListContainerEl.querySelector('.js-list-item-template');
@@ -302,6 +282,66 @@ function start(config) {
 
             showPage(page, limit);
         }
+
+        //// base routing
+        // TODO
+        var routes = {
+           
+        };
+
+        function goToRoute(route) {
+            if(route !== window.location.hash) {
+                window.location.hash = route;
+            }
+        }
+
+        function processRoute(route) {
+            // drop '#' from begining if exists
+            route = route.replace(/^#/gi, '');
+
+            // hide all menu links and all menu pages
+            var linkEls = document.querySelectorAll('[data-route-link]');
+            var pageEls = document.querySelectorAll('[data-route]');
+
+            linkEls.forEach(function (item) {
+                item.classList.remove('active');
+            });
+            pageEls.forEach(function (item) {
+                item.classList.remove('active');
+            });
+
+            // show clicked page
+            var targetLinkEls = document.querySelectorAll("[data-route-link='" + route + "']");
+            var targetPageEls = document.querySelectorAll("[data-route='" + route + "']");
+
+            targetLinkEls.forEach(function (item) {
+                item.classList.add('active');
+            });
+
+            targetPageEls.forEach(function (item) {
+                item.classList.add('active');
+                var pageHandler = window.pageHandlers[route];
+                if(!pageHandler) {
+                    console.error(`Can't find handler for page: ${route}`);
+                } else {
+                    pageHandler(item);
+                }
+            });
+        }
+
+        // listen hash changes
+        window.addEventListener('hashchange', function(e) {
+            var oldURL = e.oldURL;
+            var newUrl = e.newUrl;
+            var newHash = window.location.hash;
+            processRoute(newHash);
+        }, false);
+
+        // run route that is already in hash
+        if(!!window.location.hash) {
+            processRoute(window.location.hash);
+        }
+        ////
     }
 }
 
