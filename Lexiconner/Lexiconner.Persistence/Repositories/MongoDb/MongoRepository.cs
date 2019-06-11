@@ -142,8 +142,8 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
         public async Task<bool> AnyAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new()
         {
             var collection = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>());
-            var existing = await collection.FindAsync(predicate);
-            return existing.Current != null && existing.Current.Any();
+            var cursor = await collection.FindAsync(predicate);
+            return await cursor.AnyAsync();
         }
 
         public async Task<long> CountAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new()
