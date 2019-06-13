@@ -66,7 +66,8 @@ function start(config) {
          * @param {any} eventHandler
          */
         function addBubleEventListener(sourceElSelector, targetElSelector, eventName, eventHandler) {
-            var sourceEl = document.querySelector(sourceElSelector);
+            var sourceEl = (typeof sourceElSelector === "object") ? sourceElSelector : document.querySelector(sourceElSelector);
+
             sourceEl.addEventListener(eventName, function (e) {
                 var actualEl = e.target; // element event fired on
                 var desiredEl = e.target.closest(targetElSelector); // element we excpect event fired on
@@ -101,18 +102,24 @@ function start(config) {
                 }
             }, user.access_token);
         }
-        
+
         initAppMenu();
 
+        window.wordOrder = {
+            length: 0,
+            isFromWordList: false
+        }; // used in pageHandlers['word-list'] for eventListener
+
         window.pageHandlers = {};
-        window.pageHandlers['dashboard'] =  function () {
+        window.pageHandlers['dashboard'] = function () {
 
         }
 
-        window.pageHandlers['cards'] =  function () {
-            var counter = -1;
-            var offset = 0;
+        window.pageHandlers['cards'] = function () {
             var limit = 5;
+            var counter = window.wordOrder.length === 0 ? -1 : window.wordOrder.length - 1 - Math.floor(window.wordOrder.length / limit) * limit;
+            var offset = window.wordOrder.length === 0 ? window.wordOrder.length : Math.floor(window.wordOrder.length / limit) * limit;
+
             var pages = 0;
             var cardData = {};
             var pictures = [];
@@ -142,8 +149,6 @@ function start(config) {
                 return arrData;
             }
 
-           
-
             function showNextCard(direction = 1) {
                 counter = counter + direction * 1;
 
@@ -158,7 +163,13 @@ function start(config) {
                     }
                     getData(offset, limit, function (response) {
                         cardData = response.data;
-                        counter = direction === 1 ? 0 : cardData.items.length - 1;
+
+                        if (window.wordOrder.isFromWordList) {
+                            window.wordOrder.isFromWordList = false;
+                        }
+                        else {
+                            counter = direction === 1 ? 0 : cardData.items.length - 1;
+                        }
 
                         pages = Math.ceil(cardData.totalCount / limit);
                         showDataOnCard(cardData.items[counter]);
@@ -180,7 +191,7 @@ function start(config) {
 
                 cardTitleEl.innerText = card.title;
                 cardDescEl.innerText = card.description;
-                if(!card.exampleText) {
+                if (!card.exampleText) {
                     cardExampleTextEl.classList.add('hidden');
                 } else {
                     cardExampleTextEl.innerText = card.exampleText;
@@ -215,10 +226,12 @@ function start(config) {
             var itemListEl = pageEl.querySelector('.js-item-list');
             var listItemTemplateEl = itemListContainerEl.querySelector('.js-list-item-template');
 
-            function addDataItemsBlock(item) {
+            function addDataItemsBlock(item, i) {
                 var clone = listItemTemplateEl.cloneNode(true);
                 var textEl = clone.querySelector('.js-item-text');
                 textEl.innerText = item.title;
+                textEl.setAttribute('position-in-list', i);
+                clone.setAttribute('position-in-list', i);
                 clone.classList.remove('list-item--hidden');
                 itemListEl.appendChild(clone);
             }
@@ -230,14 +243,15 @@ function start(config) {
                 }
 
                 items.forEach(function (item, i) {
-                    addDataItemsBlock(item);
+                    addDataItemsBlock(item, i);
                 });
             }
 
             var totalCount = 0;
             var page = 0;
-            var limit = 50;
-            var calcPagesCount = function() {
+            var limit = 40;
+            var offset = page * limit;
+            var calcPagesCount = function () {
                 return Math.ceil(totalCount / limit);
             }
 
@@ -245,16 +259,20 @@ function start(config) {
                 var pages = Math.ceil(totalCount / limit);
                 page = page < 0 ? 0 : page;
                 page = page > pages ? pages : page;
-                var offset = page * limit;
+                offset = page * limit;
 
                 getData(offset, limit, callBack);
             }
 
             function showPage(page, limit) {
-                getPageData(page, limit, function(response) {
+                getPageData(page, limit, function (response) {
                     totalCount = response.data.totalCount;
                     showPageData(response.data.items);
                 });
+            }
+
+            function setNumberPage(page) {
+                currentButtonEl.innerText = page;
             }
 
             var firstButtonEl = itemListContainerEl.querySelector('.js-first-page-button');
@@ -265,32 +283,45 @@ function start(config) {
 
             firstButtonEl.addEventListener('click', function (e) {
                 page = 0;
+                setNumberPage(page)
                 showPage(page, limit);
             });
             prevButtonEl.addEventListener('click', function (e) {
-                page = page - 1;
+                page = page <= 0 ? 0 : page - 1;
+                setNumberPage(page)
                 showPage(page, limit);
             });
             nextButtonEl.addEventListener('click', function (e) {
-                page = page + 1;
+                page = (page < calcPagesCount() - 1) ? page + 1 : (calcPagesCount() - 1);
+                setNumberPage(page)
                 showPage(page, limit);
             });
             lastButtonEl.addEventListener('click', function (e) {
-                page = calcPagesCount();
+                page = calcPagesCount() - 1;
+                setNumberPage(page)
                 showPage(page, limit);
             });
 
             showPage(page, limit);
+            setNumberPage(0);
+
+            addBubleEventListener(itemListContainerEl, '[position-in-list]', 'click', function (e, desiredEl) {
+                e.stopPropagation();
+                window.wordOrder.length = (page * limit) + Number(desiredEl.getAttribute('position-in-list'));
+                window.wordOrder.isFromWordList = true;
+                console.log(window.wordOrder.length, 11);
+                goToRoute('#cards');
+            });
         }
 
         //// base routing
         // TODO
         var routes = {
-           
+
         };
 
         function goToRoute(route) {
-            if(route !== window.location.hash) {
+            if (route !== window.location.hash) {
                 window.location.hash = route;
             }
         }
@@ -321,7 +352,7 @@ function start(config) {
             targetPageEls.forEach(function (item) {
                 item.classList.add('active');
                 var pageHandler = window.pageHandlers[route];
-                if(!pageHandler) {
+                if (!pageHandler) {
                     console.error(`Can't find handler for page: ${route}`);
                 } else {
                     pageHandler(item);
@@ -330,7 +361,7 @@ function start(config) {
         }
 
         // listen hash changes
-        window.addEventListener('hashchange', function(e) {
+        window.addEventListener('hashchange', function (e) {
             var oldURL = e.oldURL;
             var newUrl = e.newUrl;
             var newHash = window.location.hash;
@@ -338,7 +369,7 @@ function start(config) {
         }, false);
 
         // run route that is already in hash
-        if(!!window.location.hash) {
+        if (!!window.location.hash) {
             processRoute(window.location.hash);
         }
         ////
