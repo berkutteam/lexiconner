@@ -12,4 +12,9 @@
     <PackageReference Include="DotNetEnv" Version="1.2.0" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lexiconner.Application\Lexiconner.Application.csproj" />
+  </ItemGroup>
+
 </Project>

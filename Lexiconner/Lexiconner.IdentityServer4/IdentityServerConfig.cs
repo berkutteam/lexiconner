@@ -6,6 +6,7 @@ using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
+using Lexiconner.Application.Extensions;
 using Lexiconner.Domain.Entitites;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.MongoDB;
@@ -127,7 +128,7 @@ namespace Lexiconner.IdentityServer4
                 },
             };
 
-            if(_hostingEnvironment.IsDevelopment())
+            if(_hostingEnvironment.IsDevelopmentAny())
             {
                 // SPA client using code flow
                 clients.Add(new Client

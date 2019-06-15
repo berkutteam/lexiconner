@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using Lexiconner.Application.Helpers;
 using Lexiconner.IdentityServer4.Exceptions;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -55,7 +56,7 @@ namespace Lexiconner.IdentityServer4
                     configBuilder.AddEnvironmentVariables();
                 });
 
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            if (HostingEnvironmentHelper.IsDevelopmentLocalhost())
             {
                 builder.UseUrls($"http://localhost:5003;https://localhost:5004");
             }

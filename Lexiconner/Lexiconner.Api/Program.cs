@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Lexiconner.Application.Helpers;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +35,7 @@ namespace Lexiconner.Api
                     configBuilder.AddEnvironmentVariables();
                 });
 
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            if (HostingEnvironmentHelper.IsDevelopmentLocalhost())
             {
                 builder.UseUrls($"http://localhost:5005;https://localhost:5006");
             }

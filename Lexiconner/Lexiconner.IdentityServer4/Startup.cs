@@ -21,6 +21,7 @@ using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Lexiconner.Application.Extensions;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -58,7 +59,7 @@ namespace Lexiconner.IdentityServer4
 
             //services.AddIdentity<ApplicationUserEntity, ApplicationRoleEntity>(options =>
             //{
-            //    if (Environment.IsDevelopment())
+            //    if (Environment.IsDevelopmentAny())
             //    {
             //        options.Password.RequireDigit = false;
             //        options.Password.RequireUppercase = false;
@@ -136,7 +137,7 @@ namespace Lexiconner.IdentityServer4
 
         public void Configure(IApplicationBuilder app, IApiVersionDescriptionProvider provider)
         {
-            if (Environment.IsDevelopment())
+            if (Environment.IsDevelopmentAny())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();

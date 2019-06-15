@@ -1,5 +1,6 @@
 ﻿using IdentityServer4.Services;
 using IdentityServer4.Stores;
+using Lexiconner.Application.Extensions;
 using Lexiconner.IdentityServer4.Store;
 using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Persistence.Repositories.MongoDb;
@@ -172,7 +173,7 @@ namespace Lexiconner.IdentityServer4.Extensions
             }
 
             // fallback to generated developer local file for development
-            if(cert == null && hostingEnvironment.IsDevelopment())
+            if(cert == null && hostingEnvironment.IsDevelopmentAny())
             {
                 builder.AddDeveloperSigningCredential(
                     persistKey: true,

@@ -118,7 +118,7 @@ namespace Lexiconner.Api
                     {
                         OnAuthenticationFailed = args =>
                         {
-                            if (HostingEnvironment.IsDevelopment())
+                            if (HostingEnvironment.IsDevelopmentAny())
                             {
                                 return AuthenticationFailed(args);
                             }
@@ -166,7 +166,7 @@ namespace Lexiconner.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
-            if (env.IsDevelopment())
+            if (env.IsDevelopmentAny())
             {
                 app.UseDeveloperExceptionPage();
             }

@@ -3,6 +3,7 @@ using System.Linq;
 using IdentityModel;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
+using Lexiconner.Application.Extensions;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.IdentityServer4.Exceptions;
 using Lexiconner.Persistence.Repositories.Base;
@@ -79,7 +80,7 @@ namespace Lexiconner.IdentityServer4.Extensions
                     }
                 }
 
-                if(hostingEnvironment.IsDevelopment())
+                if(hostingEnvironment.IsDevelopmentAny())
                 {
                     repository.DeleteAllAsync<ApplicationRoleEntity>().GetAwaiter().GetResult();
                     repository.DeleteAllAsync<ApplicationUserEntity>().GetAwaiter().GetResult();

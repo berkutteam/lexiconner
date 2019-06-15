@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Lexiconner.Application\Lexiconner.Application.csproj" />
     <ProjectReference Include="..\Lexiconner.Domain\Lexiconner.Domain.csproj" />
     <ProjectReference Include="..\Lexiconner.Persistence\Lexiconner.Persistence.csproj" />
   </ItemGroup>
