@@ -18,6 +18,9 @@ using Lexiconner.Domain.Entitites;
 using MongoDB.Driver;
 using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Persistence.Repositories.MongoDb;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -65,6 +68,8 @@ namespace Lexiconner.IdentityServer4
             //})
             //.AddDefaultTokenProviders();
 
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+
             // configure identity server with MONGO Repository for stores, keys, clients, scopes & Asp .Net Identity
             var identityServerBuilder = services.AddIdentityServer(options =>
             {
@@ -94,6 +99,26 @@ namespace Lexiconner.IdentityServer4
             //    options.ClientSecret = "copy client secret from Google here";
             //});
 
+            services.AddSwaggerGen();
+
+            services.AddApiVersioning(options =>
+            {
+                // reporting api versions will return the headers "api-supported-versions" and "api-deprecated-versions"
+                options.ReportApiVersions = true;
+            });
+
+            services.AddVersionedApiExplorer(
+               options =>
+               {
+                   // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+                   // note: the specified format code will format the version as "'v'major[.minor][-status]"
+                   options.GroupNameFormat = "'v'VVV";
+
+                   // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+                   // can also be used to control the format of the API version in route templates
+                   options.SubstituteApiVersionInUrl = true;
+               });
+
             services.AddCors(options =>
             {
                 options.AddPolicy("default", builder =>
@@ -109,7 +134,7 @@ namespace Lexiconner.IdentityServer4
             services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IApiVersionDescriptionProvider provider)
         {
             if (Environment.IsDevelopment())
             {
@@ -142,6 +167,18 @@ namespace Lexiconner.IdentityServer4
             //});
 
             app.UseMvcWithDefaultRoute();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(
+               options =>
+               {
+                   foreach (ApiVersionDescription description in provider.ApiVersionDescriptions)
+                   {
+                       options.SwaggerEndpoint(
+                           $"/swagger/{description.GroupName}/swagger.json",
+                           description.GroupName.ToUpperInvariant());
+                   }
+               });
         }
     }
 }
