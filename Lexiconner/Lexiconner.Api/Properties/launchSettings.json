@@ -24,6 +24,14 @@
         "ASPNETCORE_ENVIRONMENT": "DevelopmentLocalhost"
       },
       "applicationUrl": "https://localhost:5006;http://localhost:5005"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/api/values",
+      "httpPort": 2587,
+      "useSSL": true,
+      "sslPort": 44333
     }
   }
 }

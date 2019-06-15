@@ -13,8 +13,10 @@ WORKDIR /src
 COPY ["Lexiconner/Lexiconner.Web/Lexiconner.Web.csproj", "Lexiconner.Web/"]
 COPY ["Lexiconner/Lexiconner.Application/Lexiconner.Application.csproj", "Lexiconner.Application/"]
 RUN dotnet restore "Lexiconner.Web/Lexiconner.Web.csproj"
+#WORKDIR "/src/Lexiconner.Web"
+#COPY "Lexiconner/Lexiconner.Web/" .
+COPY "Lexiconner/"  .
 WORKDIR "/src/Lexiconner.Web"
-COPY "Lexiconner/Lexiconner.Web/" .
 RUN dotnet build "Lexiconner.Web.csproj" -c Release -o /app
 
 FROM build AS publish
