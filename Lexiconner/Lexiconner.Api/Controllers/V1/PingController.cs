@@ -13,12 +13,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace Lexiconner.Api.Controllers.V1
 {
     [ApiController]
-    [Authorize]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class PingController : ApiControllerBase
     {
-
         public PingController()
         {
         }
