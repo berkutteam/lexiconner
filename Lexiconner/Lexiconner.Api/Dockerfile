@@ -6,6 +6,7 @@ FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
 COPY ["Lexiconner/Lexiconner.Api/Lexiconner.Api.csproj", "Lexiconner.Api/"]
 COPY ["Lexiconner/Lexiconner.Persistence/Lexiconner.Persistence.csproj", "Lexiconner.Persistence/"]
+COPY ["Lexiconner/Lexiconner.Application/Lexiconner.Application.csproj", "Lexiconner.Application/"]
 COPY ["Lexiconner/Lexiconner.Domain/Lexiconner.Domain.csproj", "Lexiconner.Domain/"]
 RUN dotnet restore "Lexiconner.Api/Lexiconner.Api.csproj"
 #COPY "Lexiconner/Lexiconner.Api/"  .

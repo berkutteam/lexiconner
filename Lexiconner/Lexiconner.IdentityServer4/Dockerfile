@@ -6,6 +6,7 @@ FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
 COPY ["Lexiconner/Lexiconner.IdentityServer4/Lexiconner.IdentityServer4.csproj", "Lexiconner.IdentityServer4/"]
 COPY ["Lexiconner/Lexiconner.Persistence/Lexiconner.Persistence.csproj", "Lexiconner.Persistence/"]
+COPY ["Lexiconner/Lexiconner.Application/Lexiconner.Application.csproj", "Lexiconner.Application/"]
 COPY ["Lexiconner/Lexiconner.Domain/Lexiconner.Domain.csproj", "Lexiconner.Domain/"]
 RUN dotnet restore "Lexiconner.IdentityServer4/Lexiconner.IdentityServer4.csproj"
 #COPY . .

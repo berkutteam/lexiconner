@@ -11,6 +11,7 @@ WORKDIR /app
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
 COPY ["Lexiconner/Lexiconner.Web/Lexiconner.Web.csproj", "Lexiconner.Web/"]
+COPY ["Lexiconner/Lexiconner.Application/Lexiconner.Application.csproj", "Lexiconner.Application/"]
 RUN dotnet restore "Lexiconner.Web/Lexiconner.Web.csproj"
 WORKDIR "/src/Lexiconner.Web"
 COPY "Lexiconner/Lexiconner.Web/" .
