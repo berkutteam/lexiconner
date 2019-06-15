@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZNetCS.AspNetCore.Authentication.Basic;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
+using Lexiconner.Application.Extensions;
 
 namespace Lexiconner.Api
 {
