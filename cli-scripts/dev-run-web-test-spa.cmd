@@ -1,1 +1,1 @@
-dotnet run --project ..\Lexiconner\Lexiconner.WebSpaTest environment=development
+dotnet run --project ..\Lexiconner\Lexiconner.WebSpaTest environment=DevelopmentLocalhost

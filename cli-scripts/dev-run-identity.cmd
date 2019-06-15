@@ -1,1 +1,1 @@
-dotnet run --project ..\Lexiconner\Lexiconner.IdentityServer4 environment=development
+dotnet run --project ..\Lexiconner\Lexiconner.IdentityServer4 environment=DevelopmentLocalhost
