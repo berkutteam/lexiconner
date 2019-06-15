@@ -6,6 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Certificates\self-signed-idsr-local.pfx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Certificates\self-signed-idsr-local.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Contrib.Microsoft.AspNetCore.Identity.MongoDB" Version="2.0.5" />
     <PackageReference Include="DotNetEnv" Version="1.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.4.10" />
