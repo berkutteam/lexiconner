@@ -1,4 +1,11 @@
+import _ from 'lodash';
 
+// example of using class defined in separate file (module)
+import ExampleUtil from './utils/exampleUtil.js';
+
+ExampleUtil.testStatic('test1');
+let util = new ExampleUtil();
+util.test('test2');
 
 document.addEventListener("DOMContentLoaded", function (event) {
     httpGet('/config', function (config) {

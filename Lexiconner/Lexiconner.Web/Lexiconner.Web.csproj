@@ -7,6 +7,16 @@
     <UserSecretsId>37bf7d80-3893-4508-a64d-86bbca45f596</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="ClientVanilaJs\index.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="ClientVanilaJs\index.js">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="1.2.0" />
@@ -18,6 +28,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lexiconner.Application\Lexiconner.Application.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="ClientVanilaJs\components\" />
+    <Folder Include="ClientVanilaJs\pages\" />
   </ItemGroup>
 
 </Project>
