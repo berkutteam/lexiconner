@@ -22,6 +22,7 @@ using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Lexiconner.Application.Extensions;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -147,6 +148,22 @@ namespace Lexiconner.IdentityServer4
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
                 app.UseHttpsRedirection();
+
+                // resolve http instead https issue in '/.well-known/openid-configuration'
+                // maybe heroku uses some proxy and app gets http requests instead of https
+                var forwardOptions = new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+                    // RequireHeaderSymmetry seems to be false default in 2.1
+                    RequireHeaderSymmetry = false
+                };
+
+                // also make sure to limit the networks that can forward headers for security by adding a network with a mask as-in - this would typically be network IPv6 as
+                forwardOptions.KnownNetworks.Clear();
+                forwardOptions.KnownProxies.Clear();
+                // forwardOptions.KnownNetworks.Add(new IPNetwork());
+
+                app.UseForwardedHeaders(forwardOptions);
             }
 
             app.UseStaticFiles();
