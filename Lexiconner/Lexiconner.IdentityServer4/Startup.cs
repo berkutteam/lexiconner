@@ -146,8 +146,6 @@ namespace Lexiconner.IdentityServer4
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
-                app.UseHttpsRedirection();
 
                 // resolve http instead https issue in '/.well-known/openid-configuration'
                 // maybe heroku uses some proxy and app gets http requests instead of https
@@ -158,12 +156,19 @@ namespace Lexiconner.IdentityServer4
                     RequireHeaderSymmetry = false
                 };
 
-                // also make sure to limit the networks that can forward headers for security by adding a network with a mask as-in - this would typically be network IPv6 as
+                // Clear the forward headers networks so any ip can forward headers
+                // Should ONLY do this in dev/testing
                 forwardOptions.KnownNetworks.Clear();
                 forwardOptions.KnownProxies.Clear();
+
+                // For security you should limit the networks that can forward headers
                 // forwardOptions.KnownNetworks.Add(new IPNetwork());
 
                 app.UseForwardedHeaders(forwardOptions);
+
+
+                app.UseHsts();
+                app.UseHttpsRedirection();
             }
 
             app.UseStaticFiles();
