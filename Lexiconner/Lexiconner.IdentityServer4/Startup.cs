@@ -143,10 +143,9 @@ namespace Lexiconner.IdentityServer4
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
 
+            if (Environment.IsDevelopmentHeroku() || Environment.IsProductionHeroku())
+            {
                 // resolve http instead https issue in '/.well-known/openid-configuration'
                 // maybe heroku uses some proxy and app gets http requests instead of https
                 var forwardOptions = new ForwardedHeadersOptions
@@ -167,8 +166,17 @@ namespace Lexiconner.IdentityServer4
                 app.UseForwardedHeaders(forwardOptions);
 
 
+                //// approach with custom middleware
+                //app.Use()
+                ////
+
                 app.UseHsts();
                 app.UseHttpsRedirection();
+            }
+
+            if (Environment.IsProductionAny())
+            {
+                app.UseExceptionHandler("/Home/Error");
             }
 
             app.UseStaticFiles();

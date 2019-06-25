@@ -16,6 +16,16 @@ namespace Lexiconner.Application.Extensions
             return HostingEnvironmentHelper.IsDevelopmentDocker(GetEnvironment());
         }
 
+        public static bool IsDevelopmentAzure(this IHostingEnvironment hostingEnvironment)
+        {
+            return HostingEnvironmentHelper.IsDevelopmentAzure(GetEnvironment());
+        }
+
+        public static bool IsDevelopmentHeroku(this IHostingEnvironment hostingEnvironment)
+        {
+            return HostingEnvironmentHelper.IsDevelopmentHeroku(GetEnvironment());
+        }
+
         public static bool IsDevelopmentLocalhostOrDocker(this IHostingEnvironment hostingEnvironment)
         {
             return HostingEnvironmentHelper.IsDevelopmentLocalhost(GetEnvironment()) || HostingEnvironmentHelper.IsDevelopmentDocker(GetEnvironment());
@@ -39,6 +49,11 @@ namespace Lexiconner.Application.Extensions
         public static bool IsProductionAzure(this IHostingEnvironment hostingEnvironment)
         {
             return HostingEnvironmentHelper.IsProductionAzure(GetEnvironment());
+        }
+
+        public static bool IsProductionHeroku(this IHostingEnvironment hostingEnvironment)
+        {
+            return HostingEnvironmentHelper.IsProductionHeroku(GetEnvironment());
         }
 
         public static bool IsProductionAny(this IHostingEnvironment hostingEnvironment)
