@@ -322,10 +322,6 @@ function start(config) {
         }
 
         //// base routing
-        // TODO
-        var routes = {
-
-        };
 
         function goToRoute(route) {
             if (route !== window.location.hash) {
