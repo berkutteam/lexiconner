@@ -197,7 +197,7 @@ namespace Lexiconner.Api
 
             // seed
             ISeeder seeder = app.ApplicationServices.GetRequiredService<ISeeder>();
-            seeder.Seed().Wait();
+            seeder.Seed().GetAwaiter().GetResult();
         }
 
         private Task AuthenticationFailed(AuthenticationFailedContext arg)

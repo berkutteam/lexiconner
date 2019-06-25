@@ -23,6 +23,9 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Lexiconner.Application.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Primitives;
+using Microsoft.AspNetCore.Http;
+using IdentityServer4.Extensions;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -166,9 +169,29 @@ namespace Lexiconner.IdentityServer4
                 app.UseForwardedHeaders(forwardOptions);
 
 
-                //// approach with custom middleware
-                //app.Use()
-                ////
+                ////// approach with custom middleware (try if above solution with UseForwardedHeaders doesn't work
+                //const string XForwardedPathBase = "X-Forwarded-PathBase";
+                //const string XForwardedProto = "X-Forwarded-Proto";
+                //app.Use((context, next) => {
+                //    if (context.Request.Headers.TryGetValue(XForwardedPathBase, out StringValues pathBase))
+                //    {
+                //        context.Request.PathBase = new PathString(pathBase);
+
+                //    }
+
+                //    // if this is commented out, identity server urls are http://
+                //    if (context.Request.Headers.TryGetValue(XForwardedProto, out StringValues proto))
+                //    {
+                //        context.Request.Protocol = proto;
+                //    }
+
+                //    // this was not needed, problem was above
+                //    //string origin = context.Request.Scheme + "://" + context.Request.Host.Value;
+                //    //context.SetIdentityServerOrigin(origin);
+
+                //    return next();
+                //});
+                //////
 
                 app.UseHsts();
                 app.UseHttpsRedirection();
