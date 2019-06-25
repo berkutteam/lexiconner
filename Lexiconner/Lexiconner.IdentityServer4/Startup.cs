@@ -145,6 +145,8 @@ namespace Lexiconner.IdentityServer4
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
+                app.UseHttpsRedirection();
             }
 
             app.UseStaticFiles();
