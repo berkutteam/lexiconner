@@ -153,7 +153,7 @@ namespace Lexiconner.IdentityServer4
                 // maybe heroku uses some proxy and app gets http requests instead of https
                 var forwardOptions = new ForwardedHeadersOptions
                 {
-                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost,
                     // RequireHeaderSymmetry seems to be false default in 2.1
                     RequireHeaderSymmetry = false
                 };
