@@ -339,3 +339,6 @@ serilog-logs/
 developer-cert.pfx
 *.crt
 *.key
+
+# secrets
+Secrets/

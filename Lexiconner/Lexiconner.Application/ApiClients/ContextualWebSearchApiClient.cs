@@ -4,7 +4,11 @@ using System.Text;
 
 namespace Lexiconner.Application.ApiClients
 {
-    public class ContextualWebSearchApiClient
+    public interface IContextualWebSearchApiClient
+    {
+    }
+
+    public class ContextualWebSearchApiClient : IContextualWebSearchApiClient
     {
     }
 }

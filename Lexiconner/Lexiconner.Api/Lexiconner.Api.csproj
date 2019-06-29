@@ -36,4 +36,20 @@
     <ProjectReference Include="..\Lexiconner.Persistence\Lexiconner.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Secrets\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Secrets\lexiconner-2b83846e6407.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update=".env">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

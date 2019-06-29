@@ -22,6 +22,8 @@ using System.Threading.Tasks;
 using ZNetCS.AspNetCore.Authentication.Basic;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
 using Lexiconner.Application.Extensions;
+using Lexiconner.Application.ApiClients;
+using System.Net.Http;
 
 namespace Lexiconner.Api
 {
@@ -42,6 +44,7 @@ namespace Lexiconner.Api
             var config = Configuration.Get<ApplicationSettings>();
 
             services.AddOptions();
+            services.AddHttpClient();
             services.Configure<ApplicationSettings>(Configuration);
 
             /*
@@ -56,6 +59,7 @@ namespace Lexiconner.Api
             services.AddTransient<ISeeder, MongoDbSeeder>(); // replace with other if needed
             services.AddTransient<IStudyItemJsonRepository, StudyItemJsonRepository>(serviceProvider =>
             {
+                // TODO use config
                 return new StudyItemJsonRepository(Configuration.GetValue<string>("JsonStorePath"));
             });
             services.AddTransient<IMongoRepository, MongoRepository>(sp =>
@@ -68,6 +72,14 @@ namespace Lexiconner.Api
                 var mongoClient = sp.GetService<MongoClient>();
                 return new IdentityRepository(mongoClient, config.MongoDb.DatabaseIdentity);
             });
+            services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {
+                return new GoogleTranslateApiClient(
+                    sp.GetRequiredService<IHostingEnvironment>(), 
+                    config.Google.ProjectId,
+                    config.Google.WebApiServiceAccount
+                );
+            });
+            services.AddTransient<IContextualWebSearchApiClient, ContextualWebSearchApiClient>();
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
@@ -167,6 +179,9 @@ namespace Lexiconner.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
+            var ssss = app.ApplicationServices.GetService<IGoogleTranslateApiClient>();
+            ssss.Translate("", "", "").GetAwaiter().GetResult();
+
             if (env.IsDevelopmentAny())
             {
                 app.UseDeveloperExceptionPage();
