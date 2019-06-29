@@ -48,6 +48,7 @@ function start(config) {
     }
 
     function logout() {
+        console.log('Logout requested.')
         userManager.signoutRedirect();
     }
 
@@ -109,6 +110,13 @@ function start(config) {
                 }
             }, user.access_token);
         }
+
+        // handle logout
+        // var logoutButtonEls = document.querySelectorAll('.js-logout-button');
+        addBubleEventListener('body', '.js-logout-button', 'click', function (e, desiredEl) {
+            e.stopPropagation();
+            logout();
+        });
 
         initAppMenu();
 
