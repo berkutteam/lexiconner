@@ -1,4 +1,5 @@
 ﻿using Lexiconner.Api.ImportAndExport;
+using Lexiconner.Api.Models;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
 using Lexiconner.Persistence.Repositories.Base;
@@ -37,12 +38,13 @@ namespace Lexiconner.Api.Seed
 
             // seed imported data for marked users
             var usersWithImport = await _identityRepository.GetManyAsync<ApplicationUserEntity>(x => x.IsImportInitialData);
+            IEnumerable<WordImportModel> wordImports = null;
             Parallel.ForEach(usersWithImport, user =>
             {
                 if(!_mongoRepository.AnyAsync<StudyItemEntity>(x => x.UserId == user.Id).GetAwaiter().GetResult())
                 {
-                    var words = _wordTxtImporter.Import().GetAwaiter().GetResult();
-                    var entities = words.Select(x => new StudyItemEntity
+                    wordImports = wordImports ?? _wordTxtImporter.Import().GetAwaiter().GetResult();
+                    var entities = wordImports.Select(x => new StudyItemEntity
                     {
                         UserId = user.Id,
                         Title = x.Word,

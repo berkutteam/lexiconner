@@ -83,6 +83,16 @@ namespace Lexiconner.Application.Helpers
             return Environment == HostingEnvironmentDefaults.DevelopmentAzure;
         }
 
+        public static bool IsDevelopmentHeroku(string environment)
+        {
+            return environment == HostingEnvironmentDefaults.DevelopmentHeroku;
+        }
+
+        public static bool IsDevelopmentHeroku()
+        {
+            return Environment == HostingEnvironmentDefaults.DevelopmentHeroku;
+        }
+
         /// <summary>
         /// Returns true if current environment is Development or any custom type like DevelopmentLocalhost, DevelopmentDocker, Development[anything]
         /// </summary>
@@ -118,6 +128,16 @@ namespace Lexiconner.Application.Helpers
         public static bool IsProductionAzure()
         {
             return Environment == HostingEnvironmentDefaults.ProductionAzure;
+        }
+
+        public static bool IsProductionHeroku(string environment)
+        {
+            return environment == HostingEnvironmentDefaults.ProductionHeroku;
+        }
+
+        public static bool IsProductionHeroku()
+        {
+            return Environment == HostingEnvironmentDefaults.ProductionHeroku;
         }
 
         public static bool IsProductionAny(string environment)

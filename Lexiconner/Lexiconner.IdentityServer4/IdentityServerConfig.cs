@@ -245,6 +245,26 @@ namespace Lexiconner.IdentityServer4
             {
                 new ApplicationUserEntity
                 {
+                    Name = "John Doe1",
+                    UserName = "johndoe1",
+                    LockoutEnabled = false,
+                    EmailConfirmed = true,
+                    Email = "johndoe1@test.com",
+                    Roles = new List<string>
+                    {
+                        "RootAdmin",
+                        "Admin",
+                        "User",
+                    },
+                    Claims = new List<IdentityUserClaim>
+                    {
+                        new IdentityUserClaim(new Claim(JwtClaimTypes.Name, "John Doe1")),
+                        new IdentityUserClaim(new Claim(JwtClaimTypes.Email, "johndoe1@gmail.com")),
+                    },
+                    IsImportInitialData = true
+                },
+                new ApplicationUserEntity
+                {
                     Name = "Vadym Berkut",
                     UserName = "vadymberkut",
                     LockoutEnabled = false,
