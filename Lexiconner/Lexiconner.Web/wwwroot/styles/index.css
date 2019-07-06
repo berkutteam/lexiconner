@@ -1,11 +1,22 @@
 
-body, html{
+body, html {
     width: 100%;
     height: 100%;
     margin-bottom: 0%;
     margin-left: 0%;
     margin-right: 0%;
     margin-top: 0%;
+}
+
+body {
+    /* Set base font */
+    font-size: 2.5vh;
+}
+
+@media screen and (max-width: 720px) {
+    body {
+        font-size: 2.2vh;
+    }
 }
 
 :root{
@@ -98,7 +109,7 @@ body, html{
     align-items: center;
     background: none;
     height: 100%;
-    width: 36%;
+    width: auto;
     text-align: center;
     border-radius: 14px;
     cursor: pointer;
@@ -108,22 +119,36 @@ body, html{
 .card-button:hover {
     opacity: 1;
 }
-
+.card-button-left {
+    margin: 0 2em 0 2em;
+}
+.card-button-right {
+    margin: 0 2em 0 2em;
+}
 .card-button-icon {
-    font-size: 400%;
+    font-size: 3em;
 }
 
-.card-block{
+
+.card-block {
     background-color:var(--card-background-color);
     color: var(--text-color);
     border-radius: 3px;
-    width: 28%;
+    width: auto;
+    max-width: 500px;
     height: 100%;
     padding: 0.75em;
     display: flex;
     flex-direction: column;
     margin: 0;
     box-sizing: border-box;
+}
+
+@media screen and (max-width: 720px) {
+    .card-block {
+        width: auto;
+        max-width: initial;
+    }
 }
 
 .title{
@@ -133,7 +158,7 @@ body, html{
     overflow-x: hidden;
     overflow-y: auto;
     text-overflow: ellipsis;
-    font-size: 200%;
+    font-size: 1.8em;
     height: auto;
     padding: 0 0 0.5em 0;
     margin-bottom: 0.5em;
@@ -214,7 +239,7 @@ body, html{
     box-sizing: border-box;
     text-align: center;
     text-overflow: ellipsis;
-    font-size: 100%;
+    font-size: 1em;
 }
 
 .menu-item.active {
@@ -257,7 +282,7 @@ body, html{
     color: var( --text-color);
     text-align: center;
     overflow: auto;
-    font-size: 100%;
+    font-size: 1em;
     padding: 0.5em;
     box-sizing: border-box;
     display: flex;
@@ -282,15 +307,30 @@ body, html{
     background-color: var(--card-lighter-color);
 }
 
-.list-item:nth-child(-n + 5) {
-    margin-top: 0;
-}
-.list-item:nth-child(5n) {
-    margin-right: 0;
-}
-
 .list-item--hidden {
     display: none;
+}
+@media screen and (min-width: 721px) {
+    .list-item:nth-child(-n + 5) {
+        margin-top: 0;
+    }
+    .list-item:nth-child(5n) {
+        margin-right: 0;
+    }
+}
+@media screen and (max-width: 720px) {
+    .list-item {
+        width: 49.5%;
+        height: 60px;
+        margin: 1% 1% 0 0;
+    }
+    .list-item:nth-child(-n + 2) {
+        margin-top: 0;
+    }
+    .list-item:nth-child(2n) {
+        margin-right: 0;
+    }
+
 }
 
 .item-list-pager {
