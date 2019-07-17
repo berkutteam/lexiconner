@@ -126,11 +126,19 @@ function start(config) {
         }; // used in pageHandlers['word-list'] for eventListener
 
         window.pageHandlers = {};
+
+        window.pageHandlers['no-response'] = function () {
+
+        }
+
         window.pageHandlers['dashboard'] = function () {
 
         }
 
         window.pageHandlers['cards'] = function () {
+
+            checkingServerResponse();
+
             var limit = 5;
             var counter = window.wordOrder.length === 0 ? -1 : window.wordOrder.length - 1 - Math.floor(window.wordOrder.length / limit) * limit;
             var offset = window.wordOrder.length === 0 ? window.wordOrder.length : Math.floor(window.wordOrder.length / limit) * limit;
@@ -177,6 +185,7 @@ function start(config) {
                         offset = offset > cardData.totalCount ? 0 : offset;
                     }
                     getData(offset, limit, function (response) {
+
                         cardData = response.data;
 
                         if (window.wordOrder.isFromWordList) {
@@ -188,6 +197,7 @@ function start(config) {
 
                         pages = Math.ceil(cardData.totalCount / limit);
                         showDataOnCard(cardData.items[counter]);
+
                     });
 
 
@@ -237,6 +247,9 @@ function start(config) {
         // Show all data
 
         window.pageHandlers['word-list'] = function (pageEl) {
+
+            checkingServerResponse();
+
             var itemListContainerEl = pageEl.querySelector('.js-item-list-container');
             var itemListEl = pageEl.querySelector('.js-item-list');
             var listItemTemplateEl = itemListContainerEl.querySelector('.js-list-item-template');
@@ -324,7 +337,7 @@ function start(config) {
                 e.stopPropagation();
                 window.wordOrder.length = (page * limit) + Number(desiredEl.getAttribute('position-in-list'));
                 window.wordOrder.isFromWordList = true;
-                console.log(window.wordOrder.length, 11);
+                //console.log(window.wordOrder.length, 11);
                 goToRoute('#cards');
             });
         }
@@ -384,10 +397,19 @@ function start(config) {
             processRoute(window.location.hash);
         }
         ////
+
+        function checkingServerResponse() {
+            getData(0, 1, function (response) {
+                if (!response) {
+                    console.log('respone', false);
+                    goToRoute("#no-response");
+                }
+            });
+        }//checks server connection
+
+        checkingServerResponse();
     }
 }
-
-
 
 function httpGet(url, callBack, authToken = null) {
     var xhr = new XMLHttpRequest();
@@ -397,11 +419,13 @@ function httpGet(url, callBack, authToken = null) {
     xhr.onload = function () {
         if (xhr.status === 200) {
             var data = JSON.parse(xhr.responseText);
+
             callBack(data);
             console.log(1, data);
         }
         else {
             console.error('Request failed.  Returned status of ' + xhr.status);
+
         }
     };
     if (authToken !== null) {

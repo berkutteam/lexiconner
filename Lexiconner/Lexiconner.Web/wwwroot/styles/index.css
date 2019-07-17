@@ -80,9 +80,22 @@ body {
     max-height: 7em;
 }
 .info-container .info-image--top {
-    max-height: 13em;
+    max-height: 12em;
 }
 
+.error-image{
+    max-height: 20em;
+    display: block;
+    margin: 0 auto;
+    
+}
+
+.error-message-row{
+    font-size: 1.75em;
+    text-align: center;
+    font-size: 2em;
+    color: #fff;
+}
 
 .main-block-card{
     /* display: none; */
