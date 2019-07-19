@@ -400,8 +400,16 @@ function start(config) {
 
         function checkingServerResponse() {
             getData(0, 1, function (response) {
-                if (!response) {
+                if (response.data.items.length === 0) {
                     console.log('respone', false);
+                    var descriptionIssue = document.querySelector('.js-empty-data');
+                    descriptionIssue.classList.replace('hidden', 'active');
+                    
+                    goToRoute("#no-response");
+                } else if (response === null) {
+                    var descriptionIssue = document.querySelector('.js-no-response');
+                    descriptionIssue.classList.replace('hidden', 'active');
+
                     goToRoute("#no-response");
                 }
             });
@@ -425,7 +433,7 @@ function httpGet(url, callBack, authToken = null) {
         }
         else {
             console.error('Request failed.  Returned status of ' + xhr.status);
-
+            callBack(null);
         }
     };
     if (authToken !== null) {

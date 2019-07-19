@@ -83,6 +83,8 @@ body {
     max-height: 12em;
 }
 
+/* error page  begin*/
+
 .error-image{
     max-height: 20em;
     display: block;
@@ -96,6 +98,15 @@ body {
     font-size: 2em;
     color: #fff;
 }
+
+.hidden{
+    display: none;
+}
+
+.active{
+    display: block;
+}
+/* error page  end*/
 
 .main-block-card{
     /* display: none; */
