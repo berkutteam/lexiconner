@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Primitives;
 using Microsoft.AspNetCore.Http;
 using IdentityServer4.Extensions;
+using Microsoft.IdentityModel.Logging;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -103,6 +104,11 @@ namespace Lexiconner.IdentityServer4
             //    options.ClientId = "copy client ID from Google here";
             //    options.ClientSecret = "copy client secret from Google here";
             //});
+
+            if (Environment.IsDevelopmentAny())
+            {
+                IdentityModelEventSource.ShowPII = true; // show detail of error and see the problem
+            }
 
             services.AddSwaggerGen();
 

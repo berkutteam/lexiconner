@@ -24,6 +24,8 @@ using ZNetCS.AspNetCore.Authentication.Basic.Events;
 using Lexiconner.Application.Extensions;
 using Lexiconner.Application.ApiClients;
 using System.Net.Http;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace Lexiconner.Api
 {
@@ -140,6 +142,11 @@ namespace Lexiconner.Api
                     };
                 });
 
+            if (HostingEnvironment.IsDevelopmentAny())
+            {
+                IdentityModelEventSource.ShowPII = true; // show detail of error and see the problem
+            }
+
             services.AddSwaggerGen();
 
             services.AddApiVersioning(options =>
@@ -221,6 +228,7 @@ namespace Lexiconner.Api
             var s = $"AuthenticationFailed: {arg.Exception.Message}";
             arg.Response.ContentLength = s.Length;
             arg.Response.Body.Write(Encoding.UTF8.GetBytes(s), 0, s.Length);
+            arg.Response.StatusCode = StatusCodes.Status401Unauthorized; // not sure this is needed
             return Task.FromResult(0);
         }
     }
