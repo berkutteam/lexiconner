@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     });
 });
 
+
 function start(config) {
 
     var authConfig = {
@@ -29,7 +30,6 @@ function start(config) {
     userManager.getUser().then(function (user) {
         if (user) {
             console.log("User logged in", user, user.profile);
-
             // run app
             runApp(user);
 
@@ -44,6 +44,7 @@ function start(config) {
     });
 
     function login() {
+
         userManager.signinRedirect();
     }
 
@@ -58,6 +59,12 @@ function start(config) {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url);
         xhr.onload = function () {
+
+            // if (xhr.status === 401 || xhr.status === 403) {
+            //     console.log('Request failed.  Returned status of ' + xhr.status);
+            //     logout();
+            // }
+
             console.log('Test Api: ', xhr.status, JSON.parse(xhr.responseText));
         };
         xhr.setRequestHeader("Authorization", "Bearer " + user.access_token);
@@ -231,16 +238,23 @@ function start(config) {
                 }
             }
 
-            var leftButtonEl = document.getElementById("cardButtonLeft");
-            var rightButtonEl = document.getElementById("cardButtonRight");
+            var leftButtonEl = document.querySelectorAll(".card-button-left");
+            var rightButtonEl = document.querySelectorAll(".card-button-right");
 
-            leftButtonEl.addEventListener("click", function (e) {
-                showNextCard(-1);
+            leftButtonEl.forEach(function (item) {
+                item.addEventListener("click", function (e) {
+                    showNextCard(-1);
+                });
             });
 
-            rightButtonEl.addEventListener("click", function (e) {
-                showNextCard(1);
+
+
+            rightButtonEl.forEach(function (item) {
+                item.addEventListener("click", function (e) {
+                    showNextCard(1);
+                });
             });
+
 
             showNextCard();
         }
@@ -400,14 +414,15 @@ function start(config) {
 
         function checkingServerResponse() {
             getData(0, 1, function (response) {
+                //console.log(1222, response);
                 if (response.data.items.length === 0) {
                     console.log('respone', false);
                     var descriptionIssue = document.querySelector('.js-empty-data');
                     descriptionIssue.classList.replace('hidden', 'active');
-                    
+
                     goToRoute("#no-response");
-                } else if (response === null) {
-                    var descriptionIssue = document.querySelector('.js-no-response');
+                } else if (response === null) {// !
+                    var descriptionIssue = document.querySelector('.js-authentication-time-out');
                     descriptionIssue.classList.replace('hidden', 'active');
 
                     goToRoute("#no-response");
@@ -416,6 +431,7 @@ function start(config) {
         }//checks server connection
 
         checkingServerResponse();
+
     }
 }
 
@@ -424,18 +440,30 @@ function httpGet(url, callBack, authToken = null) {
     xhr.withCredentials = true; // force to show browser's default auth dialog
     xhr.open('GET', url);
 
+
     xhr.onload = function () {
         if (xhr.status === 200) {
             var data = JSON.parse(xhr.responseText);
 
             callBack(data);
             console.log(1, data);
+        } else if (xhr.status === 401 || xhr.status === 403) {
+            console.error('Request failed.  Returned status of ' + xhr.status);
+            callBack(data);
+        } else if (xhr.status === 500) {
+            console.error('Request failed.  Returned status of ' + xhr.status);
+            alert('Request failed.  Returned status of ' + xhr.status);
         }
         else {
             console.error('Request failed.  Returned status of ' + xhr.status);
-            callBack(null);
         }
+
     };
+
+    // if (xhr.status === 0) {
+    //     console.log('server did not respond');
+    // }
+
     if (authToken !== null) {
         xhr.setRequestHeader("Authorization", "Bearer " + authToken);
     }
