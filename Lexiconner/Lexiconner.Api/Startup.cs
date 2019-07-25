@@ -23,6 +23,7 @@ using Lexiconner.Application.ApiClients;
 using System.Net.Http;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
 
 namespace Lexiconner.Api
 {
@@ -121,13 +122,25 @@ namespace Lexiconner.Api
                     options.Audience = config.JwtBearerAuth.Audience;
                     options.Events = new JwtBearerEvents
                     {
-                        OnAuthenticationFailed = args =>
+                        // https://stackoverflow.com/questions/48649717/addjwtbearer-onauthenticationfailed-return-custom-error
+                        OnAuthenticationFailed = context =>
                         {
+                            // by default handler automatically return a WWW-Authenticate response header containing an error code/description when a 401 response is returned
                             if (HostingEnvironment.IsDevelopmentAny())
                             {
-                                return AuthenticationFailed(args);
+                                // TODO: return here base model with message for client
+
+                                // For debugging purposes only!
+                                // If you change response body status will be 200 intead of 401
+                                var text = $"AuthenticationFailed: {context.Exception.Message}";
+
+                                //// resets default response and clears WWW-Authenticate header
+                                //context.NoResult();
+                                //context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                                //context.Response.ContentType = "text/plain";
+                                //context.Response.WriteAsync(text).GetAwaiter().GetResult();
                             }
-                            return Task.FromResult(0);
+                            return Task.CompletedTask;
                         },
                     };
                 });
@@ -206,16 +219,6 @@ namespace Lexiconner.Api
                            description.GroupName.ToUpperInvariant());
                    }
                });
-        }
-
-        private Task AuthenticationFailed(AuthenticationFailedContext arg)
-        {
-            // For debugging purposes only!
-            var s = $"AuthenticationFailed: {arg.Exception.Message}";
-            arg.Response.ContentLength = s.Length;
-            arg.Response.Body.Write(Encoding.UTF8.GetBytes(s), 0, s.Length);
-            arg.Response.StatusCode = StatusCodes.Status401Unauthorized; // not sure this is needed
-            return Task.FromResult(0);
         }
     }
 }
