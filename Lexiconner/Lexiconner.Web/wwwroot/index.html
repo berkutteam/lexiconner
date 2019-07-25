@@ -36,7 +36,7 @@
 
         <div class="main-block" id="mainBlock">
 
-            <div class="menu-page-container" data-route="dashboard">
+            <div class="menu-page-container active" data-route="dashboard">
                 <div class="dashboard-container">
                     <!-- <h2 class="main-title">Dashboard</h2> -->
                     <div class="info-container">
@@ -44,13 +44,13 @@
                             <img class="info-image info-image--top" src="images/brending/study-worldwide.png" alt="" />
                         </div>
                         <div class="info-row">
-                                <p>
-                                    Write down new words that you discover when reading.
-                                </p>
-                                <div>
-                                    <img class="info-image" src="images/brending/study-icon-25.png" alt="" />
-                                </div>
+                            <p>
+                                Write down new words that you discover when reading.
+                            </p>
+                            <div>
+                                <img class="info-image" src="images/brending/study-icon-25.png" alt="" />
                             </div>
+                        </div>
                         <div class="info-row">
                             <p>
                                 Level up your dictioinary, get educated and amaze everybody with your deep knowledge!
@@ -83,6 +83,16 @@
                             <i class="fas fa-chevron-right card-button-icon"></i>
                         </div>
                     </div>
+
+                    <div class="card-button-container">
+                        <div class="card-button card-button-left" id="cardButtonLeftMobileVersion">
+                            <i class="fas fa-chevron-left card-button-icon"></i>
+                        </div>
+                        <div class="card-button card-button-right" id="cardButtonRightMobileVersion">
+                            <i class="fas fa-chevron-right card-button-icon"></i>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
@@ -113,7 +123,21 @@
                     </div>
                 </div>
             </div>
+
             <div class="menu-page-container" data-route="page4">Something</div>
+
+            <div class="menu-page-container js-error-page" data-route="no-response">
+                <img class="error-image" src="images/brending/sign.png" alt="" />
+                <div class="error-message-row">
+                    <p class="hidden js-empty-data">
+                        Server was return empty data
+                    </p>
+                    <p class="hidden js-authentication-time-out">
+                        Authentication time out
+                    </p>
+                </div>
+            </div>
+
         </div>
     </div>
 

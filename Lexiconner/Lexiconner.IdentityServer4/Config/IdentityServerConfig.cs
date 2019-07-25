@@ -119,6 +119,11 @@ namespace Lexiconner.IdentityServer4.Config
                         "webapi"
                     },
 
+                    // access_token settings
+                    AccessTokenType = AccessTokenType.Jwt,
+                    AccessTokenLifetime = Convert.ToInt32((new TimeSpan(24, 0, 0)).TotalSeconds),
+                    UpdateAccessTokenClaimsOnRefresh = true,
+
                     // refresh token settings
                     // refresh tokens are supported for the following flows: authorization code, hybrid and resource owner password credential flow.
                     AllowOfflineAccess = true,

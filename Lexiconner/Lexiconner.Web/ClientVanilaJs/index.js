@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     });
 });
 
+
 function start(config) {
 
     var authConfig = {
@@ -29,7 +30,6 @@ function start(config) {
     userManager.getUser().then(function (user) {
         if (user) {
             console.log("User logged in", user, user.profile);
-
             // run app
             runApp(user);
 
@@ -44,10 +44,12 @@ function start(config) {
     });
 
     function login() {
+
         userManager.signinRedirect();
     }
 
     function logout() {
+        console.log('Logout requested.')
         userManager.signoutRedirect();
     }
 
@@ -57,6 +59,12 @@ function start(config) {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url);
         xhr.onload = function () {
+
+            // if (xhr.status === 401 || xhr.status === 403) {
+            //     console.log('Request failed.  Returned status of ' + xhr.status);
+            //     logout();
+            // }
+
             console.log('Test Api: ', xhr.status, JSON.parse(xhr.responseText));
         };
         xhr.setRequestHeader("Authorization", "Bearer " + user.access_token);
@@ -110,6 +118,13 @@ function start(config) {
             }, user.access_token);
         }
 
+        // handle logout
+        // var logoutButtonEls = document.querySelectorAll('.js-logout-button');
+        addBubleEventListener('body', '.js-logout-button', 'click', function (e, desiredEl) {
+            e.stopPropagation();
+            logout();
+        });
+
         initAppMenu();
 
         window.wordOrder = {
@@ -118,11 +133,19 @@ function start(config) {
         }; // used in pageHandlers['word-list'] for eventListener
 
         window.pageHandlers = {};
+
+        window.pageHandlers['no-response'] = function () {
+
+        }
+
         window.pageHandlers['dashboard'] = function () {
 
         }
 
         window.pageHandlers['cards'] = function () {
+
+            checkingServerResponse();
+
             var limit = 5;
             var counter = window.wordOrder.length === 0 ? -1 : window.wordOrder.length - 1 - Math.floor(window.wordOrder.length / limit) * limit;
             var offset = window.wordOrder.length === 0 ? window.wordOrder.length : Math.floor(window.wordOrder.length / limit) * limit;
@@ -169,6 +192,7 @@ function start(config) {
                         offset = offset > cardData.totalCount ? 0 : offset;
                     }
                     getData(offset, limit, function (response) {
+
                         cardData = response.data;
 
                         if (window.wordOrder.isFromWordList) {
@@ -180,6 +204,7 @@ function start(config) {
 
                         pages = Math.ceil(cardData.totalCount / limit);
                         showDataOnCard(cardData.items[counter]);
+
                     });
 
 
@@ -213,22 +238,32 @@ function start(config) {
                 }
             }
 
-            var leftButtonEl = document.getElementById("cardButtonLeft");
-            var rightButtonEl = document.getElementById("cardButtonRight");
+            var leftButtonEl = document.querySelectorAll(".card-button-left");
+            var rightButtonEl = document.querySelectorAll(".card-button-right");
 
-            leftButtonEl.addEventListener("click", function (e) {
-                showNextCard(-1);
+            leftButtonEl.forEach(function (item) {
+                item.addEventListener("click", function (e) {
+                    showNextCard(-1);
+                });
             });
 
-            rightButtonEl.addEventListener("click", function (e) {
-                showNextCard(1);
+
+
+            rightButtonEl.forEach(function (item) {
+                item.addEventListener("click", function (e) {
+                    showNextCard(1);
+                });
             });
+
 
             showNextCard();
         }
         // Show all data
 
         window.pageHandlers['word-list'] = function (pageEl) {
+
+            checkingServerResponse();
+
             var itemListContainerEl = pageEl.querySelector('.js-item-list-container');
             var itemListEl = pageEl.querySelector('.js-item-list');
             var listItemTemplateEl = itemListContainerEl.querySelector('.js-list-item-template');
@@ -316,7 +351,7 @@ function start(config) {
                 e.stopPropagation();
                 window.wordOrder.length = (page * limit) + Number(desiredEl.getAttribute('position-in-list'));
                 window.wordOrder.isFromWordList = true;
-                console.log(window.wordOrder.length, 11);
+                //console.log(window.wordOrder.length, 11);
                 goToRoute('#cards');
             });
         }
@@ -376,26 +411,59 @@ function start(config) {
             processRoute(window.location.hash);
         }
         ////
+
+        function checkingServerResponse() {
+            getData(0, 1, function (response) {
+                //console.log(1222, response);
+                if (response.data.items.length === 0) {
+                    console.log('respone', false);
+                    var descriptionIssue = document.querySelector('.js-empty-data');
+                    descriptionIssue.classList.replace('hidden', 'active');
+
+                    goToRoute("#no-response");
+                } else if (response === null) {// !
+                    var descriptionIssue = document.querySelector('.js-authentication-time-out');
+                    descriptionIssue.classList.replace('hidden', 'active');
+
+                    goToRoute("#no-response");
+                }
+            });
+        }//checks server connection
+
+        checkingServerResponse();
+
     }
 }
-
-
 
 function httpGet(url, callBack, authToken = null) {
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true; // force to show browser's default auth dialog
     xhr.open('GET', url);
 
+
     xhr.onload = function () {
         if (xhr.status === 200) {
             var data = JSON.parse(xhr.responseText);
+
             callBack(data);
             console.log(1, data);
+        } else if (xhr.status === 401 || xhr.status === 403) {
+            console.error('Request failed.  Returned status of ' + xhr.status);
+            callBack(data);
+        } else if (xhr.status === 500) {
+            console.error('Request failed.  Returned status of ' + xhr.status);
+            alert('Request failed.  Returned status of ' + xhr.status);
         }
         else {
             console.error('Request failed.  Returned status of ' + xhr.status);
         }
+
     };
+
+    // if (xhr.status === 0) {
+    //     console.log('server did not respond');
+    // }
+
     if (authToken !== null) {
         xhr.setRequestHeader("Authorization", "Bearer " + authToken);
     }
