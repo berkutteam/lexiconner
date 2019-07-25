@@ -67,12 +67,14 @@ namespace Lexiconner.Api
             });
             services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {
                 return new GoogleTranslateApiClient(
-                    sp.GetRequiredService<IHostingEnvironment>(), 
                     config.Google.ProjectId,
                     config.Google.WebApiServiceAccount
                 );
             });
-            services.AddTransient<IContextualWebSearchApiClient, ContextualWebSearchApiClient>();
+            services.AddTransient<IContextualWebSearchApiClient, ContextualWebSearchApiClient>(sp =>
+            {
+                return new ContextualWebSearchApiClient(config.RapidApi);
+            });
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 

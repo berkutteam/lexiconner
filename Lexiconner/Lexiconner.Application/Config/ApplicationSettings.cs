@@ -44,4 +44,14 @@ namespace Lexiconner.Application.Config
             public string client_x509_cert_url { get; set; }
         }
     }
+
+    public class RapidApiSettings
+    {
+        public SpecificRapidApiSettings ContextualWebSearch { get; set; }
+
+        public class SpecificRapidApiSettings
+        {
+            public string ApplicationKey { get; set; }
+        }
+    }
 }

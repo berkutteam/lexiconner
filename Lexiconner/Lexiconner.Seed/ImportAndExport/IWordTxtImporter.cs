@@ -8,6 +8,7 @@ namespace Lexiconner.Seed.Seed.ImportAndExport
 {
     public interface IWordTxtImporter
     {
+        string SourceLanguageCode { get; }
         Task<IEnumerable<WordImportModel>> Import();
     }
 }

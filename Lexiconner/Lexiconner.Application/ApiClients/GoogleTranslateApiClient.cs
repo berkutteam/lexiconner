@@ -26,36 +26,33 @@ namespace Lexiconner.Application.ApiClients
     // 2. cache results
     // 3. handle limits
 
+    /// <summary>
+    /// The free tier is only available for Translation API v3.
+    /// </summary>
     public interface IGoogleTranslateApiClient
     {
         Task<GoogleTranslateResponseDto> Translate(List<string> contents, string sourceLanguageCode, string targetLanguageCode);
     }
-
-    /// <summary>
-    /// The free tier is only available for Translation API v3.
-    /// </summary>
+    
     public class GoogleTranslateApiClient : IGoogleTranslateApiClient
     {
         private const int FreeCharactersLimitV3 = 500_000;
         private const int CharactersPerProjectPer100SecsLimitV3 = 10_000_000;
 
-        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly string _projectId;
         private readonly GoogleCredentialSettings _googleCredentialSettings;
 
         private readonly HttpClient _httpClient;
 
         public GoogleTranslateApiClient(
-            IHostingEnvironment hostingEnvironment,
             string projectId,
             GoogleCredentialSettings googleCredentialSettings
         )
         {
-            _hostingEnvironment = hostingEnvironment;
             _projectId = projectId;
             _googleCredentialSettings = googleCredentialSettings;
 
-            _httpClient = new HttpClient();
+            _httpClient = new HttpClient(); // TODO use factory
         }
 
         public async Task<GoogleTranslateResponseDto> Translate(List<string> contents, string sourceLanguageCode, string targetLanguageCode)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lexiconner.Application.Config;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ namespace Lexiconner.Seed
     {
         public ImportSettings Import { get; set; }
         public MongoDbSettings MongoDb { get; set; }
+        public GoogleSettings Google { get; set; }
+        public RapidApiSettings RapidApi { get; set; }
     }
 
     public class ImportSettings

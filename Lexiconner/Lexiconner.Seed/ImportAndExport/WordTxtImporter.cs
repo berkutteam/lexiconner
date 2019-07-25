@@ -19,6 +19,8 @@ namespace Lexiconner.Seed.Seed.ImportAndExport
             _config = config.Value;
         }
 
+        public string SourceLanguageCode => "ru";
+
         public async Task<IEnumerable<WordImportModel>> Import()
         {
             var result = new List<WordImportModel>();

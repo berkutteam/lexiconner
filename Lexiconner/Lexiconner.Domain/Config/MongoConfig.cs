@@ -18,6 +18,9 @@ namespace Lexiconner.Domain.Config
         public const string IdentityPersistedGrant = "identityPersistedGrant";
 
         public const string StudyItems = "studyItems";
+        
+        public const string cacheGoogleTranslateApi = "cacheGoogleTranslateApi";
+        public const string cacheContextualWebSearchApi = "cacheContextualWebSearchApi";
 
         /// <summary>
         /// Defines list of allowed collections in database
@@ -36,6 +39,10 @@ namespace Lexiconner.Domain.Config
 
             // custom entities
             { typeof(StudyItemEntity).Name,   StudyItems },
+
+            // cache
+            { typeof(CacheGoogleTranslateApi).Name,   cacheGoogleTranslateApi },
+            { typeof(CacheContextualWebSearchApi).Name,   cacheContextualWebSearchApi },
         };
 
         public static string GetCollectionName<T>()

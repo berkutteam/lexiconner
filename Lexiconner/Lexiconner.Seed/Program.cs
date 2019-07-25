@@ -1,8 +1,11 @@
-﻿using Lexiconner.Application.Helpers;
+﻿using Lexiconner.Application.ApiClients;
+using Lexiconner.Application.Helpers;
+using Lexiconner.IdentityServer4.Config;
 using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Lexiconner.Seed.Seed;
 using Lexiconner.Seed.Seed.ImportAndExport;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -110,6 +113,19 @@ namespace Lexiconner.Seed
             });
 
             services.AddTransient<IWordTxtImporter, WordTxtImporter>();
+
+            services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {
+                return new GoogleTranslateApiClient(
+                    config.Google.ProjectId,
+                    config.Google.WebApiServiceAccount
+                );
+            });
+            services.AddTransient<IContextualWebSearchApiClient, ContextualWebSearchApiClient>(sp =>
+            {
+                return new ContextualWebSearchApiClient(config.RapidApi);
+            });
+
+            services.AddTransient<IIdentityServerConfig, IdentityServerConfig>();
 
             if (HostingEnvironmentHelper.IsDevelopmentLocalhost())
             {

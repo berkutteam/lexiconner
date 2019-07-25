@@ -15,6 +15,7 @@ namespace Lexiconner.Api
         public JwtBearerAuthSettings JwtBearerAuth { get; set; }
         public UrlsSettings Urls { get; set; }
         public GoogleSettings Google { get; set; }
+        public RapidApiSettings RapidApi { get; set; }
     }
 
     public class CorsSettings

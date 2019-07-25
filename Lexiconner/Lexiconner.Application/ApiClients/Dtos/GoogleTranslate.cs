@@ -44,6 +44,12 @@ namespace Lexiconner.Application.ApiClients.Dtos
 
     public class GoogleTranslateResponseDto
     {
+        public GoogleTranslateResponseDto()
+        {
+            Translations = new List<GoogleTranslateResponseItemDto>();
+            GlossaryTranslations = new List<GoogleTranslateResponseItemDto>();
+        }
+
         /// <summary>
         /// Text translation responses with no glossary applied. This field has the same length as contents.
         /// </summary>
