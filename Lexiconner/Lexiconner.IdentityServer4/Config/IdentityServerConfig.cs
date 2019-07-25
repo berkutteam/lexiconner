@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using AspNetCore.Identity.MongoDbCore.Models;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
@@ -10,7 +11,6 @@ using Lexiconner.Application.Extensions;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.IdentityServer4.Config;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity.MongoDB;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -204,6 +204,82 @@ namespace Lexiconner.IdentityServer4.Config
             };
         }
 
+        #region Contrib.Microsoft.AspNetCore.Identity.MongoDB by thrixton (uses Mongo ObjectId)
+
+        //public List<ApplicationUserEntity> GetInitialdentityUsers()
+        //{
+        //    return new List<ApplicationUserEntity>
+        //    {
+        //        new ApplicationUserEntity
+        //        {
+        //            //Id = ,
+        //            Name = "John Doe1",
+        //            UserName = "johndoe1",
+        //            LockoutEnabled = false,
+        //            EmailConfirmed = true,
+        //            Email = "johndoe1@test.com",
+        //            Roles = new List<string>
+        //            {
+        //                "RootAdmin",
+        //                "Admin",
+        //                "User",
+        //            },
+        //            Claims = new List<IdentityUserClaim>
+        //            {
+        //                new IdentityUserClaim(new Claim(JwtClaimTypes.Name, "John Doe1")),
+        //                new IdentityUserClaim(new Claim(JwtClaimTypes.Email, "johndoe1@gmail.com")),
+        //            },
+        //            IsImportInitialData = true
+        //        },
+        //        new ApplicationUserEntity
+        //        {
+        //            //Id = ,
+        //            Name = "Vadym Berkut",
+        //            UserName = "vadymberkut",
+        //            LockoutEnabled = false,
+        //            EmailConfirmed = true,
+        //            Email = "vadimberkut8@gmail.com",
+        //            Roles = new List<string>
+        //            {
+        //                "RootAdmin",
+        //                "Admin",
+        //                "User",
+        //            },
+        //            Claims = new List<IdentityUserClaim>
+        //            {
+        //                new IdentityUserClaim(new Claim(JwtClaimTypes.Name, "Vadym Berkut")),
+        //                new IdentityUserClaim(new Claim(JwtClaimTypes.Email, "vadimberkut8@gmail.com")),
+        //            },
+        //            IsImportInitialData = true
+        //        },
+        //        new ApplicationUserEntity
+        //        {
+        //            //Id = ,
+        //            Name = "Bogdan Berkut",
+        //            UserName = "bogdanberkut",
+        //            LockoutEnabled = false,
+        //            EmailConfirmed = true,
+        //            Email = "bogdanberkut9@gmail.com",
+        //            Roles = new List<string>
+        //            {
+        //                "RootAdmin",
+        //                "Admin",
+        //                "User",
+        //            },
+        //            Claims = new List<IdentityUserClaim>
+        //            {
+        //                new IdentityUserClaim(new Claim(JwtClaimTypes.Name, "Bogdan Berkut")),
+        //                new IdentityUserClaim(new Claim(JwtClaimTypes.Email, "bogdanberkut9@gmail.com")),
+        //            },
+        //            IsImportInitialData = true
+        //        },
+        //    };
+        //}
+
+        #endregion
+
+        #region AspNetCore.Identity.MongoDbCore by Alexandre Spieser (allows to set custom Ids)
+
         public List<ApplicationUserEntity> GetInitialdentityUsers()
         {
             return new List<ApplicationUserEntity>
@@ -222,10 +298,18 @@ namespace Lexiconner.IdentityServer4.Config
                         "Admin",
                         "User",
                     },
-                    Claims = new List<IdentityUserClaim>
+                    Claims = new List<MongoClaim>
                     {
-                        new IdentityUserClaim(new Claim(JwtClaimTypes.Name, "John Doe1")),
-                        new IdentityUserClaim(new Claim(JwtClaimTypes.Email, "johndoe1@gmail.com")),
+                        new MongoClaim() {
+                            Type = JwtClaimTypes.Name,
+                            Value = "John Doe1",
+                            Issuer = null,
+                        },
+                        new MongoClaim() {
+                            Type = JwtClaimTypes.Email,
+                            Value = "johndoe1@gmail.com",
+                            Issuer = null,
+                        },
                     },
                     IsImportInitialData = true
                 },
@@ -243,10 +327,18 @@ namespace Lexiconner.IdentityServer4.Config
                         "Admin",
                         "User",
                     },
-                    Claims = new List<IdentityUserClaim>
+                    Claims = new List<MongoClaim>
                     {
-                        new IdentityUserClaim(new Claim(JwtClaimTypes.Name, "Vadym Berkut")),
-                        new IdentityUserClaim(new Claim(JwtClaimTypes.Email, "vadimberkut8@gmail.com")),
+                        new MongoClaim() {
+                            Type = JwtClaimTypes.Name,
+                            Value = "Vadym Berkut",
+                            Issuer = null,
+                        },
+                        new MongoClaim() {
+                            Type = JwtClaimTypes.Email,
+                            Value = "vadimberkut8@gmail.com",
+                            Issuer = null,
+                        },
                     },
                     IsImportInitialData = true
                 },
@@ -264,14 +356,24 @@ namespace Lexiconner.IdentityServer4.Config
                         "Admin",
                         "User",
                     },
-                    Claims = new List<IdentityUserClaim>
+                    Claims = new List<MongoClaim>
                     {
-                        new IdentityUserClaim(new Claim(JwtClaimTypes.Name, "Bogdan Berkut")),
-                        new IdentityUserClaim(new Claim(JwtClaimTypes.Email, "bogdanberkut9@gmail.com")),
+                        new MongoClaim() {
+                            Type = JwtClaimTypes.Name,
+                            Value = "Bogdan Berkut",
+                            Issuer = null,
+                        },
+                        new MongoClaim() {
+                            Type = JwtClaimTypes.Email,
+                            Value = "bogdanberkut9@gmail.com",
+                            Issuer = null,
+                        },
                     },
                     IsImportInitialData = true
                 },
             };
         }
+
+        #endregion
     }
 }

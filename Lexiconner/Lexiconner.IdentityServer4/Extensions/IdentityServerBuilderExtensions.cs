@@ -1,17 +1,18 @@
 ﻿using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Lexiconner.Application.Extensions;
+using Lexiconner.Domain.Entitites;
 using Lexiconner.IdentityServer4.Config;
 using Lexiconner.IdentityServer4.Store;
 using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.MongoDB;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using MongoDbGenericRepository;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -65,30 +66,55 @@ namespace Lexiconner.IdentityServer4.Extensions
         /// - IRoleStore<T>
         /// ]]></remarks>
         public static IIdentityServerBuilder AddMongoDbForAspIdentity<TIdentity, TRole>(this IIdentityServerBuilder builder, ApplicationSettings config) 
-            where TIdentity : Microsoft.AspNetCore.Identity.MongoDB.IdentityUser 
-            where TRole     : Microsoft.AspNetCore.Identity.MongoDB.IdentityRole
+            //where TIdentity : Microsoft.AspNetCore.Identity.MongoDB.IdentityUser 
+            //where TRole     : Microsoft.AspNetCore.Identity.MongoDB.IdentityRole
+            where TIdentity : ApplicationUserEntity, new ()
+            where TRole : ApplicationRoleEntity, new()
         {
 
             //User Mongodb for Asp.net identity in order to get users stored
             var client = new MongoClient(config.MongoDb.ConnectionString);
             var database = client.GetDatabase(config.MongoDb.Database);
 
-            // Configure Asp Net Core Identity / Role to use MongoDB
-            builder.Services.AddSingleton<IUserStore<TIdentity>>(x =>
-            {
-                var usersCollection = database.GetCollection<TIdentity>(MongoConfig.GetCollectionName<TIdentity>());
-                IndexChecks.EnsureUniqueIndexOnNormalizedEmail(usersCollection);
-                IndexChecks.EnsureUniqueIndexOnNormalizedUserName(usersCollection);
-                return new UserStore<TIdentity>(usersCollection);
-            });
+            //// Configure Asp Net Core Identity / Role to use MongoDB
+            
+            // Contrib.Microsoft.AspNetCore.Identity.MongoDB by thrixton (uses Mongo ObjectId)
+            // https://github.com/thrixton/aspnetcore-identity-mongodb-netcore2plus
+            //builder.Services.AddSingleton<IUserStore<TIdentity>>(x =>
+            //{
+            //    var usersCollection = database.GetCollection<TIdentity>(MongoConfig.GetCollectionName<TIdentity>());
+            //    IndexChecks.EnsureUniqueIndexOnNormalizedEmail(usersCollection);
+            //    IndexChecks.EnsureUniqueIndexOnNormalizedUserName(usersCollection);
+            //    return new UserStore<TIdentity>(usersCollection);
+            //});
 
-            builder.Services.AddSingleton<IRoleStore<TRole>>(x =>
-            {
-                var rolesCollection = database.GetCollection<TRole>(MongoConfig.GetCollectionName<TRole>());
-                IndexChecks.EnsureUniqueIndexOnNormalizedRoleName(rolesCollection);
-                return new RoleStore<TRole>(rolesCollection);
-            });
-            builder.Services.AddIdentity<TIdentity, TRole>();
+            //builder.Services.AddSingleton<IRoleStore<TRole>>(x =>
+            //{
+            //    var rolesCollection = database.GetCollection<TRole>(MongoConfig.GetCollectionName<TRole>());
+            //    IndexChecks.EnsureUniqueIndexOnNormalizedRoleName(rolesCollection);
+            //    return new RoleStore<TRole>(rolesCollection);
+            //});
+
+            //builder.Services.AddIdentity<TIdentity, TRole>()
+            //    .AddDefaultTokenProviders();
+
+
+            // AspNetCore.Identity.MongoDbCore by Alexandre Spieser (allows to set custom Ids)
+            // https://github.com/alexandre-spieser/AspNetCore.Identity.MongoDbCore
+            IMongoDbContext mongoDbContext = new MongoDbContext(config.MongoDb.ConnectionString, config.MongoDb.Database);
+            //builder.Services.AddSingleton<IUserStore<TIdentity>>(x =>
+            //{
+            //    return new AspNetCore.Identity.MongoDbCore.MongoUserStore<TIdentity>(mongoDbContext);
+            //});
+
+            //builder.Services.AddSingleton<IRoleStore<TRole>>(x =>
+            //{
+            //    return new AspNetCore.Identity.MongoDbCore.MongoRoleStore<TRole>(mongoDbContext);
+            //});
+
+            builder.Services.AddIdentity<TIdentity, TRole>()
+                .AddMongoDbStores<ApplicationUserEntity, ApplicationRoleEntity, string>(mongoDbContext)
+                .AddDefaultTokenProviders();
 
             return builder;
         }

@@ -1,4 +1,5 @@
 ﻿using IdentityServer4.Models;
+using Lexiconner.Domain.Config;
 using Lexiconner.Domain.Entitites.Base;
 using Lexiconner.Persistence.Repositories.Base;
 using Microsoft.Extensions.Options;
