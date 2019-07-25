@@ -12,6 +12,7 @@ using IdentityServer4.Stores;
 using IdentityServer4.Validation;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.IdentityServer4;
+using Lexiconner.IdentityServer4.Config;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -160,7 +161,7 @@ namespace IdentityServer4.Quickstart.UI
         public async Task<IActionResult> LoginAs(
             LoginInputModel model, 
             [FromServices] IOptions<ApplicationSettings> config, 
-            [FromServices] IdentityServerConfig identityServerConfig, 
+            [FromServices] IIdentityServerConfig identityServerConfig, 
             [FromServices] IdentityServerTools identityServerTools,
             [FromServices] ITokenService tokenService,
             [FromServices] IUserClaimsPrincipalFactory<ApplicationUserEntity> principalFactory,

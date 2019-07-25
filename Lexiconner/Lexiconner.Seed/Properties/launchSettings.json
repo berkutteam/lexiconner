@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Lexiconner.Seed": {
+      "commandName": "Project",
+      "environmentVariables": {
+        // change this to seed different DB
+        "Environment": "DevelopmentLocalhost"
+      }
+    }
+  }
+}

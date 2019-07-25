@@ -1,8 +1,5 @@
-﻿using Lexiconner.Api.ImportAndExport;
-using Lexiconner.Api.Seed;
-using Lexiconner.Persistence.Repositories;
+﻿using Lexiconner.Persistence.Repositories;
 using Lexiconner.Persistence.Repositories.Base;
-using Lexiconner.Persistence.Repositories.Json;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -52,12 +49,6 @@ namespace Lexiconner.Api
                 return new MongoClient(config.MongoDb.ConnectionString);
             });
 
-            services.AddTransient<IWordTxtImporter, WordTxtImporter>();
-            services.AddTransient<ISeeder, MongoDbSeeder>(); // replace with other if needed
-            services.AddTransient<IStudyItemJsonRepository, StudyItemJsonRepository>(serviceProvider =>
-            {
-                return new StudyItemJsonRepository(Configuration.GetValue<string>("JsonStorePath"));
-            });
             services.AddTransient<IMongoRepository, MongoRepository>(sp =>
             {
                 var mongoClient = sp.GetService<MongoClient>();
@@ -194,10 +185,6 @@ namespace Lexiconner.Api
                            description.GroupName.ToUpperInvariant());
                    }
                });
-
-            // seed
-            ISeeder seeder = app.ApplicationServices.GetRequiredService<ISeeder>();
-            seeder.Seed().GetAwaiter().GetResult();
         }
 
         private Task AuthenticationFailed(AuthenticationFailedContext arg)

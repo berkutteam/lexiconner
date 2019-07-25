@@ -1,47 +1,57 @@
-﻿using Lexiconner.Api.ImportAndExport;
-using Lexiconner.Api.Models;
-using Lexiconner.Domain.Entitites;
-using Lexiconner.Persistence.Repositories;
+﻿using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories.Base;
-using Lexiconner.Persistence.Repositories.MongoDb;
-using Microsoft.Extensions.Configuration;
+using Lexiconner.Seed.Models;
+using Lexiconner.Seed.Seed.ImportAndExport;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace Lexiconner.Api.Seed
+namespace Lexiconner.Seed.Seed
 {
-    public class MongoDbSeeder : ISeeder
+    public class SeedServiceDevelopmentLocalhost : ISeedService
     {
-        private readonly IConfiguration _configuration;
+        private readonly ILogger<ISeedService> _logger;
         private readonly IWordTxtImporter _wordTxtImporter;
         private readonly IMongoRepository _mongoRepository;
         private readonly IIdentityRepository _identityRepository;
 
-        public MongoDbSeeder(
-            IConfiguration configuration, 
-            IWordTxtImporter wordTxtImporter, 
+        public SeedServiceDevelopmentLocalhost(
+            ILogger<ISeedService> logger,
+            IWordTxtImporter wordTxtImporter,
             IMongoRepository mongoRepository,
             IIdentityRepository identityRepository
         )
         {
-            _configuration = configuration;
+            _logger = logger;
             _wordTxtImporter = wordTxtImporter;
             _mongoRepository = mongoRepository;
             _identityRepository = identityRepository;
         }
 
-        public async Task Seed()
+        public Task RemoveDatabaseAsync()
         {
-            Console.WriteLine($"Seeding db...");
+            throw new NotImplementedException();
+        }
+
+        public async Task SeedAsync()
+        {
+            _logger.LogInformation("Start seeding data...");
+
+            _logger.LogInformation("Users...");
+            
+            _logger.LogInformation("Users Done.");
 
             // seed imported data for marked users
+            _logger.LogInformation("StudyItems...");
             var usersWithImport = await _identityRepository.GetManyAsync<ApplicationUserEntity>(x => x.IsImportInitialData);
             IEnumerable<WordImportModel> wordImports = null;
             Parallel.ForEach(usersWithImport, user =>
             {
-                if(!_mongoRepository.AnyAsync<StudyItemEntity>(x => x.UserId == user.Id).GetAwaiter().GetResult())
+                if (!_mongoRepository.AnyAsync<StudyItemEntity>(x => x.UserId == user.Id).GetAwaiter().GetResult())
                 {
                     wordImports = wordImports ?? _wordTxtImporter.Import().GetAwaiter().GetResult();
                     var entities = wordImports.Select(x => new StudyItemEntity
@@ -55,8 +65,9 @@ namespace Lexiconner.Api.Seed
                     _mongoRepository.AddAsync(entities).GetAwaiter().GetResult();
                 }
             });
+            _logger.LogInformation("StudyItems Done.");
 
-            Console.WriteLine($"Seed finished.");
+            _logger.LogInformation("Seed completed.");
         }
     }
 }

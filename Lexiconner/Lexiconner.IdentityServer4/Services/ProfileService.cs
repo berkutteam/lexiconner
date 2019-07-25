@@ -1,5 +1,10 @@
-﻿using IdentityServer4.Models;
+﻿using IdentityServer4.Extensions;
+using IdentityServer4.Models;
 using IdentityServer4.Services;
+using Lexiconner.Domain.Entitites;
+using Lexiconner.Persistence.Repositories.Base;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +15,39 @@ namespace Lexiconner.IdentityServer4.Services
 {
     public class ProfileService : IProfileService
     {
-        public Task GetProfileDataAsync(ProfileDataRequestContext context)
+        protected ApplicationSettings _config;
+        protected UserManager<ApplicationUserEntity> _userManager;
+        private readonly IUserClaimsPrincipalFactory<ApplicationUserEntity> _claimsFactory;
+        protected IMongoRepository _dataRepository;
+
+        public ProfileService(
+            IOptions<ApplicationSettings> config,
+            UserManager<ApplicationUserEntity> userManager,
+            IUserClaimsPrincipalFactory<ApplicationUserEntity> claimsFactory,
+            IMongoRepository dataRepository
+        )
         {
-            //Extend here for custom data  and claims like email from user database
-            // context.IssuedClaims.Add(new Claim(ClaimValueTypes.Email, "foo@mail.foo"));
-            return Task.CompletedTask;
+            _config = config.Value;
+            _userManager = userManager;
+            _claimsFactory = claimsFactory;
+            _dataRepository = dataRepository;
         }
 
-        public Task IsActiveAsync(IsActiveContext context)
+        public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
-            context.IsActive = true;
-            return Task.FromResult(true);
+            //Extend here for custom data  and claims like email from user database
+            var sub = context.Subject.GetSubjectId();
+            var user = await _userManager.FindByIdAsync(sub);
+            var principal = await _claimsFactory.CreateAsync(user);
+
+            // ...
+        }
+
+        public async Task IsActiveAsync(IsActiveContext context)
+        {
+            var sub = context.Subject.GetSubjectId();
+            var user = await _userManager.FindByIdAsync(sub);
+            context.IsActive = user != null;
         }
     }
 }

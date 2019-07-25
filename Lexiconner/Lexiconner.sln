@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.489
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.Api", "Lexiconner.Api\Lexiconner.Api.csproj", "{1F8F68C2-EDFA-4D37-A36B-274A7F71FFD6}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.IdentityServer4", "Lexiconner.IdentityServer4\Lexiconner.IdentityServer4.csproj", "{65E77D3C-A6D8-47EC-B687-3A7B5D9D36BB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.WebSpaTest", "Lexiconner.WebSpaTest\Lexiconner.WebSpaTest.csproj", "{C60BB5F6-DCDE-43BA-B40E-63A97890E752}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexiconner.Seed", "Lexiconner.Seed\Lexiconner.Seed.csproj", "{45D246DF-59EB-498F-B568-EA5740BF0032}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{C60BB5F6-DCDE-43BA-B40E-63A97890E752}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C60BB5F6-DCDE-43BA-B40E-63A97890E752}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C60BB5F6-DCDE-43BA-B40E-63A97890E752}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45D246DF-59EB-498F-B568-EA5740BF0032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45D246DF-59EB-498F-B568-EA5740BF0032}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45D246DF-59EB-498F-B568-EA5740BF0032}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45D246DF-59EB-498F-B568-EA5740BF0032}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

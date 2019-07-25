@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Lexiconner.Api.Models;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
-using Lexiconner.Persistence.Repositories.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

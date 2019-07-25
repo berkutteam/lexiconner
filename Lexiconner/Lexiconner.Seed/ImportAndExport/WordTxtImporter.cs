@@ -3,25 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
-using Lexiconner.Api.Models;
 using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
+using Lexiconner.Seed.Models;
+using Microsoft.Extensions.Options;
 
-namespace Lexiconner.Api.ImportAndExport
+namespace Lexiconner.Seed.Seed.ImportAndExport
 {
     public class WordTxtImporter : IWordTxtImporter
     {
-        private readonly IConfiguration _configuration;
+        private readonly ApplicationSettings _config;
 
-        public WordTxtImporter(IConfiguration configuration)
+        public WordTxtImporter(IOptions<ApplicationSettings> config)
         {
-            _configuration = configuration;
+            _config = config.Value;
         }
 
         public async Task<IEnumerable<WordImportModel>> Import()
         {
             var result = new List<WordImportModel>();
-            string filePath = _configuration.GetValue<string>("Import:FilePath");
+            string filePath = _config.Import.FilePath;
 
             // word - desc[ - example]
             var regex = new Regex(@"(?<word>[^=]+)\s+===\s+(?<description>[^=]+)(?:\s{0,}(:?===)?\s{0,}(?<example>[^=]+)?)", RegexOptions.IgnoreCase);

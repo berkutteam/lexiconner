@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appsettings.DevelopmentHeroku.json" />
+    <None Remove="appsettings.DevelopmentLocalhost.json" />
+    <None Remove="appsettings.json" />
+    <None Remove="appsettings.ProductionHeroku.json" />
+    <None Remove="ImportData\words.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="ImportData\words.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lexiconner.Application\Lexiconner.Application.csproj" />
+    <ProjectReference Include="..\Lexiconner.Domain\Lexiconner.Domain.csproj" />
+    <ProjectReference Include="..\Lexiconner.IdentityServer4\Lexiconner.IdentityServer4.csproj" />
+    <ProjectReference Include="..\Lexiconner.Persistence\Lexiconner.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.DevelopmentLocalhost.json">
+      <DependentUpon>appsettings.json</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="appsettings.DevelopmentHeroku.json">
+      <DependentUpon>appsettings.json</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="appsettings.ProductionHeroku.json">
+      <DependentUpon>appsettings.json</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update=".env__DevelopmentHeroku">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update=".env__DevelopmentLocalhost">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update=".env__ProductionHeroku">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

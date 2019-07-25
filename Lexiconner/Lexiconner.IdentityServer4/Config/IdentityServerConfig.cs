@@ -8,6 +8,7 @@ using IdentityServer4.Models;
 using IdentityServer4.Test;
 using Lexiconner.Application.Extensions;
 using Lexiconner.Domain.Entitites;
+using Lexiconner.IdentityServer4.Config;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.MongoDB;
 using Microsoft.Extensions.Options;
@@ -15,9 +16,9 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace Lexiconner.IdentityServer4
+namespace Lexiconner.IdentityServer4.Config
 {
-    public class IdentityServerConfig
+    public class IdentityServerConfig : IIdentityServerConfig
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ApplicationSettings _config;
@@ -179,47 +180,6 @@ namespace Lexiconner.IdentityServer4
             return clients;
         }
 
-        /// <summary>
-        /// For example only
-        /// </summary>
-        /// <returns></returns>
-        public List<TestUser> GetSampleIdentityServerUsers()
-        {
-            return new List<TestUser>
-            {
-                new TestUser
-                {
-                    SubjectId = "818728",
-                    Username = "alice",
-                    Password = "Password_1",
-
-                    Claims = new List<Claim>
-                    {
-                        new Claim(JwtClaimTypes.Name, "Alice Smith"),
-                        new Claim(JwtClaimTypes.GivenName, "Alice"),
-                        new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                        new Claim(JwtClaimTypes.Email, "alice@test.com"),
-                        new Claim(JwtClaimTypes.WebSite, "http://alice.test.com")
-                    }
-                },
-                new TestUser
-                {
-                    SubjectId = "918749",
-                    Username = "bob",
-                    Password = "Password_1",
-
-                    Claims = new List<Claim>
-                    {
-                        new Claim(JwtClaimTypes.Name, "Bob Smith"),
-                        new Claim(JwtClaimTypes.GivenName, "Bob"),
-                        new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                        new Claim(JwtClaimTypes.Email, "bob@test.com"),
-                        new Claim(JwtClaimTypes.WebSite, "https://bob.test.com")
-                    }
-                }
-            };
-        }
-
         public List<ApplicationRoleEntity> GetInitialIdentityRoles()
         {
             return new List<ApplicationRoleEntity>
@@ -245,6 +205,7 @@ namespace Lexiconner.IdentityServer4
             {
                 new ApplicationUserEntity
                 {
+                    //Id = ,
                     Name = "John Doe1",
                     UserName = "johndoe1",
                     LockoutEnabled = false,
@@ -265,6 +226,7 @@ namespace Lexiconner.IdentityServer4
                 },
                 new ApplicationUserEntity
                 {
+                    //Id = ,
                     Name = "Vadym Berkut",
                     UserName = "vadymberkut",
                     LockoutEnabled = false,
@@ -285,6 +247,7 @@ namespace Lexiconner.IdentityServer4
                 },
                 new ApplicationUserEntity
                 {
+                    //Id = ,
                     Name = "Bogdan Berkut",
                     UserName = "bogdanberkut",
                     LockoutEnabled = false,
@@ -305,7 +268,5 @@ namespace Lexiconner.IdentityServer4
                 },
             };
         }
-
-        
     }
 }

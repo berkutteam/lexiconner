@@ -90,9 +90,8 @@ namespace Lexiconner.IdentityServer4
             .AddClients()
             .AddIdentityApiResources()
             .AddPersistedGrants()
-            .AddAspNetIdentity<ApplicationUserEntity>();
-            //.AddTestUsers(Config.GetUsers())
-            //.AddProfileService<ProfileService>();
+            .AddAspNetIdentity<ApplicationUserEntity>()
+            .AddProfileService<ProfileService>();
 
             services.AddAuthentication();
             //.AddGoogle(options =>

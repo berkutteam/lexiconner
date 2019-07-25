@@ -5,6 +5,7 @@ using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Lexiconner.Application.Extensions;
 using Lexiconner.Domain.Entitites;
+using Lexiconner.IdentityServer4.Config;
 using Lexiconner.IdentityServer4.Exceptions;
 using Lexiconner.Persistence.Repositories.Base;
 using Microsoft.AspNetCore.Builder;
@@ -36,7 +37,7 @@ namespace Lexiconner.IdentityServer4.Extensions
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var hostingEnvironment = app.ApplicationServices.GetService<IHostingEnvironment>();
-                var identityServerConfig = app.ApplicationServices.GetService<IdentityServerConfig>();
+                var identityServerConfig = app.ApplicationServices.GetService<IIdentityServerConfig>();
                 var repository = app.ApplicationServices.GetService<IMongoRepository>();
                 var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUserEntity>>();
                 var roleManager = scope.ServiceProvider.GetService<RoleManager<ApplicationRoleEntity>>();
@@ -141,53 +142,7 @@ namespace Lexiconner.IdentityServer4.Extensions
             }
         }
 
-        /// <summary>
-        /// Populate MongoDB with a List of Dummy users to enable tests - e.g. Alice, Bob
-        ///   see Config.GetSampleUsers() for details.
-        /// </summary>
-        /// <param name="userManager"></param>
-        private static void AddSampleUsers(IdentityServerConfig identityServerConfig, UserManager<ApplicationUserEntity> userManager)
-        {
-            var dummyUsers = identityServerConfig.GetSampleIdentityServerUsers();
-
-            foreach (var usrDummy in dummyUsers)
-            {
-                var userDummyEmail = usrDummy.Claims.FirstOrDefault(c => c.Type == JwtClaimTypes.Email);
-
-                if (userDummyEmail == null)
-                {
-                    throw new Exception("Could not locate user email from claims!");
-                }
-
-                var existing = userManager.FindByEmailAsync(userDummyEmail.Value).GetAwaiter().GetResult();
-                if(existing != null)
-                {
-                    userManager.DeleteAsync(existing).GetAwaiter().GetResult();
-                }
-
-                var user = new ApplicationUserEntity()
-                {
-                    UserName = usrDummy.Username,
-                    LockoutEnabled = false,
-                    EmailConfirmed = true,
-                    Email = userDummyEmail.Value,
-                    NormalizedEmail = userDummyEmail.Value
-                };
-
-                foreach (var claim in usrDummy.Claims)
-                {
-                    user.AddClaim(claim);
-                }
-                var result = userManager.CreateAsync(user, usrDummy.Password);
-                if (!result.Result.Succeeded)
-                {
-                    var errorList = result.Result.Errors.ToList();
-                    throw new Exception(string.Join("; ", errorList));
-                }
-            }
-        }
-
-        private static void AddInitialRoles(IdentityServerConfig identityServerConfig, RoleManager<ApplicationRoleEntity> roleManager)
+        private static void AddInitialRoles(IIdentityServerConfig identityServerConfig, RoleManager<ApplicationRoleEntity> roleManager)
         {
             var roles = identityServerConfig.GetInitialIdentityRoles();
 
@@ -208,7 +163,7 @@ namespace Lexiconner.IdentityServer4.Extensions
             }
         }
 
-        private static void AddInitialUsers(IdentityServerConfig identityServerConfig, UserManager<ApplicationUserEntity> userManager)
+        private static void AddInitialUsers(IIdentityServerConfig identityServerConfig, UserManager<ApplicationUserEntity> userManager)
         {
             var users = identityServerConfig.GetInitialdentityUsers();
 

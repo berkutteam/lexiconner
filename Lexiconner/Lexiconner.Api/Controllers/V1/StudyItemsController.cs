@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Lexiconner.Api.Models;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
-using Lexiconner.Persistence.Repositories.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,46 +17,38 @@ namespace Lexiconner.Api.Controllers.V1
     [Route("api/v{version:apiVersion}/[controller]")]
     public class StudyItemsController : ApiControllerBase
     {
-        private readonly IStudyItemJsonRepository _studyItemJsonRepository;
-
-        public StudyItemsController(IStudyItemJsonRepository studyItemJsonRepository)
+        public StudyItemsController()
         {
-            _studyItemJsonRepository = studyItemJsonRepository;
         }
 
         [HttpGet]
         public async Task<BaseApiResponseModel<IEnumerable<StudyItemEntity>>> GetAll()
         {
-            var result = await _studyItemJsonRepository.GetAllAsync<StudyItemEntity>();
-            return BaseJsonResponse(result);
+            throw new InvalidOperationException("Derecated! Use v2");
         }
 
         [HttpGet("{id}")]
         public async Task<BaseApiResponseModel<StudyItemEntity>> Get(string id)
         {
-            var result = await _studyItemJsonRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id);
-            return BaseJsonResponse(result);
+            throw new InvalidOperationException("Derecated! Use v2");
         }
 
         [HttpPost]
         public async Task<BaseApiResponseModel<StudyItemEntity>> Post([FromBody] StudyItemEntity data)
         {
-            await _studyItemJsonRepository.AddAsync(data);
-            return BaseJsonResponse(data);
+            throw new InvalidOperationException("Derecated! Use v2");
         }
 
         [HttpPut("{id}")]
         public async Task<BaseApiResponseModel<StudyItemEntity>> Put(string id, [FromBody] StudyItemEntity data)
         {
-            await _studyItemJsonRepository.UpdateAsync(data);
-            return BaseJsonResponse(data);
+            throw new InvalidOperationException("Derecated! Use v2");
         }
 
         [HttpDelete("{id}")]
         public async Task Delete(string id)
         {
-            var existing = await _studyItemJsonRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id);
-            await _studyItemJsonRepository.DeleteAsync<StudyItemEntity>(x => x.Id == existing.Id);
+            throw new InvalidOperationException("Derecated! Use v2");
         }
     }
 }

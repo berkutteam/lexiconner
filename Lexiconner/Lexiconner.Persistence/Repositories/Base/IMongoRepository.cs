@@ -13,10 +13,16 @@ namespace Lexiconner.Persistence.Repositories.Base
     public interface IMongoRepository : IRepositoryBase
     {
         /// <summary>
-        /// Returns Mngo database
+        /// Returns Mongo database
         /// </summary>
         /// <returns></returns>
         IMongoDatabase GetDatabase();
+
+        /// <summary>
+        /// Drops database
+        /// </summary>
+        /// <returns></returns>
+        Task DropDatabaseAsync();
 
         /// <summary>
         /// Checks that collection exists

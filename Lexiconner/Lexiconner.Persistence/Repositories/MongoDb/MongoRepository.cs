@@ -20,6 +20,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
     /// </summary>
     public class MongoRepository : IMongoRepository
     {
+        protected readonly string _databseName;
         protected readonly IMongoClient _client;
         protected readonly IMongoDatabase _database;
 
@@ -27,6 +28,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
 
         public MongoRepository(MongoClient client, string database)
         {
+            _databseName = database;
             _client = client;
             _database = client.GetDatabase(database); // db will be created if not exists
         }
@@ -34,6 +36,11 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
         public IMongoDatabase GetDatabase()
         {
             return _database;
+        }
+
+        public Task DropDatabaseAsync()
+        {
+            return _client.DropDatabaseAsync(_databseName);
         }
 
         public async Task<bool> CollectionExistsAsync<T>() where T : class, new()

@@ -1,6 +1,7 @@
 ﻿using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Lexiconner.Application.Extensions;
+using Lexiconner.IdentityServer4.Config;
 using Lexiconner.IdentityServer4.Store;
 using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Persistence.Repositories.MongoDb;
@@ -30,7 +31,7 @@ namespace Lexiconner.IdentityServer4.Extensions
         /// <returns></returns>
         public static IIdentityServerBuilder AddConfig(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddSingleton<IdentityServerConfig>();
+            builder.Services.AddSingleton<IIdentityServerConfig, IdentityServerConfig>();
             return builder;
         }
 
