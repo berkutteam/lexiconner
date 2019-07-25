@@ -1,4 +1,5 @@
 ﻿using Lexiconner.Domain.Entitites;
+using Lexiconner.IdentityServer4.Config;
 using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Seed.Models;
 using Lexiconner.Seed.Seed.ImportAndExport;
@@ -42,12 +43,14 @@ namespace Lexiconner.Seed.Seed
             _logger.LogInformation("Start seeding data...");
 
             _logger.LogInformation("Users...");
-            // TODO
+            IIdentityServerConfig identityServerConfig = new IdentityServerConfig(null); // we don't need arguments - pass nulls
+          
             _logger.LogInformation("Users Done.");
 
             // seed imported data for marked users
             _logger.LogInformation("StudyItems...");
-            var usersWithImport = await _identityRepository.GetManyAsync<ApplicationUserEntity>(x => x.IsImportInitialData);
+            var usersWithImport = identityServerConfig.GetInitialdentityUsers().Where(x => x.IsImportInitialData);
+            // var usersWithImport = await _identityRepository.GetManyAsync<ApplicationUserEntity>(x => x.IsImportInitialData);
             IEnumerable<WordImportModel> wordImports = null;
             Parallel.ForEach(usersWithImport, user =>
             {
@@ -63,6 +66,7 @@ namespace Lexiconner.Seed.Seed
                         Tags = x.Tags,
                     });
                     _mongoRepository.AddAsync(entities).GetAwaiter().GetResult();
+                    _logger.LogInformation($"StudyItems was added for user #{user.Email}.");
                 }
             });
             _logger.LogInformation("StudyItems Done.");

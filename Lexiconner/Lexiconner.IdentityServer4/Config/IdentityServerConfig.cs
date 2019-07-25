@@ -8,6 +8,7 @@ using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
 using Lexiconner.Application.Extensions;
+using Lexiconner.Application.Helpers;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.IdentityServer4.Config;
 using Microsoft.AspNetCore.Hosting;
@@ -20,13 +21,13 @@ namespace Lexiconner.IdentityServer4.Config
 {
     public class IdentityServerConfig : IIdentityServerConfig
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ApplicationSettings _config;
 
-        public IdentityServerConfig(IHostingEnvironment hostingEnvironment, IOptions<ApplicationSettings> config)
+        public IdentityServerConfig(
+            IOptions<ApplicationSettings> config
+        )
         {
             _config = config.Value;
-            _hostingEnvironment = hostingEnvironment;
         }
 
         public IEnumerable<IdentityResource> GetIdentityResources()
@@ -134,7 +135,7 @@ namespace Lexiconner.IdentityServer4.Config
                 },
             };
 
-            if(_hostingEnvironment.IsDevelopmentAny())
+            if(HostingEnvironmentHelper.IsDevelopmentAny())
             {
                 // SPA client using code flow
                 clients.Add(new Client
@@ -286,7 +287,7 @@ namespace Lexiconner.IdentityServer4.Config
             {
                 new ApplicationUserEntity
                 {
-                    //Id = ,
+                    Id = "01DGMH8EQAZS9M4VS6X5FB2HDA",
                     Name = "John Doe1",
                     UserName = "johndoe1",
                     LockoutEnabled = false,
@@ -315,7 +316,7 @@ namespace Lexiconner.IdentityServer4.Config
                 },
                 new ApplicationUserEntity
                 {
-                    //Id = ,
+                    Id = "01DGMH8EQC7V8N3R6RHQYY2VH7",
                     Name = "Vadym Berkut",
                     UserName = "vadymberkut",
                     LockoutEnabled = false,
@@ -344,7 +345,7 @@ namespace Lexiconner.IdentityServer4.Config
                 },
                 new ApplicationUserEntity
                 {
-                    //Id = ,
+                    Id = "01DGMH8EQC2B6F26KAPF9PRW59",
                     Name = "Bogdan Berkut",
                     UserName = "bogdanberkut",
                     LockoutEnabled = false,
