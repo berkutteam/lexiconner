@@ -103,7 +103,6 @@ namespace Lexiconner.Application.ApiClients
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var responseDto = JsonConvert.DeserializeObject<ImageSearchResponseDto>(responseContent);
-            responseDto.RapidApiInfo = rapidApiInfo;
 
             return responseDto;
         }

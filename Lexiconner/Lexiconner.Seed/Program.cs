@@ -1,6 +1,7 @@
 ﻿using Lexiconner.Application.ApiClients;
 using Lexiconner.Application.Helpers;
 using Lexiconner.IdentityServer4.Config;
+using Lexiconner.Persistence.Cache;
 using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Lexiconner.Seed.Seed;
@@ -111,6 +112,8 @@ namespace Lexiconner.Seed
                 var mongoClient = sp.GetService<MongoClient>();
                 return new IdentityRepository(mongoClient, config.MongoDb.DatabaseIdentity);
             });
+
+            services.AddTransient<IDataCache, DataCacheDataRepository>();
 
             services.AddTransient<IWordTxtImporter, WordTxtImporter>();
 

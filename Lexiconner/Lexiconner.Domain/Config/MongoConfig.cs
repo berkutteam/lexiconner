@@ -1,5 +1,6 @@
 ﻿using IdentityServer4.Models;
 using Lexiconner.Domain.Entitites;
+using Lexiconner.Domain.Entitites.Cache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +20,8 @@ namespace Lexiconner.Domain.Config
 
         public const string StudyItems = "studyItems";
         
-        public const string cacheGoogleTranslateApi = "cacheGoogleTranslateApi";
-        public const string cacheContextualWebSearchApi = "cacheContextualWebSearchApi";
+        public const string CacheGoogleTranslateApi = "cacheGoogleTranslateApi";
+        public const string CacheContextualWebSearchImageSearchApi = "cacheContextualWebSearchImageSearchApi";
 
         /// <summary>
         /// Defines list of allowed collections in database
@@ -41,8 +42,8 @@ namespace Lexiconner.Domain.Config
             { typeof(StudyItemEntity).Name,   StudyItems },
 
             // cache
-            { typeof(CacheGoogleTranslateApi).Name,   cacheGoogleTranslateApi },
-            { typeof(CacheContextualWebSearchApi).Name,   cacheContextualWebSearchApi },
+            { typeof(GoogleTranslateDataCacheEntity).Name,   CacheGoogleTranslateApi },
+            { typeof(ContextualWebSearchImageSearchDataCacheEntity).Name,   CacheContextualWebSearchImageSearchApi },
         };
 
         public static string GetCollectionName<T>()

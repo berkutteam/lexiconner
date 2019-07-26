@@ -44,7 +44,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             return _client.DropDatabaseAsync(_databseName);
         }
 
-        public async Task<bool> CollectionExistsAsync<T>() where T : class, new()
+        public async Task<bool> CollectionExistsAsync<T>() where T : class
         {
             var collection = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>());
             var filter = new BsonDocument();
@@ -52,14 +52,14 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             return totalCount != 0;
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync<T>() where T : class, new()
+        public async Task<IEnumerable<T>> GetAllAsync<T>() where T : class
         {
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).Find(x => true);
             List<T> result = await query.ToListAsync();
             return result;
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit, string search = "") where T : class, new()
+        public async Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit, string search = "") where T : class
         {
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).Find(x => true);
             var result = await query.Skip(offset)
@@ -68,21 +68,21 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             return result;
         }
 
-        public async Task<T> GetOneAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new()
+        public async Task<T> GetOneAsync<T>(Expression<Func<T, bool>> predicate) where T : class
         {
             var cursor = await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).FindAsync(predicate);
             var result = await cursor.FirstOrDefaultAsync();
             return result;
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new()
+        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class
         {
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).Find(predicate);
             List<T> result = await query.ToListAsync();
             return result;
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit, string search = "") where T : class, new()
+        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit, string search = "") where T : class
         {
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).Find(predicate);
             var result = await query.Skip(offset)
@@ -91,18 +91,18 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             return result;
         }
 
-        public async Task AddAsync<T>(T entity) where T : class, new()
+        public async Task AddAsync<T>(T entity) where T : class
         {
             await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).InsertOneAsync(entity);
         }
 
-        public async Task AddAsync<T>(IEnumerable<T> entities) where T : class, new()
+        public async Task AddAsync<T>(IEnumerable<T> entities) where T : class
         {
             await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).InsertManyAsync(entities);
         }
 
         // TODO - check works properly
-        public async Task UpdateAsync<T>(T entity) where T : BaseEntity, new()
+        public async Task UpdateAsync<T>(T entity) where T : BaseEntity
         {
             var definition = new ObjectUpdateDefinition<T>(entity);
             var result = await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).UpdateOneAsync(x => x.Id == entity.Id, definition);
@@ -113,7 +113,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
         }
 
         // TODO - check works properly
-        public async Task UpdateAsync<T>(IEnumerable<T> entities) where T : BaseEntity, new()
+        public async Task UpdateAsync<T>(IEnumerable<T> entities) where T : BaseEntity
         {
             var ids = entities.Select(x => x.Id).ToList();
             var updates = new List<WriteModel<T>>();
@@ -130,31 +130,49 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             }
         }
 
-        public async Task DeleteAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new()
+        public async Task DeleteAsync<T>(Expression<Func<T, bool>> predicate) where T : class
         {
             await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).DeleteManyAsync(predicate);
         }
 
-        public async Task DeleteAllAsync<T>() where T : class, new()
+        public async Task DeleteAllAsync<T>() where T : class
         {
             await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).DeleteManyAsync(x => true);
         }
 
-        public async Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new()
+        public async Task DeleteNDcoumentsAsync<T>(
+            Expression<Func<T, bool>> predicate, 
+            Expression<Func<T, object>> sortFieldSelector, 
+            int deleteCount
+        ) where T : class, IIdentifiableEntity
+        {
+            var collection = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>());
+
+            var query = collection.Find(predicate);
+            var result = await query.SortByDescending(sortFieldSelector)
+                .Limit(deleteCount)
+                .Project(x => new { Id = x.Id })
+                .ToListAsync();
+            IEnumerable<string> ids = result.Select(x => x.ToString()).ToList();
+
+            await collection.DeleteManyAsync(x => ids.Contains(x.Id));
+        }
+
+        public async Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> predicate) where T : class
         {
             var collection = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>());
             var cursor = await collection.FindAsync(predicate);
             return await cursor.AnyAsync();
         }
 
-        public async Task<bool> AnyAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new()
+        public async Task<bool> AnyAsync<T>(Expression<Func<T, bool>> predicate) where T : class
         {
             var collection = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>());
             var cursor = await collection.FindAsync(predicate);
             return await cursor.AnyAsync();
         }
 
-        public async Task<long> CountAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new()
+        public async Task<long> CountAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class
         {
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>()).Find(predicate);
             return await query.CountDocumentsAsync();

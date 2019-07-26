@@ -29,6 +29,6 @@ namespace Lexiconner.Persistence.Repositories.Base
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        Task<bool> CollectionExistsAsync<T>() where T : class, new();
+        Task<bool> CollectionExistsAsync<T>() where T : class;
     }
 }

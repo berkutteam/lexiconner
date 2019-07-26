@@ -73,7 +73,11 @@ namespace Lexiconner.Application.ApiClients
             _httpClient = new HttpClient(); // TODO use factory
         }
 
-        public async Task<GoogleTranslateResponseDto> Translate(List<string> contents, string sourceLanguageCode, string targetLanguageCode)
+        public async Task<GoogleTranslateResponseDto> Translate(
+            List<string> contents, 
+            string sourceLanguageCode, 
+            string targetLanguageCode
+        )
         {
             string accessToken = await GetAccessToken();
 
