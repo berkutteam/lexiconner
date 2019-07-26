@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Lexiconner.Domain.Config;
 using MongoDB.Driver;
 
 namespace Lexiconner.Persistence.Repositories.Base
@@ -30,5 +31,8 @@ namespace Lexiconner.Persistence.Repositories.Base
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         Task<bool> CollectionExistsAsync<T>() where T : class;
+
+        Task InitializeCollection<T>();
+       // Task InitializeCollections(List<MongoCollectionConfig> mongoCollectionConfigs);
     }
 }

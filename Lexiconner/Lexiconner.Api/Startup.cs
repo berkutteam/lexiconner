@@ -25,6 +25,7 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Logging;
+using Lexiconner.Domain.Enums;
 
 namespace Lexiconner.Api
 {
@@ -59,12 +60,12 @@ namespace Lexiconner.Api
             services.AddTransient<IMongoRepository, MongoRepository>(sp =>
             {
                 var mongoClient = sp.GetService<MongoClient>();
-                return new MongoRepository(mongoClient, config.MongoDb.Database);
+                return new MongoRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
             });
             services.AddTransient<IIdentityRepository, IdentityRepository>(sp =>
             {
                 var mongoClient = sp.GetService<MongoClient>();
-                return new IdentityRepository(mongoClient, config.MongoDb.DatabaseIdentity);
+                return new IdentityRepository(mongoClient, config.MongoDb.DatabaseIdentity, ApplicationDb.Identity);
             });
             services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {
                 return new GoogleTranslateApiClient(

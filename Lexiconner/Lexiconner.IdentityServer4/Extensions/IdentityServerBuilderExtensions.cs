@@ -2,6 +2,7 @@
 using IdentityServer4.Stores;
 using Lexiconner.Application.Extensions;
 using Lexiconner.Domain.Entitites;
+using Lexiconner.Domain.Enums;
 using Lexiconner.IdentityServer4.Config;
 using Lexiconner.IdentityServer4.Store;
 using Lexiconner.Persistence.Repositories.Base;
@@ -50,7 +51,7 @@ namespace Lexiconner.IdentityServer4.Extensions
                 {
                     var config = sp.GetService<IOptions<ApplicationSettings>>().Value;
                     var mongoClient = sp.GetService<MongoClient>();
-                    return new MongoRepository(mongoClient, config.MongoDb.Database);
+                    return new MongoRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Identity);
                 });
             }
 
