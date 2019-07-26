@@ -67,10 +67,11 @@ namespace Lexiconner.Seed.Seed
                 if (true || !_mongoRepository.AnyAsync<StudyItemEntity>(x => x.UserId == user.Id).GetAwaiter().GetResult())
                 {
                     studyItems = studyItems ?? GetStudyItems().GetAwaiter().GetResult();
-                    foreach (var item in studyItems)
+                    studyItems = studyItems.Select(x =>
                     {
-                        item.UserId = user.Id;
-                    }
+                        x.UserId = user.Id;
+                        return x;
+                    });
                     _mongoRepository.AddAsync(studyItems).GetAwaiter().GetResult();
                     _logger.LogInformation($"StudyItems was added for user #{user.Email}.");
                 }
@@ -92,6 +93,9 @@ namespace Lexiconner.Seed.Seed
                 ExampleText = x.ExampleText,
                 Tags = x.Tags,
             });
+
+            // TODO
+            return entities;
 
             _logger.LogInformation("Making translations and adding images to StudyItems...");
 

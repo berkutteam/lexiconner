@@ -36,8 +36,17 @@ namespace Lexiconner.Application.ApiClients
     
     public class GoogleTranslateApiClient : IGoogleTranslateApiClient
     {
-        private const int FreeCharactersLimitV3 = 500_000;
-        private const int CharactersPerProjectPer100SecsLimitV3 = 10_000_000;
+        // https://cloud.google.com/translate/quotas
+        private const int FreeCharactersPerMonthLimitV3 = 500_000;
+
+        private const int CharactersPerProjectPer100SecsDefaultLimitV3 = 1_000_000;
+        private const int CharactersPerProjectPer100SecsMaximumLimitV3 = 10_000_000;
+
+        //private const int CharactersPerProjectPerUserPer100SecsDefaultLimitV3 = 100_000; // OLD
+        //private const int CharactersPerProjectPerUserPer100SecsMaximumLimitV3 = 10_000_000; // OLD
+
+        private const int CharactersPerProjectPerUserPer100SecsDefaultLimitV3 = 1_000_000; // after 2019-07-29
+        private const int CharactersPerProjectPerUserPer100SecsMaximumLimitV3 = 10_000_000; // after 2019-07-29
 
         private readonly string _projectId;
         private readonly GoogleCredentialSettings _googleCredentialSettings;
