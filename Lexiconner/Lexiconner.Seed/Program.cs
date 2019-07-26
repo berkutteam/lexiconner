@@ -117,12 +117,16 @@ namespace Lexiconner.Seed
             services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {
                 return new GoogleTranslateApiClient(
                     config.Google.ProjectId,
-                    config.Google.WebApiServiceAccount
+                    config.Google.WebApiServiceAccount,
+                    sp.GetService<ILogger<IGoogleTranslateApiClient>>()
                 );
             });
             services.AddTransient<IContextualWebSearchApiClient, ContextualWebSearchApiClient>(sp =>
             {
-                return new ContextualWebSearchApiClient(config.RapidApi);
+                return new ContextualWebSearchApiClient(
+                    config.RapidApi,
+                    sp.GetService<ILogger<IContextualWebSearchApiClient>>()
+                );
             });
 
             services.AddTransient<IIdentityServerConfig, IdentityServerConfig>();

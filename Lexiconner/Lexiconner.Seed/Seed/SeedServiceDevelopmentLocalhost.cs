@@ -1,4 +1,5 @@
 ﻿using Lexiconner.Application.ApiClients;
+using Lexiconner.Application.Exceptions;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.IdentityServer4.Config;
 using Lexiconner.Persistence.Repositories.Base;
@@ -94,9 +95,6 @@ namespace Lexiconner.Seed.Seed
                 Tags = x.Tags,
             });
 
-            // TODO
-            return entities;
-
             _logger.LogInformation("Making translations and adding images to StudyItems...");
 
             // get translation ru -> en
@@ -104,36 +102,51 @@ namespace Lexiconner.Seed.Seed
             string sourceLanguageCode = _wordTxtImporter.SourceLanguageCode;
             string targetLanguageCode = "en";
 
-            foreach (var entity in entities)
+            try
             {
-                // TODO handle erorrs, request limits
-
-                // translate
-                var translateResult = await _googleTranslateApiClient.Translate(new List<string>() { entity.Title }, sourceLanguageCode, targetLanguageCode);
-
-                // make contextual search
-                if(translateResult.Translations.Any())
+                foreach (var entity in entities)
                 {
-                    var translation = translateResult.Translations.First().TranslatedText;
-                    var imageSearchResult = await _contextualWebSearchApiClient.ImageSearchAsync(query: translation, pageSize: 2);
+                    // translate
+                    var translateResult = await _googleTranslateApiClient.Translate(new List<string>() { entity.Title }, sourceLanguageCode, targetLanguageCode);
 
-                    if(imageSearchResult.Value.Any())
+                    // make contextual search
+                    if (translateResult.Translations.Any())
                     {
-                        var image = imageSearchResult.Value.First();
-                        entity.Image = new StudyItemImageEntity
+                        var translation = translateResult.Translations.First().TranslatedText;
+                        var imageSearchResult = await _contextualWebSearchApiClient.ImageSearchAsync(query: translation, pageSize: 2);
+
+                        if (imageSearchResult.Value.Any())
                         {
-                            Url = image.Url,
-                            Height = image.Height,
-                            Width = image.Width,
-                            Thumbnail = image.Thumbnail,
-                            ThumbnailHeight = image.ThumbnailHeight,
-                            ThumbnailWidth = image.ThumbnailWidth,
-                            Base64Encoding = image.Base64Encoding,
-                        };
+                            var image = imageSearchResult.Value.First();
+                            entity.Image = new StudyItemImageEntity
+                            {
+                                Url = image.Url,
+                                Height = image.Height,
+                                Width = image.Width,
+                                Thumbnail = image.Thumbnail,
+                                ThumbnailHeight = image.ThumbnailHeight,
+                                ThumbnailWidth = image.ThumbnailWidth,
+                                Base64Encoding = image.Base64Encoding,
+                            };
+                        }
                     }
                 }
             }
-
+            catch (ApiRateLimitExceededException ex)
+            {
+                // break
+                return entities;
+            }
+            catch (ApiErrorException ex)
+            {
+                // break
+                return entities;
+            }
+            catch (Exception ex)
+            {
+                // rethrow
+                throw;
+            }
 
             return entities;
         }

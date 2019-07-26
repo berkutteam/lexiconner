@@ -1,10 +1,12 @@
 ﻿using Lexiconner.Application.ApiClients.Dtos;
 using Lexiconner.Application.Config;
 using Lexiconner.Application.Exceptions;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,18 +40,20 @@ namespace Lexiconner.Application.ApiClients
     {
         private const int FreeRequestsPerMonth = 10_000;
 
-        private readonly string _projectId;
         private readonly RapidApiSettings _settings;
+        private readonly ILogger<IContextualWebSearchApiClient> _logger;
 
         private readonly HttpClient _httpClient;
 
         private RapidApiResponseInfoDto _rapidApiResponseInfoDto = null;
 
         public ContextualWebSearchApiClient(
-            RapidApiSettings settings
+            RapidApiSettings settings,
+            ILogger<IContextualWebSearchApiClient> logger
         )
         {
             _settings = settings;
+            _logger = logger;
 
             _httpClient = new HttpClient(); // TODO use factory
         }
@@ -93,12 +97,13 @@ namespace Lexiconner.Application.ApiClients
             request.Headers.Add("X-RapidAPI-Key", _settings.ContextualWebSearch.ApplicationKey);
 
             var response = await _httpClient.SendAsync(request);
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var responseDto = JsonConvert.DeserializeObject<ImageSearchResponseDto>(responseContent);
 
             var rapidApiInfo = GetRapidApiResponseInfo(response);
+            HandleApiLimits(response, rapidApiInfo);
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var responseDto = JsonConvert.DeserializeObject<ImageSearchResponseDto>(responseContent);
             responseDto.RapidApiInfo = rapidApiInfo;
-            HandleApiLimits(rapidApiInfo);
 
             return responseDto;
         }
@@ -126,15 +131,31 @@ namespace Lexiconner.Application.ApiClients
             }
             if(_rapidApiResponseInfoDto.XRateLimitRequestsRemaining == 0)
             {
-                throw new ApiRateLimitExceededException($"Month free quota for BASIC plan is exceeded! Quota = {_rapidApiResponseInfoDto.XRateLimitRequestsLimit}.");
+                string message = $"Contextual Web Search: month free quota for BASIC plan is exceeded! Quota = {_rapidApiResponseInfoDto.XRateLimitRequestsLimit}.";
+                _logger.LogError(message);
+                throw new ApiRateLimitExceededException(message);
             }
         }
 
-        private void HandleApiLimits(RapidApiResponseInfoDto rapidApiResponseInfoDto)
+        private void HandleApiLimits(HttpResponseMessage httpResponseMessage, RapidApiResponseInfoDto rapidApiResponseInfoDto)
         {
             _rapidApiResponseInfoDto = rapidApiResponseInfoDto;
 
-            // TODO check if api suspended. Need to figure out how to check that
+            if (httpResponseMessage.StatusCode == HttpStatusCode.Forbidden)
+            {
+                // TODO check if api suspended. Need to figure out how to check that (what Status?)
+                //var responseContent = httpResponseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                //string message = $"Contextual Web Search API rate limit exceeded: {responseContent}";
+                //_logger.LogError(message);
+                //throw new ApiRateLimitExceededException(message);
+            }
+            else if (!httpResponseMessage.IsSuccessStatusCode)
+            {
+                var responseContent = httpResponseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                string message = $"Contextual Web Search API returned error response: {responseContent}";
+                _logger.LogError(message);
+                throw new ApiErrorException(message);
+            }
         }
     }
 }

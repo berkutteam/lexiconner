@@ -24,6 +24,7 @@ using System.Net.Http;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Lexiconner.Api
 {
@@ -68,12 +69,16 @@ namespace Lexiconner.Api
             services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {
                 return new GoogleTranslateApiClient(
                     config.Google.ProjectId,
-                    config.Google.WebApiServiceAccount
+                    config.Google.WebApiServiceAccount,
+                    sp.GetService<ILogger<IGoogleTranslateApiClient>>()
                 );
             });
             services.AddTransient<IContextualWebSearchApiClient, ContextualWebSearchApiClient>(sp =>
             {
-                return new ContextualWebSearchApiClient(config.RapidApi);
+                return new ContextualWebSearchApiClient(
+                    config.RapidApi,
+                    sp.GetService<ILogger<IContextualWebSearchApiClient>>()
+                );
             });
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
