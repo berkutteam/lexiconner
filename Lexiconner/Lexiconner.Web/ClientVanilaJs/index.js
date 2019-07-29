@@ -30,6 +30,7 @@ function start(config) {
     userManager.getUser().then(function (user) {
         if (user) {
             console.log("User logged in", user, user.profile);
+            //user.access_token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY0MzgyNUFFMjQ4NDNFNjMzMjYwQjlBOTU1RDExNDQ4NkZGRURCRUMiLCJ0eXAiOiJKV1QiLCJ4NXQiOiI5RGdscmlTRVBtTXlZTG1wVmRFVVNHXy0yLXcifQ.eyJuYmYiOjE1NjQwNTE5MjQsImV4cCI6MTU2NDA1NTUyNCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwNCIsImF1ZCI6WyJodHRwczovL2xvY2FsaG9zdDo1MDA0L3Jlc291cmNlcyIsIndlYmFwaSJdLCJjbGllbnRfaWQiOiJ3ZWJzcGEiLCJzdWIiOiI1ZDM5ODk5YjA5ZDAyNjI1NzRkNWYwOWYiLCJhdXRoX3RpbWUiOjE1NjQwNTE5MjIsImlkcCI6ImxvY2FsIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsIndlYmFwaSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXX0.n9vNo2wkZEEtNS2hHHEroDYiUG0OPoXFkF86poJEJXNhQrndAjQdVMc4FeFehUDP7GOj7pSCAmcllvRiRsUjAQ-IeV5DEjtgFsLxZon8svbb5UPJ-efjULcHT-U2u5a-eWqRQXck1gZ2W9fIzCcaBYzptV_K9gjlhuFLlUVs-L2PQe0gULHu0fKYmZjtdO-bI8hBYo8ZSvvwrRVMVgKp798bmlIX5z12mnh_knLCWCUe-tCn4qe0X0oHgHb3KGRneTR2JpocCQWSvdYYkPm-rR-XK3m8EETq_kxXCdTd1nRcV2pKa0sSynpcLW2MOQiOZ61wuFcsHolGV6K9zWnBFQ";
             // run app
             runApp(user);
 
@@ -60,10 +61,11 @@ function start(config) {
         xhr.open("GET", url);
         xhr.onload = function () {
 
-            // if (xhr.status === 401 || xhr.status === 403) {
-            //     console.log('Request failed.  Returned status of ' + xhr.status);
-            //     logout();
-            // }
+            if (xhr.status === 401 || xhr.status === 403) {
+                console.error('Request failed.  Returned status of ' + xhr.status);
+                alert("Authentication time is up");
+                logout();
+            }
 
             console.log('Test Api: ', xhr.status, JSON.parse(xhr.responseText));
         };
@@ -144,15 +146,16 @@ function start(config) {
 
         window.pageHandlers['cards'] = function () {
 
-            checkingServerResponse();
 
             var limit = 5;
-            var counter = window.wordOrder.length === 0 ? -1 : window.wordOrder.length - 1 - Math.floor(window.wordOrder.length / limit) * limit;
-            var offset = window.wordOrder.length === 0 ? window.wordOrder.length : Math.floor(window.wordOrder.length / limit) * limit;
+            var counter = 0;
+            var offset = 0;
 
             var pages = 0;
             var cardData = {};
             var pictures = [];
+
+
 
             for (var i = 0; i < 69; i++) { // add picture in array for random example picture
                 pictures.push(i + ".jpg");
@@ -182,34 +185,52 @@ function start(config) {
             function showNextCard(direction = 1) {
                 counter = counter + direction * 1;
 
-                if (!cardData.items || (counter >= cardData.items.length || counter < 0)) {
-                    if (cardData.items && direction === -1) {
-                        offset = offset - limit;
-                        offset = offset < 0 ? ((pages - 1) * limit) : offset;
-                    }
-                    if (cardData.items && direction === 1) {
-                        offset = offset + limit;
-                        offset = offset > cardData.totalCount ? 0 : offset;
-                    }
+                if (window.wordOrder.isFromWordList) {
+
+                    
+                    counter = window.wordOrder.length - Math.floor(window.wordOrder.length / limit) * limit;
+                    offset = Math.floor(window.wordOrder.length / limit) * limit;
+                    window.wordOrder.isFromWordList = false;
+
                     getData(offset, limit, function (response) {
 
                         cardData = response.data;
-
-                        if (window.wordOrder.isFromWordList) {
-                            window.wordOrder.isFromWordList = false;
-                        }
-                        else {
-                            counter = direction === 1 ? 0 : cardData.items.length - 1;
-                        }
 
                         pages = Math.ceil(cardData.totalCount / limit);
                         showDataOnCard(cardData.items[counter]);
 
                     });
-
-
                 } else {
-                    showDataOnCard(cardData.items[counter]);
+
+                    if (!cardData.items || (counter >= cardData.items.length || counter < 0)) {
+                        if (cardData.items && direction === -1) {
+                            offset = offset - limit;
+                            offset = offset < 0 ? ((pages - 1) * limit) : offset;
+                        }
+                        if (cardData.items && direction === 1) {
+                            offset = offset + limit;
+                            offset = offset > cardData.totalCount ? 0 : offset;
+                        }
+                        getData(offset, limit, function (response) {
+
+                            cardData = response.data;
+
+                            if ((direction === 0) || (direction === 1)) {
+                                counter = 0;
+
+                            } else {
+                                counter = cardData.items.length - 1;
+                            }
+                         
+                            pages = Math.ceil(cardData.totalCount / limit);
+                            showDataOnCard(cardData.items[counter]);
+
+                        });
+
+
+                    } else {
+                        showDataOnCard(cardData.items[counter]);
+                    }
                 }
             }
 
@@ -238,31 +259,34 @@ function start(config) {
                 }
             }
 
-            var leftButtonEl = document.querySelectorAll(".card-button-left");
-            var rightButtonEl = document.querySelectorAll(".card-button-right");
+            var leftButtonEl = document.querySelector(".card-button-left");
+            var rightButtonEl = document.querySelector(".card-button-right");
 
-            leftButtonEl.forEach(function (item) {
-                item.addEventListener("click", function (e) {
-                    showNextCard(-1);
-                });
+            var leftButtonElMobileVersion = document.getElementById("cardButtonLeftMobileVersion");
+            var rightButtonElMobileVersion = document.getElementById("cardButtonRightMobileVersion");
+
+            leftButtonEl.addEventListener("click", function (e) {
+
+                showNextCard(-1);
             });
 
-
-
-            rightButtonEl.forEach(function (item) {
-                item.addEventListener("click", function (e) {
-                    showNextCard(1);
-                });
+            rightButtonEl.addEventListener("click", function (e) {
+                showNextCard(1);
             });
 
+            leftButtonElMobileVersion.addEventListener("click", function (e) {
+                showNextCard(-1);
+            });
 
-            showNextCard();
+            rightButtonElMobileVersion.addEventListener("click", function (e) {
+                showNextCard(1);
+            });
+
+            showNextCard(0);
         }
         // Show all data
 
         window.pageHandlers['word-list'] = function (pageEl) {
-
-            checkingServerResponse();
 
             var itemListContainerEl = pageEl.querySelector('.js-item-list-container');
             var itemListEl = pageEl.querySelector('.js-item-list');
@@ -351,7 +375,6 @@ function start(config) {
                 e.stopPropagation();
                 window.wordOrder.length = (page * limit) + Number(desiredEl.getAttribute('position-in-list'));
                 window.wordOrder.isFromWordList = true;
-                //console.log(window.wordOrder.length, 11);
                 goToRoute('#cards');
             });
         }
@@ -421,11 +444,6 @@ function start(config) {
                     descriptionIssue.classList.replace('hidden', 'active');
 
                     goToRoute("#no-response");
-                } else if (response === null) {// !
-                    var descriptionIssue = document.querySelector('.js-authentication-time-out');
-                    descriptionIssue.classList.replace('hidden', 'active');
-
-                    goToRoute("#no-response");
                 }
             });
         }//checks server connection
@@ -447,9 +465,7 @@ function httpGet(url, callBack, authToken = null) {
 
             callBack(data);
             console.log(1, data);
-        } else if (xhr.status === 401 || xhr.status === 403) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            callBack(data);
+
         } else if (xhr.status === 500) {
             console.error('Request failed.  Returned status of ' + xhr.status);
             alert('Request failed.  Returned status of ' + xhr.status);
@@ -460,9 +476,6 @@ function httpGet(url, callBack, authToken = null) {
 
     };
 
-    // if (xhr.status === 0) {
-    //     console.log('server did not respond');
-    // }
 
     if (authToken !== null) {
         xhr.setRequestHeader("Authorization", "Bearer " + authToken);
