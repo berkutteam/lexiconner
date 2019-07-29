@@ -6,7 +6,7 @@ using NUlid.Rng;
 
 namespace Lexiconner.Domain.Entitites.Base
 {
-    public class BaseEntity
+    public class BaseEntity : IIdentifiableEntity
     {
         public BaseEntity()
         {

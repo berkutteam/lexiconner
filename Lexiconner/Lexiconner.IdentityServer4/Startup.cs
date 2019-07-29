@@ -27,6 +27,7 @@ using Microsoft.Extensions.Primitives;
 using Microsoft.AspNetCore.Http;
 using IdentityServer4.Extensions;
 using Microsoft.IdentityModel.Logging;
+using Lexiconner.Domain.Enums;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -59,7 +60,7 @@ namespace Lexiconner.IdentityServer4
             services.AddTransient<IMongoRepository, MongoRepository>(sp =>
             {
                 var mongoClient = sp.GetService<MongoClient>();
-                return new MongoRepository(mongoClient, config.MongoDb.Database);
+                return new MongoRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Identity);
             });
 
             //services.AddIdentity<ApplicationUserEntity, ApplicationRoleEntity>(options =>

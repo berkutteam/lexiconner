@@ -6,7 +6,7 @@ namespace Lexiconner.Application.Exceptions
 {
     public class ApiRateLimitExceededException : ApplicationBaseException
     {
-        private const string _title = "Api rate limit is exceeded. Try later.";
+        private const string _title = "API rate limit is exceeded. Try later.";
 
         public ApiRateLimitExceededException() : base(_title)
         {

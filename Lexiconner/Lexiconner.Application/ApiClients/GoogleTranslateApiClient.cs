@@ -12,6 +12,9 @@ using Lexiconner.Application.ApiClients.Dtos;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using static Lexiconner.Application.Config.GoogleSettings;
+using Lexiconner.Application.Exceptions;
+using System.Net;
+using Microsoft.Extensions.Logging;
 
 namespace Lexiconner.Application.ApiClients
 {
@@ -36,26 +39,45 @@ namespace Lexiconner.Application.ApiClients
     
     public class GoogleTranslateApiClient : IGoogleTranslateApiClient
     {
-        private const int FreeCharactersLimitV3 = 500_000;
-        private const int CharactersPerProjectPer100SecsLimitV3 = 10_000_000;
+        // https://cloud.google.com/translate/quotas
+        private const int FreeCharactersPerMonthLimitV3 = 500_000;
+
+        private const int CharactersPerProjectPerDayDefaultLimitV3 = 1_000_000_000;
+        private const int CharactersPerProjectPerDayMaximumLimitV3 = -1; // unlimited
+
+        private const int CharactersPerProjectPer100SecsDefaultLimitV3 = 1_000_000;
+        private const int CharactersPerProjectPer100SecsMaximumLimitV3 = 10_000_000;
+
+        //private const int CharactersPerProjectPerUserPer100SecsDefaultLimitV3 = 100_000; // OLD
+        //private const int CharactersPerProjectPerUserPer100SecsMaximumLimitV3 = 10_000_000; // OLD
+
+        private const int CharactersPerProjectPerUserPer100SecsDefaultLimitV3 = 1_000_000; // after 2019-07-29
+        private const int CharactersPerProjectPerUserPer100SecsMaximumLimitV3 = 10_000_000; // after 2019-07-29
 
         private readonly string _projectId;
         private readonly GoogleCredentialSettings _googleCredentialSettings;
+        private readonly ILogger<IGoogleTranslateApiClient> _logger;
 
         private readonly HttpClient _httpClient;
 
         public GoogleTranslateApiClient(
             string projectId,
-            GoogleCredentialSettings googleCredentialSettings
+            GoogleCredentialSettings googleCredentialSettings,
+            ILogger<IGoogleTranslateApiClient> logger
         )
         {
             _projectId = projectId;
             _googleCredentialSettings = googleCredentialSettings;
+            _logger = logger;
 
             _httpClient = new HttpClient(); // TODO use factory
         }
 
-        public async Task<GoogleTranslateResponseDto> Translate(List<string> contents, string sourceLanguageCode, string targetLanguageCode)
+        public async Task<GoogleTranslateResponseDto> Translate(
+            List<string> contents, 
+            string sourceLanguageCode, 
+            string targetLanguageCode
+        )
         {
             string accessToken = await GetAccessToken();
 
@@ -74,6 +96,9 @@ namespace Lexiconner.Application.ApiClients
             request.Headers.Add("Authorization", $"Bearer {accessToken}");
 
             var response = await _httpClient.SendAsync(request);
+
+            HandleApiLimits(response);
+
             var responseContent = await response.Content.ReadAsStringAsync();
             var responseDto = JsonConvert.DeserializeObject<GoogleTranslateResponseDto>(responseContent);
 
@@ -115,6 +140,26 @@ namespace Lexiconner.Application.ApiClients
             // read from config
             string json = JsonConvert.SerializeObject(_googleCredentialSettings);
             return json;
+        }
+
+        private void HandleApiLimits(HttpResponseMessage httpResponseMessage)
+        {
+            // 403 - Daily Limit Exceeded - if you exceeded the daily limit
+            // 403 - User Rate Limit Exceeded - if you exceeded either of the "Characters per 100 seconds" quotas
+            if(httpResponseMessage.StatusCode == HttpStatusCode.Forbidden)
+            {
+                var responseContent = httpResponseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                string message = $"Google Translate API rate limit exceeded: {responseContent}";
+                _logger.LogError(message);
+                throw new ApiRateLimitExceededException(message);
+            }
+            else if(!httpResponseMessage.IsSuccessStatusCode)
+            {
+                var responseContent = httpResponseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                string message = $"Google Translate API returned error response: {responseContent}";
+                _logger.LogError(message);
+                throw new ApiErrorException(message);
+            }
         }
     }
 }

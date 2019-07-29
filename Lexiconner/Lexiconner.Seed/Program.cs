@@ -1,6 +1,10 @@
 ﻿using Lexiconner.Application.ApiClients;
 using Lexiconner.Application.Helpers;
+using Lexiconner.Domain.Config;
+using Lexiconner.Domain.Entitites.Cache;
+using Lexiconner.Domain.Enums;
 using Lexiconner.IdentityServer4.Config;
+using Lexiconner.Persistence.Cache;
 using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Lexiconner.Seed.Seed;
@@ -54,12 +58,19 @@ namespace Lexiconner.Seed
             logger.LogInformation("\n");
 
             var seedService = serviceProvider.GetService<ISeedService>();
+            var mongoRepository = serviceProvider.GetService<IMongoRepository>();
 
             if (replaceDatabase)
             {
                 await seedService.RemoveDatabaseAsync();
             }
 
+            // configure collections (set indexes, ...)
+            logger.LogInformation("Configure collections (set indexes, ...)");
+            await mongoRepository.InitializeCollection<GoogleTranslateDataCacheEntity>();
+            await mongoRepository.InitializeCollection<ContextualWebSearchImageSearchDataCacheEntity>();
+
+            // seed
             await seedService.SeedAsync();
         }
 
@@ -104,25 +115,31 @@ namespace Lexiconner.Seed
             services.AddTransient<IMongoRepository, MongoRepository>(sp =>
             {
                 var mongoClient = sp.GetService<MongoClient>();
-                return new MongoRepository(mongoClient, config.MongoDb.Database);
+                return new MongoRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
             });
             services.AddTransient<IIdentityRepository, IdentityRepository>(sp =>
             {
                 var mongoClient = sp.GetService<MongoClient>();
-                return new IdentityRepository(mongoClient, config.MongoDb.DatabaseIdentity);
+                return new IdentityRepository(mongoClient, config.MongoDb.DatabaseIdentity, ApplicationDb.Identity);
             });
+
+            services.AddTransient<IDataCache, DataCacheDataRepository>();
 
             services.AddTransient<IWordTxtImporter, WordTxtImporter>();
 
             services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {
                 return new GoogleTranslateApiClient(
                     config.Google.ProjectId,
-                    config.Google.WebApiServiceAccount
+                    config.Google.WebApiServiceAccount,
+                    sp.GetService<ILogger<IGoogleTranslateApiClient>>()
                 );
             });
             services.AddTransient<IContextualWebSearchApiClient, ContextualWebSearchApiClient>(sp =>
             {
-                return new ContextualWebSearchApiClient(config.RapidApi);
+                return new ContextualWebSearchApiClient(
+                    config.RapidApi,
+                    sp.GetService<ILogger<IContextualWebSearchApiClient>>()
+                );
             });
 
             services.AddTransient<IIdentityServerConfig, IdentityServerConfig>();

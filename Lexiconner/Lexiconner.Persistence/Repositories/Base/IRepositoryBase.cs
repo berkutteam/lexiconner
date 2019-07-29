@@ -10,19 +10,30 @@ namespace Lexiconner.Persistence.Repositories.Base
 {
     public interface IRepositoryBase
     {
-        Task<IEnumerable<T>> GetAllAsync<T>() where T : class, new();
-        Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit, string search = "") where T : class, new();
-        Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new();
-        Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit, string search = "") where T : class, new();
-        Task<T> GetOneAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new();
-        Task AddAsync<T>(T entity) where T : class, new();
-        Task AddAsync<T>(IEnumerable<T> entities) where T : class, new();
-        Task UpdateAsync<T>(T entity) where T : BaseEntity, new();
-        Task UpdateAsync<T>(IEnumerable<T> entities) where T : BaseEntity, new();
-        Task DeleteAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new();
-        Task DeleteAllAsync<T>() where T : class, new();
-        Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new();
-        Task<bool> AnyAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new();
-        Task<long> CountAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class, new();
+        Task<IEnumerable<T>> GetAllAsync<T>() where T : class;
+        Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit, string search = "") where T : class;
+        Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
+        Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit, string search = "") where T : class;
+        Task<T> GetOneAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
+        Task AddAsync<T>(T entity) where T : class;
+        Task AddAsync<T>(IEnumerable<T> entities) where T : class;
+        Task UpdateAsync<T>(T entity) where T : BaseEntity;
+        Task UpdateAsync<T>(IEnumerable<T> entities) where T : BaseEntity;
+        Task DeleteAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
+        Task DeleteAllAsync<T>() where T : class;
+
+        /// <summary>
+        /// Deletes only N documents by predicate selected after order
+        /// </summary>
+        /// <returns></returns>
+        Task DeleteNDcoumentsAsync<T>(
+            Expression<Func<T, bool>> predicate,
+            Expression<Func<T, object>> sortFieldSelector,
+            int deleteCount
+        ) where T : class, IIdentifiableEntity;
+
+        Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
+        Task<bool> AnyAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
+        Task<long> CountAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
     }
 }

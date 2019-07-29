@@ -24,6 +24,8 @@ using System.Net.Http;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Logging;
+using Lexiconner.Domain.Enums;
 
 namespace Lexiconner.Api
 {
@@ -58,22 +60,26 @@ namespace Lexiconner.Api
             services.AddTransient<IMongoRepository, MongoRepository>(sp =>
             {
                 var mongoClient = sp.GetService<MongoClient>();
-                return new MongoRepository(mongoClient, config.MongoDb.Database);
+                return new MongoRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
             });
             services.AddTransient<IIdentityRepository, IdentityRepository>(sp =>
             {
                 var mongoClient = sp.GetService<MongoClient>();
-                return new IdentityRepository(mongoClient, config.MongoDb.DatabaseIdentity);
+                return new IdentityRepository(mongoClient, config.MongoDb.DatabaseIdentity, ApplicationDb.Identity);
             });
             services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {
                 return new GoogleTranslateApiClient(
                     config.Google.ProjectId,
-                    config.Google.WebApiServiceAccount
+                    config.Google.WebApiServiceAccount,
+                    sp.GetService<ILogger<IGoogleTranslateApiClient>>()
                 );
             });
             services.AddTransient<IContextualWebSearchApiClient, ContextualWebSearchApiClient>(sp =>
             {
-                return new ContextualWebSearchApiClient(config.RapidApi);
+                return new ContextualWebSearchApiClient(
+                    config.RapidApi,
+                    sp.GetService<ILogger<IContextualWebSearchApiClient>>()
+                );
             });
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();

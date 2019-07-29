@@ -22,9 +22,6 @@ namespace Lexiconner.Application.ApiClients.Dtos
         [JsonProperty("value")]
         public List<ImageSearchResponseItemDto> Value { get; set; }
 
-        // from headers
-        public RapidApiResponseInfoDto RapidApiInfo { get; set; }
-
         public class ImageSearchResponseItemDto
         {
             [JsonProperty("url")]
