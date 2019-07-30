@@ -302,7 +302,7 @@ function start(config) {
 
                 if (!card.image) {
 
-                    cardExampleImageEl.src = "1600x900\\" + pictures[Math.floor(Math.random() * pictures.length)];
+                    cardExampleImageEl.src = "images\\default.png";
                 } else {
                     cardExampleImageEl.src = card.image.url;
                 }
@@ -445,12 +445,13 @@ function start(config) {
                 formDataObj.tags.push(addWordFormEl.elements.tags.value);
                 //console.log('FORM',formDataObj);
                 //console.log("token", user.id_token);
-                serverRequest(url, formDataObj, user.access_token, function (request) {
-                    console.log("request", request);
+                postRequest(url, formDataObj, user.access_token, function (request) {
+                    console.log("Send to server", request);
+                    alert("Item was add");
                 });
             });
 
-            function serverRequest(url, data, authToken = null, callback = null) {
+            function postRequest(url, data, authToken = null, callback = null) {
                 var xhr = new XMLHttpRequest();
 
                 xhr.withCredentials = true; // force to show browser's default auth dialog
