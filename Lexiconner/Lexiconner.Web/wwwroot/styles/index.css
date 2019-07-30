@@ -103,6 +103,11 @@ body {
     margin: 0 auto;
     
 }
+@media screen and (max-width: 720px){
+    .error-image{
+         max-width: 10em;
+    }
+}
 
 .error-message-row{
     font-size: 1.75em;
@@ -437,3 +442,72 @@ body {
 
 .item-list-pager__button .button-icon {
 }
+
+/*begin add word ford */
+
+.add-word-form{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 1em 4em 0em;
+    
+}
+
+.form-container{
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-size: 2em;
+}
+
+.form-text{
+    margin: 0em 0em 0.5em;
+}
+
+.input-field-title{
+    padding: 0em 0.5em;
+    margin: 1em 0em 0.5em;
+    height: 1.2em;
+    width: 16.1em;
+    font-size: 0.7em;
+}
+
+.input-field-description{
+    height: 7em;
+    width: 23em;
+    padding: 0.5em;
+    font-size: 0.5em;
+    word-spacing: -0.09em;
+    margin: 0.5em 0em;
+}
+
+.input-field-example-text{
+    height: 7em;
+    width: 23em;
+    padding: 0.5em;
+    font-size: 0.5em;
+    word-spacing: -0.09em;
+    margin: 0.5em 0em;
+}
+
+.input-field-tags{
+    padding: 0em 0.5em;
+    margin: 0.5em 0em 0.5em;
+    height: 1.2em;
+    width: 16.1em;
+    font-size: 0.7em;
+}
+
+.reset-button{
+    width: 5em;
+}
+
+.form-button-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.send-button{
+
+}
+/* end add word ford */

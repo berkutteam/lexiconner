@@ -60,13 +60,6 @@ function start(config) {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url);
         xhr.onload = function () {
-
-            if (xhr.status === 401 || xhr.status === 403) {
-                console.error('Request failed.  Returned status of ' + xhr.status);
-                alert("Authentication time is up");
-                logout();
-            }
-
             console.log('Test Api: ', xhr.status, JSON.parse(xhr.responseText));
         };
         xhr.setRequestHeader("Authorization", "Bearer " + user.access_token);
@@ -149,7 +142,7 @@ function start(config) {
 
             var limit = 5;
             var counter = 0;
-            var offset = 0;
+            var offsetCards = 0;
 
             var pages = 0;
             var cardData = {};
@@ -187,12 +180,11 @@ function start(config) {
 
                 if (window.wordOrder.isFromWordList) {
 
-                    
                     counter = window.wordOrder.length - Math.floor(window.wordOrder.length / limit) * limit;
-                    offset = Math.floor(window.wordOrder.length / limit) * limit;
+                    offsetCards = Math.floor(window.wordOrder.length / limit) * limit;
                     window.wordOrder.isFromWordList = false;
 
-                    getData(offset, limit, function (response) {
+                    getData(offsetCards, limit, function (response) {
 
                         cardData = response.data;
 
@@ -204,14 +196,14 @@ function start(config) {
 
                     if (!cardData.items || (counter >= cardData.items.length || counter < 0)) {
                         if (cardData.items && direction === -1) {
-                            offset = offset - limit;
-                            offset = offset < 0 ? ((pages - 1) * limit) : offset;
+                            offsetCards = offsetCards - limit;
+                            offsetCards = offsetCards < 0 ? ((pages - 1) * limit) : offsetCards;
                         }
                         if (cardData.items && direction === 1) {
-                            offset = offset + limit;
-                            offset = offset > cardData.totalCount ? 0 : offset;
+                            offsetCards = offsetCards + limit;
+                            offsetCards = offsetCards > cardData.totalCount ? 0 : offsetCards;
                         }
-                        getData(offset, limit, function (response) {
+                        getData(offsetCards, limit, function (response) {
 
                             cardData = response.data;
 
@@ -221,7 +213,7 @@ function start(config) {
                             } else {
                                 counter = cardData.items.length - 1;
                             }
-                         
+
                             pages = Math.ceil(cardData.totalCount / limit);
                             showDataOnCard(cardData.items[counter]);
 
@@ -316,7 +308,7 @@ function start(config) {
             var totalCount = 0;
             var page = 0;
             var limit = 40;
-            var offset = page * limit;
+            var offsetWordList = page * limit;
             var calcPagesCount = function () {
                 return Math.ceil(totalCount / limit);
             }
@@ -325,9 +317,9 @@ function start(config) {
                 var pages = Math.ceil(totalCount / limit);
                 page = page < 0 ? 0 : page;
                 page = page > pages ? pages : page;
-                offset = page * limit;
+                offsetWordList = page * limit;
 
-                getData(offset, limit, callBack);
+                getData(offsetWordList, limit, callBack);
             }
 
             function showPage(page, limit) {
@@ -379,6 +371,57 @@ function start(config) {
             });
         }
 
+        window.pageHandlers['add-word'] = function () {
+
+            var sendButtonEl = document.querySelector('.js-send-word-button');
+            var formDataObj = {};
+            var addWordFormEl = document.forms.addWordForm;
+            var url = `${config.urls.api}/api/v2/StudyItems`;
+
+
+            sendButtonEl.addEventListener('click', function (e) {
+                formDataObj.userId = user.id_token;
+                formDataObj.title = addWordFormEl.elements.title.value;
+                formDataObj.description = addWordFormEl.elements.description.value;
+                formDataObj.exampleText = addWordFormEl.elements.exampleText.value;
+                formDataObj.tags = [];
+                formDataObj.tags.push(addWordFormEl.elements.tags.value);
+                //console.log('FORM',formDataObj);
+                //console.log("token", user.id_token);
+                serverRequest(url, formDataObj, user.access_token, function (request) {
+                    console.log("request", request);
+                });
+            });
+
+            function serverRequest(url, data, authToken = null, callback = null) {
+                var xhr = new XMLHttpRequest();
+
+                xhr.withCredentials = true; // force to show browser's default auth dialog
+                xhr.open('POST', url, true);
+
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+
+                        callback(xhr.responseText);
+
+                    } else if (xhr.status === 500) {
+                        console.error('Request failed.  Returned status of ' + xhr.status);
+                        alert('Request failed.  Returned status of ' + xhr.status);
+                    } else if (xhr.status === 401 || xhr.status === 403) {
+                        console.error('Request failed.  Returned status of ' + xhr.status);
+                        alert("Authentication time is up");
+                        //logout();
+                    }
+                };
+
+                if (authToken !== null) {
+                    xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+                }
+                console.log("sss", JSON.stringify(data));
+                xhr.send(JSON.stringify(data));
+            }
+        }
         //// base routing
 
         function goToRoute(route) {
@@ -437,7 +480,6 @@ function start(config) {
 
         function checkingServerResponse() {
             getData(0, 1, function (response) {
-                //console.log(1222, response);
                 if (response.data.items.length === 0) {
                     console.log('respone', false);
                     var descriptionIssue = document.querySelector('.js-empty-data');
@@ -452,6 +494,8 @@ function start(config) {
 
     }
 }
+
+
 
 function httpGet(url, callBack, authToken = null) {
     var xhr = new XMLHttpRequest();
@@ -469,6 +513,10 @@ function httpGet(url, callBack, authToken = null) {
         } else if (xhr.status === 500) {
             console.error('Request failed.  Returned status of ' + xhr.status);
             alert('Request failed.  Returned status of ' + xhr.status);
+        } else if (xhr.status === 401 || xhr.status === 403) {
+            console.error('Request failed.  Returned status of ' + xhr.status);
+            alert("Authentication time is up");
+            //console.log(222222, xhr.getResponseHeader('WWW-Authenticate')); returns
         }
         else {
             console.error('Request failed.  Returned status of ' + xhr.status);

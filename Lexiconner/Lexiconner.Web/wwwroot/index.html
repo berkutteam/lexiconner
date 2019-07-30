@@ -25,8 +25,8 @@
                 <a href="#" class="menu-item" data-route-link="word-list">
                     <span>Show All Word</span>
                 </a>
-                <a href="#" class="menu-item" data-route-link="page4">
-                    <span>Something</span>
+                <a href="#" class="menu-item" data-route-link="add-word">
+                    <span>Add Word</span>
                 </a>
                 <a href="#" class="menu-item js-logout-button">
                     <span>Logout</span>
@@ -124,21 +124,42 @@
                 </div>
             </div>
 
-            <div class="menu-page-container" data-route="page4">Something</div>
+            <div class="menu-page-container" data-route="add-word">
+                <form method="post" class="add-word-form" name="addWordForm" action="">
+                    <div class="form-container">
+                        <input class="input-field-title" type="text" name="title" placeholder="Title">
+                        <textarea class="input-field-description" name="description"
+                            placeholder="Description"></textarea>
+                        <textarea class="input-field-example-text" name="exampleText"
+                            placeholder="Example Text"></textarea>
+                        <input class="input-field-tags" type="text" name="tags" placeholder="Tags">
+                    </div>
 
-            <div class="menu-page-container js-error-page" data-route="no-response">
-                <img class="error-image" src="images/brending/sign.png" alt="" />
-                <div class="error-message-row">
-                    <p class="hidden js-empty-data">
-                        Server returned no data
-                    </p>
-                    <p class="hidden js-authentication-time-out">
-                        Authentication time out
-                    </p>
-                </div>
+                    <div class="form-button-container">
+                        <input class="reset-button" type="reset" value="reset">
+                        <input type="button" class="js-send-word-button" value="Send" />
+                    </div>
             </div>
 
+
+
+            </form>
+
         </div>
+
+        <div class="menu-page-container js-error-page" data-route="no-response">
+            <img class="error-image" src="images/brending/sign.png" alt="" />
+            <div class="error-message-row">
+                <p class="hidden js-empty-data">
+                    Server returned no data
+                </p>
+                <p class="hidden js-authentication-time-out">
+                    Authentication time out
+                </p>
+            </div>
+        </div>
+
+    </div>
     </div>
 
     <script src="lib/oidc-client.min.js"></script>
