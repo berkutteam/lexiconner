@@ -26,6 +26,8 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Logging;
 using Lexiconner.Domain.Enums;
+using Lexiconner.Persistence.Cache;
+using Lexiconner.Application.Services;
 
 namespace Lexiconner.Api
 {
@@ -81,6 +83,9 @@ namespace Lexiconner.Api
                     sp.GetService<ILogger<IContextualWebSearchApiClient>>()
                 );
             });
+
+            services.AddTransient<IDataCache, DataCacheDataRepository>();
+            services.AddTransient<IImageService, ImageService>();
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 

@@ -1,13 +1,14 @@
 ﻿using Lexiconner.Application.ApiClients;
 using Lexiconner.Application.ApiClients.Dtos;
 using Lexiconner.Application.Exceptions;
+using Lexiconner.Application.ImportAndExport;
+using Lexiconner.Application.Services;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.IdentityServer4.Config;
 using Lexiconner.Persistence.Cache;
 using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Seed.Models;
-using Lexiconner.Seed.Seed.ImportAndExport;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
@@ -26,30 +27,24 @@ namespace Lexiconner.Seed.Seed
         private readonly IWordTxtImporter _wordTxtImporter;
         private readonly IMongoRepository _mongoRepository;
         private readonly IIdentityRepository _identityRepository;
-        private readonly IDataCache _dataCache;
         private readonly IIdentityServerConfig _identityServerConfig;
-        private readonly IGoogleTranslateApiClient _googleTranslateApiClient;
-        private readonly IContextualWebSearchApiClient _contextualWebSearchApiClient;
+        private readonly IImageService _imageService;
 
         public SeedServiceDevelopmentLocalhost(
             ILogger<ISeedService> logger,
             IWordTxtImporter wordTxtImporter,
             IMongoRepository mongoRepository,
             IIdentityRepository identityRepository,
-            IDataCache dataCache,
             IIdentityServerConfig identityServerConfig,
-            IGoogleTranslateApiClient googleTranslateApiClient,
-            IContextualWebSearchApiClient contextualWebSearchApiClient
+            IImageService imageService
         )
         {
             _logger = logger;
             _wordTxtImporter = wordTxtImporter;
             _mongoRepository = mongoRepository;
             _identityRepository = identityRepository;
-            _dataCache = dataCache;
             _identityServerConfig = identityServerConfig;
-            _googleTranslateApiClient = googleTranslateApiClient;
-            _contextualWebSearchApiClient = contextualWebSearchApiClient;
+            _imageService = imageService;
         }
 
         public Task RemoveDatabaseAsync()
@@ -125,126 +120,22 @@ namespace Lexiconner.Seed.Seed
             {
                 try
                 {
-                    // translate
-                    var translateContents = new List<string>() { entity.Title };
+                    sourceLanguageCode = "";
+                    var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode, entity.Title);
 
-                    var translateCache = new GoogleTranslateDataCacheEntity(translateContents, sourceLanguageCode, targetLanguageCode); // use just for compare
-                    var translateResultCache = await _dataCache.Get<GoogleTranslateDataCacheEntity>(x => x.CacheKey == translateCache.GetCacheKey());
-                    GoogleTranslateResponseDto translateResult = null;
-
-                    if (translateResultCache == null)
+                    if (imagesResult.Any())
                     {
-                        // call api
-                        _logger.LogInformation($"Calling Google Translate API for '{entity.Title}'...");
-                        translateResult = await _googleTranslateApiClient.Translate(translateContents, sourceLanguageCode, targetLanguageCode);
-
-                        // cache response
-                        _logger.LogInformation($"Caching Google Translate API response for '{entity.Title}'...");
-                        await _dataCache.Add(new GoogleTranslateDataCacheEntity(translateContents, sourceLanguageCode, targetLanguageCode) {
-                            Data = new GoogleTranslateDataCacheEntity.DataCacheEntity
-                            {
-                                Translations = translateResult.Translations.Select(x => new GoogleTranslateDataCacheEntity.DataCacheEntity.GoogleTranslateResponseItemEntity
-                                {
-                                    TranslatedText = x.TranslatedText
-                                }).ToList(),
-                                GlossaryTranslations = translateResult.GlossaryTranslations.Select(x => new GoogleTranslateDataCacheEntity.DataCacheEntity.GoogleTranslateResponseItemEntity
-                                {
-                                    TranslatedText = x.TranslatedText
-                                }).ToList(),
-                            }
-                        });
-                    }
-                    else
-                    {
-                        // use cache
-                        _logger.LogInformation($"Using Google Translate API cached response for '{entity.Title}'...");
-                        translateResult = new GoogleTranslateResponseDto
+                        var image = imagesResult.First();
+                        entity.Image = new StudyItemImageEntity
                         {
-                            Translations = translateResultCache.Data.Translations.Select(x => new GoogleTranslateResponseItemDto {
-                                TranslatedText = x.TranslatedText
-                            }).ToList(),
-                            GlossaryTranslations = translateResultCache.Data.GlossaryTranslations.Select(x => new GoogleTranslateResponseItemDto
-                            {
-                                TranslatedText = x.TranslatedText
-                            }).ToList()
+                            Url = image.Url,
+                            Height = image.Height,
+                            Width = image.Width,
+                            Thumbnail = image.Thumbnail,
+                            ThumbnailHeight = image.ThumbnailHeight,
+                            ThumbnailWidth = image.ThumbnailWidth,
+                            Base64Encoding = image.Base64Encoding,
                         };
-                    }
-
-
-                    // make contextual search
-                    if (translateResult.Translations.Any())
-                    {
-                        string query = translateResult.Translations.First().TranslatedText;
-                        int pageNumber = 1;
-                        int pageSize = 2;
-                        bool isAutoCorrect = false;
-                        bool isSafeSearch = false;
-
-                        var imageSearchCache = new ContextualWebSearchImageSearchDataCacheEntity(query, pageNumber, pageSize, isAutoCorrect, isSafeSearch); // use just for compare
-                        var imageSearchResultCache = await _dataCache.Get<ContextualWebSearchImageSearchDataCacheEntity>(x => x.CacheKey == imageSearchCache.GetCacheKey());
-                        ImageSearchResponseDto imageSearchResult = null;
-
-                        if (imageSearchResultCache == null)
-                        {
-                            // call api
-                            _logger.LogInformation($"Calling Contextual Web Search API for '{entity.Title}' -> '{query}'...");
-                            imageSearchResult = await _contextualWebSearchApiClient.ImageSearchAsync(query, pageNumber, pageSize, isAutoCorrect, isSafeSearch);
-
-                            // cache response
-                            _logger.LogInformation($"Caching Contextual Web Search API response for '{entity.Title}'-> '{query}'...");
-                            await _dataCache.Add(new ContextualWebSearchImageSearchDataCacheEntity(query, pageNumber, pageSize, isAutoCorrect, isSafeSearch)
-                            {
-                                Data = new ContextualWebSearchImageSearchDataCacheEntity.DataCacheEntity
-                                {
-                                    _Type = imageSearchResult._Type,
-                                    TotalCount = imageSearchResult.TotalCount,
-                                    Value = imageSearchResult.Value.Select(x => new ContextualWebSearchImageSearchDataCacheEntity.DataCacheEntity.ImageSearchResponseItemEntity {
-                                        Url = x.Url,
-                                        Height = x.Height,
-                                        Width = x.Width,
-                                        Thumbnail = x.Thumbnail,
-                                        ThumbnailHeight = x.ThumbnailHeight,
-                                        ThumbnailWidth = x.ThumbnailWidth,
-                                        Base64Encoding = x.Base64Encoding,
-                                    }).ToList()
-                                }
-                            });
-                        }
-                        else
-                        {
-                            // use cache
-                            _logger.LogInformation($"Using Contextual Web Search API cached response for '{entity.Title}' -> '{query}'...");
-                            imageSearchResult = new ImageSearchResponseDto
-                            {
-                                _Type = imageSearchResultCache.Data._Type,
-                                TotalCount = imageSearchResultCache.Data.TotalCount,
-                                Value = imageSearchResultCache.Data.Value.Select(x => new ImageSearchResponseItemDto
-                                {
-                                    Url = x.Url,
-                                    Height = x.Height,
-                                    Width = x.Width,
-                                    Thumbnail = x.Thumbnail,
-                                    ThumbnailHeight = x.ThumbnailHeight,
-                                    ThumbnailWidth = x.ThumbnailWidth,
-                                    Base64Encoding = x.Base64Encoding,
-                                }).ToList()
-                            };
-                        }
-
-                        if (imageSearchResult.Value.Any())
-                        {
-                            var image = imageSearchResult.Value.First();
-                            entity.Image = new StudyItemImageEntity
-                            {
-                                Url = image.Url,
-                                Height = image.Height,
-                                Width = image.Width,
-                                Thumbnail = image.Thumbnail,
-                                ThumbnailHeight = image.ThumbnailHeight,
-                                ThumbnailWidth = image.ThumbnailWidth,
-                                Base64Encoding = image.Base64Encoding,
-                            };
-                        }
                     }
                 }
                 catch (ApiRateLimitExceededException ex)

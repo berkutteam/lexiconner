@@ -7,6 +7,59 @@ namespace Lexiconner.Application.ApiClients.Dtos
 {
     // https://cloud.google.com/translate/docs/reference/rest/v3beta1/projects.locations/translateText#authorization-scopes
 
+    // https://cloud.google.com/translate/docs/reference/rest/v3beta1/projects/detectLanguage
+    #region Detect Languge
+
+    public class GoogleTranslateDetectLanguageRequestDto
+    {
+        /// <summary>
+        /// Required. The content of the input stored as a string.
+        /// </summary>
+        [JsonProperty("content")]
+        public string Content { get; set; }
+
+        /// <summary>
+        /// Optional. The format of the source text, for example, "text/html", "text/plain". If left blank, the MIME type defaults to "text/html".
+        /// </summary>
+        [JsonProperty("mimeType")]
+        public string MimeType { get; set; } = "text/plain";
+
+        /// <summary>
+        /// Optional. The language detection model to be used.
+        /// </summary>
+        [JsonProperty("model")]
+        public string Model { get; set; }
+    }
+
+    public class GoogleTranslateDetectLanguageResponseDto
+    {
+        public GoogleTranslateDetectLanguageResponseDto()
+        {
+            Languages = new List<GoogleTranslateDetectLanguageResponseItemDto>();
+        }
+
+        /// <summary>
+        /// Text translation responses with no glossary applied. This field has the same length as contents.
+        /// </summary>
+        [JsonProperty("languages")]
+        public List<GoogleTranslateDetectLanguageResponseItemDto> Languages { get; set; }
+
+        public class GoogleTranslateDetectLanguageResponseItemDto
+        {
+            [JsonProperty("languageCode")]
+            public string LanguageCode { get; set; }
+
+            [JsonProperty("confidence")]
+            public double Confidence { get; set; }
+        }
+    }
+
+
+    #endregion
+
+
+    #region Translate text
+
     public class GoogleTranslateRequestDto
     {
         /// <summary>
@@ -68,4 +121,6 @@ namespace Lexiconner.Application.ApiClients.Dtos
             public string TranslatedText { get; set; }
         }
     }
+
+#endregion
 }

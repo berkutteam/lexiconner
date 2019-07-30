@@ -1,10 +1,10 @@
-﻿using Lexiconner.Seed.Models;
+﻿using Lexiconner.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lexiconner.Seed.Seed.ImportAndExport
+namespace Lexiconner.Application.ImportAndExport
 {
     public interface IWordTxtImporter
     {

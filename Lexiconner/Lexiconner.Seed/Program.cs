@@ -1,5 +1,7 @@
 ﻿using Lexiconner.Application.ApiClients;
 using Lexiconner.Application.Helpers;
+using Lexiconner.Application.ImportAndExport;
+using Lexiconner.Application.Services;
 using Lexiconner.Domain.Config;
 using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.Domain.Enums;
@@ -8,7 +10,6 @@ using Lexiconner.Persistence.Cache;
 using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Lexiconner.Seed.Seed;
-using Lexiconner.Seed.Seed.ImportAndExport;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -124,8 +125,11 @@ namespace Lexiconner.Seed
             });
 
             services.AddTransient<IDataCache, DataCacheDataRepository>();
+            services.AddTransient<IImageService, ImageService>();
 
-            services.AddTransient<IWordTxtImporter, WordTxtImporter>();
+            services.AddTransient<IWordTxtImporter, WordTxtImporter>(xp => {
+                return new WordTxtImporter(config.Import);
+            });
 
             services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {
                 return new GoogleTranslateApiClient(
