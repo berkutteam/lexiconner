@@ -141,7 +141,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).InsertOneAsync(entity);
         }
 
-        public async Task AddAsync<T>(IEnumerable<T> entities) where T : class
+        public async Task AddManyAsync<T>(IEnumerable<T> entities) where T : class
         {
             await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).InsertManyAsync(entities);
         }

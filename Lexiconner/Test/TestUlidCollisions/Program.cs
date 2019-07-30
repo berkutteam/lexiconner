@@ -11,10 +11,8 @@ namespace TestUlidCollisions
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-
             const int TaskCount = 10;
-            const int LoopCount = 5000;
+            const int LoopCount = 15000;
 
             // Ulid
             var tasks = Enumerable.Range(0, TaskCount).Select(x =>
@@ -25,8 +23,8 @@ namespace TestUlidCollisions
                     for (int i = 0; i < LoopCount; i++)
                     {
 
-                        string id = Ulid.NewUlid(new  SimpleUlidRng()).ToString(); // has collisions
-                        // string id = Ulid.NewUlid(new NUlid.Rng.CSUlidRng()).ToString(); // no collisions
+                        string id = Ulid.NewUlid(new SimpleUlidRng()).ToString(); // has collisions
+                        //string id = Ulid.NewUlid(new NUlid.Rng.CSUlidRng()).ToString(); // no collisions
                         //string id = Ulid.NewUlid(new NUlid.Rng.MonotonicUlidRng()).ToString(); // no collisions
                         result.Add(id);
                     }
