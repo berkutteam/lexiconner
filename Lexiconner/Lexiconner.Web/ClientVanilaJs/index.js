@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 
 // example of using class defined in separate file (module)
 import ExampleUtil from './utils/exampleUtil.js';
@@ -16,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
 function start(config) {
 
+    // https://github.com/IdentityModel/oidc-client-js/wiki
     var authConfig = {
         authority: config.auth.authority,
         client_id: config.auth.clientId,
@@ -23,17 +25,45 @@ function start(config) {
         response_type: config.auth.responseType,
         scope: config.auth.scope,
         post_logout_redirect_uri: config.auth.postLogoutRedirectUri,
+
+        // access_token renew
+        automaticSilentRenew: true,
+        silentRequestTimeout: 10000,
+        accessTokenExpiringNotificationTime: 3 * 60, // 3 mins in secs
     };
+
     var userManager = new Oidc.UserManager(authConfig);
+    window.userManager = userManager; // for tests only
+
+    // setup logging
+    Oidc.Log.logger = console;
+    Oidc.Log.level = Oidc.Log.INFO;
+
+    userManager.events.addUserLoaded(function(){
+        console.log("userLoaded");
+    });
+    userManager.events.addUserUnloaded(function(){
+        console.log("userUnloaded");
+    });
+    userManager.events.addAccessTokenExpiring(function(){
+        console.log("access_token expiring...");
+    });
+    userManager.events.addAccessTokenExpired(function(){
+        console.log("access_token expired");
+    });
+    userManager.events.addSilentRenewError(function(err){
+        console.error("silentRenewError: ", err);
+    });
 
     // check user logged in
     userManager.getUser().then(function (user) {
         if (user) {
             console.log("User logged in", user, user.profile);
             //user.access_token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY0MzgyNUFFMjQ4NDNFNjMzMjYwQjlBOTU1RDExNDQ4NkZGRURCRUMiLCJ0eXAiOiJKV1QiLCJ4NXQiOiI5RGdscmlTRVBtTXlZTG1wVmRFVVNHXy0yLXcifQ.eyJuYmYiOjE1NjQwNTE5MjQsImV4cCI6MTU2NDA1NTUyNCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwNCIsImF1ZCI6WyJodHRwczovL2xvY2FsaG9zdDo1MDA0L3Jlc291cmNlcyIsIndlYmFwaSJdLCJjbGllbnRfaWQiOiJ3ZWJzcGEiLCJzdWIiOiI1ZDM5ODk5YjA5ZDAyNjI1NzRkNWYwOWYiLCJhdXRoX3RpbWUiOjE1NjQwNTE5MjIsImlkcCI6ImxvY2FsIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsIndlYmFwaSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXX0.n9vNo2wkZEEtNS2hHHEroDYiUG0OPoXFkF86poJEJXNhQrndAjQdVMc4FeFehUDP7GOj7pSCAmcllvRiRsUjAQ-IeV5DEjtgFsLxZon8svbb5UPJ-efjULcHT-U2u5a-eWqRQXck1gZ2W9fIzCcaBYzptV_K9gjlhuFLlUVs-L2PQe0gULHu0fKYmZjtdO-bI8hBYo8ZSvvwrRVMVgKp798bmlIX5z12mnh_knLCWCUe-tCn4qe0X0oHgHb3KGRneTR2JpocCQWSvdYYkPm-rR-XK3m8EETq_kxXCdTd1nRcV2pKa0sSynpcLW2MOQiOZ61wuFcsHolGV6K9zWnBFQ";
+            
             // run app
             runApp(user);
-
+            // handleAccessTokenExpiration(user);
             checkIdentityApi(user);
         }
         else {
@@ -52,6 +82,33 @@ function start(config) {
     function logout() {
         console.log('Logout requested.')
         userManager.signoutRedirect();
+    }
+
+    function handleAccessTokenExpiration(user) {
+        let {
+            profile,
+            id_token,
+            access_token,
+            refresh_token,
+            expires_at, // int - seconds
+            scope,
+            session_state,
+            state,
+            token_type,
+            expired, // func
+            expires_in, // func - returns seconds
+            scopes, // func - returns array<string>
+        } = user;
+        let {
+            amr, //array<string>
+            auth_time, // int - seconds
+            idp,
+            sid,
+            sub, // user id
+        } = profile;
+
+        // refresh access_token manually before it get expired using refresh_token (if flow allows)
+        // ...
     }
 
     function checkIdentityApi(user) {
