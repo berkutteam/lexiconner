@@ -10,7 +10,7 @@ namespace Lexiconner.Domain.Entitites.Base
     {
         public BaseEntity()
         {
-            Id = Ulid.NewUlid(new SimpleUlidRng()).ToString();
+            RegenerateId();
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }
@@ -21,5 +21,10 @@ namespace Lexiconner.Domain.Entitites.Base
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }
+
+        public void RegenerateId()
+        {
+            Id = Ulid.NewUlid(new NUlid.Rng.CSUlidRng()).ToString();
+        }
     }
 }

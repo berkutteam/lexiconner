@@ -76,6 +76,10 @@ namespace Lexiconner.Seed.Seed
                     studyItems = studyItems ?? GetStudyItems().GetAwaiter().GetResult();
                     studyItems = studyItems.Select(x =>
                     {
+                        // fix same ids for different users
+                        x.RegenerateId();
+                        x.Image?.RegenerateId();
+
                         x.UserId = user.Id;
                         return x;
                     });
@@ -85,8 +89,8 @@ namespace Lexiconner.Seed.Seed
 
                     for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
                     {
-                        var items = studyItems.Skip(chunkNumber * chunkSize).Take(chunkSize);
-                        _mongoRepository.AddAsync(items).GetAwaiter().GetResult();
+                        var items = studyItems.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
+                        _mongoRepository.AddManyAsync(items).GetAwaiter().GetResult();
                         _logger.LogInformation($"StudyItems processed chunnk {chunkNumber + 1}/{chunkCount}.");
                     }
                     _logger.LogInformation($"StudyItems was added for user #{user.Email}.");
@@ -108,7 +112,7 @@ namespace Lexiconner.Seed.Seed
                 Description = x.Description,
                 ExampleText = x.ExampleText,
                 Tags = x.Tags,
-            });
+            }).ToList();
 
             _logger.LogInformation("Making translations and adding images to StudyItems...");
 
@@ -117,7 +121,7 @@ namespace Lexiconner.Seed.Seed
             string sourceLanguageCode = _wordTxtImporter.SourceLanguageCode;
             string targetLanguageCode = "en";
             
-            foreach (var entity in entities)
+            foreach (StudyItemEntity entity in entities)
             {
                 try
                 {

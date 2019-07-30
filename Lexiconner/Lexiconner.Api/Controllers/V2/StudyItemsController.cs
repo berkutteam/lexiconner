@@ -59,6 +59,7 @@ namespace Lexiconner.Api.Controllers.V2
         [HttpPut("{id}")]
         public async Task<BaseApiResponseModel<StudyItemEntity>> Put(string id, [FromBody] StudyItemEntity data)
         {
+            data.Id = id;
             data.UserId = GetUserId();
             await _mongoRepository.UpdateAsync(data);
             return BaseJsonResponse(data);
