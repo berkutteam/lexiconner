@@ -5,18 +5,19 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
-using Lexiconner.Seed.Models;
 using Microsoft.Extensions.Options;
+using Lexiconner.Application.Config;
+using Lexiconner.Domain.Models;
 
-namespace Lexiconner.Seed.Seed.ImportAndExport
+namespace Lexiconner.Application.ImportAndExport
 {
     public class WordTxtImporter : IWordTxtImporter
     {
-        private readonly ApplicationSettings _config;
+        private readonly ImportSettings _config;
 
-        public WordTxtImporter(IOptions<ApplicationSettings> config)
+        public WordTxtImporter(ImportSettings config)
         {
-            _config = config.Value;
+            _config = config;
         }
 
         public string SourceLanguageCode => "ru";
@@ -24,7 +25,7 @@ namespace Lexiconner.Seed.Seed.ImportAndExport
         public async Task<IEnumerable<WordImportModel>> Import()
         {
             var result = new List<WordImportModel>();
-            string filePath = _config.Import.FilePath;
+            string filePath = _config.FilePath;
 
             // word - desc[ - example]
             var regex = new Regex(@"(?<word>[^=]+)\s+===\s+(?<description>[^=]+)(?:\s{0,}(:?===)?\s{0,}(?<example>[^=]+)?)", RegexOptions.IgnoreCase);

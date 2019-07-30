@@ -34,6 +34,7 @@ namespace Lexiconner.Application.ApiClients
     /// </summary>
     public interface IGoogleTranslateApiClient
     {
+        Task<GoogleTranslateDetectLanguageResponseDto> DetectLanguage(string content);
         Task<GoogleTranslateResponseDto> Translate(List<string> contents, string sourceLanguageCode, string targetLanguageCode);
     }
     
@@ -71,6 +72,33 @@ namespace Lexiconner.Application.ApiClients
             _logger = logger;
 
             _httpClient = new HttpClient(); // TODO use factory
+        }
+
+
+        public async Task<GoogleTranslateDetectLanguageResponseDto> DetectLanguage(string content)
+        {
+            string accessToken = await GetAccessToken();
+
+            string url = $"https://translation.googleapis.com/v3beta1/projects/{_projectId}/locations/global:detectLanguage";
+
+            var requestDto = new GoogleTranslateDetectLanguageRequestDto
+            {
+                Content = content
+            };
+            var request = new HttpRequestMessage(new HttpMethod("POST"), url)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(requestDto), Encoding.UTF8, "application/json"),
+            };
+            request.Headers.Add("Authorization", $"Bearer {accessToken}");
+
+            var response = await _httpClient.SendAsync(request);
+
+            HandleApiLimits(response);
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var responseDto = JsonConvert.DeserializeObject<GoogleTranslateDetectLanguageResponseDto>(responseContent);
+
+            return responseDto;
         }
 
         public async Task<GoogleTranslateResponseDto> Translate(

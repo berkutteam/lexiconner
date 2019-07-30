@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Lexiconner.Api.Models;
 using Lexiconner.Api.Models.RequestModels;
 using Lexiconner.Api.Models.ResponseModels;
+using Lexiconner.Application.Services;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
 using Lexiconner.Persistence.Repositories.Base;
@@ -21,10 +22,15 @@ namespace Lexiconner.Api.Controllers.V2
     public class StudyItemsController : ApiControllerBase
     {
         private readonly IMongoRepository _mongoRepository;
+        private readonly IImageService _imageService;
 
-        public StudyItemsController(IMongoRepository mongoRepository)
+        public StudyItemsController(
+            IMongoRepository mongoRepository,
+            IImageService imageService
+        )
         {
             _mongoRepository = mongoRepository;
+            _imageService = imageService;
         }
 
         [HttpGet]
@@ -52,6 +58,25 @@ namespace Lexiconner.Api.Controllers.V2
         public async Task<BaseApiResponseModel<StudyItemEntity>> Post([FromBody] StudyItemEntity data)
         {
             data.UserId = GetUserId();
+
+            // set image
+            var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: null, data.Title);
+
+            if (imagesResult.Any())
+            {
+                var image = imagesResult.First();
+                data.Image = new StudyItemImageEntity
+                {
+                    Url = image.Url,
+                    Height = image.Height,
+                    Width = image.Width,
+                    Thumbnail = image.Thumbnail,
+                    ThumbnailHeight = image.ThumbnailHeight,
+                    ThumbnailWidth = image.ThumbnailWidth,
+                    Base64Encoding = image.Base64Encoding,
+                };
+            }
+
             await _mongoRepository.AddAsync(data);
             return BaseJsonResponse(data);
         }
@@ -61,6 +86,25 @@ namespace Lexiconner.Api.Controllers.V2
         {
             data.Id = id;
             data.UserId = GetUserId();
+
+            // set image
+            var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: null, data.Title);
+
+            if (imagesResult.Any())
+            {
+                var image = imagesResult.First();
+                data.Image = new StudyItemImageEntity
+                {
+                    Url = image.Url,
+                    Height = image.Height,
+                    Width = image.Width,
+                    Thumbnail = image.Thumbnail,
+                    ThumbnailHeight = image.ThumbnailHeight,
+                    ThumbnailWidth = image.ThumbnailWidth,
+                    Base64Encoding = image.Base64Encoding,
+                };
+            }
+
             await _mongoRepository.UpdateAsync(data);
             return BaseJsonResponse(data);
         }

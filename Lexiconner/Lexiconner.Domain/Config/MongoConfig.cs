@@ -22,6 +22,7 @@ namespace Lexiconner.Domain.Config
         private const string StudyItems = "studyItems";
 
         private const string CacheGoogleTranslateApi = "cacheGoogleTranslateApi";
+        private const string CacheGoogleTranslateDetectLanguageApi = "cacheGoogleTranslateDetectLanguageApi";
         private const string CacheContextualWebSearchImageSearchApi = "cacheContextualWebSearchImageSearchApi";
 
         ///// <summary>
@@ -109,6 +110,14 @@ namespace Lexiconner.Domain.Config
             },
 
             // cache
+             new MongoCollectionConfig
+            {
+                CollectionType = typeof(GoogleTranslateDetectLangugaeDataCacheEntity),
+                CollectionName = CacheGoogleTranslateDetectLanguageApi,
+                Indexes = new List<string> {
+                    nameof(GoogleTranslateDetectLangugaeDataCacheEntity.CacheKey)
+                }
+            },
             new MongoCollectionConfig
             {
                 CollectionType = typeof(GoogleTranslateDataCacheEntity),

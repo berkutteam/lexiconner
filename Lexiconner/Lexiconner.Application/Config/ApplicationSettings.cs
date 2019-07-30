@@ -5,6 +5,11 @@ using System.Text;
 
 namespace Lexiconner.Application.Config
 {
+    public class ImportSettings
+    {
+        public string FilePath { get; set; }
+    }
+
     public class GoogleSettings
     {
         public string ProjectId { get; set; }

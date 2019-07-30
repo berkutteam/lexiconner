@@ -14,11 +14,6 @@ namespace Lexiconner.Seed
         public RapidApiSettings RapidApi { get; set; }
     }
 
-    public class ImportSettings
-    {
-        public string FilePath { get; set; }
-    }
-
     public class MongoDbSettings
     {
         public string ConnectionString { get; set; }

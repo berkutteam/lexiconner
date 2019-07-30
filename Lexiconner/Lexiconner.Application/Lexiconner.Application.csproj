@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -12,6 +12,11 @@
 
   <ItemGroup>
     <Folder Include="ApiClients\Exceptions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lexiconner.Domain\Lexiconner.Domain.csproj" />
+    <ProjectReference Include="..\Lexiconner.Persistence\Lexiconner.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
