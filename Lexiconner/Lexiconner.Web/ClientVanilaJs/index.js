@@ -300,11 +300,11 @@ function start(config) {
                     cardExampleTextEl.classList.remove('hidden');
                 }
 
-                if (!card.examplePicture) {
+                if (!card.image) {
 
                     cardExampleImageEl.src = "1600x900\\" + pictures[Math.floor(Math.random() * pictures.length)];
                 } else {
-                    cardExampleImageEl.src = card.exampleImageUrl;
+                    cardExampleImageEl.src = card.image.url;
                 }
             }
 
