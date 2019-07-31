@@ -39,19 +39,19 @@ function start(config) {
     Oidc.Log.logger = console;
     Oidc.Log.level = Oidc.Log.INFO;
 
-    userManager.events.addUserLoaded(function(){
+    userManager.events.addUserLoaded(function () {
         console.log("userLoaded");
     });
-    userManager.events.addUserUnloaded(function(){
+    userManager.events.addUserUnloaded(function () {
         console.log("userUnloaded");
     });
-    userManager.events.addAccessTokenExpiring(function(){
+    userManager.events.addAccessTokenExpiring(function () {
         console.log("access_token expiring...");
     });
-    userManager.events.addAccessTokenExpired(function(){
+    userManager.events.addAccessTokenExpired(function () {
         console.log("access_token expired");
     });
-    userManager.events.addSilentRenewError(function(err){
+    userManager.events.addSilentRenewError(function (err) {
         console.error("silentRenewError: ", err);
     });
 
@@ -60,7 +60,7 @@ function start(config) {
         if (user) {
             console.log("User logged in", user, user.profile);
             //user.access_token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkY0MzgyNUFFMjQ4NDNFNjMzMjYwQjlBOTU1RDExNDQ4NkZGRURCRUMiLCJ0eXAiOiJKV1QiLCJ4NXQiOiI5RGdscmlTRVBtTXlZTG1wVmRFVVNHXy0yLXcifQ.eyJuYmYiOjE1NjQwNTE5MjQsImV4cCI6MTU2NDA1NTUyNCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwNCIsImF1ZCI6WyJodHRwczovL2xvY2FsaG9zdDo1MDA0L3Jlc291cmNlcyIsIndlYmFwaSJdLCJjbGllbnRfaWQiOiJ3ZWJzcGEiLCJzdWIiOiI1ZDM5ODk5YjA5ZDAyNjI1NzRkNWYwOWYiLCJhdXRoX3RpbWUiOjE1NjQwNTE5MjIsImlkcCI6ImxvY2FsIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsIndlYmFwaSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXX0.n9vNo2wkZEEtNS2hHHEroDYiUG0OPoXFkF86poJEJXNhQrndAjQdVMc4FeFehUDP7GOj7pSCAmcllvRiRsUjAQ-IeV5DEjtgFsLxZon8svbb5UPJ-efjULcHT-U2u5a-eWqRQXck1gZ2W9fIzCcaBYzptV_K9gjlhuFLlUVs-L2PQe0gULHu0fKYmZjtdO-bI8hBYo8ZSvvwrRVMVgKp798bmlIX5z12mnh_knLCWCUe-tCn4qe0X0oHgHb3KGRneTR2JpocCQWSvdYYkPm-rR-XK3m8EETq_kxXCdTd1nRcV2pKa0sSynpcLW2MOQiOZ61wuFcsHolGV6K9zWnBFQ";
-            
+
             // run app
             runApp(user);
             // handleAccessTokenExpiration(user);
@@ -184,6 +184,14 @@ function start(config) {
             isFromWordList: false
         }; // used in pageHandlers['word-list'] for eventListener
 
+        window.countOfEventlisteners = {
+            addWordButtonEventListener: 0,
+            cardLeftButtonEvent: 0,
+            cardRightButtonEvent: 0,
+            cardLeftButtonMobileVersionEvent: 0,
+            cardRightButtonMobileVersionEvent: 0
+        };
+
         window.pageHandlers = {};
 
         window.pageHandlers['no-response'] = function () {
@@ -203,13 +211,6 @@ function start(config) {
 
             var pages = 0;
             var cardData = {};
-            var pictures = [];
-
-
-
-            for (var i = 0; i < 69; i++) { // add picture in array for random example picture
-                pictures.push(i + ".jpg");
-            }
 
             function getTestData(countOfElmenets, testOffset = 0) {
                 var arrData = [];
@@ -231,8 +232,7 @@ function start(config) {
                 }
                 return arrData;
             }
-
-            function showNextCard(direction = 1) {
+            function showNextCard(direction = 0) {
                 counter = counter + direction * 1;
 
                 if (window.wordOrder.isFromWordList) {
@@ -264,11 +264,11 @@ function start(config) {
 
                             cardData = response.data;
 
-                            if ((direction === 0) || (direction === 1)) {
+                            if (direction === -1) {
+                                counter = cardData.items.length - 1;
+                            } else {
                                 counter = 0;
 
-                            } else {
-                                counter = cardData.items.length - 1;
                             }
 
                             pages = Math.ceil(cardData.totalCount / limit);
@@ -308,29 +308,47 @@ function start(config) {
                 }
             }
 
-            var leftButtonEl = document.querySelector(".card-button-left");
-            var rightButtonEl = document.querySelector(".card-button-right");
+            if (window.countOfEventlisteners.cardLeftButtonEvent === 0) {
 
-            var leftButtonElMobileVersion = document.getElementById("cardButtonLeftMobileVersion");
-            var rightButtonElMobileVersion = document.getElementById("cardButtonRightMobileVersion");
+                var leftButtonEl = document.querySelector(".card-button-left");
 
-            leftButtonEl.addEventListener("click", function (e) {
+                leftButtonEl.addEventListener("click", function (e) {
 
-                showNextCard(-1);
-            });
+                    showNextCard(-1);
+                });
+                window.countOfEventlisteners.cardLeftButtonEvent++;
+            }
 
-            rightButtonEl.addEventListener("click", function (e) {
-                showNextCard(1);
-            });
+            if (window.countOfEventlisteners.cardRightButtonEvent === 0) {
 
-            leftButtonElMobileVersion.addEventListener("click", function (e) {
-                showNextCard(-1);
-            });
+                var rightButtonEl = document.querySelector(".card-button-right");
 
-            rightButtonElMobileVersion.addEventListener("click", function (e) {
-                showNextCard(1);
-            });
+                rightButtonEl.addEventListener("click", function (e) {
+                    showNextCard(1);
+                });
+                window.countOfEventlisteners.cardRightButtonEvent++;
+            }
 
+            if (window.countOfEventlisteners.cardLeftButtonMobileVersionEvent === 0) {
+
+                var leftButtonElMobileVersion = document.getElementById("cardButtonLeftMobileVersion");
+
+                leftButtonElMobileVersion.addEventListener("click", function (e) {
+                    showNextCard(-1);
+                });
+
+                window.countOfEventlisteners.cardLeftButtonMobileVersionEvent++;
+            }
+
+            if (window.countOfEventlisteners.cardRightButtonMobileVersionEvent === 0) {
+
+                var rightButtonElMobileVersion = document.getElementById("cardButtonRightMobileVersion");
+
+                rightButtonElMobileVersion.addEventListener("click", function (e) {
+                    showNextCard(1);
+                });
+                window.countOfEventlisteners.cardRightButtonMobileVersionEvent++;
+            }
             showNextCard(0);
         }
         // Show all data
@@ -430,55 +448,85 @@ function start(config) {
 
         window.pageHandlers['add-word'] = function () {
 
-            var sendButtonEl = document.querySelector('.js-send-word-button');
-            var formDataObj = {};
+            var formDataSend = {};
             var addWordFormEl = document.forms.addWordForm;
-            var url = `${config.urls.api}/api/v2/StudyItems`;
+            var postUrl = `${config.urls.api}/api/v2/StudyItems`;
+            var deleteUrl = `${config.urls.api}/api/v2/StudyItems/`;
+
+            if (window.countOfEventlisteners.addWordButtonEventListener === 0) {
+
+                var sendButtonEl = document.querySelector('.js-send-word-button');
+
+                sendButtonEl.addEventListener('click', function (e) {
+
+                    formDataSend.userId = user.id_token;
+
+                    formDataSend.title = addWordFormEl.elements.title.value ? addWordFormEl.elements.title.value :
+                        addWordFormEl.elements.title.classList.add('input-field-empty-js');
+
+                    formDataSend.description = addWordFormEl.elements.description.value ? addWordFormEl.elements.description.value :
+                        addWordFormEl.elements.description.classList.add('input-field-empty-js');
+
+                    formDataSend.exampleText = addWordFormEl.elements.exampleText.value ? addWordFormEl.elements.exampleText.value :
+                        addWordFormEl.elements.exampleText.classList.add('input-field-empty-js');
+
+                    formDataSend.tags = [];
+                    addWordFormEl.elements.tags.value ? formDataSend.tags.push(addWordFormEl.elements.tags.value) :
+                        addWordFormEl.elements.tags.classList.add('input-field-empty-js')
 
 
-            sendButtonEl.addEventListener('click', function (e) {
-                formDataObj.userId = user.id_token;
-                formDataObj.title = addWordFormEl.elements.title.value;
-                formDataObj.description = addWordFormEl.elements.description.value;
-                formDataObj.exampleText = addWordFormEl.elements.exampleText.value;
-                formDataObj.tags = [];
-                formDataObj.tags.push(addWordFormEl.elements.tags.value);
-                //console.log('FORM',formDataObj);
-                //console.log("token", user.id_token);
-                postRequest(url, formDataObj, user.access_token, function (request) {
-                    console.log("Send to server", request);
-                    alert("Item was add");
+                    addWordFormEl.elements.title.onfocus = function () {
+                        if (addWordFormEl.elements.title.classList.contains('input-field-empty-js')) {
+                            addWordFormEl.elements.title.classList.remove('input-field-empty-js');
+                        }
+                    }
+
+                    addWordFormEl.elements.description.onfocus = function () {
+                        if (addWordFormEl.elements.description.classList.contains('input-field-empty-js')) {
+                            addWordFormEl.elements.description.classList.remove('input-field-empty-js');
+                        }
+                    }
+
+                    addWordFormEl.elements.exampleText.onfocus = function () {
+                        if (addWordFormEl.elements.exampleText.classList.contains('input-field-empty-js')) {
+                            addWordFormEl.elements.exampleText.classList.remove('input-field-empty-js');
+                        }
+                    }
+
+                    addWordFormEl.elements.tags.onfocus = function () {
+                        if (addWordFormEl.elements.tags.classList.contains('input-field-empty-js')) {
+                            addWordFormEl.elements.tags.classList.remove('input-field-empty-js');
+                        }
+                    }
+
+                    if (formDataSend.title && formDataSend.description && formDataSend.exampleText && (formDataSend.tags.length !== 0)) {
+                        sendData(postUrl, formDataSend, user.access_token);
+                    }
+
                 });
+                window.countOfEventlisteners.addWordButtonEventListener++;
+            }
+
+            var deleteButtonEl = document.querySelector('.js-delete-word-button');
+            deleteButtonEl.addEventListener('click', function (e) {
+                deleteData(deleteUrl, addWordFormEl.elements.delete.value, user.access_token);
             });
 
-            function postRequest(url, data, authToken = null, callback = null) {
-                var xhr = new XMLHttpRequest();
-
-                xhr.withCredentials = true; // force to show browser's default auth dialog
-                xhr.open('POST', url, true);
-
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.onload = function () {
-                    if (xhr.status === 200) {
-
-                        callback(xhr.responseText);
-
-                    } else if (xhr.status === 500) {
-                        console.error('Request failed.  Returned status of ' + xhr.status);
-                        alert('Request failed.  Returned status of ' + xhr.status);
-                    } else if (xhr.status === 401 || xhr.status === 403) {
-                        console.error('Request failed.  Returned status of ' + xhr.status);
-                        alert("Authentication time is up");
-                        //logout();
-                    }
-                };
-
-                if (authToken !== null) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-                }
-                console.log("sss", JSON.stringify(data));
-                xhr.send(JSON.stringify(data));
+            function sendData(url, data, authToken) {
+                postRequest(url, data, authToken, function (request) {
+                    alert("Item was add");
+                });
             }
+
+            function deleteData(url, dataId, authToken) {
+                if (dataId) {
+                    url = `${config.urls.api}/api/v2/StudyItems/${dataId}`;
+                }
+                console.log("Delete to", url);
+
+                deleteRequest(url, authToken);
+            }
+
         }
         //// base routing
 
@@ -553,7 +601,61 @@ function start(config) {
     }
 }
 
+function deleteRequest(url, authToken) {
+    var xhr = new XMLHttpRequest();
 
+    xhr.withCredentials = true; // force to show browser's default auth dialog
+    xhr.open('DELETE', url, true);
+
+    //xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+
+            console.log("Item successfully deleted");
+
+        } else if (xhr.status === 500) {
+            console.error('Request failed.  Returned status of ' + xhr.status);
+            alert('Request failed.  Returned status of ' + xhr.status);
+        } else if (xhr.status === 401 || xhr.status === 403) {
+            console.error('Request failed.  Returned status of ' + xhr.status);
+            alert("Authentication time is up");
+            //logout();
+        }
+    };
+
+    if (authToken !== null) {
+        xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+    }
+    xhr.send();
+}
+
+function postRequest(url, data, authToken = null, callback) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.withCredentials = true; // force to show browser's default auth dialog
+    xhr.open('POST', url, true);
+
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+
+            callback(JSON.parse(xhr.responseText));
+
+        } else if (xhr.status === 500) {
+            console.error('Request failed.  Returned status of ' + xhr.status);
+            alert('Request failed.  Returned status of ' + xhr.status);
+        } else if (xhr.status === 401 || xhr.status === 403) {
+            console.error('Request failed.  Returned status of ' + xhr.status);
+            alert("Authentication time is up");
+            //logout();
+        }
+    };
+
+    if (authToken !== null) {
+        xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+    }
+    xhr.send(JSON.stringify(data));
+}
 
 function httpGet(url, callBack, authToken = null) {
     var xhr = new XMLHttpRequest();

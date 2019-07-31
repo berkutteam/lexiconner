@@ -31,6 +31,8 @@ body {
     --example-background-color: #35849c;
     --menu-item-font-color: #fff;
     --button-red-color: brown;
+    --input-field-color:#bec9ff;
+    --input-field-border-color:#bec9ff;
     --block-bottom-width: 13%;
     --block-bottom-height: 10%;
 }
@@ -444,7 +446,7 @@ body {
 .item-list-pager__button .button-icon {
 }
 
-/*begin add word ford */
+/*begin add word form */
 
 .add-word-form{
     display: flex;
@@ -466,6 +468,8 @@ body {
 }
 
 .input-field-title{
+    background-color: var(--input-field-color);
+    border-color: var(--input-field-border-color);
     padding: 0em 0.5em;
     margin: 1em 0em 0.5em;
     height: 1.2em;
@@ -474,6 +478,8 @@ body {
 }
 
 .input-field-description{
+    background-color: var(--input-field-color);
+    border-color: var(--input-field-border-color);
     height: 7em;
     width: 23em;
     padding: 0.5em;
@@ -483,6 +489,8 @@ body {
 }
 
 .input-field-example-text{
+    background-color: var(--input-field-color);
+    border-color: var(--input-field-border-color);
     height: 7em;
     width: 23em;
     padding: 0.5em;
@@ -492,11 +500,28 @@ body {
 }
 
 .input-field-tags{
+    background-color: var(--input-field-color);
+    border-color: var(--input-field-border-color);
     padding: 0em 0.5em;
     margin: 0.5em 0em 0.5em;
     height: 1.2em;
     width: 16.1em;
     font-size: 0.7em;
+}
+
+.input-field-to-delete{
+    background-color: var(--input-field-color);
+    border-color: var(--input-field-border-color);
+    padding: 0em 0.5em;
+    margin: 1em 0em 0.5em;
+    height: 1.2em;
+    width: 16.6em;
+    font-size: 0.7em;
+}
+
+.input-field-empty-js {
+    border-width: 0.12em;
+    border-color: red; 
 }
 
 .reset-button{
@@ -511,4 +536,4 @@ body {
 .send-button{
 
 }
-/* end add word ford */
+/* end add word form */
