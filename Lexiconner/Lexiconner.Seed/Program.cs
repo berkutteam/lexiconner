@@ -69,6 +69,7 @@ namespace Lexiconner.Seed
             // configure collections (set indexes, ...)
             logger.LogInformation("Configure collections (set indexes, ...)");
             await mongoRepository.InitializeCollection<GoogleTranslateDataCacheEntity>();
+            await mongoRepository.InitializeCollection<GoogleTranslateDetectLangugaeDataCacheEntity>();
             await mongoRepository.InitializeCollection<ContextualWebSearchImageSearchDataCacheEntity>();
 
             // seed
