@@ -49,7 +49,7 @@ namespace Lexiconner.Domain.Entitites
 
         public List<StudyItemTrainingProgressItemEntity> Trainings { get; set; }
 
-        public decimal GetOverallProgress()
+        public double GetOverallProgress()
         {
             var progress = Math.Round(Trainings.Select(x => x.Progress).Sum() / Trainings.Count, 2);
             return progress;
@@ -67,7 +67,7 @@ namespace Lexiconner.Domain.Entitites
             /// <summary>
             /// Percents [0, 1]
             /// </summary>
-            public decimal Progress { get; set; }
+            public double Progress { get; set; }
         }
     }
 }

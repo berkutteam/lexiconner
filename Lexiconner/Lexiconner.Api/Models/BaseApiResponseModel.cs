@@ -7,6 +7,7 @@ namespace Lexiconner.Api.Models
 {
     public class BaseApiResponseModel<T>
     {
+        public bool Ok { get; set; }
         public T Data { get; set; }
     }
 }

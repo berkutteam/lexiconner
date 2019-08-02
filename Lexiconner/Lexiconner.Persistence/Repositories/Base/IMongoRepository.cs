@@ -32,7 +32,7 @@ namespace Lexiconner.Persistence.Repositories.Base
         /// <returns></returns>
         Task<bool> CollectionExistsAsync<T>() where T : class;
 
-        Task InitializeCollection<T>();
+        Task InitializeCollectionAsync<T>();
        // Task InitializeCollections(List<MongoCollectionConfig> mongoCollectionConfigs);
     }
 }

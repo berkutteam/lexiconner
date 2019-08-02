@@ -1,6 +1,7 @@
 ﻿using IdentityServer4.Models;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
+using Lexiconner.Domain.Entitites.Testing;
 using Lexiconner.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -134,6 +135,15 @@ namespace Lexiconner.Domain.Config
                     nameof(ContextualWebSearchImageSearchDataCacheEntity.CacheKey)
                 }
             },
+
+            // testing
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(SimpleTestEntity),
+                CollectionName = "simpleTest",
+                Indexes = new List<string> {
+                }
+            },
         };
 
         public static string GetCollectionName<T>(ApplicationDb applicationDb)
@@ -142,19 +152,14 @@ namespace Lexiconner.Domain.Config
             return config.CollectionName;
         }
 
+        public static bool IsCollectionConfigExists<T>(ApplicationDb applicationDb)
+        {
+            return _GetCollectionConfig<T>(applicationDb) != null;
+        }
+
         public static MongoCollectionConfig GetCollectionConfig<T>(ApplicationDb applicationDb)
         {
-            MongoCollectionConfig config = null;
-
-            switch(applicationDb)
-            {
-                case ApplicationDb.Identity:
-                    config = IdentityDbCollectionConfig.FirstOrDefault(x => x.CollectionType == typeof(T));
-                    break;
-                case ApplicationDb.Main:
-                    config = MainDbCollectionConfig.FirstOrDefault(x => x.CollectionType == typeof(T));
-                    break;
-            }
+            MongoCollectionConfig config = _GetCollectionConfig<T>(applicationDb);
 
             if (config == null)
             {
@@ -181,6 +186,23 @@ namespace Lexiconner.Domain.Config
             {
                 throw new InvalidOperationException($"Collections config for {nameof(ApplicationDb)} {applicationDb} is not registered!");
             }
+            return config;
+        }
+
+        private static MongoCollectionConfig _GetCollectionConfig<T>(ApplicationDb applicationDb)
+        {
+            MongoCollectionConfig config = null;
+
+            switch (applicationDb)
+            {
+                case ApplicationDb.Identity:
+                    config = IdentityDbCollectionConfig.FirstOrDefault(x => x.CollectionType == typeof(T));
+                    break;
+                case ApplicationDb.Main:
+                    config = MainDbCollectionConfig.FirstOrDefault(x => x.CollectionType == typeof(T));
+                    break;
+            }
+
             return config;
         }
     }

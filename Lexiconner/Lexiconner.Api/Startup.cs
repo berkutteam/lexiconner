@@ -28,6 +28,7 @@ using Microsoft.Extensions.Logging;
 using Lexiconner.Domain.Enums;
 using Lexiconner.Persistence.Cache;
 using Lexiconner.Application.Services;
+using Lexiconner.Api.Services;
 
 namespace Lexiconner.Api
 {
@@ -86,6 +87,7 @@ namespace Lexiconner.Api
 
             services.AddTransient<IDataCache, DataCacheDataRepository>();
             services.AddTransient<IImageService, ImageService>();
+            services.AddTransient<IStudyItemsService, StudyItemsService>();
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 

@@ -66,7 +66,7 @@ namespace Lexiconner.Seed.Seed
             IEnumerable<StudyItemEntity> studyItems = null;
             foreach (var user in usersWithImport)
             {
-                if (!_mongoRepository.AnyAsync<StudyItemEntity>(x => x.UserId == user.Id).GetAwaiter().GetResult())
+                if (!_mongoRepository.ExistsAsync<StudyItemEntity>(x => x.UserId == user.Id).GetAwaiter().GetResult())
                 {
                     studyItems = studyItems ?? GetStudyItems().GetAwaiter().GetResult();
                     studyItems = studyItems.Select(x =>

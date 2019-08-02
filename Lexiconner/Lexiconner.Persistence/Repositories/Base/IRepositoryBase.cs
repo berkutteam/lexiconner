@@ -18,7 +18,7 @@ namespace Lexiconner.Persistence.Repositories.Base
         Task AddAsync<T>(T entity) where T : class;
         Task AddManyAsync<T>(IEnumerable<T> entities) where T : class;
         Task UpdateAsync<T>(T entity) where T : BaseEntity;
-        Task UpdateAsync<T>(IEnumerable<T> entities) where T : BaseEntity;
+        Task UpdateManyAsync<T>(IEnumerable<T> entities) where T : BaseEntity;
         Task DeleteAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
         Task DeleteAllAsync<T>() where T : class;
 
@@ -26,14 +26,13 @@ namespace Lexiconner.Persistence.Repositories.Base
         /// Deletes only N documents by predicate selected after order
         /// </summary>
         /// <returns></returns>
-        Task DeleteNDcoumentsAsync<T>(
+        Task DeleteNDocumentsAsync<T>(
             Expression<Func<T, bool>> predicate,
             Expression<Func<T, object>> sortFieldSelector,
             int deleteCount
         ) where T : class, IIdentifiableEntity;
 
         Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
-        Task<bool> AnyAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
         Task<long> CountAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
     }
 }
