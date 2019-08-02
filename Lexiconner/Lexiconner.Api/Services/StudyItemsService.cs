@@ -75,7 +75,7 @@ namespace Lexiconner.Api.Services
         {
             var entities = await _mongoRepository.GetManyAsync<StudyItemEntity>(
                 x => x.UserId == userId && 
-                (x.TrainingInfo == null || (x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress != 1 && y.NextTrainingdAt >= DateTime.UtcNow)))
+                (x.TrainingInfo == null || (x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress != 1 && y.NextTrainingdAt <= DateTime.UtcNow)))
             );
 
             return new FlashCardsTrainingDto
@@ -109,6 +109,9 @@ namespace Lexiconner.Api.Services
                     training.Progress = training.Progress - infoAttribute.WrongAnswerProgressRate;
                     training.Progress = Math.Max(training.Progress, 0);
                 }
+
+                training.LastTrainingdAt = DateTime.UtcNow;
+                training.NextTrainingdAt = DateTime.UtcNow.Add(infoAttribute.TrainIntervalTimespan);
 
                 return x;
             });
