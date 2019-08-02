@@ -163,7 +163,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
         }
 
         // TODO - check works properly
-        public async Task UpdateAsync<T>(IEnumerable<T> entities) where T : BaseEntity
+        public async Task UpdateManyAsync<T>(IEnumerable<T> entities) where T : BaseEntity
         {
             var ids = entities.Select(x => x.Id).ToList();
             var updates = new List<WriteModel<T>>();
