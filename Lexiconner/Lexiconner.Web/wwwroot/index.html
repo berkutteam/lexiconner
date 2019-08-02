@@ -98,10 +98,28 @@
 
             <div class="menu-page-container" data-route="word-list">
                 <div class="item-list-container js-item-list-container">
+
                     <!-- Template el -->
+
                     <div class="list-item list-item--hidden js-list-item-template">
-                        <div class="list-item-text js-item-text"></div>
+                        <div class="list-item-text js-item-text">
+                            <span class="list-item-text-span"></span>
+                        </div>
+
+                        <div class="container-edit-picture">
+                            <div class="list-item-picture-delete">
+                                <img class="edit-picture" src="images/icons8-delete.png">
+                            </div>
+                            <div class="list-item-picture-put">
+                                <img class="edit-picture" src="images/icons8-put.png">
+                            </div>
+                        </div>
+
+                        <!-- picture -->
+
+
                     </div>
+
                     <div class="item-list js-item-list">
                         <!-- Items will be inserted dynamically -->
                     </div>
@@ -125,41 +143,45 @@
             </div>
 
             <div class="menu-page-container" data-route="add-word">
-                <form method="post" class="add-word-form" name="addWordForm" action="">
-                    <div class="form-container">
-                        <input class="input-field-title" type="text" name="title" placeholder="Title">
-                        <textarea class="input-field-description" name="description"
-                            placeholder="Description"></textarea>
-                        <textarea class="input-field-example-text" name="exampleText"
-                            placeholder="Example Text"></textarea>
-                        <input class="input-field-tags" type="text" name="tags" placeholder="Tags">
-                        <input class="input-field-to-delete" type="text" name="delete" placeholder="To delete (id)">
-                    </div>
+                <div class="data-form-container">
+                    <form method="post" class="add-word-form" name="addWordForm">
+                        <div class="form-container">
+                            <input class="input-field-title" type="text" name="title" placeholder="Title">
+                            <textarea class="input-field-description" name="description"
+                                placeholder="Description"></textarea>
+                            <textarea class="input-field-example-text" name="exampleText"
+                                placeholder="Example Text"></textarea>
+                            <input class="input-field-tags" type="text" name="tags" placeholder="Tags">
+                            <input class="input-field-id-item" type="text" name="idItem"
+                                placeholder="Id item (put or delete)">
+                        </div>
 
-                    <div class="form-button-container">
-                        <input class="reset-button" type="reset" value="reset">
-                        <input type="button" class="js-send-word-button" value="Send" />
-                        <input type="button" class="js-delete-word-button" value="Delete" />
-                    </div>
+                        <div class="form-button-container">
+                            <input class="reset-button" type="reset" value="reset">
+                            <input type="button" class="js-send-word-button" value="Send" />
+                            <input type="button" class="js-put-button" value="Put" />
+
+                        </div>
+                    </form>
+
+                </div>
             </div>
 
-
-
-            </form>
+            <div class="menu-page-container js-error-page" data-route="no-response">
+                <img class="error-image" src="images/brending/sign.png" alt="" />
+                <div class="error-message-row">
+                    <p class="hidden js-empty-data">
+                        Server returned no data
+                    </p>
+                    <p class="hidden js-authentication-time-out">
+                        Authentication time out
+                    </p>
+                </div>
+            </div>
 
         </div>
 
-        <div class="menu-page-container js-error-page" data-route="no-response">
-            <img class="error-image" src="images/brending/sign.png" alt="" />
-            <div class="error-message-row">
-                <p class="hidden js-empty-data">
-                    Server returned no data
-                </p>
-                <p class="hidden js-authentication-time-out">
-                    Authentication time out
-                </p>
-            </div>
-        </div>
+
 
     </div>
     </div>

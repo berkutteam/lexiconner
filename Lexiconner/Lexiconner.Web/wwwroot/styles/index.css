@@ -26,6 +26,7 @@ body {
     --card-background-color: #232644;
     --card-list-item-background-color: #232644;
     --card-lighter-color: #30355d;
+    --card-lighter-color-edit-control-button: #494f7c;
     --card-darker-color: #20233e;
     --bottom-color: #4f9da6;
     --example-background-color: #35849c;
@@ -361,6 +362,9 @@ body {
 
 
 .list-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     width: 19.6%;
     height: 60px;
     margin: 0.5% 0.5% 0 0;
@@ -371,10 +375,6 @@ body {
     font-size: 1em;
     padding: 0.5em;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -382,11 +382,40 @@ body {
 }
 
 .list-item-text {
-    display: block;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+    height: 4em;
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    
+}
+
+.list-item-text-span{
+    flex-grow: 1;
+}
+
+.container-edit-picture{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--card-list-item-control-button-background-color);
+}
+
+.edit-picture{
+    width: auto;
+    height: 1.5em;
+}
+
+.list-item-picture-delete:hover {
+    background-color: var(--card-lighter-color-edit-control-button);
+}
+
+.list-item-picture-put:hover {
+    background-color: var(--card-lighter-color-edit-control-button);
 }
 
 .list-item:hover {
@@ -447,7 +476,10 @@ body {
 }
 
 /*begin add word form */
-
+.data-form-container{
+    display: flex;
+    flex-direction: row;
+}
 .add-word-form{
     display: flex;
     flex-direction: column;
@@ -509,7 +541,7 @@ body {
     font-size: 0.7em;
 }
 
-.input-field-to-delete{
+.input-field-id-item{
     background-color: var(--input-field-color);
     border-color: var(--input-field-border-color);
     padding: 0em 0.5em;

@@ -361,9 +361,20 @@ function start(config) {
 
             function addDataItemsBlock(item, i) {
                 var clone = listItemTemplateEl.cloneNode(true);
-                var textEl = clone.querySelector('.js-item-text');
+                var textEl = clone.querySelector('.list-item-text-span');
+
+                // begin edit picture elements (delete,put)
+                var containerEditPictureEl = clone.querySelector('.container-edit-picture');
+                var deletePictureEl = containerEditPictureEl.querySelector('.list-item-picture-delete');
+                var putPictureEl = containerEditPictureEl.querySelector('.list-item-picture-put');
+                // end edit picture elements (delete,put)
+
                 textEl.innerText = item.title;
                 textEl.setAttribute('position-in-list', i);
+
+                deletePictureEl.setAttribute('position-in-list', i);
+                putPictureEl.setAttribute('position-in-list', i);
+
                 clone.setAttribute('position-in-list', i);
                 clone.classList.remove('list-item--hidden');
                 itemListEl.appendChild(clone);
@@ -383,6 +394,7 @@ function start(config) {
             var totalCount = 0;
             var page = 0;
             var limit = 40;
+            var pageData = {};
             var offsetWordList = page * limit;
             var calcPagesCount = function () {
                 return Math.ceil(totalCount / limit);
@@ -400,6 +412,8 @@ function start(config) {
             function showPage(page, limit) {
                 getPageData(page, limit, function (response) {
                     totalCount = response.data.totalCount;
+                    pageData = response.data;
+
                     showPageData(response.data.items);
                 });
             }
@@ -435,15 +449,39 @@ function start(config) {
                 showPage(page, limit);
             });
 
-            showPage(page, limit);
-            setNumberPage(0);
-
-            addBubleEventListener(itemListContainerEl, '[position-in-list]', 'click', function (e, desiredEl) {
+            addBubleEventListener(itemListContainerEl, '.js-item-text', 'click', function (e, desiredEl) {
                 e.stopPropagation();
+
+
                 window.wordOrder.length = (page * limit) + Number(desiredEl.getAttribute('position-in-list'));
                 window.wordOrder.isFromWordList = true;
                 goToRoute('#cards');
             });
+
+            addBubleEventListener(itemListContainerEl, '.list-item-picture-delete', 'click', function (e, actualEl, desiredEl) {
+                e.stopPropagation();
+
+                var numberOfItem = Number(desiredEl.getAttribute('position-in-list'));
+
+
+                if (confirm(`Do you want to delete ${pageData.items[numberOfItem].title}`)) {
+
+                    var idItemUrl = `${config.urls.api}/api/v2/StudyItems/${pageData.items[numberOfItem].id}`;
+                    deleteData(idItemUrl, user.access_token);
+
+                    alert('Deleted');
+                }
+            });
+
+            function deleteData(url, authToken) {
+
+                console.log("Delete to", url);
+                deleteRequest(url, authToken);
+
+            }
+
+            showPage(page, limit);
+            setNumberPage(0);
         }
 
         window.pageHandlers['add-word'] = function () {
@@ -451,7 +489,7 @@ function start(config) {
             var formDataSend = {};
             var addWordFormEl = document.forms.addWordForm;
             var postUrl = `${config.urls.api}/api/v2/StudyItems`;
-            var deleteUrl = `${config.urls.api}/api/v2/StudyItems/`;
+            var idItemUrl = `${config.urls.api}/api/v2/StudyItems/`;
 
             if (window.countOfEventlisteners.addWordButtonEventListener === 0) {
 
@@ -459,47 +497,7 @@ function start(config) {
 
                 sendButtonEl.addEventListener('click', function (e) {
 
-                    formDataSend.userId = user.id_token;
-
-                    formDataSend.title = addWordFormEl.elements.title.value ? addWordFormEl.elements.title.value :
-                        addWordFormEl.elements.title.classList.add('input-field-empty-js');
-
-                    formDataSend.description = addWordFormEl.elements.description.value ? addWordFormEl.elements.description.value :
-                        addWordFormEl.elements.description.classList.add('input-field-empty-js');
-
-                    formDataSend.exampleText = addWordFormEl.elements.exampleText.value ? addWordFormEl.elements.exampleText.value :
-                        addWordFormEl.elements.exampleText.classList.add('input-field-empty-js');
-
-                    formDataSend.tags = [];
-                    addWordFormEl.elements.tags.value ? formDataSend.tags.push(addWordFormEl.elements.tags.value) :
-                        addWordFormEl.elements.tags.classList.add('input-field-empty-js')
-
-
-                    addWordFormEl.elements.title.onfocus = function () {
-                        if (addWordFormEl.elements.title.classList.contains('input-field-empty-js')) {
-                            addWordFormEl.elements.title.classList.remove('input-field-empty-js');
-                        }
-                    }
-
-                    addWordFormEl.elements.description.onfocus = function () {
-                        if (addWordFormEl.elements.description.classList.contains('input-field-empty-js')) {
-                            addWordFormEl.elements.description.classList.remove('input-field-empty-js');
-                        }
-                    }
-
-                    addWordFormEl.elements.exampleText.onfocus = function () {
-                        if (addWordFormEl.elements.exampleText.classList.contains('input-field-empty-js')) {
-                            addWordFormEl.elements.exampleText.classList.remove('input-field-empty-js');
-                        }
-                    }
-
-                    addWordFormEl.elements.tags.onfocus = function () {
-                        if (addWordFormEl.elements.tags.classList.contains('input-field-empty-js')) {
-                            addWordFormEl.elements.tags.classList.remove('input-field-empty-js');
-                        }
-                    }
-
-                    if (formDataSend.title && formDataSend.description && formDataSend.exampleText && (formDataSend.tags.length !== 0)) {
+                    if (makeRequestBody()) {
                         sendData(postUrl, formDataSend, user.access_token);
                     }
 
@@ -507,10 +505,52 @@ function start(config) {
                 window.countOfEventlisteners.addWordButtonEventListener++;
             }
 
-            var deleteButtonEl = document.querySelector('.js-delete-word-button');
-            deleteButtonEl.addEventListener('click', function (e) {
-                deleteData(deleteUrl, addWordFormEl.elements.delete.value, user.access_token);
-            });
+            function makeRequestBody() {
+
+                formDataSend.userId = user.id_token;
+
+                formDataSend.title = addWordFormEl.elements.title.value ? addWordFormEl.elements.title.value :
+                    addWordFormEl.elements.title.classList.add('input-field-empty-js');
+
+                formDataSend.description = addWordFormEl.elements.description.value ? addWordFormEl.elements.description.value :
+                    addWordFormEl.elements.description.classList.add('input-field-empty-js');
+
+                formDataSend.exampleText = addWordFormEl.elements.exampleText.value ? addWordFormEl.elements.exampleText.value :
+                    addWordFormEl.elements.exampleText.classList.add('input-field-empty-js');
+
+                formDataSend.tags = [];
+                addWordFormEl.elements.tags.value ? formDataSend.tags.push(addWordFormEl.elements.tags.value) :
+                    addWordFormEl.elements.tags.classList.add('input-field-empty-js')
+
+
+                addWordFormEl.elements.title.onfocus = function () {
+                    if (addWordFormEl.elements.title.classList.contains('input-field-empty-js')) {
+                        addWordFormEl.elements.title.classList.remove('input-field-empty-js');
+                    }
+                }
+
+                addWordFormEl.elements.description.onfocus = function () {
+                    if (addWordFormEl.elements.description.classList.contains('input-field-empty-js')) {
+                        addWordFormEl.elements.description.classList.remove('input-field-empty-js');
+                    }
+                }
+
+                addWordFormEl.elements.exampleText.onfocus = function () {
+                    if (addWordFormEl.elements.exampleText.classList.contains('input-field-empty-js')) {
+                        addWordFormEl.elements.exampleText.classList.remove('input-field-empty-js');
+                    }
+                }
+
+                addWordFormEl.elements.tags.onfocus = function () {
+                    if (addWordFormEl.elements.tags.classList.contains('input-field-empty-js')) {
+                        addWordFormEl.elements.tags.classList.remove('input-field-empty-js');
+                    }
+                }
+
+                if (formDataSend.title && formDataSend.description && formDataSend.exampleText && (formDataSend.tags.length !== 0)) {
+                    return true;
+                }
+            }
 
             function sendData(url, data, authToken) {
                 postRequest(url, data, authToken, function (request) {
@@ -518,14 +558,11 @@ function start(config) {
                 });
             }
 
-            function deleteData(url, dataId, authToken) {
-                if (dataId) {
-                    url = `${config.urls.api}/api/v2/StudyItems/${dataId}`;
-                }
-                console.log("Delete to", url);
-
-                deleteRequest(url, authToken);
-            }
+            // function updateData(url, data, authToken){
+            //    putRequest(url, data, authToken, function (request) {
+            //         alert("Item was add");
+            //     });
+            // }
 
         }
         //// base routing
@@ -599,6 +636,34 @@ function start(config) {
         checkingServerResponse();
 
     }
+}
+
+function putRequest(url, data, authToken = null, callback) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.withCredentials = true; // force to show browser's default auth dialog
+    xhr.open('POST', url, true);
+
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+
+            callback(JSON.parse(xhr.responseText));
+
+        } else if (xhr.status === 500) {
+            console.error('Request failed.  Returned status of ' + xhr.status);
+            alert('Request failed.  Returned status of ' + xhr.status);
+        } else if (xhr.status === 401 || xhr.status === 403) {
+            console.error('Request failed.  Returned status of ' + xhr.status);
+            alert("Authentication time is up");
+            //logout();
+        }
+    };
+
+    if (authToken !== null) {
+        xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+    }
+    xhr.send(JSON.stringify(data));
 }
 
 function deleteRequest(url, authToken) {
