@@ -146,11 +146,16 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).InsertManyAsync(entities);
         }
 
-        // TODO - check works properly
         public async Task UpdateAsync<T>(T entity) where T : BaseEntity
         {
-            var definition = new ObjectUpdateDefinition<T>(entity);
-            var result = await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).UpdateOneAsync(x => x.Id == entity.Id, definition);
+            ///// FYI - update throws exception 'MongoDB Element name _id not valid'.
+            /// This happerns when model has Id property that mongo driver maps to _id and when update you can't change it
+            // var definition = new ObjectUpdateDefinition<T>(entity);
+            //var result = await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).UpdateOneAsync(x => x.Id == model.Id, definition, new UpdateOptions {
+            //    IsUpsert = false, // upsert requires _id. otherwise exception will be thrown
+            //});
+
+            var result = await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).ReplaceOneAsync(x => x.Id == entity.Id, entity);
             if (!result.IsAcknowledged)
             {
                 throw new Exception($"{nameof(UpdateAsync)} wasn't acknowledged!");
@@ -173,6 +178,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             {
                 throw new Exception($"{nameof(UpdateAsync)} wasn't acknowledged!");
             }
+
         }
 
         public async Task DeleteAsync<T>(Expression<Func<T, bool>> predicate) where T : class
