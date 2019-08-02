@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Mongo2Go" Version="2.2.11" />
+    <PackageReference Include="MongoDB.Driver" Version="2.8.1" />
+
+    <PackageReference Include="Bogus" Version="27.0.1" />
+    <PackageReference Include="FluentAssertions" Version="5.6.0" />
+    <PackageReference Include="FluentAssertions.AspNetCore.Mvc" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" />
+    <PackageReference Include="MimeMapping" Version="1.0.1.12" />
+    <PackageReference Include="Moq" Version="4.10.1" />
+    
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
+    
+    <PackageReference Include="NUlid" Version="1.4.1" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Lexiconner.Application\Lexiconner.Application.csproj" />
+    <ProjectReference Include="..\..\Lexiconner.Domain\Lexiconner.Domain.csproj" />
+    <ProjectReference Include="..\..\Lexiconner.Persistence\Lexiconner.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Entities\" />
+  </ItemGroup>
+
+</Project>

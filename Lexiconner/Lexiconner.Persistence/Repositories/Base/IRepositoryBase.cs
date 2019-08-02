@@ -26,14 +26,13 @@ namespace Lexiconner.Persistence.Repositories.Base
         /// Deletes only N documents by predicate selected after order
         /// </summary>
         /// <returns></returns>
-        Task DeleteNDcoumentsAsync<T>(
+        Task DeleteNDocumentsAsync<T>(
             Expression<Func<T, bool>> predicate,
             Expression<Func<T, object>> sortFieldSelector,
             int deleteCount
         ) where T : class, IIdentifiableEntity;
 
         Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
-        Task<bool> AnyAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
         Task<long> CountAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
     }
 }

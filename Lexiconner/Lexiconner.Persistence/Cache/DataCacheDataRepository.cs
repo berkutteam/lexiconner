@@ -58,7 +58,7 @@ namespace Lexiconner.Persistence.Cache
             if(count > _documentsMaxLimit)
             {
                 _logger.LogInformation($"Cache limit of {_documentsMaxLimit} documents is exceeded. Delete {_documentsToDeleteOnMaxLimit} documents to free up the space.");
-                await _dataRepository.DeleteNDcoumentsAsync<T>(x => true, x => x.CreatedAt, deleteCount: _documentsToDeleteOnMaxLimit);
+                await _dataRepository.DeleteNDocumentsAsync<T>(x => true, x => x.CreatedAt, deleteCount: _documentsToDeleteOnMaxLimit);
             }
         }
     }
