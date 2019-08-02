@@ -184,6 +184,8 @@ function start(config) {
             isFromWordList: false
         }; // used in pageHandlers['word-list'] for eventListener
 
+        window.itemIdPut = ""//used in pageHandlers['add-word'] for PUT method
+
         window.countOfEventlisteners = {
             addWordButtonEventListener: 0,
             cardLeftButtonEvent: 0,
@@ -463,7 +465,6 @@ function start(config) {
 
                 var numberOfItem = Number(desiredEl.getAttribute('position-in-list'));
 
-
                 if (confirm(`Do you want to delete ${pageData.items[numberOfItem].title}`)) {
 
                     var idItemUrl = `${config.urls.api}/api/v2/StudyItems/${pageData.items[numberOfItem].id}`;
@@ -472,6 +473,98 @@ function start(config) {
                     alert('Deleted');
                 }
             });
+
+
+            var test = '';// used for put
+            addBubleEventListener(itemListContainerEl, '.list-item-picture-put', 'click', function (e, actualEl, desiredEl) {
+                e.stopPropagation();
+
+                var modalWindowForm = document.querySelector('.js-form-dialog');
+                var numberOfItem1 = Number(desiredEl.getAttribute('position-in-list'));
+                var x = pageData.items[numberOfItem1].id;
+                test = x;
+
+                modalWindowForm.showModal();
+
+              
+
+                var formPutButtonEl = document.querySelector('.js-put-button');
+                var formDataSend = {};
+
+
+                formPutButtonEl.addEventListener('click', function (e) {
+
+                    var idItemPutUrl = `${config.urls.api}/api/v2/StudyItems/${test}`;
+
+                    if (makeRequestBody()) {
+
+                        updateData(idItemPutUrl, formDataSend, user.access_token);
+                    }
+                });
+
+                function updateData(url, data, authToken) {
+                    putRequest(url, data, authToken, function (request) {
+                        alert(`Item was update`);
+                        modalWindowForm.close();
+
+                    });
+                }
+
+                document.querySelector('#close').onclick = function () {
+                    modalWindowForm.close();
+                };
+
+                function makeRequestBody() {
+
+                    var addWordFormEl = document.forms.putWordForm;
+
+                    formDataSend.userId = user.id_token;
+
+                    formDataSend.title = addWordFormEl.elements.title.value ? addWordFormEl.elements.title.value :
+                        addWordFormEl.elements.title.classList.add('input-field-empty-js');
+
+                    formDataSend.description = addWordFormEl.elements.description.value ? addWordFormEl.elements.description.value :
+                        addWordFormEl.elements.description.classList.add('input-field-empty-js');
+
+                    formDataSend.exampleText = addWordFormEl.elements.exampleText.value ? addWordFormEl.elements.exampleText.value :
+                        addWordFormEl.elements.exampleText.classList.add('input-field-empty-js');
+
+                    formDataSend.tags = [];
+                    addWordFormEl.elements.tags.value ? formDataSend.tags.push(addWordFormEl.elements.tags.value) :
+                        addWordFormEl.elements.tags.classList.add('input-field-empty-js')
+
+
+                    addWordFormEl.elements.title.onfocus = function () {
+                        if (addWordFormEl.elements.title.classList.contains('input-field-empty-js')) {
+                            addWordFormEl.elements.title.classList.remove('input-field-empty-js');
+                        }
+                    }
+
+                    addWordFormEl.elements.description.onfocus = function () {
+                        if (addWordFormEl.elements.description.classList.contains('input-field-empty-js')) {
+                            addWordFormEl.elements.description.classList.remove('input-field-empty-js');
+                        }
+                    }
+
+                    addWordFormEl.elements.exampleText.onfocus = function () {
+                        if (addWordFormEl.elements.exampleText.classList.contains('input-field-empty-js')) {
+                            addWordFormEl.elements.exampleText.classList.remove('input-field-empty-js');
+                        }
+                    }
+
+                    addWordFormEl.elements.tags.onfocus = function () {
+                        if (addWordFormEl.elements.tags.classList.contains('input-field-empty-js')) {
+                            addWordFormEl.elements.tags.classList.remove('input-field-empty-js');
+                        }
+                    }
+
+                    if (formDataSend.title && formDataSend.description && formDataSend.exampleText && (formDataSend.tags.length !== 0)) {
+                        return true;
+                    }
+                }// make request body and checks empty field(s)
+
+            });// event listener on PUT button
+
 
             function deleteData(url, authToken) {
 
@@ -489,7 +582,6 @@ function start(config) {
             var formDataSend = {};
             var addWordFormEl = document.forms.addWordForm;
             var postUrl = `${config.urls.api}/api/v2/StudyItems`;
-            var idItemUrl = `${config.urls.api}/api/v2/StudyItems/`;
 
             if (window.countOfEventlisteners.addWordButtonEventListener === 0) {
 
@@ -557,13 +649,6 @@ function start(config) {
                     alert("Item was add");
                 });
             }
-
-            // function updateData(url, data, authToken){
-            //    putRequest(url, data, authToken, function (request) {
-            //         alert("Item was add");
-            //     });
-            // }
-
         }
         //// base routing
 
@@ -642,7 +727,7 @@ function putRequest(url, data, authToken = null, callback) {
     var xhr = new XMLHttpRequest();
 
     xhr.withCredentials = true; // force to show browser's default auth dialog
-    xhr.open('POST', url, true);
+    xhr.open('PUT', url, true);
 
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onload = function () {

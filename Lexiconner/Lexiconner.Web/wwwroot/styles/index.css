@@ -448,6 +448,11 @@ body {
 
 }
 
+/* Begin Modal window */
+
+  .close:hover {background: #e6e6ff;}
+/*End Modal window  */
+
 .item-list-pager {
     display: flex;
     flex-direction: row;

@@ -116,13 +116,40 @@
                         </div>
 
                         <!-- picture -->
-
-
                     </div>
 
                     <div class="item-list js-item-list">
                         <!-- Items will be inserted dynamically -->
                     </div>
+
+                    <div class="modal-window">
+
+                        <dialog class="js-form-dialog">
+
+                            <form method="post" class="put-word-form" name="putWordForm">
+                                <div class="form-container">
+                                    <input class="input-field-title" type="text" name="title" placeholder="Title">
+                                    <textarea class="input-field-description" name="description"
+                                        placeholder="Description"></textarea>
+                                    <textarea class="input-field-example-text" name="exampleText"
+                                        placeholder="Example Text"></textarea>
+                                    <input class="input-field-tags" type="text" name="tags" placeholder="Tags">
+                                   
+                                </div>
+
+                                <div class="form-button-container">
+                                    <input class="reset-button" type="reset" value="reset">
+                                    <input type="button" class="js-put-button" value="Put" />
+
+                                </div>
+                            </form>
+
+                            <button id="close">Close</button>
+                        </dialog>
+                    </div>
+
+
+
                     <div class="item-list-pager" id="dataItemsButtonBlock">
                         <div class="item-list-pager__button js-first-page-button">
                             <i class="fas fa-angle-double-left button-icon"></i>
@@ -152,14 +179,12 @@
                             <textarea class="input-field-example-text" name="exampleText"
                                 placeholder="Example Text"></textarea>
                             <input class="input-field-tags" type="text" name="tags" placeholder="Tags">
-                            <input class="input-field-id-item" type="text" name="idItem"
-                                placeholder="Id item (put or delete)">
+                            
                         </div>
 
                         <div class="form-button-container">
                             <input class="reset-button" type="reset" value="reset">
                             <input type="button" class="js-send-word-button" value="Send" />
-                            <input type="button" class="js-put-button" value="Put" />
 
                         </div>
                     </form>
