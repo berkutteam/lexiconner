@@ -83,6 +83,94 @@ namespace Lexiconner.Api.IntegrationTests.Utils
 
         #endregion
 
+
+        #region Study items
+
+        public StudyItemEntity PrepareStudyItemCreateDto()
+        {
+            return new StudyItemEntity
+            {
+                Title = _faker.Lorem.Word(),
+                Description = _faker.Lorem.Text(),
+                ExampleText = _faker.Lorem.Text(),
+                Tags = new List<string>
+                    {
+                        _faker.Lorem.Word(),
+                        _faker.Lorem.Word(),
+                    },
+            };
+        }
+
+        public StudyItemEntity PrepareStudyItemUpdateDto(StudyItemEntity dto)
+        {
+            return new StudyItemEntity
+            {
+                Id = dto.Id,
+                Title = _faker.Lorem.Word(),
+                Description = _faker.Lorem.Word()
+            };
+        }
+
+        public async Task<StudyItemEntity> GetStudyItemAsync(
+            string id
+        )
+        {
+            return await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id);
+        }
+
+        public async Task<List<StudyItemEntity>> CreateStudyItemsAsync(
+            string userId,
+            int count = 10
+        )
+        {
+            var entities = Enumerable.Range(0, count).Select(x =>
+            {
+                return new StudyItemEntity()
+                {
+                    UserId = userId,
+                    Title = _faker.Lorem.Word(),
+                    Description = _faker.Lorem.Text(),
+                    ExampleText = _faker.Lorem.Text(),
+                    Tags = new List<string>
+                    {
+                        _faker.Lorem.Word(),
+                        _faker.Lorem.Word(),
+                    },
+                    Image = null
+                };
+            }).ToList();
+
+            await _dataRepository.AddManyAsync<StudyItemEntity>(entities);
+
+            return entities;
+        }
+
+        public async Task<StudyItemEntity> CreateStudyItemAsync(
+            string userId
+        )
+        {
+            var entity =new StudyItemEntity()
+            {
+                UserId = userId,
+                Title = _faker.Lorem.Word(),
+                Description = _faker.Lorem.Text(),
+                ExampleText = _faker.Lorem.Text(),
+                Tags = new List<string>
+                    {
+                        _faker.Lorem.Word(),
+                        _faker.Lorem.Word(),
+                    },
+                Image = null
+            };
+
+            await _dataRepository.AddAsync<StudyItemEntity>(entity);
+
+            return entity;
+        }
+
+        #endregion
+
+
         #region Cleanup
 
         /// <summary>

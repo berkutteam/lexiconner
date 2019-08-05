@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Lexiconner.Api.Models;
 using Lexiconner.Api.Models.RequestModels;
@@ -34,7 +35,12 @@ namespace Lexiconner.Api.Controllers.V2
         }
 
         [HttpGet]
-        public async Task<BaseApiResponseModel<GetAllResponseModel<StudyItemEntity>>> GetAll([FromQuery] GetAllRequestModel data)
+        [ProducesResponseType(typeof(BaseApiResponseModel<GetAllResponseModel<StudyItemEntity>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetAll([FromQuery] GetAllRequestModel data)
         {
             var itemsTask = _mongoRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == GetUserId(), data.Offset.GetValueOrDefault(0), data.Limit.GetValueOrDefault(10), data.Search);
             var totalTask = _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == GetUserId());
@@ -44,18 +50,28 @@ namespace Lexiconner.Api.Controllers.V2
                 Items = await itemsTask,
                 TotalCount = await totalTask,
             };
-            return BaseJsonResponse(result);
+            return BaseResponse(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<BaseApiResponseModel<StudyItemEntity>> Get(string id)
+        [ProducesResponseType(typeof(BaseApiResponseModel<StudyItemEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> Get([FromRoute]string id)
         {
             var result = await _mongoRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
-            return BaseJsonResponse(result);
+            return BaseResponse(result);
         }
 
         [HttpPost]
-        public async Task<BaseApiResponseModel<StudyItemEntity>> Post([FromBody] StudyItemEntity data)
+        [ProducesResponseType(typeof(BaseApiResponseModel<StudyItemEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> Post([FromBody] StudyItemEntity data)
         {
             data.UserId = GetUserId();
 
@@ -78,11 +94,16 @@ namespace Lexiconner.Api.Controllers.V2
             }
 
             await _mongoRepository.AddAsync(data);
-            return BaseJsonResponse(data);
+            return BaseResponse(data);
         }
 
         [HttpPut("{id}")]
-        public async Task<BaseApiResponseModel<StudyItemEntity>> Put(string id, [FromBody] StudyItemEntity data)
+        [ProducesResponseType(typeof(BaseApiResponseModel<StudyItemEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> Put([FromRoute]string id, [FromBody] StudyItemEntity data)
         {
             data.Id = id;
             data.UserId = GetUserId();
@@ -106,14 +127,20 @@ namespace Lexiconner.Api.Controllers.V2
             }
 
             await _mongoRepository.UpdateAsync(data);
-            return BaseJsonResponse(data);
+            return BaseResponse(data);
         }
 
         [HttpDelete("{id}")]
-        public async Task Delete(string id)
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> Delete([FromRoute]string id)
         {
             var existing = await _mongoRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
             await _mongoRepository.DeleteAsync<StudyItemEntity>(x => x.Id == existing.Id);
+            return StatusCodeBaseResponse();
         }
     }
 }

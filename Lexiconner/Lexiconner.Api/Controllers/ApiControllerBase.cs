@@ -1,4 +1,5 @@
-﻿using Lexiconner.Api.Models;
+﻿using IdentityModel;
+using Lexiconner.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -50,7 +51,16 @@ namespace Lexiconner.Api.Controllers
         protected string GetUserId()
         {
             ClaimsPrincipal currentUser = this.User;
-            var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+            string currentUserId = null;
+
+            if (currentUser.HasClaim(x => x.Type == ClaimTypes.NameIdentifier))
+            {
+                currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+            }
+            else if (currentUser.HasClaim(x => x.Type == JwtClaimTypes.Subject))
+            {
+                currentUserId = currentUser.FindFirst(JwtClaimTypes.Subject).Value;
+            }
             return currentUserId;
         }
     }

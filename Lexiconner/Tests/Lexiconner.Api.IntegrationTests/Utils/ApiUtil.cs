@@ -1,5 +1,8 @@
 ﻿using FluentAssertions;
 using Lexiconner.Api.Models;
+using Lexiconner.Api.Models.RequestModels;
+using Lexiconner.Api.Models.ResponseModels;
+using Lexiconner.Domain.Entitites;
 using Lexiconner.Infrastructure.Tests.Utils;
 using Newtonsoft.Json;
 using System;
@@ -40,7 +43,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
 
         #endregion
 
-        #region Ping
+        #region Identity
 
         public async Task<string> GetIdentityAsync(string accessToken)
         {
@@ -90,6 +93,83 @@ namespace Lexiconner.Api.IntegrationTests.Utils
 
         //    return responseModel.Data;
         //}
+
+        #endregion
+
+        #region Study items
+
+        public async Task<GetAllResponseModel<StudyItemEntity>> GetStudyItemsAsync(string accessToken, GetAllRequestModel model)
+        {
+            var httpResponse = await _httpUtil.GetAsync($"/api/v2/studyitems?Search={model.Search}&Offset={model.Offset}&Limit={model.Limit}", accessToken);
+            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<GetAllResponseModel<StudyItemEntity>>>(stringResponse);
+
+            responseModel.Should().NotBeNull();
+            responseModel.Ok.Should().BeTrue();
+            responseModel.Data.Should().NotBeNull();
+
+            return responseModel.Data;
+        }
+
+        public async Task<StudyItemEntity> GetStudyItemByIdAsync(string accessToken, string id)
+        {
+            var httpResponse = await _httpUtil.GetAsync($"/api/v2/studyitems/{id}", accessToken);
+            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<StudyItemEntity>>(stringResponse);
+
+            responseModel.Should().NotBeNull();
+            responseModel.Ok.Should().BeTrue();
+            responseModel.Data.Should().NotBeNull();
+
+            return responseModel.Data;
+        }
+
+        public async Task<StudyItemEntity> CreateStudyItemAsync(string accessToken, StudyItemEntity dto)
+        {
+            var httpResponse = await _httpUtil.PostJsonAsync($"/api/v2/studyitems", dto, accessToken);
+            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<StudyItemEntity>>(stringResponse);
+
+            responseModel.Should().NotBeNull();
+            responseModel.Ok.Should().BeTrue();
+            responseModel.Data.Should().NotBeNull();
+
+            return responseModel.Data;
+        }
+
+        public async Task<StudyItemEntity> UpdateStudyItemAsync(string accessToken, string id, StudyItemEntity dto)
+        {
+            var httpResponse = await _httpUtil.PutJsonAsync($"/api/v2/studyitems/{id}", dto, accessToken);
+            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<StudyItemEntity>>(stringResponse);
+
+            responseModel.Should().NotBeNull();
+            responseModel.Ok.Should().BeTrue();
+            responseModel.Data.Should().NotBeNull();
+
+            return responseModel.Data;
+        }
+
+        public async Task DeleteStudyItemAsync(string accessToken, string id)
+        {
+            var httpResponse = await _httpUtil.DeleteAsync($"/api/v2/studyitems/{id}",accessToken);
+            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<object>>(stringResponse);
+
+            responseModel.Should().NotBeNull();
+            responseModel.Ok.Should().BeTrue();
+            responseModel.Data.Should().BeNull();
+        }
 
         #endregion
     }

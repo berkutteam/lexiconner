@@ -117,21 +117,12 @@ namespace Lexiconner.Api.IntegrationTests.Utils
                 //    return sp.GetService<IMongoDbDataRepository>();
                 //});
 
-                services.AddTransient<IGoogleTranslateApiClient>(sp => {
-                    return Mock.Of<IGoogleTranslateApiClient>();
-                    //return new GoogleTranslateApiClient(
-                    //    config.Google.ProjectId,
-                    //    config.Google.WebApiServiceAccount,
-                    //    sp.GetService<ILogger<IGoogleTranslateApiClient>>()
-                    //);
+                services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClientMock>(sp => {
+                    return new GoogleTranslateApiClientMock();
                 });
-                services.AddTransient<IContextualWebSearchApiClient>(sp =>
+                services.AddTransient<IContextualWebSearchApiClient, ContextualWebSearchApiClientMock>(sp =>
                 {
-                    return Mock.Of<IContextualWebSearchApiClient>();
-                    //return new ContextualWebSearchApiClient(
-                    //    config.RapidApi,
-                    //    sp.GetService<ILogger<IContextualWebSearchApiClient>>()
-                    //);
+                    return new ContextualWebSearchApiClientMock();
                 });
 
                 // use mocked auth
