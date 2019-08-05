@@ -29,6 +29,8 @@ using Lexiconner.Domain.Enums;
 using Lexiconner.Persistence.Cache;
 using Lexiconner.Application.Services;
 using Lexiconner.Api.Services;
+using Autofac;
+using Lexiconner.Application.Helpers;
 
 namespace Lexiconner.Api
 {
@@ -70,6 +72,7 @@ namespace Lexiconner.Api
                 var mongoClient = sp.GetService<MongoClient>();
                 return new IdentityRepository(mongoClient, config.MongoDb.DatabaseIdentity, ApplicationDb.Identity);
             });
+
             services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {
                 return new GoogleTranslateApiClient(
                     config.Google.ProjectId,
@@ -185,29 +188,44 @@ namespace Lexiconner.Api
                    options.SubstituteApiVersionInUrl = true;
                });
 
-            services.AddCors(options =>
+            if (!HostingEnvironmentHelper.IsTestingAny())
             {
-                options.AddPolicy("default", builder =>
+                services.AddCors(options =>
                 {
-                    builder
-                        .WithOrigins(config.Cors.AllowedOrigins.ToArray())
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
+                    options.AddPolicy("default", builder =>
+                    {
+                        builder
+                            .WithOrigins(config.Cors.AllowedOrigins.ToArray())
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials();
+                    });
                 });
-            });
+            }
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // ConfigureContainer is where you can register things directly
+        // with Autofac. This runs after ConfigureServices so the things
+        // here will override registrations made in ConfigureServices.
+        // Don't build the container; that gets done for you. If you
+        // need a reference to the container, you need to use the
+        // "Without ConfigureContainer" mechanism (see docs).
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new AutofacDefaultModule());
+        }
+
+        // This method gets caled by the runtime. Use this method to configure the HTTP request pipeline.
+        // This is called after ConfigureContainer.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
             //var ssss = app.ApplicationServices.GetService<IGoogleTranslateApiClient>();
             //ssss.Translate("", "", "").GetAwaiter().GetResult();
 
-            if (env.IsDevelopmentAny())
+            if (HostingEnvironmentHelper.IsDevelopmentAny())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -219,7 +237,11 @@ namespace Lexiconner.Api
 
             app.UseHttpsRedirection();
 
-            app.UseCors("default");
+            if (!HostingEnvironmentHelper.IsTestingAny())
+            {
+                app.UseCors("default");
+            }
+
             app.UseAuthentication();
             app.UseMvc();
 

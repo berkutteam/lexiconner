@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IdentityModel;
 using Lexiconner.Api.Models;
 using Lexiconner.Api.Models.RequestModels;
 using Lexiconner.Api.Models.ResponseModels;
@@ -25,7 +26,16 @@ namespace Lexiconner.Api.Controllers.V2
         public async Task<BaseApiResponseModel<string>> Get()
         {
             ClaimsPrincipal currentUser = this.User;
-            var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+            string currentUserId = null;
+
+            if (currentUser.HasClaim(x => x.Type == ClaimTypes.NameIdentifier))
+            {
+                currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+            }
+            else if (currentUser.HasClaim(x => x.Type == JwtClaimTypes.Subject))
+            {
+                currentUserId = currentUser.FindFirst(JwtClaimTypes.Subject).Value;
+            }
             return BaseJsonResponse(currentUserId);
         }
     }

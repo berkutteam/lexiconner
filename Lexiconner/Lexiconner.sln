@@ -25,9 +25,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestUlidCollisions", "Test\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{5BDCCAEE-5A74-47F9-A6FF-94B1D0388B5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexiconner.Persistence.UnitTests", "Tests\Lexiconner.Persistence.UnitTests\Lexiconner.Persistence.UnitTests.csproj", "{149641D5-2207-44B4-9891-4A8BEE35D0F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.Persistence.UnitTests", "Tests\Lexiconner.Persistence.UnitTests\Lexiconner.Persistence.UnitTests.csproj", "{149641D5-2207-44B4-9891-4A8BEE35D0F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexiconner.Infrastructure.Tests", "Tests\Lexiconner.Infrastructure.Tests\Lexiconner.Infrastructure.Tests.csproj", "{97BF74D2-C693-47C3-8B6D-E14960FDC3C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.Infrastructure.Tests", "Tests\Lexiconner.Infrastructure.Tests\Lexiconner.Infrastructure.Tests.csproj", "{97BF74D2-C693-47C3-8B6D-E14960FDC3C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexiconner.Api.IntegrationTests", "Tests\Lexiconner.Api.IntegrationTests\Lexiconner.Api.IntegrationTests.csproj", "{1F94FF5B-EB72-437F-AEF6-EACD2AC4FDC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +81,10 @@ Global
 		{97BF74D2-C693-47C3-8B6D-E14960FDC3C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97BF74D2-C693-47C3-8B6D-E14960FDC3C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97BF74D2-C693-47C3-8B6D-E14960FDC3C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F94FF5B-EB72-437F-AEF6-EACD2AC4FDC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F94FF5B-EB72-437F-AEF6-EACD2AC4FDC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F94FF5B-EB72-437F-AEF6-EACD2AC4FDC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F94FF5B-EB72-437F-AEF6-EACD2AC4FDC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,6 +93,7 @@ Global
 		{E97E4EF7-8F9A-4977-9E16-21784C4B06AF} = {C7F80535-3CCF-470F-9FD7-AFEEF0C37B70}
 		{149641D5-2207-44B4-9891-4A8BEE35D0F5} = {5BDCCAEE-5A74-47F9-A6FF-94B1D0388B5C}
 		{97BF74D2-C693-47C3-8B6D-E14960FDC3C5} = {5BDCCAEE-5A74-47F9-A6FF-94B1D0388B5C}
+		{1F94FF5B-EB72-437F-AEF6-EACD2AC4FDC5} = {5BDCCAEE-5A74-47F9-A6FF-94B1D0388B5C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3D7EE588-5F73-40E0-A3A6-DB4DD1CC6B64}

@@ -17,6 +17,7 @@ namespace Lexiconner.Api.Controllers
         {
             return new BaseApiResponseModel<T>()
             {
+                Ok = true,
                 Data = data,
             };
         }
