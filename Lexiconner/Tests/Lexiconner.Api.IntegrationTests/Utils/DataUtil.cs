@@ -118,6 +118,13 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             return await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id);
         }
 
+        public async Task<List<StudyItemEntity>> GetStudyItemsAsync(
+           string userId
+       )
+        {
+            return (await _dataRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == userId)).ToList();
+        }
+
         public async Task<List<StudyItemEntity>> CreateStudyItemsAsync(
             string userId,
             int count = 10

@@ -61,8 +61,8 @@ namespace Lexiconner.Domain.Entitites
         {
             [JsonConverter(typeof(StringEnumConverter))]
             public TrainingType TrainingType { get; set; }
-            public DateTime? LastTrainingdAt { get; set; }
-            public DateTime? NextTrainingdAt { get; set; }
+            public DateTime LastTrainingdAt { get; set; }
+            public DateTime NextTrainingdAt { get; set; }
 
             /// <summary>
             /// Percents [0, 1]

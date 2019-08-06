@@ -9,6 +9,7 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Lexiconner.Api.Services
@@ -73,9 +74,12 @@ namespace Lexiconner.Api.Services
 
         public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCards(string userId)
         {
+            int count = 10;
             var entities = await _mongoRepository.GetManyAsync<StudyItemEntity>(
                 x => x.UserId == userId && 
-                (x.TrainingInfo == null || (x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress != 1 && y.NextTrainingdAt <= DateTime.UtcNow)))
+                (x.TrainingInfo == null || (x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow))),
+                0,
+                count
             );
 
             return new FlashCardsTrainingDto
@@ -87,17 +91,27 @@ namespace Lexiconner.Api.Services
         public async Task SaveTrainingResultsForFlashCards(string userId, FlashCardsTrainingResultDto results)
         {
             var ids = results.ItemsResults.Select(x => x.ItemId);
-            var entities = await _mongoRepository.GetManyAsync<StudyItemEntity>(
+            var entities = (await _mongoRepository.GetManyAsync<StudyItemEntity>(
                 x => x.UserId == userId && ids.Contains(x.Id)
-            );
+            )).ToList();
 
-            var infoAttribute = results.TrainingType.GetType().GetCustomAttributes(typeof(TrainingTypeInfoAttribute), false).First() as TrainingTypeInfoAttribute;
-            
+            var infoAttribute = TrainingTypeHelper.GetAttribute(TrainingType.FlashCards);
+
             entities = entities.Select(x =>
             {
                 bool isCorrect = results.ItemsResults.Any(y => y.ItemId == x.Id && y.IsCorrect);
 
-                var training = x.TrainingInfo.Trainings.FirstOrDefault(y => y.TrainingType == TrainingType.FlashCards) ?? new StudyItemTrainingInfoEntity.StudyItemTrainingProgressItemEntity();
+                x.TrainingInfo = x.TrainingInfo ?? new StudyItemTrainingInfoEntity();
+                x.TrainingInfo.Trainings = x.TrainingInfo.Trainings ?? new List<StudyItemTrainingInfoEntity.StudyItemTrainingProgressItemEntity>();
+
+                var training = x.TrainingInfo.Trainings.FirstOrDefault(y => y.TrainingType == TrainingType.FlashCards);
+                if(training == null)
+                {
+                    training = new StudyItemTrainingInfoEntity.StudyItemTrainingProgressItemEntity() {
+                        TrainingType = TrainingType.FlashCards,
+                    };
+                    x.TrainingInfo.Trainings.Add(training);
+                }
 
                 if (isCorrect)
                 {
@@ -106,15 +120,23 @@ namespace Lexiconner.Api.Services
                 }
                 else
                 {
-                    training.Progress = training.Progress - infoAttribute.WrongAnswerProgressRate;
+                    training.Progress = training.Progress + infoAttribute.WrongAnswerProgressRate;
                     training.Progress = Math.Max(training.Progress, 0);
                 }
+                training.Progress = Math.Round(training.Progress, 2);
 
                 training.LastTrainingdAt = DateTime.UtcNow;
-                training.NextTrainingdAt = DateTime.UtcNow.Add(infoAttribute.TrainIntervalTimespan);
+
+                if(training.Progress < 1)
+                {
+                    training.NextTrainingdAt = DateTime.UtcNow.Add(infoAttribute.TrainIntervalTimespan);
+                } else
+                {
+                    training.NextTrainingdAt = DateTime.UtcNow.Add(infoAttribute.TrainIntervalForRepeatTimespan);
+                }
 
                 return x;
-            });
+            }).ToList();
 
             await _mongoRepository.UpdateManyAsync(entities);
         }

@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Lexiconner.Api.DTOs.StudyItemsTrainings;
 using Lexiconner.Api.Models;
 using Lexiconner.Api.Models.RequestModels;
 using Lexiconner.Api.Models.ResponseModels;
@@ -172,5 +173,38 @@ namespace Lexiconner.Api.IntegrationTests.Utils
         }
 
         #endregion
+
+
+        #region Study items trainings
+
+        public async Task<FlashCardsTrainingDto> FlashcardsStartTraining(string accessToken)
+        {
+            var httpResponse = await _httpUtil.GetAsync($"/api/v2/studyitems/trainings/flashcards", accessToken);
+            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<FlashCardsTrainingDto>>(stringResponse);
+
+            responseModel.Should().NotBeNull();
+            responseModel.Ok.Should().BeTrue();
+            responseModel.Data.Should().NotBeNull();
+
+            return responseModel.Data;
+        }
+        public async Task FlashcardsSaveTrainingResults(string accessToken, FlashCardsTrainingResultDto dto)
+        {
+            var httpResponse = await _httpUtil.PostJsonAsync($"/api/v2/studyitems/trainings/flashcards/save", dto, accessToken);
+            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<object>>(stringResponse);
+
+            responseModel.Should().NotBeNull();
+            responseModel.Ok.Should().BeTrue();
+            responseModel.Data.Should().BeNull();
+        }
+
+        #endregion
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
 using Lexiconner.Api.Models;
@@ -33,24 +34,44 @@ namespace Lexiconner.Api.Controllers.V2
         }
 
         [HttpGet("stats")]
+        [ProducesResponseType(typeof(BaseApiResponseModel<TrainingsStatisticsDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetTrainingStatistics()
         {
             var result = await _studyItemsService.GetTrainingStatistics(GetUserId());
             return BaseResponse(result);
         }
 
-        [HttpGet("flashcards/get")]
-        public async Task<IActionResult> StartTraining()
+
+        #region Flashcards
+
+        [HttpGet("flashcards")]
+        [ProducesResponseType(typeof(BaseApiResponseModel<FlashCardsTrainingDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> FlashcardsStartTraining()
         {
             var result = await _studyItemsService.GetTrainingItemsForFlashCards(GetUserId());
             return BaseResponse(result);
         }
 
         [HttpPost("flashcards/save")]
-        public async Task<IActionResult> StartTraining([FromBody]FlashCardsTrainingResultDto dto)
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> FlashcardsSaveTrainingResults([FromBody]FlashCardsTrainingResultDto dto)
         {
             await _studyItemsService.SaveTrainingResultsForFlashCards(GetUserId(), dto);
             return StatusCodeBaseResponse();
         }
+
+        #endregion
     }
 }
