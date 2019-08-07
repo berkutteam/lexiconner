@@ -142,18 +142,17 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: flex-start;
+    align-items: stretch;
     height: auto;
     width: 100%;
     padding: 3em 0 0 0;
+    flex-grow: 1;
 }
 
 .card-button {
-    text-align: center;
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
     background: none;
     height: 100%;
     width: auto;
@@ -162,18 +161,28 @@ body {
     cursor: pointer;
     opacity: 0.75;
     color: #fff;
+    height: 31em;
+    flex-grow: 1;
 }
 .card-button:hover {
     opacity: 1;
 }
+
 .card-button-left {
-    margin: 0 2em 0 2em;
+    justify-content: flex-end;
+    height: auto;
+    padding: 8em 2em 0 2em;
+    opacity: 0.75;
 }
 .card-button-right {
-    margin: 0 2em 0 2em;
+    justify-content: flex-start;
+    height: auto;
+    padding: 8em 2em 0 2em;
 }
+
 .card-button-icon {
     font-size: 3em;
+    
 }
 
 .card-button-container{
@@ -201,11 +210,15 @@ body {
     }
 
     #cardButtonLeftMobileVersion{
-        display: block
+        display: block;
+        padding: 1em;
+        height: auto;
     }
     
     #cardButtonRightMobileVersion{
         display: block;
+        padding: 1em;
+        height: auto;
     }
 }
 
@@ -222,6 +235,7 @@ body {
     flex-direction: column;
     margin: 0;
     box-sizing: border-box;
+
 }
 
 @media screen and (max-width: 720px) {
