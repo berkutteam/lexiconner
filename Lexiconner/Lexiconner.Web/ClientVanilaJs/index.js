@@ -477,7 +477,7 @@ function start(config) {
             var idItemPutUrl = '';// used for put
             var postUrl = `${config.urls.api}/api/v2/StudyItems`;// used for add item
             var formDataSend = {};
-            var modalWindowForm = document.querySelector('.js-form-dialog');
+            var modalWindowForm = document.querySelector('.form-dialog');
             var formButtonEl = document.querySelectorAll('.form-control-button');
 
             document.querySelector('.modal-window-close-button').onclick = function () {
@@ -542,7 +542,29 @@ function start(config) {
                 window.countOfEventlisteners.addWordButtonEventListener++;
             }
 
+            var formResetButton = document.querySelector('.reset-button');
 
+            formResetButton.onclick = function (e) {
+
+                var WordFormEl = document.forms.WordForm;
+
+                if (WordFormEl.elements.title.classList.contains('input-field-empty-js')) {
+                    WordFormEl.elements.title.classList.remove('input-field-empty-js');
+                }
+
+                if (WordFormEl.elements.description.classList.contains('input-field-empty-js')) {
+                    WordFormEl.elements.description.classList.remove('input-field-empty-js');
+                }
+
+                if (WordFormEl.elements.exampleText.classList.contains('input-field-empty-js')) {
+                    WordFormEl.elements.exampleText.classList.remove('input-field-empty-js');
+                }
+
+                if (WordFormEl.elements.tags.classList.contains('input-field-empty-js')) {
+                    WordFormEl.elements.tags.classList.remove('input-field-empty-js');
+                }
+
+            };// removes all input fields with red border when click on "reset"
 
             function makeRequestBody(formDataSend) {
 
@@ -591,7 +613,7 @@ function start(config) {
                 if (formDataSend.title && formDataSend.description && formDataSend.exampleText && (formDataSend.tags.length !== 0)) {
                     return true;
                 }
-            }// make request body and checks empty field(s)
+            }// makes request body and checks empty field(s)
 
             function sendData(url, data, authToken) {
                 httpRequest(url, data, 'POST', authToken, function (request) {
