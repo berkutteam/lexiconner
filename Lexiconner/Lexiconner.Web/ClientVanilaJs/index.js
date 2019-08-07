@@ -184,9 +184,8 @@ function start(config) {
             isFromWordList: false
         }; // used in pageHandlers['word-list'] for eventListener
 
-        window.itemIdPut = ""//used in pageHandlers['add-word'] for PUT method
-
         window.countOfEventlisteners = {
+            putWordButtonEventListener: 0,
             addWordButtonEventListener: 0,
             cardLeftButtonEvent: 0,
             cardRightButtonEvent: 0,
@@ -475,96 +474,137 @@ function start(config) {
             });
 
 
-            var test = '';// used for put
-            addBubleEventListener(itemListContainerEl, '.list-item-picture-put', 'click', function (e, actualEl, desiredEl) {
-                e.stopPropagation();
+            var idItemPutUrl = '';// used for put
+            var postUrl = `${config.urls.api}/api/v2/StudyItems`;// used for add item
+            var formDataSend = {};
+            var modalWindowForm = document.querySelector('.js-form-dialog');
+            var formButtonEl = document.querySelectorAll('.form-control-button');
 
-                var modalWindowForm = document.querySelector('.js-form-dialog');
-                var numberOfItem1 = Number(desiredEl.getAttribute('position-in-list'));
-                var x = pageData.items[numberOfItem1].id;
-                test = x;
+            document.querySelector('.modal-window-close-button').onclick = function () {
+                modalWindowForm.close();
+            };
 
-                modalWindowForm.showModal();
+            if (window.countOfEventlisteners.putWordButtonEventListener === 0) {
 
-              
+                addBubleEventListener(itemListContainerEl, '.list-item-picture-put', 'click', function (e, actualEl, desiredEl) {
+                    e.stopPropagation();
 
-                var formPutButtonEl = document.querySelector('.js-put-button');
-                var formDataSend = {};
+                    var numberOfItem1 = Number(desiredEl.getAttribute('position-in-list'));
+                    var formPutButtonEl = document.querySelector('.js-put-button');
 
+                    formButtonEl.forEach(function (item) {
+                        item.classList.remove('active');
+                        item.classList.add('hidden');
+                    });
 
-                formPutButtonEl.addEventListener('click', function (e) {
+                    formPutButtonEl.classList.replace('hidden', 'active');
+                    modalWindowForm.showModal();
 
-                    var idItemPutUrl = `${config.urls.api}/api/v2/StudyItems/${test}`;
+                    formPutButtonEl.addEventListener('click', function (e) {
 
-                    if (makeRequestBody()) {
+                        idItemPutUrl = `${config.urls.api}/api/v2/StudyItems/${pageData.items[numberOfItem1].id}`;
 
-                        updateData(idItemPutUrl, formDataSend, user.access_token);
-                    }
-                });
+                        if (makeRequestBody(formDataSend)) {
 
-                function updateData(url, data, authToken) {
-                    putRequest(url, data, authToken, function (request) {
-                        alert(`Item was update`);
-                        modalWindowForm.close();
+                            updateData(idItemPutUrl, formDataSend, user.access_token);
+                            modalWindowForm.close();
+                        }
+                    });
+
+                });// event listener on PUT button
+                window.countOfEventlisteners.putWordButtonEventListener++;
+            }
+
+            if (window.countOfEventlisteners.addWordButtonEventListener === 0) {
+
+                addBubleEventListener(itemListContainerEl, '.item-list-pager__add-button', 'click', function (e, actualEl, desiredEl) {
+                    e.stopPropagation();
+
+                    var formAddButtonEl = document.querySelector('.js-add-button');
+
+                    formButtonEl.forEach(function (item) {
+                        item.classList.remove('active');
+                        item.classList.add('hidden');
+                    });
+
+                    formAddButtonEl.classList.replace('hidden', 'active');
+                    modalWindowForm.showModal();
+
+                    formAddButtonEl.addEventListener('click', function (e) {
+
+                        if (makeRequestBody(formDataSend)) {
+                            sendData(postUrl, formDataSend, user.access_token);
+                            modalWindowForm.close();
+                        }
 
                     });
+                });// event listener on ADD button
+                window.countOfEventlisteners.addWordButtonEventListener++;
+            }
+
+
+
+            function makeRequestBody(formDataSend) {
+
+                var WordFormEl = document.forms.WordForm;
+
+                formDataSend.userId = user.id_token;
+
+                formDataSend.title = WordFormEl.elements.title.value ? WordFormEl.elements.title.value :
+                    WordFormEl.elements.title.classList.add('input-field-empty-js');
+
+                formDataSend.description = WordFormEl.elements.description.value ? WordFormEl.elements.description.value :
+                    WordFormEl.elements.description.classList.add('input-field-empty-js');
+
+                formDataSend.exampleText = WordFormEl.elements.exampleText.value ? WordFormEl.elements.exampleText.value :
+                    WordFormEl.elements.exampleText.classList.add('input-field-empty-js');
+
+                formDataSend.tags = [];
+                WordFormEl.elements.tags.value ? formDataSend.tags.push(WordFormEl.elements.tags.value) :
+                    WordFormEl.elements.tags.classList.add('input-field-empty-js')
+
+
+                WordFormEl.elements.title.onfocus = function () {
+                    if (WordFormEl.elements.title.classList.contains('input-field-empty-js')) {
+                        WordFormEl.elements.title.classList.remove('input-field-empty-js');
+                    }
                 }
 
-                document.querySelector('#close').onclick = function () {
-                    modalWindowForm.close();
-                };
-
-                function makeRequestBody() {
-
-                    var addWordFormEl = document.forms.putWordForm;
-
-                    formDataSend.userId = user.id_token;
-
-                    formDataSend.title = addWordFormEl.elements.title.value ? addWordFormEl.elements.title.value :
-                        addWordFormEl.elements.title.classList.add('input-field-empty-js');
-
-                    formDataSend.description = addWordFormEl.elements.description.value ? addWordFormEl.elements.description.value :
-                        addWordFormEl.elements.description.classList.add('input-field-empty-js');
-
-                    formDataSend.exampleText = addWordFormEl.elements.exampleText.value ? addWordFormEl.elements.exampleText.value :
-                        addWordFormEl.elements.exampleText.classList.add('input-field-empty-js');
-
-                    formDataSend.tags = [];
-                    addWordFormEl.elements.tags.value ? formDataSend.tags.push(addWordFormEl.elements.tags.value) :
-                        addWordFormEl.elements.tags.classList.add('input-field-empty-js')
-
-
-                    addWordFormEl.elements.title.onfocus = function () {
-                        if (addWordFormEl.elements.title.classList.contains('input-field-empty-js')) {
-                            addWordFormEl.elements.title.classList.remove('input-field-empty-js');
-                        }
+                WordFormEl.elements.description.onfocus = function () {
+                    if (WordFormEl.elements.description.classList.contains('input-field-empty-js')) {
+                        WordFormEl.elements.description.classList.remove('input-field-empty-js');
                     }
+                }
 
-                    addWordFormEl.elements.description.onfocus = function () {
-                        if (addWordFormEl.elements.description.classList.contains('input-field-empty-js')) {
-                            addWordFormEl.elements.description.classList.remove('input-field-empty-js');
-                        }
+                WordFormEl.elements.exampleText.onfocus = function () {
+                    if (WordFormEl.elements.exampleText.classList.contains('input-field-empty-js')) {
+                        WordFormEl.elements.exampleText.classList.remove('input-field-empty-js');
                     }
+                }
 
-                    addWordFormEl.elements.exampleText.onfocus = function () {
-                        if (addWordFormEl.elements.exampleText.classList.contains('input-field-empty-js')) {
-                            addWordFormEl.elements.exampleText.classList.remove('input-field-empty-js');
-                        }
+                WordFormEl.elements.tags.onfocus = function () {
+                    if (WordFormEl.elements.tags.classList.contains('input-field-empty-js')) {
+                        WordFormEl.elements.tags.classList.remove('input-field-empty-js');
                     }
+                }
 
-                    addWordFormEl.elements.tags.onfocus = function () {
-                        if (addWordFormEl.elements.tags.classList.contains('input-field-empty-js')) {
-                            addWordFormEl.elements.tags.classList.remove('input-field-empty-js');
-                        }
-                    }
+                if (formDataSend.title && formDataSend.description && formDataSend.exampleText && (formDataSend.tags.length !== 0)) {
+                    return true;
+                }
+            }// make request body and checks empty field(s)
 
-                    if (formDataSend.title && formDataSend.description && formDataSend.exampleText && (formDataSend.tags.length !== 0)) {
-                        return true;
-                    }
-                }// make request body and checks empty field(s)
+            function sendData(url, data, authToken) {
+                httpRequest(url, data, 'POST', authToken, function (request) {
+                    alert("Item was add");
+                });
+            }
 
-            });// event listener on PUT button
+            function updateData(url, data, authToken) {
+                httpRequest(url, data, 'PUT', authToken, function (request) {
+                    alert(`Item was update`);
 
+                });
+            }
 
             function deleteData(url, authToken) {
 
@@ -577,78 +617,8 @@ function start(config) {
             setNumberPage(0);
         }
 
-        window.pageHandlers['add-word'] = function () {
+        window.pageHandlers['something'] = function () {
 
-            var formDataSend = {};
-            var addWordFormEl = document.forms.addWordForm;
-            var postUrl = `${config.urls.api}/api/v2/StudyItems`;
-
-            if (window.countOfEventlisteners.addWordButtonEventListener === 0) {
-
-                var sendButtonEl = document.querySelector('.js-send-word-button');
-
-                sendButtonEl.addEventListener('click', function (e) {
-
-                    if (makeRequestBody()) {
-                        sendData(postUrl, formDataSend, user.access_token);
-                    }
-
-                });
-                window.countOfEventlisteners.addWordButtonEventListener++;
-            }
-
-            function makeRequestBody() {
-
-                formDataSend.userId = user.id_token;
-
-                formDataSend.title = addWordFormEl.elements.title.value ? addWordFormEl.elements.title.value :
-                    addWordFormEl.elements.title.classList.add('input-field-empty-js');
-
-                formDataSend.description = addWordFormEl.elements.description.value ? addWordFormEl.elements.description.value :
-                    addWordFormEl.elements.description.classList.add('input-field-empty-js');
-
-                formDataSend.exampleText = addWordFormEl.elements.exampleText.value ? addWordFormEl.elements.exampleText.value :
-                    addWordFormEl.elements.exampleText.classList.add('input-field-empty-js');
-
-                formDataSend.tags = [];
-                addWordFormEl.elements.tags.value ? formDataSend.tags.push(addWordFormEl.elements.tags.value) :
-                    addWordFormEl.elements.tags.classList.add('input-field-empty-js')
-
-
-                addWordFormEl.elements.title.onfocus = function () {
-                    if (addWordFormEl.elements.title.classList.contains('input-field-empty-js')) {
-                        addWordFormEl.elements.title.classList.remove('input-field-empty-js');
-                    }
-                }
-
-                addWordFormEl.elements.description.onfocus = function () {
-                    if (addWordFormEl.elements.description.classList.contains('input-field-empty-js')) {
-                        addWordFormEl.elements.description.classList.remove('input-field-empty-js');
-                    }
-                }
-
-                addWordFormEl.elements.exampleText.onfocus = function () {
-                    if (addWordFormEl.elements.exampleText.classList.contains('input-field-empty-js')) {
-                        addWordFormEl.elements.exampleText.classList.remove('input-field-empty-js');
-                    }
-                }
-
-                addWordFormEl.elements.tags.onfocus = function () {
-                    if (addWordFormEl.elements.tags.classList.contains('input-field-empty-js')) {
-                        addWordFormEl.elements.tags.classList.remove('input-field-empty-js');
-                    }
-                }
-
-                if (formDataSend.title && formDataSend.description && formDataSend.exampleText && (formDataSend.tags.length !== 0)) {
-                    return true;
-                }
-            }
-
-            function sendData(url, data, authToken) {
-                postRequest(url, data, authToken, function (request) {
-                    alert("Item was add");
-                });
-            }
         }
         //// base routing
 
@@ -723,11 +693,11 @@ function start(config) {
     }
 }
 
-function putRequest(url, data, authToken = null, callback) {
+function httpRequest(url, data, typeOfrequest, authToken = null, callback) {
     var xhr = new XMLHttpRequest();
 
     xhr.withCredentials = true; // force to show browser's default auth dialog
-    xhr.open('PUT', url, true);
+    xhr.open(typeOfrequest, url, true);
 
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onload = function () {
@@ -750,6 +720,7 @@ function putRequest(url, data, authToken = null, callback) {
     }
     xhr.send(JSON.stringify(data));
 }
+
 
 function deleteRequest(url, authToken) {
     var xhr = new XMLHttpRequest();
@@ -779,33 +750,7 @@ function deleteRequest(url, authToken) {
     xhr.send();
 }
 
-function postRequest(url, data, authToken = null, callback) {
-    var xhr = new XMLHttpRequest();
 
-    xhr.withCredentials = true; // force to show browser's default auth dialog
-    xhr.open('POST', url, true);
-
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-
-            callback(JSON.parse(xhr.responseText));
-
-        } else if (xhr.status === 500) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert('Request failed.  Returned status of ' + xhr.status);
-        } else if (xhr.status === 401 || xhr.status === 403) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert("Authentication time is up");
-            //logout();
-        }
-    };
-
-    if (authToken !== null) {
-        xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-    }
-    xhr.send(JSON.stringify(data));
-}
 
 function httpGet(url, callBack, authToken = null) {
     var xhr = new XMLHttpRequest();

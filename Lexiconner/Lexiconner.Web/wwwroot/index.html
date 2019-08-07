@@ -25,8 +25,8 @@
                 <a href="#" class="menu-item" data-route-link="word-list">
                     <span>Show All Word</span>
                 </a>
-                <a href="#" class="menu-item" data-route-link="add-word">
-                    <span>Add Word</span>
+                <a href="#" class="menu-item" data-route-link="something">
+                    <span>Something</span>
                 </a>
                 <a href="#" class="menu-item js-logout-button">
                     <span>Logout</span>
@@ -126,7 +126,7 @@
 
                         <dialog class="js-form-dialog">
 
-                            <form method="post" class="put-word-form" name="putWordForm">
+                            <form method="post" class="put-word-form" name="WordForm">
                                 <div class="form-container">
                                     <input class="input-field-title" type="text" name="title" placeholder="Title">
                                     <textarea class="input-field-description" name="description"
@@ -134,21 +134,20 @@
                                     <textarea class="input-field-example-text" name="exampleText"
                                         placeholder="Example Text"></textarea>
                                     <input class="input-field-tags" type="text" name="tags" placeholder="Tags">
-                                   
+
                                 </div>
 
                                 <div class="form-button-container">
+                                    <input type="button" class="form-control-button js-put-button hidden" value="Put" />
+                                    <input type="button" class="form-control-button js-add-button hidden" value="Add" />
                                     <input class="reset-button" type="reset" value="reset">
-                                    <input type="button" class="js-put-button" value="Put" />
 
                                 </div>
                             </form>
 
-                            <button id="close">Close</button>
+                            <button class="modal-window-close-button" id="close">Close</button>
                         </dialog>
                     </div>
-
-
 
                     <div class="item-list-pager" id="dataItemsButtonBlock">
                         <div class="item-list-pager__button js-first-page-button">
@@ -164,32 +163,22 @@
                             <i class="fas fa-angle-right button-icon"></i>
                         </div>
                         <div class="item-list-pager__button js-last-page-button">
-                            <i class="fas fa-angle-double-right button-icon"></i></div>
+                            <i class="fas fa-angle-double-right button-icon"></i>
+                        </div>
+
                     </div>
+
+                    <div class="item-list-pager">
+                        <div class="item-list-pager__add-button">
+                            <span>Add Item</span>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
-            <div class="menu-page-container" data-route="add-word">
-                <div class="data-form-container">
-                    <form method="post" class="add-word-form" name="addWordForm">
-                        <div class="form-container">
-                            <input class="input-field-title" type="text" name="title" placeholder="Title">
-                            <textarea class="input-field-description" name="description"
-                                placeholder="Description"></textarea>
-                            <textarea class="input-field-example-text" name="exampleText"
-                                placeholder="Example Text"></textarea>
-                            <input class="input-field-tags" type="text" name="tags" placeholder="Tags">
-                            
-                        </div>
-
-                        <div class="form-button-container">
-                            <input class="reset-button" type="reset" value="reset">
-                            <input type="button" class="js-send-word-button" value="Send" />
-
-                        </div>
-                    </form>
-
-                </div>
+            <div class="menu-page-container" data-route="something">
+             Something
             </div>
 
             <div class="menu-page-container js-error-page" data-route="no-response">

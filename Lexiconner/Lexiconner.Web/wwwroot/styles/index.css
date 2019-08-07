@@ -119,13 +119,13 @@ body {
     color: #fff;
 }
 
-/* .hidden{
+.hidden{
     display: none;
 }
 
 .active{
     display: block;
-} */
+}
 /* error page  end*/
 
 
@@ -450,8 +450,10 @@ body {
 
 /* Begin Modal window */
 
-  .close:hover {background: #e6e6ff;}
+  .modal-window-close-button:hover {background: #e6e6ff;}
 /*End Modal window  */
+
+
 
 .item-list-pager {
     display: flex;
@@ -562,7 +564,15 @@ body {
 }
 
 .reset-button{
-    width: 5em;
+    width: 7em;
+    height: 2em;
+    margin: 1em 0em 1em 11em;
+}
+
+.form-control-button{
+    width: 7em;
+    height: 2em;
+    margin: 1em 0em 1em 0em;
 }
 
 .form-button-container{
@@ -572,5 +582,19 @@ body {
 
 .send-button{
 
+}
+
+.item-list-pager__add-button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    width: 10em;
+    color: var( --text-color);
+    padding: 0.25em;
+    background-color: var(--button-red-color);
+    border-radius: 2px;
+    cursor: pointer;
 }
 /* end add word form */
