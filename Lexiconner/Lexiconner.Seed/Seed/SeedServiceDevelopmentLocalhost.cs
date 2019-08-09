@@ -115,7 +115,10 @@ namespace Lexiconner.Seed.Seed
             // https://cloud.google.com/translate/docs/languages
             string sourceLanguageCode = _wordTxtImporter.SourceLanguageCode;
             string targetLanguageCode = "en";
-            
+
+            const int preferredImageWidth = 600;
+            const int maxImageWidth = 800;
+
             foreach (StudyItemEntity entity in entities)
             {
                 try
@@ -125,17 +128,25 @@ namespace Lexiconner.Seed.Seed
 
                     if (imagesResult.Any())
                     {
-                        var image = imagesResult.First();
-                        entity.Image = new StudyItemImageEntity
+                        // try to find suitable image
+                        ImageSearchResponseDto.ImageSearchResponseItemDto image = null;
+                        image = imagesResult.FirstOrDefault(x => int.Parse(x.Width) <= preferredImageWidth);
+                        image = image ?? imagesResult.FirstOrDefault(x => int.Parse(x.Width) <= maxImageWidth);
+                        // image = image ?? imagesResult.First(); // do not take big images
+
+                        if(image != null)
                         {
-                            Url = image.Url,
-                            Height = image.Height,
-                            Width = image.Width,
-                            Thumbnail = image.Thumbnail,
-                            ThumbnailHeight = image.ThumbnailHeight,
-                            ThumbnailWidth = image.ThumbnailWidth,
-                            Base64Encoding = image.Base64Encoding,
-                        };
+                            entity.Image = new StudyItemImageEntity
+                            {
+                                Url = image.Url,
+                                Height = image.Height,
+                                Width = image.Width,
+                                Thumbnail = image.Thumbnail,
+                                ThumbnailHeight = image.ThumbnailHeight,
+                                ThumbnailWidth = image.ThumbnailWidth,
+                                Base64Encoding = image.Base64Encoding,
+                            };
+                        }
                     }
                 }
                 catch (ApiRateLimitExceededException ex)
