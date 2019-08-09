@@ -17,7 +17,7 @@ namespace Lexiconner.Api.Services
     public interface IStudyItemsService
     {
         Task<TrainingsStatisticsDto> GetTrainingStatistics(string userId);
-        Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCards(string userId);
+        Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCards(string userId, int limit);
         Task SaveTrainingResultsForFlashCards(string userId, FlashCardsTrainingResultDto results);
     }
 
@@ -72,14 +72,13 @@ namespace Lexiconner.Api.Services
             return result;
         }
 
-        public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCards(string userId)
+        public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCards(string userId, int limit)
         {
-            int count = 10;
             var entities = await _mongoRepository.GetManyAsync<StudyItemEntity>(
                 x => x.UserId == userId && 
                 (x.TrainingInfo == null || (x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow))),
                 0,
-                count
+                limit
             );
 
             return new FlashCardsTrainingDto

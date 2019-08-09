@@ -39,11 +39,14 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
             var accessToken = TestAuthenticationHelper.GenerateAccessToken(userEntity);
 
             int count = 15;
+            int limit = count;
             var studyItemsEntities = await _dataUtil.CreateStudyItemsAsync(userEntity.Id, count);
 
-            var trainingDto = await _apiUtil.FlashcardsStartTraining(accessToken);
+            var trainingDto = await _apiUtil.FlashcardsStartTraining(accessToken, limit);
 
+            trainingDto.TrainingType.Should().Be(TrainingType.FlashCards);
             trainingDto.Items.Should().NotBeEmpty();
+            trainingDto.Items.Count.Should().Be(limit);
             trainingDto.Items.ToList().ForEach(x =>
             {
                 Assert.Contains(studyItemsEntities, y => y.Id == x.Id);
@@ -58,9 +61,10 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
             var accessToken = TestAuthenticationHelper.GenerateAccessToken(userEntity);
 
             int count = 15;
+            int limit = count;
             var studyItemsEntities = await _dataUtil.CreateStudyItemsAsync(userEntity.Id, count);
 
-            var trainingDto = await _apiUtil.FlashcardsStartTraining(accessToken);
+            var trainingDto = await _apiUtil.FlashcardsStartTraining(accessToken, limit);
 
            
             var requestDto = new FlashCardsTrainingResultDto() {

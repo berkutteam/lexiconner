@@ -177,9 +177,9 @@ namespace Lexiconner.Api.IntegrationTests.Utils
 
         #region Study items trainings
 
-        public async Task<FlashCardsTrainingDto> FlashcardsStartTraining(string accessToken)
+        public async Task<FlashCardsTrainingDto> FlashcardsStartTraining(string accessToken, int limit)
         {
-            var httpResponse = await _httpUtil.GetAsync($"/api/v2/studyitems/trainings/flashcards", accessToken);
+            var httpResponse = await _httpUtil.GetAsync($"/api/v2/studyitems/trainings/flashcards?limit={limit}", accessToken);
             _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
