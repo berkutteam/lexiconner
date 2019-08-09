@@ -177,6 +177,21 @@ namespace Lexiconner.Api.IntegrationTests.Utils
 
         #region Study items trainings
 
+        public async Task<TrainingsStatisticsDto> GetTrainingStatistics(string accessToken)
+        {
+            var httpResponse = await _httpUtil.GetAsync($"/api/v2/studyitems/trainings/stats", accessToken);
+            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<TrainingsStatisticsDto>>(stringResponse);
+
+            responseModel.Should().NotBeNull();
+            responseModel.Ok.Should().BeTrue();
+            responseModel.Data.Should().NotBeNull();
+
+            return responseModel.Data;
+        }
+
         public async Task<FlashCardsTrainingDto> FlashcardsStartTraining(string accessToken, int limit)
         {
             var httpResponse = await _httpUtil.GetAsync($"/api/v2/studyitems/trainings/flashcards?limit={limit}", accessToken);
@@ -191,6 +206,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
 
             return responseModel.Data;
         }
+
         public async Task FlashcardsSaveTrainingResults(string accessToken, FlashCardsTrainingResultDto dto)
         {
             var httpResponse = await _httpUtil.PostJsonAsync($"/api/v2/studyitems/trainings/flashcards/save", dto, accessToken);

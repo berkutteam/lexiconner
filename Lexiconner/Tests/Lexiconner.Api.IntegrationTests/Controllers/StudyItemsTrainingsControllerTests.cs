@@ -25,7 +25,21 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
         [Fact(DisplayName = "Should return training statistics")]
         public async Task GetTrainingStatistics()
         {
-           // TODO
+            await GetAndSaveTrainings(out string accessToken);
+
+            var statsDto = await _apiUtil.GetTrainingStatistics(accessToken);
+
+            statsDto.TotalItemCount.Should().NotBe(0);
+            statsDto.TrainedItemCount.Should().NotBe(1);
+            statsDto.OnTrainingItemCount.Should().NotBe(0);
+
+            statsDto.TrainingStats.Count.Should().Be(3);
+            statsDto.TrainingStats.First(x => x.TrainingType == TrainingType.FlashCards).OnTrainingItemCount.Should().NotBe(0);
+            statsDto.TrainingStats.First(x => x.TrainingType == TrainingType.FlashCards).TrainedItemCount.Should().Be(0);
+            statsDto.TrainingStats.First(x => x.TrainingType == TrainingType.WordMeaning).OnTrainingItemCount.Should().Be(0);
+            statsDto.TrainingStats.First(x => x.TrainingType == TrainingType.WordMeaning).TrainedItemCount.Should().Be(0);
+            statsDto.TrainingStats.First(x => x.TrainingType == TrainingType.MeaningWord).OnTrainingItemCount.Should().Be(0);
+            statsDto.TrainingStats.First(x => x.TrainingType == TrainingType.MeaningWord).TrainedItemCount.Should().Be(0);
         }
 
 
@@ -56,18 +70,24 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
         [Fact(DisplayName = "Should save training results for flashcards")]
         public async Task FlashcardsSaveTrainingResults()
         {
-            var userEntity = await _dataUtil.CreateUserAsync();
-            var userInfoEntity = await _dataUtil.CreateUserInfoAsync(userEntity.Id);
-            var accessToken = TestAuthenticationHelper.GenerateAccessToken(userEntity);
+            await GetAndSaveTrainings(out string accessToken);
+        }
+
+        private Task GetAndSaveTrainings(out string accessToken)
+        {
+            var userEntity = _dataUtil.CreateUserAsync().GetAwaiter().GetResult();
+            var userInfoEntity = _dataUtil.CreateUserInfoAsync(userEntity.Id).GetAwaiter().GetResult();
+            accessToken = TestAuthenticationHelper.GenerateAccessToken(userEntity);
 
             int count = 15;
             int limit = count;
-            var studyItemsEntities = await _dataUtil.CreateStudyItemsAsync(userEntity.Id, count);
+            var studyItemsEntities = _dataUtil.CreateStudyItemsAsync(userEntity.Id, count).GetAwaiter().GetResult();
 
-            var trainingDto = await _apiUtil.FlashcardsStartTraining(accessToken, limit);
+            var trainingDto = _apiUtil.FlashcardsStartTraining(accessToken, limit).GetAwaiter().GetResult();
 
-           
-            var requestDto = new FlashCardsTrainingResultDto() {
+
+            var requestDto = new FlashCardsTrainingResultDto()
+            {
 
                 TrainingType = TrainingType.FlashCards,
                 ItemsResults = trainingDto.Items.Select((x, i) => new FlashCardsTrainingResultDto.FlashCardsTrainingResultForItemDto
@@ -79,27 +99,31 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
             var correctItemIds = requestDto.ItemsResults.Where(x => x.IsCorrect).Select(x => x.ItemId).ToList();
             var inCorrectItemIds = requestDto.ItemsResults.Where(x => !x.IsCorrect).Select(x => x.ItemId).ToList();
 
-            await _apiUtil.FlashcardsSaveTrainingResults(accessToken, requestDto);
+            _apiUtil.FlashcardsSaveTrainingResults(accessToken, requestDto).GetAwaiter().GetResult();
 
-            studyItemsEntities = await _dataUtil.GetStudyItemsAsync(userEntity.Id);
+            studyItemsEntities = _dataUtil.GetStudyItemsAsync(userEntity.Id).GetAwaiter().GetResult();
 
             var infoAttribute = TrainingTypeHelper.GetAttribute(TrainingType.FlashCards);
             studyItemsEntities
                 .Where(x => requestDto.ItemsResults.Any(y => y.ItemId == x.Id))
                 .ToList()
                 .ForEach(x =>
-            {
-                Assert.Contains(x.TrainingInfo.Trainings, y => y.TrainingType == TrainingType.FlashCards);
-                Assert.Contains(x.TrainingInfo.Trainings, y => y.LastTrainingdAt < DateTime.UtcNow);
-                Assert.Contains(x.TrainingInfo.Trainings, y => y.NextTrainingdAt > DateTime.UtcNow);
+                {
+                    Assert.Contains(x.TrainingInfo.Trainings, y => y.TrainingType == TrainingType.FlashCards);
+                    Assert.Contains(x.TrainingInfo.Trainings, y => y.LastTrainingdAt < DateTime.UtcNow);
+                    Assert.Contains(x.TrainingInfo.Trainings, y => y.NextTrainingdAt > DateTime.UtcNow);
 
-                if(correctItemIds.Contains(x.Id)) {
-                    Assert.Contains(x.TrainingInfo.Trainings, y => y.Progress == infoAttribute.CorrectAnswerProgressRate);
-                }
-                else if (inCorrectItemIds.Contains(x.Id)) {
-                    Assert.Contains(x.TrainingInfo.Trainings, y => y.Progress == 0);
-                }
-            });
+                    if (correctItemIds.Contains(x.Id))
+                    {
+                        Assert.Contains(x.TrainingInfo.Trainings, y => y.Progress == infoAttribute.CorrectAnswerProgressRate);
+                    }
+                    else if (inCorrectItemIds.Contains(x.Id))
+                    {
+                        Assert.Contains(x.TrainingInfo.Trainings, y => y.Progress == 0);
+                    }
+                });
+
+            return Task.CompletedTask;
         }
 
 

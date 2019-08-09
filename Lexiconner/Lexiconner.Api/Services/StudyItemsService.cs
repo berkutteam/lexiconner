@@ -39,13 +39,13 @@ namespace Lexiconner.Api.Services
         {
             long totalItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId);
             long onTrainingItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.Progress != 1));
-            long trainedItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.All(y => y.Progress == 1));
+            long trainedItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && !x.TrainingInfo.Trainings.Any(y => y.Progress != 1));
 
             Func<string, TrainingType, Task<TrainingsStatisticsDto.TrainingStatisticsItemDto>> getTrainingStatisticsItem = async (_userId, trainingType) =>
             {
                 return new TrainingsStatisticsDto.TrainingStatisticsItemDto
                 {
-                    TrainingType = TrainingType.FlashCards,
+                    TrainingType = trainingType,
                     OnTrainingItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(
                             x => x.UserId == _userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == trainingType && y.Progress != 1)
                         ),
