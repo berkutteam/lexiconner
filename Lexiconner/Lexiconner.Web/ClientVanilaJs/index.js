@@ -125,6 +125,26 @@ function start(config) {
 
     function runApp(user) {
 
+        window.checkEventListener = {
+            menuLinks: { state: false },
+            logoutButton: { state: false },
+            cardLeftButton: { state: false },
+            cardRightButton: { state: false },
+            cardLeftButtonMobileVersion: { state: false },
+            cardRightButtonMobileVersion: { state: false },
+            itemListFirstButton: { state: false },
+            itemListPrevButton: { state: false },
+            itemListNextButton: { state: false },
+            itemListLastButton: { state: false },
+            itemListButtonFromListToCard: { state: false },
+            itemListPutButton: { state: false },
+            itemListDeleteButton: { state: false },
+            itemListAddButton: { state: false },
+            formPutButton: { state: false },
+            formAddButton: { state: false }
+        }; // used for addBubleEventListener() for add one event listener
+
+
         /**
          * Listens to all events inside source element
          * @param {any} sourceElSelector
@@ -132,27 +152,32 @@ function start(config) {
          * @param {any} eventName
          * @param {any} eventHandler
          */
-        function addBubleEventListener(sourceElSelector, targetElSelector, eventName, eventHandler) {
-            var sourceEl = (typeof sourceElSelector === "object") ? sourceElSelector : document.querySelector(sourceElSelector);
+        function addBubleEventListener(sourceElSelector, targetElSelector, eventName, checkedHandler, eventHandler) {
 
-            sourceEl.addEventListener(eventName, function (e) {
-                var actualEl = e.target; // element event fired on
-                var desiredEl = e.target.closest(targetElSelector); // element we excpect event fired on
+            if (!(checkedHandler.state)) {
+                var sourceEl = (typeof sourceElSelector === "object") ? sourceElSelector : document.querySelector(sourceElSelector);
+                checkedHandler.state = true;
 
-                var matches = actualEl.matches(targetElSelector);
-                var isChildEl = desiredEl !== null; // if this el is parent
+                sourceEl.addEventListener(eventName, function (e) {
+                    var actualEl = e.target; // element event fired on
+                    var desiredEl = e.target.closest(targetElSelector); // element we excpect event fired on
 
-                if (matches || isChildEl) {
-                    eventHandler(e, actualEl, desiredEl || actualEl);
-                }
-            });
+                    var matches = actualEl.matches(targetElSelector);
+                    var isChildEl = desiredEl !== null; // if this el is parent
+
+                    if (matches || isChildEl) {
+                        eventHandler(e, actualEl, desiredEl || actualEl);
+                    }
+                });
+            }
         }
 
         /**
          * Inits app menu, enables menu links
          */
         function initAppMenu() {
-            addBubleEventListener('body', '[data-route-link]', 'click', function (e, actualEl, desiredEl) {
+
+            addBubleEventListener('body', '[data-route-link]', 'click', window.checkEventListener.menuLinks, function (e, actualEl, desiredEl) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -172,7 +197,7 @@ function start(config) {
 
         // handle logout
         // var logoutButtonEls = document.querySelectorAll('.js-logout-button');
-        addBubleEventListener('body', '.js-logout-button', 'click', function (e, desiredEl) {
+        addBubleEventListener('body', '.js-logout-button', 'click', window.checkEventListener.logoutButton, function (e, desiredEl) {
             e.stopPropagation();
             logout();
         });
@@ -184,14 +209,7 @@ function start(config) {
             isFromWordList: false
         }; // used in pageHandlers['word-list'] for eventListener
 
-        window.countOfEventlisteners = {
-            putWordButtonEventListener: 0,
-            addWordButtonEventListener: 0,
-            cardLeftButtonEvent: 0,
-            cardRightButtonEvent: 0,
-            cardLeftButtonMobileVersionEvent: 0,
-            cardRightButtonMobileVersionEvent: 0
-        };
+
 
         window.pageHandlers = {};
 
@@ -233,7 +251,10 @@ function start(config) {
                 }
                 return arrData;
             }
-            function showNextCard(direction = 0) {
+
+            var i = 0;
+
+            function showNextCard(direction = 0) {// !!!!!!!!!!!!!!!!!!!!!!
                 counter = counter + direction * 1;
 
                 if (window.wordOrder.isFromWordList) {
@@ -241,6 +262,8 @@ function start(config) {
                     counter = window.wordOrder.length - Math.floor(window.wordOrder.length / limit) * limit;
                     offsetCards = Math.floor(window.wordOrder.length / limit) * limit;
                     window.wordOrder.isFromWordList = false;
+                    console.log('-----', i, counter);
+                    i++;
 
                     getData(offsetCards, limit, function (response) {
 
@@ -269,14 +292,12 @@ function start(config) {
                                 counter = cardData.items.length - 1;
                             } else {
                                 counter = 0;
-
                             }
 
                             pages = Math.ceil(cardData.totalCount / limit);
                             showDataOnCard(cardData.items[counter]);
 
                         });
-
 
                     } else {
                         showDataOnCard(cardData.items[counter]);
@@ -309,47 +330,33 @@ function start(config) {
                 }
             }
 
-            if (window.countOfEventlisteners.cardLeftButtonEvent === 0) {
 
-                var leftButtonEl = document.querySelector(".card-button-left");
+            var leftButtonEl = document.querySelector(".card-button-left");
 
-                leftButtonEl.addEventListener("click", function (e) {
+            addBubleEventListener(leftButtonEl, ".card-button-icon", "click", window.checkEventListener.cardLeftButton, function (e) {
+                showNextCard(-1);
+            });
 
-                    showNextCard(-1);
-                });
-                window.countOfEventlisteners.cardLeftButtonEvent++;
-            }
 
-            if (window.countOfEventlisteners.cardRightButtonEvent === 0) {
 
-                var rightButtonEl = document.querySelector(".card-button-right");
+            var rightButtonEl = document.querySelector(".card-button-right");
 
-                rightButtonEl.addEventListener("click", function (e) {
-                    showNextCard(1);
-                });
-                window.countOfEventlisteners.cardRightButtonEvent++;
-            }
+            addBubleEventListener(rightButtonEl, ".card-button-icon", "click", window.checkEventListener.cardRightButton, function (e) {
+                showNextCard(1);
+            });
 
-            if (window.countOfEventlisteners.cardLeftButtonMobileVersionEvent === 0) {
 
-                var leftButtonElMobileVersion = document.getElementById("cardButtonLeftMobileVersion");
+            var leftButtonElMobileVersion = document.getElementById("cardButtonLeftMobileVersion");
 
-                leftButtonElMobileVersion.addEventListener("click", function (e) {
-                    showNextCard(-1);
-                });
+            addBubleEventListener(leftButtonElMobileVersion, ".card-button-icon", "click", window.checkEventListener.cardLeftButtonMobileVersion, function (e) {
+                showNextCard(-1);
+            });
 
-                window.countOfEventlisteners.cardLeftButtonMobileVersionEvent++;
-            }
+            var rightButtonElMobileVersion = document.getElementById("cardButtonRightMobileVersion");
 
-            if (window.countOfEventlisteners.cardRightButtonMobileVersionEvent === 0) {
-
-                var rightButtonElMobileVersion = document.getElementById("cardButtonRightMobileVersion");
-
-                rightButtonElMobileVersion.addEventListener("click", function (e) {
-                    showNextCard(1);
-                });
-                window.countOfEventlisteners.cardRightButtonMobileVersionEvent++;
-            }
+            addBubleEventListener(rightButtonElMobileVersion, ".card-button-icon", "click", window.checkEventListener.cardRightButtonMobileVersion, function (e) {
+                showNextCard(1);
+            });
             showNextCard(0);
         }
         // Show all data
@@ -365,9 +372,9 @@ function start(config) {
                 var textEl = clone.querySelector('.list-item-text-span');
 
                 // begin edit picture elements (delete,put)
-                var containerEditPictureEl = clone.querySelector('.container-edit-picture');
-                var deletePictureEl = containerEditPictureEl.querySelector('.list-item-picture-delete');
-                var putPictureEl = containerEditPictureEl.querySelector('.list-item-picture-put');
+                var containerEditPictureEl = clone.querySelector('.container-edit-icon');
+                var deletePictureEl = containerEditPictureEl.querySelector('.list-item-icon-delete');
+                var putPictureEl = containerEditPictureEl.querySelector('.list-item-icon-put');
                 // end edit picture elements (delete,put)
 
                 textEl.innerText = item.title;
@@ -420,7 +427,7 @@ function start(config) {
             }
 
             function setNumberPage(page) {
-                currentButtonEl.innerText = page;
+                currentButtonEl.innerText = page + 1;
             }
 
             var firstButtonEl = itemListContainerEl.querySelector('.js-first-page-button');
@@ -429,37 +436,40 @@ function start(config) {
             var nextButtonEl = itemListContainerEl.querySelector('.js-next-page-button');
             var lastButtonEl = itemListContainerEl.querySelector('.js-last-page-button');
 
-            firstButtonEl.addEventListener('click', function (e) {
+
+            addBubleEventListener(firstButtonEl, ".button-icon", "click", window.checkEventListener.itemListFirstButton, function (e) {
                 page = 0;
                 setNumberPage(page)
                 showPage(page, limit);
             });
-            prevButtonEl.addEventListener('click', function (e) {
+
+            addBubleEventListener(prevButtonEl, ".button-icon", "click", window.checkEventListener.itemListPrevButton, function (e) {
                 page = page <= 0 ? 0 : page - 1;
                 setNumberPage(page)
                 showPage(page, limit);
             });
-            nextButtonEl.addEventListener('click', function (e) {
+
+            addBubleEventListener(nextButtonEl, ".button-icon", "click", window.checkEventListener.itemListNextButton, function (e) {
                 page = (page < calcPagesCount() - 1) ? page + 1 : (calcPagesCount() - 1);
                 setNumberPage(page)
                 showPage(page, limit);
             });
-            lastButtonEl.addEventListener('click', function (e) {
+
+            addBubleEventListener(lastButtonEl, ".button-icon", "click", window.checkEventListener.itemListLastButton, function (e) {
                 page = calcPagesCount() - 1;
                 setNumberPage(page)
                 showPage(page, limit);
             });
 
-            addBubleEventListener(itemListContainerEl, '.js-item-text', 'click', function (e, desiredEl) {
+            addBubleEventListener(itemListContainerEl, '.js-item-text', 'click', window.checkEventListener.itemListButtonFromListToCard, function (e, desiredEl) {
                 e.stopPropagation();
-
 
                 window.wordOrder.length = (page * limit) + Number(desiredEl.getAttribute('position-in-list'));
                 window.wordOrder.isFromWordList = true;
                 goToRoute('#cards');
             });
 
-            addBubleEventListener(itemListContainerEl, '.list-item-picture-delete', 'click', function (e, actualEl, desiredEl) {
+            addBubleEventListener(itemListContainerEl, '.list-item-icon-delete', 'click', window.checkEventListener.itemListDeleteButton, function (e, actualEl, desiredEl) {
                 e.stopPropagation();
 
                 var numberOfItem = Number(desiredEl.getAttribute('position-in-list'));
@@ -484,63 +494,56 @@ function start(config) {
                 modalWindowForm.close();
             };
 
-            if (window.countOfEventlisteners.putWordButtonEventListener === 0) {
+            addBubleEventListener(itemListContainerEl, '.list-item-icon-put', 'click', window.checkEventListener.itemListPutButton, function (e, actualEl, desiredEl) {
+                e.stopPropagation();
 
-                addBubleEventListener(itemListContainerEl, '.list-item-picture-put', 'click', function (e, actualEl, desiredEl) {
-                    e.stopPropagation();
+                var numberOfItem1 = Number(desiredEl.getAttribute('position-in-list'));
+                var formPutButtonEl = document.querySelector('.js-put-button');
 
-                    var numberOfItem1 = Number(desiredEl.getAttribute('position-in-list'));
-                    var formPutButtonEl = document.querySelector('.js-put-button');
+                formButtonEl.forEach(function (item) {
+                    item.classList.remove('active');
+                    item.classList.add('hidden');
+                });
 
-                    formButtonEl.forEach(function (item) {
-                        item.classList.remove('active');
-                        item.classList.add('hidden');
-                    });
+                formPutButtonEl.classList.replace('hidden', 'active');
+                modalWindowForm.showModal();
 
-                    formPutButtonEl.classList.replace('hidden', 'active');
-                    modalWindowForm.showModal();
+                addBubleEventListener(formPutButtonEl, '.js-put-button', 'click', window.checkEventListener.formPutButton, function (e) {
 
-                    formPutButtonEl.addEventListener('click', function (e) {
+                    idItemPutUrl = `${config.urls.api}/api/v2/StudyItems/${pageData.items[numberOfItem1].id}`;
 
-                        idItemPutUrl = `${config.urls.api}/api/v2/StudyItems/${pageData.items[numberOfItem1].id}`;
+                    if (makeRequestBody(formDataSend)) {
 
-                        if (makeRequestBody(formDataSend)) {
+                        updateData(idItemPutUrl, formDataSend, user.access_token);
+                        modalWindowForm.close();
+                    }
+                });
 
-                            updateData(idItemPutUrl, formDataSend, user.access_token);
-                            modalWindowForm.close();
-                        }
-                    });
+            });// event listener on PUT button
 
-                });// event listener on PUT button
-                window.countOfEventlisteners.putWordButtonEventListener++;
-            }
 
-            if (window.countOfEventlisteners.addWordButtonEventListener === 0) {
+            addBubleEventListener(itemListContainerEl, '.item-list-pager__add-button', 'click', window.checkEventListener.itemListAddButton, function (e, actualEl, desiredEl) {
+                e.stopPropagation();
 
-                addBubleEventListener(itemListContainerEl, '.item-list-pager__add-button', 'click', function (e, actualEl, desiredEl) {
-                    e.stopPropagation();
+                var formAddButtonEl = document.querySelector('.js-add-button');
 
-                    var formAddButtonEl = document.querySelector('.js-add-button');
+                formButtonEl.forEach(function (item) {
+                    item.classList.remove('active');
+                    item.classList.add('hidden');
+                });
 
-                    formButtonEl.forEach(function (item) {
-                        item.classList.remove('active');
-                        item.classList.add('hidden');
-                    });
+                formAddButtonEl.classList.replace('hidden', 'active');
+                modalWindowForm.showModal();
 
-                    formAddButtonEl.classList.replace('hidden', 'active');
-                    modalWindowForm.showModal();
+                addBubleEventListener(formAddButtonEl, ".js-add-button", "click", window.checkEventListener.formAddButton, function (e) {
 
-                    formAddButtonEl.addEventListener('click', function (e) {
+                    if (makeRequestBody(formDataSend)) {
+                        sendData(postUrl, formDataSend, user.access_token);
+                        modalWindowForm.close();
+                    }
 
-                        if (makeRequestBody(formDataSend)) {
-                            sendData(postUrl, formDataSend, user.access_token);
-                            modalWindowForm.close();
-                        }
-
-                    });
-                });// event listener on ADD button
-                window.countOfEventlisteners.addWordButtonEventListener++;
-            }
+                });
+            });// event listener on ADD button
 
             var formResetButton = document.querySelector('.reset-button');
 

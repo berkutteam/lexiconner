@@ -85,7 +85,7 @@
                         <div class="card-button card-button-right" id="cardButtonRight">
                             <i class="fas fa-chevron-right card-button-icon"></i>
                         </div>
-                        
+
                     </div>
 
                     <div class="card-button-container">
@@ -102,24 +102,28 @@
 
             <div class="menu-page-container" data-route="word-list">
                 <div class="item-list-container js-item-list-container">
-
+                    <div class="item-list-add-button-container">
+                        <div class="item-list-pager__add-button">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                    </div>
                     <!-- Template el -->
 
                     <div class="list-item list-item--hidden js-list-item-template">
+
                         <div class="list-item-text js-item-text">
                             <span class="list-item-text-span"></span>
                         </div>
 
-                        <div class="container-edit-picture">
-                            <div class="list-item-picture-delete">
-                                <img class="edit-picture" src="images/icons8-delete.png">
+                        <div class="container-edit-icon">
+                            <div class="list-item-icon-delete">
+                                <i class="far fa-trash-alt edit-picture"></i>
                             </div>
-                            <div class="list-item-picture-put">
-                                <img class="edit-picture" src="images/icons8-put.png">
+                            <div class="list-item-icon-put">
+                                <i class="fas fa-pencil-alt edit-picture"></i>
                             </div>
                         </div>
 
-                        <!-- picture -->
                     </div>
 
                     <div class="item-list js-item-list">
@@ -172,17 +176,13 @@
 
                     </div>
 
-                    <div class="item-list-pager">
-                        <div class="item-list-pager__add-button">
-                            <span>Add Item</span>
-                        </div>
-                    </div>
+
 
                 </div>
             </div>
 
             <div class="menu-page-container" data-route="something">
-             Something
+                Something
             </div>
 
             <div class="menu-page-container js-error-page" data-route="no-response">
@@ -206,6 +206,7 @@
 
     <script src="lib/oidc-client.min.js"></script>
     <script src="dist/bundle.js"></script>
+
 </body>
 
 </html>
