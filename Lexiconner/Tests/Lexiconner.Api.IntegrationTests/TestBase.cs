@@ -31,8 +31,8 @@ namespace Lexiconner.Api.IntegrationTests
         protected readonly HttpUtil _httpUtil;
         protected readonly Faker _faker;
         protected readonly ApplicationSettings _config;
-        protected readonly IMongoDataRepository _mongoDataRepository;
         protected readonly IDataRepository _dataRepository;
+        protected readonly IMongoDataRepository _mongoDataRepository;
 
 
         protected ApplicationUserEntity _userEntity;
@@ -48,8 +48,8 @@ namespace Lexiconner.Api.IntegrationTests
             _httpUtil = new HttpUtil(_client);
             _faker = new Faker();
             _config = factory.Server.Host.Services.GetService<IOptions<ApplicationSettings>>().Value;
-            _mongoDataRepository = factory.Server.Host.Services.GetService<IMongoDataRepository>();
             _dataRepository = factory.Server.Host.Services.GetService<IDataRepository>();
+            _mongoDataRepository = _dataRepository as IMongoDataRepository;
 
             // Do "global" initialization here; Called before every test method.
         }

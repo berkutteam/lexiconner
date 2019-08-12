@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using Lexiconner.Persistence.Repositories;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
@@ -9,16 +10,18 @@ namespace Lexiconner.Persistence.UnitTests.Utils
     public class DataUtil
     {
         private readonly ApplicationSettings _config;
-        private readonly IMongoDataRepository _mongoDataRepository;
+        protected readonly IDataRepository _dataRepository;
+        protected readonly IMongoDataRepository _mongoDataRepository;
         private readonly Faker _faker;
 
         public DataUtil(
             IOptions<ApplicationSettings> config,
-            IMongoDataRepository mongoDataRepository
+            IDataRepository dataRepository
         )
         {
             _config = config.Value;
-            _mongoDataRepository = mongoDataRepository;
+            _dataRepository = dataRepository;
+            _mongoDataRepository = _dataRepository as IMongoDataRepository;
             _faker = new Faker();
         }
 

@@ -22,18 +22,20 @@ namespace Lexiconner.Api.IntegrationTests.Utils
     {
         private readonly CustomWebApplicationFactory<TStartup> _factory;
         private readonly ApplicationSettings _config;
-        private readonly IMongoDataRepository _mongoDataRepository;
-        private readonly IDataRepository _dataRepository;
         private readonly IIdentityDataRepository _identityDataRepository;
+        private readonly IDataRepository _dataRepository;
+        private readonly IMongoDataRepository _mongoIdentityDataRepository;
+        private readonly IMongoDataRepository _mongoDataRepository;
         private readonly Faker _faker;
 
         public DataUtil(CustomWebApplicationFactory<TStartup> factory)
         {
             _factory = factory;
             _config = factory.Server.Host.Services.GetService<IOptions<ApplicationSettings>>().Value;
-            _mongoDataRepository = factory.Server.Host.Services.GetService<IMongoDataRepository>();
-            _dataRepository = factory.Server.Host.Services.GetService<IDataRepository>();
             _identityDataRepository = factory.Server.Host.Services.GetService<IIdentityDataRepository>();
+            _dataRepository = factory.Server.Host.Services.GetService<IDataRepository>();
+            _mongoIdentityDataRepository = _identityDataRepository as IMongoDataRepository;
+            _mongoDataRepository = _dataRepository as IMongoDataRepository;
             _faker = new Faker();
         }
 
@@ -196,6 +198,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
         {
             await Task.WhenAll(new List<Task>()
             {
+                _mongoIdentityDataRepository.DropDatabaseAsync(),
                 _mongoDataRepository.DropDatabaseAsync()
             });
         }

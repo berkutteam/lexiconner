@@ -22,16 +22,14 @@ using Lexiconner.Domain.Entitites;
 using Lexiconner.Infrastructure.Tests.Assertions;
 using Lexiconner.Domain.Entitites.Testing;
 using Lexiconner.Persistence.Repositories.MongoDb;
+using Lexiconner.Persistence.Repositories;
 
 namespace Lexiconner.Persistence.UnitTests
 {
     public class MongoDbRepositoryTests : TestBase
     {
-        protected readonly IMongoDataRepository _mongoDataRepository;
-
         public MongoDbRepositoryTests(TestFixture fixture) : base(fixture)
         {
-            _mongoDataRepository = _fixture.ServiceProvider.GetService<IMongoDataRepository>();
         }
 
         [Fact(DisplayName = "Should throw MongoDbCollectionException if collection is not in config")]

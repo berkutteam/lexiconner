@@ -139,13 +139,19 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             {
                 var mongoClient = sp.GetService<MongoClient>();
                 ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
-                return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
+                return new MongoDataRepository(mongoClient, config.MongoDb.DatabaseMain, ApplicationDb.Main);
             });
             services.AddTransient<IIdentityDataRepository, IdentityDataRepository>(sp =>
             {
                 var mongoClient = sp.GetService<MongoClient>();
                 ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
                 return new IdentityDataRepository(mongoClient, config.MongoDb.DatabaseIdentity, ApplicationDb.Identity);
+            });
+            services.AddTransient<ISharedCacheDataRepository, SharedCacheDataRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new SharedCacheDataRepository(mongoClient, config.MongoDb.DatabaseSharedCache, ApplicationDb.SharedCache);
             });
         }
 
