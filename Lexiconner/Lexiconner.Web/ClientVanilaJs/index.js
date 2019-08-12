@@ -1,6 +1,11 @@
 import _ from 'lodash';
 import moment from 'moment';
 
+import HttpUtil from './modules/HttpUtil.js.js';
+let helper = new HttpUtil();
+
+import DomUtil from './modules/DomUtil.js';
+
 // example of using class defined in separate file (module)
 import ExampleUtil from './utils/exampleUtil.js';
 
@@ -9,7 +14,7 @@ let util = new ExampleUtil();
 util.test('test2');
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    httpGet('/config', function (config) {
+    helper.httpGet('/config', function (config) {
         start(config);
     });
 });
@@ -152,32 +157,14 @@ function start(config) {
          * @param {any} eventName
          * @param {any} eventHandler
          */
-        function addBubleEventListener(sourceElSelector, targetElSelector, eventName, checkedHandler, eventHandler) {
-
-            if (!(checkedHandler.state)) {
-                var sourceEl = (typeof sourceElSelector === "object") ? sourceElSelector : document.querySelector(sourceElSelector);
-                checkedHandler.state = true;
-
-                sourceEl.addEventListener(eventName, function (e) {
-                    var actualEl = e.target; // element event fired on
-                    var desiredEl = e.target.closest(targetElSelector); // element we excpect event fired on
-
-                    var matches = actualEl.matches(targetElSelector);
-                    var isChildEl = desiredEl !== null; // if this el is parent
-
-                    if (matches || isChildEl) {
-                        eventHandler(e, actualEl, desiredEl || actualEl);
-                    }
-                });
-            }
-        }
+       
 
         /**
          * Inits app menu, enables menu links
          */
         function initAppMenu() {
 
-            addBubleEventListener('body', '[data-route-link]', 'click', window.checkEventListener.menuLinks, function (e, actualEl, desiredEl) {
+            DomUtil.addBubleEventListener('body', '[data-route-link]', 'click', window.checkEventListener.menuLinks, function (e, actualEl, desiredEl) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -187,7 +174,7 @@ function start(config) {
         }
 
         function getData(offset = 0, limit = 2, callBack = null) {
-            httpGet(config.urls.api + '/api/v2/studyitems' + '?' + 'offset=' + offset + '&' + 'limit=' + limit, function (data) {
+            helper.httpGet(config.urls.api + '/api/v2/studyitems' + '?' + 'offset=' + offset + '&' + 'limit=' + limit, function (data) {
                 console.log(2, data);
                 if (callBack !== null) {
                     callBack(data);
@@ -197,7 +184,7 @@ function start(config) {
 
         // handle logout
         // var logoutButtonEls = document.querySelectorAll('.js-logout-button');
-        addBubleEventListener('body', '.js-logout-button', 'click', window.checkEventListener.logoutButton, function (e, desiredEl) {
+        DomUtil.addBubleEventListener('body', '.js-logout-button', 'click', window.checkEventListener.logoutButton, function (e, desiredEl) {
             e.stopPropagation();
             logout();
         });
@@ -227,18 +214,12 @@ function start(config) {
             var limit = 5;
             var counter = window.wordOrder.isFromWordList ? (window.wordOrder.length - Math.floor(window.wordOrder.length / limit) * limit) : 0;
             var offsetCards = window.wordOrder.isFromWordList ? (Math.floor(window.wordOrder.length / limit) * limit) : 0;
-
             var pages = 0;
             var cardData = {};
-
-            console.log('----1----', counter);
-
-
 
             function showNextCard(direction = 0) {// !!!!!!!!!!!!!!!!!!!!!!
 
                 counter = counter + direction * 1;
-                console.log('----2----', counter);
 
                 if (!cardData.items || (counter >= cardData.items.length || counter < 0)) {
                     if (cardData.items && direction === -1) {
@@ -267,7 +248,6 @@ function start(config) {
 
                         pages = Math.ceil(cardData.totalCount / limit);
 
-                        console.log('----3---', counter);
                         showDataOnCard(cardData.items[counter]);
 
                     });
@@ -306,7 +286,7 @@ function start(config) {
 
             var leftButtonEl = document.querySelector(".card-button-left");
 
-            addBubleEventListener(leftButtonEl, ".card-button-icon", "click", window.checkEventListener.cardLeftButton, function (e) {
+            DomUtil.addBubleEventListener(leftButtonEl, ".card-button-icon", "click", window.checkEventListener.cardLeftButton, function (e) {
                 showNextCard(-1);
             });
 
@@ -314,20 +294,20 @@ function start(config) {
 
             var rightButtonEl = document.querySelector(".card-button-right");
 
-            addBubleEventListener(rightButtonEl, ".card-button-icon", "click", window.checkEventListener.cardRightButton, function (e) {
+            DomUtil.addBubleEventListener(rightButtonEl, ".card-button-icon", "click", window.checkEventListener.cardRightButton, function (e) {
                 showNextCard(1);
             });
 
 
             var leftButtonElMobileVersion = document.getElementById("cardButtonLeftMobileVersion");
 
-            addBubleEventListener(leftButtonElMobileVersion, ".card-button-icon", "click", window.checkEventListener.cardLeftButtonMobileVersion, function (e) {
+            DomUtil.addBubleEventListener(leftButtonElMobileVersion, ".card-button-icon", "click", window.checkEventListener.cardLeftButtonMobileVersion, function (e) {
                 showNextCard(-1);
             });
 
             var rightButtonElMobileVersion = document.getElementById("cardButtonRightMobileVersion");
 
-            addBubleEventListener(rightButtonElMobileVersion, ".card-button-icon", "click", window.checkEventListener.cardRightButtonMobileVersion, function (e) {
+            DomUtil.addBubleEventListener(rightButtonElMobileVersion, ".card-button-icon", "click", window.checkEventListener.cardRightButtonMobileVersion, function (e) {
                 showNextCard(1);
             });
             showNextCard(0);
@@ -413,31 +393,31 @@ function start(config) {
             var lastButtonEl = itemListContainerEl.querySelector('.js-last-page-button');
 
 
-            addBubleEventListener(firstButtonEl, ".button-icon", "click", window.checkEventListener.itemListFirstButton, function (e) {
+            DomUtil.addBubleEventListener(firstButtonEl, ".button-icon", "click", window.checkEventListener.itemListFirstButton, function (e) {
                 page = 0;
                 setNumberPage(page)
                 showPage(page, limit);
             });
 
-            addBubleEventListener(prevButtonEl, ".button-icon", "click", window.checkEventListener.itemListPrevButton, function (e) {
+            DomUtil.addBubleEventListener(prevButtonEl, ".button-icon", "click", window.checkEventListener.itemListPrevButton, function (e) {
                 page = page <= 0 ? 0 : page - 1;
                 setNumberPage(page)
                 showPage(page, limit);
             });
 
-            addBubleEventListener(nextButtonEl, ".button-icon", "click", window.checkEventListener.itemListNextButton, function (e) {
+            DomUtil.addBubleEventListener(nextButtonEl, ".button-icon", "click", window.checkEventListener.itemListNextButton, function (e) {
                 page = (page < calcPagesCount() - 1) ? page + 1 : (calcPagesCount() - 1);
                 setNumberPage(page)
                 showPage(page, limit);
             });
 
-            addBubleEventListener(lastButtonEl, ".button-icon", "click", window.checkEventListener.itemListLastButton, function (e) {
+            DomUtil.addBubleEventListener(lastButtonEl, ".button-icon", "click", window.checkEventListener.itemListLastButton, function (e) {
                 page = calcPagesCount() - 1;
                 setNumberPage(page)
                 showPage(page, limit);
             });
 
-            addBubleEventListener(itemListContainerEl, '.js-item-text', 'click', window.checkEventListener.itemListButtonFromListToCard, function (e, desiredEl) {
+            DomUtil.addBubleEventListener(itemListContainerEl, '.js-item-text', 'click', window.checkEventListener.itemListButtonFromListToCard, function (e, desiredEl) {
                 e.stopPropagation();
 
                 window.wordOrder.length = (page * limit) + Number(desiredEl.getAttribute('position-in-list'));
@@ -445,7 +425,7 @@ function start(config) {
                 goToRoute('#cards');
             });
 
-            addBubleEventListener(itemListContainerEl, '.list-item-icon-delete', 'click', window.checkEventListener.itemListDeleteButton, function (e, actualEl, desiredEl) {
+            DomUtil.addBubleEventListener(itemListContainerEl, '.list-item-icon-delete', 'click', window.checkEventListener.itemListDeleteButton, function (e, actualEl, desiredEl) {
                 e.stopPropagation();
 
                 var numberOfItem = Number(desiredEl.getAttribute('position-in-list'));
@@ -470,7 +450,7 @@ function start(config) {
                 modalWindowForm.close();
             };
 
-            addBubleEventListener(itemListContainerEl, '.list-item-icon-put', 'click', window.checkEventListener.itemListPutButton, function (e, actualEl, desiredEl) {
+            DomUtil.addBubleEventListener(itemListContainerEl, '.list-item-icon-put', 'click', window.checkEventListener.itemListPutButton, function (e, actualEl, desiredEl) {
                 e.stopPropagation();
 
                 var numberOfItem1 = Number(desiredEl.getAttribute('position-in-list'));
@@ -484,7 +464,7 @@ function start(config) {
                 formPutButtonEl.classList.replace('hidden', 'active');
                 modalWindowForm.showModal();
 
-                addBubleEventListener(formPutButtonEl, '.js-put-button', 'click', window.checkEventListener.formPutButton, function (e) {
+                DomUtil.addBubleEventListener(formPutButtonEl, '.js-put-button', 'click', window.checkEventListener.formPutButton, function (e) {
 
                     idItemPutUrl = `${config.urls.api}/api/v2/StudyItems/${pageData.items[numberOfItem1].id}`;
 
@@ -498,7 +478,7 @@ function start(config) {
             });// event listener on PUT button
 
 
-            addBubleEventListener(itemListContainerEl, '.item-list-pager__add-button', 'click', window.checkEventListener.itemListAddButton, function (e, actualEl, desiredEl) {
+            DomUtil.addBubleEventListener(itemListContainerEl, '.item-list-pager__add-button', 'click', window.checkEventListener.itemListAddButton, function (e, actualEl, desiredEl) {
                 e.stopPropagation();
 
                 var formAddButtonEl = document.querySelector('.js-add-button');
@@ -511,7 +491,7 @@ function start(config) {
                 formAddButtonEl.classList.replace('hidden', 'active');
                 modalWindowForm.showModal();
 
-                addBubleEventListener(formAddButtonEl, ".js-add-button", "click", window.checkEventListener.formAddButton, function (e) {
+                DomUtil.addBubleEventListener(formAddButtonEl, ".js-add-button", "click", window.checkEventListener.formAddButton, function (e) {
 
                     if (makeRequestBody(formDataSend)) {
                         sendData(postUrl, formDataSend, user.access_token);
@@ -595,13 +575,13 @@ function start(config) {
             }// makes request body and checks empty field(s)
 
             function sendData(url, data, authToken) {
-                httpRequest(url, data, 'POST', authToken, function (request) {
+                helper.httpRequest(url, data, 'POST', authToken, function (request) {
                     alert("Item was add");
                 });
             }
 
             function updateData(url, data, authToken) {
-                httpRequest(url, data, 'PUT', authToken, function (request) {
+                helper.httpRequest(url, data, 'PUT', authToken, function (request) {
                     alert(`Item was update`);
 
                 });
@@ -610,7 +590,7 @@ function start(config) {
             function deleteData(url, authToken) {
 
                 console.log("Delete to", url);
-                deleteRequest(url, authToken);
+                helper.deleteRequest(url, authToken);
 
             }
 
@@ -692,97 +672,4 @@ function start(config) {
         checkingServerResponse();
 
     }
-}
-
-function httpRequest(url, data, typeOfrequest, authToken = null, callback) {
-    var xhr = new XMLHttpRequest();
-
-    xhr.withCredentials = true; // force to show browser's default auth dialog
-    xhr.open(typeOfrequest, url, true);
-
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-
-            callback(JSON.parse(xhr.responseText));
-
-        } else if (xhr.status === 500) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert('Request failed.  Returned status of ' + xhr.status);
-        } else if (xhr.status === 401 || xhr.status === 403) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert("Authentication time is up");
-            //logout();
-        }
-    };
-
-    if (authToken !== null) {
-        xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-    }
-    xhr.send(JSON.stringify(data));
-}
-
-
-function deleteRequest(url, authToken) {
-    var xhr = new XMLHttpRequest();
-
-    xhr.withCredentials = true; // force to show browser's default auth dialog
-    xhr.open('DELETE', url, true);
-
-    //xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-
-            console.log("Item successfully deleted");
-
-        } else if (xhr.status === 500) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert('Request failed.  Returned status of ' + xhr.status);
-        } else if (xhr.status === 401 || xhr.status === 403) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert("Authentication time is up");
-            //logout();
-        }
-    };
-
-    if (authToken !== null) {
-        xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-    }
-    xhr.send();
-}
-
-
-
-function httpGet(url, callBack, authToken = null) {
-    var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true; // force to show browser's default auth dialog
-    xhr.open('GET', url);
-
-
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            var data = JSON.parse(xhr.responseText);
-
-            callBack(data);
-            console.log(1, data);
-
-        } else if (xhr.status === 500) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert('Request failed.  Returned status of ' + xhr.status);
-        } else if (xhr.status === 401 || xhr.status === 403) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert("Authentication time is up");
-            //console.log(222222, xhr.getResponseHeader('WWW-Authenticate')); returns
-        }
-        else {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-        }
-
-    };
-
-
-    if (authToken !== null) {
-        xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-    }
-    xhr.send();
 }
