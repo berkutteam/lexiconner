@@ -1,6 +1,7 @@
 ﻿using IdentityServer4.Models;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
+using Lexiconner.Domain.Entitites.IdentityModel;
 using Lexiconner.Domain.Entitites.Testing;
 using Lexiconner.Domain.Enums;
 using System;
@@ -68,7 +69,7 @@ namespace Lexiconner.Domain.Config
                 }
             },
 
-            // Identity Server
+            // Identity model
             new MongoCollectionConfig
             {
                 CollectionType = typeof(ApiResource),
@@ -93,6 +94,36 @@ namespace Lexiconner.Domain.Config
             new MongoCollectionConfig
             {
                 CollectionType = typeof(PersistedGrant),
+                CollectionName = IdentityPersistedGrant,
+                Indexes = new List<string> {
+                }
+            },
+
+             // Identity model wrappers
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(ApiResourceEntity),
+                CollectionName = IdentityApiResources,
+                Indexes = new List<string> {
+                }
+            },
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(ClientEntity),
+                CollectionName = IdentityClients,
+                Indexes = new List<string> {
+                }
+            },
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(IdentityResourceEntity),
+                CollectionName = IdentityIdentityResources,
+                Indexes = new List<string> {
+                }
+            },
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(PersistedGrantEntity),
                 CollectionName = IdentityPersistedGrant,
                 Indexes = new List<string> {
                 }
