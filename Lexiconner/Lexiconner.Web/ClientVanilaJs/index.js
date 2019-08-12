@@ -1,6 +1,9 @@
 import _ from 'lodash';
 import moment from 'moment';
 
+import HttpUtil from './pages/HttpUtil.js';
+let helper = new HttpUtil();
+
 // example of using class defined in separate file (module)
 import ExampleUtil from './utils/exampleUtil.js';
 
@@ -9,7 +12,7 @@ let util = new ExampleUtil();
 util.test('test2');
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    httpGet('/config', function (config) {
+    helper.httpGet('/config', function (config) {
         start(config);
     });
 });
@@ -187,7 +190,7 @@ function start(config) {
         }
 
         function getData(offset = 0, limit = 2, callBack = null) {
-            httpGet(config.urls.api + '/api/v2/studyitems' + '?' + 'offset=' + offset + '&' + 'limit=' + limit, function (data) {
+            helper.httpGet(config.urls.api + '/api/v2/studyitems' + '?' + 'offset=' + offset + '&' + 'limit=' + limit, function (data) {
                 console.log(2, data);
                 if (callBack !== null) {
                     callBack(data);
@@ -227,18 +230,12 @@ function start(config) {
             var limit = 5;
             var counter = window.wordOrder.isFromWordList ? (window.wordOrder.length - Math.floor(window.wordOrder.length / limit) * limit) : 0;
             var offsetCards = window.wordOrder.isFromWordList ? (Math.floor(window.wordOrder.length / limit) * limit) : 0;
-
             var pages = 0;
             var cardData = {};
-
-            console.log('----1----', counter);
-
-
 
             function showNextCard(direction = 0) {// !!!!!!!!!!!!!!!!!!!!!!
 
                 counter = counter + direction * 1;
-                console.log('----2----', counter);
 
                 if (!cardData.items || (counter >= cardData.items.length || counter < 0)) {
                     if (cardData.items && direction === -1) {
@@ -267,7 +264,6 @@ function start(config) {
 
                         pages = Math.ceil(cardData.totalCount / limit);
 
-                        console.log('----3---', counter);
                         showDataOnCard(cardData.items[counter]);
 
                     });
@@ -595,13 +591,13 @@ function start(config) {
             }// makes request body and checks empty field(s)
 
             function sendData(url, data, authToken) {
-                httpRequest(url, data, 'POST', authToken, function (request) {
+                helper.httpRequest(url, data, 'POST', authToken, function (request) {
                     alert("Item was add");
                 });
             }
 
             function updateData(url, data, authToken) {
-                httpRequest(url, data, 'PUT', authToken, function (request) {
+                helper.httpRequest(url, data, 'PUT', authToken, function (request) {
                     alert(`Item was update`);
 
                 });
@@ -610,7 +606,7 @@ function start(config) {
             function deleteData(url, authToken) {
 
                 console.log("Delete to", url);
-                deleteRequest(url, authToken);
+                helper.deleteRequest(url, authToken);
 
             }
 
@@ -692,97 +688,4 @@ function start(config) {
         checkingServerResponse();
 
     }
-}
-
-function httpRequest(url, data, typeOfrequest, authToken = null, callback) {
-    var xhr = new XMLHttpRequest();
-
-    xhr.withCredentials = true; // force to show browser's default auth dialog
-    xhr.open(typeOfrequest, url, true);
-
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-
-            callback(JSON.parse(xhr.responseText));
-
-        } else if (xhr.status === 500) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert('Request failed.  Returned status of ' + xhr.status);
-        } else if (xhr.status === 401 || xhr.status === 403) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert("Authentication time is up");
-            //logout();
-        }
-    };
-
-    if (authToken !== null) {
-        xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-    }
-    xhr.send(JSON.stringify(data));
-}
-
-
-function deleteRequest(url, authToken) {
-    var xhr = new XMLHttpRequest();
-
-    xhr.withCredentials = true; // force to show browser's default auth dialog
-    xhr.open('DELETE', url, true);
-
-    //xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-
-            console.log("Item successfully deleted");
-
-        } else if (xhr.status === 500) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert('Request failed.  Returned status of ' + xhr.status);
-        } else if (xhr.status === 401 || xhr.status === 403) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert("Authentication time is up");
-            //logout();
-        }
-    };
-
-    if (authToken !== null) {
-        xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-    }
-    xhr.send();
-}
-
-
-
-function httpGet(url, callBack, authToken = null) {
-    var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true; // force to show browser's default auth dialog
-    xhr.open('GET', url);
-
-
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            var data = JSON.parse(xhr.responseText);
-
-            callBack(data);
-            console.log(1, data);
-
-        } else if (xhr.status === 500) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert('Request failed.  Returned status of ' + xhr.status);
-        } else if (xhr.status === 401 || xhr.status === 403) {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-            alert("Authentication time is up");
-            //console.log(222222, xhr.getResponseHeader('WWW-Authenticate')); returns
-        }
-        else {
-            console.error('Request failed.  Returned status of ' + xhr.status);
-        }
-
-    };
-
-
-    if (authToken !== null) {
-        xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-    }
-    xhr.send();
 }
