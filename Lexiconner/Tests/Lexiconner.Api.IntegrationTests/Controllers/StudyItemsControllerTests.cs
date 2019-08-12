@@ -22,14 +22,12 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
         [Fact(DisplayName = "Should return all items")]
         public async Task GetAll()
         {
-            var userEntity = await _dataUtil.CreateUserAsync();
-            var userInfoEntity = await _dataUtil.CreateUserInfoAsync(userEntity.Id);
-            var accessToken = TestAuthenticationHelper.GenerateAccessToken(userEntity);
+            await PrepareTestUser();
 
             int count = 7;
-            var studyItemsEntities = await _dataUtil.CreateStudyItemsAsync(userEntity.Id, count);
+            var studyItemsEntities = await _dataUtil.CreateStudyItemsAsync(_userEntity.Id, count);
 
-            var response = await _apiUtil.GetStudyItemsAsync(accessToken, new StudyItemsRequestDto { Offset = 0, Limit = count });
+            var response = await _apiUtil.GetStudyItemsAsync(_accessToken, new StudyItemsRequestDto { Offset = 0, Limit = count });
 
             response.TotalCount.Should().Be(count);
             response.Items.Should().NotBeEmpty();
@@ -42,14 +40,12 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
         [Fact(DisplayName = "Should return 0 favorite items")]
         public async Task GetAllFavouritesFalse()
         {
-            var userEntity = await _dataUtil.CreateUserAsync();
-            var userInfoEntity = await _dataUtil.CreateUserInfoAsync(userEntity.Id);
-            var accessToken = TestAuthenticationHelper.GenerateAccessToken(userEntity);
+            await PrepareTestUser();
 
             int count = 7;
-            var studyItemsEntities = await _dataUtil.CreateStudyItemsAsync(userEntity.Id, count);
+            var studyItemsEntities = await _dataUtil.CreateStudyItemsAsync(_userEntity.Id, count);
 
-            var response = await _apiUtil.GetStudyItemsAsync(accessToken, new StudyItemsRequestDto { Offset = 0, Limit = count, IsFavourite = true });
+            var response = await _apiUtil.GetStudyItemsAsync(_accessToken, new StudyItemsRequestDto { Offset = 0, Limit = count, IsFavourite = true });
 
             response.TotalCount.Should().Be(0);
             response.Items.Should().BeEmpty();
@@ -58,12 +54,10 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
         [Fact(DisplayName = "Should return n favorite items")]
         public async Task GetAllFavouritesTrue()
         {
-            var userEntity = await _dataUtil.CreateUserAsync();
-            var userInfoEntity = await _dataUtil.CreateUserInfoAsync(userEntity.Id);
-            var accessToken = TestAuthenticationHelper.GenerateAccessToken(userEntity);
+            await PrepareTestUser();
 
             int count = 7;
-            var studyItemsEntities = await _dataUtil.CreateStudyItemsAsync(userEntity.Id, count);
+            var studyItemsEntities = await _dataUtil.CreateStudyItemsAsync(_userEntity.Id, count);
 
             var favouriteEntities = studyItemsEntities.Take(4).Select(x =>
             {
@@ -72,7 +66,7 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
             }).ToList();
             await _dataRepository.UpdateManyAsync(favouriteEntities);
 
-            var response = await _apiUtil.GetStudyItemsAsync(accessToken, new StudyItemsRequestDto { Offset = 0, Limit = 10, IsFavourite = true });
+            var response = await _apiUtil.GetStudyItemsAsync(_accessToken, new StudyItemsRequestDto { Offset = 0, Limit = 10, IsFavourite = true });
 
             response.TotalCount.Should().Be(favouriteEntities.Count);
             response.ReturnedCount.Should().Be(favouriteEntities.Count);
@@ -86,12 +80,10 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
         [Fact(DisplayName = "Should search items")]
         public async Task GetAllSearch()
         {
-            var userEntity = await _dataUtil.CreateUserAsync();
-            var userInfoEntity = await _dataUtil.CreateUserInfoAsync(userEntity.Id);
-            var accessToken = TestAuthenticationHelper.GenerateAccessToken(userEntity);
+            await PrepareTestUser();
 
             int count = 7;
-            var studyItemsEntities = await _dataUtil.CreateStudyItemsAsync(userEntity.Id, count);
+            var studyItemsEntities = await _dataUtil.CreateStudyItemsAsync(_userEntity.Id, count);
 
             var searchEntities = studyItemsEntities.Take(3).ToList();
             string search = "sEaRcH";
@@ -100,7 +92,7 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
             searchEntities[2].ExampleText = $"xxxRRRR444{search}__sd";
             await _dataRepository.UpdateManyAsync(searchEntities);
 
-            var response = await _apiUtil.GetStudyItemsAsync(accessToken, new StudyItemsRequestDto { Offset = 0, Limit = 10, Search = search });
+            var response = await _apiUtil.GetStudyItemsAsync(_accessToken, new StudyItemsRequestDto { Offset = 0, Limit = 10, Search = search });
 
             response.TotalCount.Should().Be(searchEntities.Count);
             response.ReturnedCount.Should().Be(searchEntities.Count);
@@ -115,13 +107,11 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
         [Fact(DisplayName = "Should return item by id")]
         public async Task GetById()
         {
-            var userEntity = await _dataUtil.CreateUserAsync();
-            var userInfoEntity = await _dataUtil.CreateUserInfoAsync(userEntity.Id);
-            var accessToken = TestAuthenticationHelper.GenerateAccessToken(userEntity);
+            await PrepareTestUser();
 
-            var studyItemEntity = await _dataUtil.CreateStudyItemAsync(userEntity.Id);
+            var studyItemEntity = await _dataUtil.CreateStudyItemAsync(_userEntity.Id);
 
-            var response = await _apiUtil.GetStudyItemByIdAsync(accessToken, studyItemEntity.Id);
+            var response = await _apiUtil.GetStudyItemByIdAsync(_accessToken, studyItemEntity.Id);
 
             response.Id.Should().Be(studyItemEntity.Id);
         }
@@ -129,33 +119,29 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
         [Fact(DisplayName = "Should create item")]
         public async Task Create()
         {
-            var userEntity = await _dataUtil.CreateUserAsync();
-            var userInfoEntity = await _dataUtil.CreateUserInfoAsync(userEntity.Id);
-            var accessToken = TestAuthenticationHelper.GenerateAccessToken(userEntity);
+            await PrepareTestUser();
 
             var createDto = _dataUtil.PrepareStudyItemCreateDto();
 
-            var apiCreatedDto = await _apiUtil.CreateStudyItemAsync(accessToken, createDto);
+            var apiCreatedDto = await _apiUtil.CreateStudyItemAsync(_accessToken, createDto);
 
             var dbEntity = await _dataUtil.GetStudyItemAsync(apiCreatedDto.Id);
             dbEntity.Should().NotBeNull();
 
             apiCreatedDto.Id.Should().Be(createDto.Id);
-            apiCreatedDto.UserId.Should().Be(userEntity.Id);
+            apiCreatedDto.UserId.Should().Be(_userEntity.Id);
         }
 
         [Fact(DisplayName = "Should update item")]
         public async Task Update()
         {
-            var userEntity = await _dataUtil.CreateUserAsync();
-            var userInfoEntity = await _dataUtil.CreateUserInfoAsync(userEntity.Id);
-            var accessToken = TestAuthenticationHelper.GenerateAccessToken(userEntity);
+            await PrepareTestUser();
 
             var createDto = _dataUtil.PrepareStudyItemCreateDto();
-            var apiCreatedDto = await _apiUtil.CreateStudyItemAsync(accessToken, createDto);
+            var apiCreatedDto = await _apiUtil.CreateStudyItemAsync(_accessToken, createDto);
 
             var updateDto = _dataUtil.PrepareStudyItemUpdateDto(apiCreatedDto);
-            var apiUpdatedDto = await _apiUtil.UpdateStudyItemAsync(accessToken, apiCreatedDto.Id, updateDto);
+            var apiUpdatedDto = await _apiUtil.UpdateStudyItemAsync(_accessToken, apiCreatedDto.Id, updateDto);
 
             var dbEntity = await _dataUtil.GetStudyItemAsync(apiCreatedDto.Id);
             dbEntity.Should().NotBeNull();
@@ -167,14 +153,12 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
         [Fact(DisplayName = "Should delete item")]
         public async Task Delete()
         {
-            var userEntity = await _dataUtil.CreateUserAsync();
-            var userInfoEntity = await _dataUtil.CreateUserInfoAsync(userEntity.Id);
-            var accessToken = TestAuthenticationHelper.GenerateAccessToken(userEntity);
+            await PrepareTestUser();
 
             var createDto = _dataUtil.PrepareStudyItemCreateDto();
-            var apiCreatedDto = await _apiUtil.CreateStudyItemAsync(accessToken, createDto);
+            var apiCreatedDto = await _apiUtil.CreateStudyItemAsync(_accessToken, createDto);
 
-            await _apiUtil.DeleteStudyItemAsync(accessToken, apiCreatedDto.Id);
+            await _apiUtil.DeleteStudyItemAsync(_accessToken, apiCreatedDto.Id);
 
             var dbEntity = await _dataUtil.GetStudyItemAsync(apiCreatedDto.Id);
             dbEntity.Should().BeNull();
