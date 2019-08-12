@@ -167,7 +167,7 @@ namespace Lexiconner.Persistence.UnitTests
             }).ToList();
             var docIds = docs.Select(x => x.Id);
 
-            var dbDocs = await _mongoDbDataRepository.GetAllAsync<SimpleTestEntity>(0, docs.Count, search: "");
+            var dbDocs = await _mongoDbDataRepository.GetAllAsync<SimpleTestEntity>(0, docs.Count);
 
             Assert.True(docIds.All(x => dbDocs.Any(y => y.Id == x)));
         }

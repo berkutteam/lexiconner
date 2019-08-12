@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Lexiconner.Api.DTOs;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
 using Lexiconner.Api.Models;
 using Lexiconner.Api.Services;
@@ -20,57 +19,40 @@ namespace Lexiconner.Api.Controllers.V2
     [ApiController]
     [Authorize]
     [ApiVersion("2.0")]
-    [Route("api/v{version:apiVersion}/studyitems/trainings")]
-    public class StudyItemsTrainingsController : ApiControllerBase
+    [Route("api/v{version:apiVersion}/studyitems")]
+    public class StudyItemsFavouritesController : ApiControllerBase
     {
         private readonly IStudyItemsService _studyItemsService;
 
-        public StudyItemsTrainingsController(
+        public StudyItemsFavouritesController(
             IStudyItemsService studyItemsService
         )
         {
             _studyItemsService = studyItemsService;
         }
 
-        [HttpGet("stats")]
-        [ProducesResponseType(typeof(BaseApiResponseDto<TrainingsStatisticsDto>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetTrainingStatistics()
-        {
-            var result = await _studyItemsService.GetTrainingStatisticsAsync(GetUserId());
-            return BaseResponse(result);
-        }
-
-
-        #region Flashcards
-
-        [HttpGet("flashcards")]
-        [ProducesResponseType(typeof(BaseApiResponseDto<FlashCardsTrainingDto>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> FlashcardsStartTraining([FromQuery]int limit)
-        {
-            var result = await _studyItemsService.GetTrainingItemsForFlashCardsAsync(GetUserId(), limit);
-            return BaseResponse(result);
-        }
-
-        [HttpPost("flashcards/save")]
+        [HttpPost("{id}/favourites")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> FlashcardsSaveTrainingResults([FromBody]FlashCardsTrainingResultDto dto)
+        public async Task<IActionResult> AddToFavourites([FromRoute]string id)
         {
-            await _studyItemsService.SaveTrainingResultsForFlashCardsAsync(GetUserId(), dto);
+            await _studyItemsService.AddToFavouritesAsync(GetUserId(), new List<string> { id });
             return StatusCodeBaseResponse();
         }
 
-        #endregion
+        [HttpDelete("{id}/favourites")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> DeleteFromFavourites([FromRoute]string id)
+        {
+            await _studyItemsService.DeleteFromFavouritesAsync(GetUserId(), new List<string> { id });
+            return StatusCodeBaseResponse();
+        }
     }
 }

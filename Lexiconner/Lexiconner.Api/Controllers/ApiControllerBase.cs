@@ -1,4 +1,5 @@
 ﻿using IdentityModel;
+using Lexiconner.Api.DTOs;
 using Lexiconner.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -14,9 +15,9 @@ namespace Lexiconner.Api.Controllers
 {
     public class ApiControllerBase : ControllerBase
     {
-        protected BaseApiResponseModel<T> BaseJsonResponse<T>(T data)
+        protected BaseApiResponseDto<T> BaseJsonResponse<T>(T data)
         {
-            return new BaseApiResponseModel<T>()
+            return new BaseApiResponseDto<T>()
             {
                 Ok = true,
                 Data = data,
@@ -26,7 +27,7 @@ namespace Lexiconner.Api.Controllers
         protected IActionResult BaseResponse<T>(T data, HttpStatusCode status = HttpStatusCode.OK)
         {
 
-            var responseModel = new BaseApiResponseModel<T>()
+            var responseModel = new BaseApiResponseDto<T>()
             {
                 Ok = status == HttpStatusCode.OK,
                 Data = data

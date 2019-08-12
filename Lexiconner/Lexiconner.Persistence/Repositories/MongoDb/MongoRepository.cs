@@ -111,7 +111,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             return result;
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit, string search = "") where T : class
+        public async Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit) where T : class
         {
             CheckCollectionConfig<T>();
 
@@ -140,7 +140,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             return result;
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit, string search = "") where T : class
+        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit) where T : class
         {
             CheckCollectionConfig<T>();
 

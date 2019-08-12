@@ -1,8 +1,7 @@
 ﻿using FluentAssertions;
+using Lexiconner.Api.DTOs;
+using Lexiconner.Api.DTOs.StudyItems;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
-using Lexiconner.Api.Models;
-using Lexiconner.Api.Models.RequestModels;
-using Lexiconner.Api.Models.ResponseModels;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Infrastructure.Tests.Utils;
 using Newtonsoft.Json;
@@ -52,7 +51,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
-            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<string>>(stringResponse);
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseDto<string>>(stringResponse);
 
             responseModel.Should().NotBeNull();
             responseModel.Ok.Should().BeTrue();
@@ -99,13 +98,13 @@ namespace Lexiconner.Api.IntegrationTests.Utils
 
         #region Study items
 
-        public async Task<GetAllResponseModel<StudyItemEntity>> GetStudyItemsAsync(string accessToken, GetAllRequestModel model)
+        public async Task<PaginationResponseDto<StudyItemEntity>> GetStudyItemsAsync(string accessToken, StudyItemsRequestDto dto)
         {
-            var httpResponse = await _httpUtil.GetAsync($"/api/v2/studyitems?Search={model.Search}&Offset={model.Offset}&Limit={model.Limit}", accessToken);
+            var httpResponse = await _httpUtil.GetAsync($"/api/v2/studyitems?Offset={dto.Offset}&Limit={dto.Limit}&Search={dto.Search}&IsFavourite={dto.IsFavourite}", accessToken);
             _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
-            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<GetAllResponseModel<StudyItemEntity>>>(stringResponse);
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseDto<PaginationResponseDto<StudyItemEntity>>>(stringResponse);
 
             responseModel.Should().NotBeNull();
             responseModel.Ok.Should().BeTrue();
@@ -120,7 +119,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
-            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<StudyItemEntity>>(stringResponse);
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseDto<StudyItemEntity>>(stringResponse);
 
             responseModel.Should().NotBeNull();
             responseModel.Ok.Should().BeTrue();
@@ -135,7 +134,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
-            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<StudyItemEntity>>(stringResponse);
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseDto<StudyItemEntity>>(stringResponse);
 
             responseModel.Should().NotBeNull();
             responseModel.Ok.Should().BeTrue();
@@ -150,7 +149,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
-            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<StudyItemEntity>>(stringResponse);
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseDto<StudyItemEntity>>(stringResponse);
 
             responseModel.Should().NotBeNull();
             responseModel.Ok.Should().BeTrue();
@@ -165,7 +164,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
-            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<object>>(stringResponse);
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseDto<object>>(stringResponse);
 
             responseModel.Should().NotBeNull();
             responseModel.Ok.Should().BeTrue();
@@ -183,7 +182,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
-            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<TrainingsStatisticsDto>>(stringResponse);
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseDto<TrainingsStatisticsDto>>(stringResponse);
 
             responseModel.Should().NotBeNull();
             responseModel.Ok.Should().BeTrue();
@@ -198,7 +197,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
-            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<FlashCardsTrainingDto>>(stringResponse);
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseDto<FlashCardsTrainingDto>>(stringResponse);
 
             responseModel.Should().NotBeNull();
             responseModel.Ok.Should().BeTrue();
@@ -213,7 +212,38 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             _httpUtil.EnsureSuccessStatusCode(httpResponse);
 
             string stringResponse = await httpResponse.Content.ReadAsStringAsync();
-            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseModel<object>>(stringResponse);
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseDto<object>>(stringResponse);
+
+            responseModel.Should().NotBeNull();
+            responseModel.Ok.Should().BeTrue();
+            responseModel.Data.Should().BeNull();
+        }
+
+        #endregion
+
+
+        #region Favourites
+
+        public async Task AddToFavouritesAsync(string accessToken, string itemId)
+        {
+            var httpResponse = await _httpUtil.PostJsonAsync($"/api/v2/studyitems/{itemId}/favourites", new { }, accessToken);
+            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseDto<object>>(stringResponse);
+
+            responseModel.Should().NotBeNull();
+            responseModel.Ok.Should().BeTrue();
+            responseModel.Data.Should().BeNull();
+        }
+
+        public async Task DeleteFromFavouritesAsync(string accessToken, string itemId)
+        {
+            var httpResponse = await _httpUtil.DeleteAsync($"/api/v2/studyitems/{itemId}/favourites", accessToken);
+            _httpUtil.EnsureSuccessStatusCode(httpResponse);
+
+            string stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<BaseApiResponseDto<object>>(stringResponse);
 
             responseModel.Should().NotBeNull();
             responseModel.Ok.Should().BeTrue();

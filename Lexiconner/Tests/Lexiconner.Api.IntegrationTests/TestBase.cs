@@ -1,6 +1,8 @@
 ﻿using Bogus;
 using FluentAssertions;
+using Lexiconner.Api.IntegrationTests.Auth;
 using Lexiconner.Api.IntegrationTests.Utils;
+using Lexiconner.Domain.Entitites;
 using Lexiconner.Infrastructure.Tests.Utils;
 using Lexiconner.Persistence.Repositories.Base;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +32,11 @@ namespace Lexiconner.Api.IntegrationTests
         protected readonly ApplicationSettings _config;
         protected readonly IMongoRepository _dataRepository;
 
+
+        protected ApplicationUserEntity _userEntity;
+        protected UserInfoEntity _userInfoEntity;
+        protected string _accessToken;
+
         public TestBase(CustomWebApplicationFactory<Startup> factory)
         {
             _factory = factory;
@@ -58,6 +65,13 @@ namespace Lexiconner.Api.IntegrationTests
         public void Dispose()
         {
             // Do "global" teardown here; Called after every test method.
+        }
+
+        protected async Task PrepareTestUser()
+        {
+            _userEntity = await _dataUtil.CreateUserAsync();
+            _userInfoEntity = await _dataUtil.CreateUserInfoAsync(_userEntity.Id);
+            _accessToken = TestAuthenticationHelper.GenerateAccessToken(_userEntity);
         }
     }
 }

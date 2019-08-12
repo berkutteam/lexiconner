@@ -2,7 +2,6 @@
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
 using Lexiconner.Api.IntegrationTests.Auth;
 using Lexiconner.Api.IntegrationTests.Utils;
-using Lexiconner.Api.Models.RequestModels;
 using Lexiconner.Domain.Attributes;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Enums;

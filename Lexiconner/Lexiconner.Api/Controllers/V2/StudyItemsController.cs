@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Lexiconner.Api.DTOs;
+using Lexiconner.Api.DTOs.StudyItems;
 using Lexiconner.Api.Models;
-using Lexiconner.Api.Models.RequestModels;
-using Lexiconner.Api.Models.ResponseModels;
+using Lexiconner.Api.Services;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
@@ -23,38 +24,36 @@ namespace Lexiconner.Api.Controllers.V2
     public class StudyItemsController : ApiControllerBase
     {
         private readonly IMongoRepository _mongoRepository;
+        private readonly IStudyItemsService _studyItemsService;
         private readonly IImageService _imageService;
 
         public StudyItemsController(
             IMongoRepository mongoRepository,
+            IStudyItemsService studyItemsService,
             IImageService imageService
         )
         {
             _mongoRepository = mongoRepository;
+            _studyItemsService = studyItemsService;
             _imageService = imageService;
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(BaseApiResponseModel<GetAllResponseModel<StudyItemEntity>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<PaginationResponseDto<StudyItemEntity>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllRequestModel data)
+        public async Task<IActionResult> GetAll([FromQuery] StudyItemsRequestDto dto)
         {
-            var itemsTask = _mongoRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == GetUserId(), data.Offset.GetValueOrDefault(0), data.Limit.GetValueOrDefault(10), data.Search);
-            var totalTask = _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == GetUserId());
-            await Task.WhenAll(itemsTask, totalTask);
-            var result = new GetAllResponseModel<StudyItemEntity>
-            {
-                Items = await itemsTask,
-                TotalCount = await totalTask,
-            };
+            var searchFilter = new StudyItemsSearchFilter(dto.Search, dto.IsFavourite);
+
+            var result = await _studyItemsService.GetAllStudyItemsAsync(GetUserId(), dto.Offset, dto.Limit, searchFilter);
             return BaseResponse(result);
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(BaseApiResponseModel<StudyItemEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemEntity>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
@@ -66,7 +65,7 @@ namespace Lexiconner.Api.Controllers.V2
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(BaseApiResponseModel<StudyItemEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemEntity>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
@@ -98,7 +97,7 @@ namespace Lexiconner.Api.Controllers.V2
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(BaseApiResponseModel<StudyItemEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemEntity>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]

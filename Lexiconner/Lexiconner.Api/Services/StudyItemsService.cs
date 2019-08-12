@@ -1,9 +1,12 @@
-﻿using Lexiconner.Api.DTOs.StudyItemsTrainings;
+﻿using Lexiconner.Api.DTOs;
+using Lexiconner.Api.DTOs.StudyItemsTrainings;
+using Lexiconner.Api.Models;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Attributes;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Enums;
 using Lexiconner.Persistence.Repositories.Base;
+using LinqKit;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -16,9 +19,14 @@ namespace Lexiconner.Api.Services
 {
     public interface IStudyItemsService
     {
-        Task<TrainingsStatisticsDto> GetTrainingStatistics(string userId);
-        Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCards(string userId, int limit);
-        Task SaveTrainingResultsForFlashCards(string userId, FlashCardsTrainingResultDto results);
+        Task<PaginationResponseDto<StudyItemEntity>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null);
+
+        Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId);
+        Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, int limit);
+        Task SaveTrainingResultsForFlashCardsAsync(string userId, FlashCardsTrainingResultDto results);
+
+        Task AddToFavouritesAsync(string userId, IEnumerable<string> itemIds);
+        Task DeleteFromFavouritesAsync(string userId, IEnumerable<string> itemIds);
     }
 
     public class StudyItemsService : IStudyItemsService
@@ -35,7 +43,49 @@ namespace Lexiconner.Api.Services
             _imageService = imageService;
         }
 
-        public async Task<TrainingsStatisticsDto> GetTrainingStatistics(string userId)
+        #region Study items
+
+        public async Task<PaginationResponseDto<StudyItemEntity>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null)
+        {
+            var predicate = PredicateBuilder.New<StudyItemEntity>(x => x.UserId == userId);
+
+            if(searchFilter != null)
+            {
+                if (!String.IsNullOrEmpty(searchFilter.Search))
+                {
+                    string search = searchFilter.Search.Trim().ToLower();
+                    predicate.And(x => x.Title.ToLower().Contains(search) || x.Description.ToLower().Contains(search) || x.ExampleText.ToLower().Contains(search));
+                }
+                if (searchFilter.IsFavourite.GetValueOrDefault(false))
+                {
+                    predicate.And(x => x.IsFavourite);
+                }
+            }
+
+            var itemsTask = _mongoRepository.GetManyAsync<StudyItemEntity>(predicate, offset, limit);
+            var totalTask = _mongoRepository.CountAllAsync<StudyItemEntity>(predicate);
+
+            var total = await totalTask;
+            var items = await itemsTask;
+
+            var result = new PaginationResponseDto<StudyItemEntity>
+            {
+                TotalCount = total,
+                ReturnedCount = items.Count(),
+                Offset = offset,
+                Limit = limit,
+                Items = items,
+            };
+
+            return result;
+        }
+
+        #endregion
+
+
+        #region Trainings
+
+        public async Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId)
         {
             long totalItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId);
             long onTrainingItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.Progress != 1));
@@ -72,7 +122,7 @@ namespace Lexiconner.Api.Services
             return result;
         }
 
-        public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCards(string userId, int limit)
+        public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, int limit)
         {
             var entities = await _mongoRepository.GetManyAsync<StudyItemEntity>(
                 x => x.UserId == userId && 
@@ -87,7 +137,7 @@ namespace Lexiconner.Api.Services
             };
         }
 
-        public async Task SaveTrainingResultsForFlashCards(string userId, FlashCardsTrainingResultDto results)
+        public async Task SaveTrainingResultsForFlashCardsAsync(string userId, FlashCardsTrainingResultDto results)
         {
             var ids = results.ItemsResults.Select(x => x.ItemId);
             var entities = (await _mongoRepository.GetManyAsync<StudyItemEntity>(
@@ -139,5 +189,38 @@ namespace Lexiconner.Api.Services
 
             await _mongoRepository.UpdateManyAsync(entities);
         }
+
+        #endregion
+
+
+        #region Favourites
+
+        public async Task AddToFavouritesAsync(string userId, IEnumerable<string> itemIds)
+        {
+            var entities = (await _mongoRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == userId && itemIds.Contains(x.Id))).ToList();
+
+            entities = entities.Select(x =>
+            {
+                x.IsFavourite = true;
+                return x;
+            }).ToList();
+
+            await _mongoRepository.UpdateManyAsync<StudyItemEntity>(entities);
+        }
+
+        public async Task DeleteFromFavouritesAsync(string userId, IEnumerable<string> itemIds)
+        {
+            var entities = (await _mongoRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == userId && itemIds.Contains(x.Id))).ToList();
+
+            entities = entities.Select(x =>
+            {
+                x.IsFavourite = false;
+                return x;
+            }).ToList();
+
+            await _mongoRepository.UpdateManyAsync<StudyItemEntity>(entities);
+        }
+
+        #endregion
     }
 }
