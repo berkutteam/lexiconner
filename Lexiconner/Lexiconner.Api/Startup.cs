@@ -70,7 +70,11 @@ namespace Lexiconner.Api
                 );
             });
 
-            services.AddTransient<IDataCache, DataCacheDataRepository>();
+            services.AddTransient<IDataCache, DataCacheDataRepository>(sp => {
+                var logger = sp.GetService<ILogger<IDataCache>>();
+                ISharedCacheDataRepository dataRepository = sp.GetService<ISharedCacheDataRepository>();
+                return new DataCacheDataRepository(logger, dataRepository);
+            });
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IStudyItemsService, StudyItemsService>();
 
@@ -252,25 +256,32 @@ namespace Lexiconner.Api
             });
 
             // main repository
-            services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
-            {
-                var mongoClient = sp.GetService<MongoClient>();
-                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
-                return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
-            });
+            // no need. Just cast IDataRepository to IMongoDataRepository if needed
+            //services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
+            //{
+            //    var mongoClient = sp.GetService<MongoClient>();
+            //    ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+            //    return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
+            //});
 
             // abstracted repository
             services.AddTransient<IDataRepository, MongoDataRepository>(sp =>
             {
                 var mongoClient = sp.GetService<MongoClient>();
                 ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
-                return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
+                return new MongoDataRepository(mongoClient, config.MongoDb.DatabaseMain, ApplicationDb.Main);
             });
             services.AddTransient<IIdentityDataRepository, IdentityDataRepository>(sp =>
             {
                 var mongoClient = sp.GetService<MongoClient>();
                 ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
                 return new IdentityDataRepository(mongoClient, config.MongoDb.DatabaseIdentity, ApplicationDb.Identity);
+            });
+            services.AddTransient<ISharedCacheDataRepository, SharedCacheDataRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new SharedCacheDataRepository(mongoClient, config.MongoDb.DatabaseSharedCache, ApplicationDb.SharedCache);
             });
         }
     }

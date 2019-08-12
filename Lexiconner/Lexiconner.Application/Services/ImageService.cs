@@ -171,7 +171,7 @@ namespace Lexiconner.Application.Services
                 {
                     string query = imageQueryEn;
                     int pageNumber = 1;
-                    int pageSize = 2;
+                    int pageSize = 10;
                     bool isAutoCorrect = false;
                     bool isSafeSearch = false;
 

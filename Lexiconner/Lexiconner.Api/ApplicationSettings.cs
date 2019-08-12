@@ -31,8 +31,9 @@ namespace Lexiconner.Api
     public class MongoDbSettings
     {
         public string ConnectionString { get; set; }
-        public string Database { get; set; }
         public string DatabaseIdentity { get; set; }
+        public string DatabaseMain { get; set; }
+        public string DatabaseSharedCache { get; set; }
     }
 
     public class BasicAuthSettings

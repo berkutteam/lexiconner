@@ -16,17 +16,17 @@ namespace Lexiconner.Persistence.Cache
         private readonly int _documentsToDeleteOnMaxLimit = 1000;
 
         private readonly ILogger<IDataCache> _logger;
-        private readonly IDataRepository _dataRepository;
+        private readonly ISharedCacheDataRepository _sharedCacheDataRepository;
 
         public DataCacheDataRepository(
             ILogger<IDataCache> logger,
-            IDataRepository dataRepository,
+            ISharedCacheDataRepository sharedCacheDataRepository,
             int documentsMaxLimit = 50_000,
             int documentsToDeleteOnMaxLimit = 1000
         )
         {
             _logger = logger;
-            _dataRepository = dataRepository;
+            _sharedCacheDataRepository = sharedCacheDataRepository;
 
             _documentsMaxLimit = documentsMaxLimit <= 10_000_000 ? documentsMaxLimit : 10_000_000;
             _documentsToDeleteOnMaxLimit = documentsToDeleteOnMaxLimit;
@@ -34,32 +34,32 @@ namespace Lexiconner.Persistence.Cache
 
         public async Task<T> Get<T>(Expression<Func<T, bool>> predicate) where T : DataCacheBaseEntity
         {
-            return await _dataRepository.GetOneAsync<T>(predicate);
+            return await _sharedCacheDataRepository.GetOneAsync<T>(predicate);
         }
 
         public async Task Add<T>(T entity) where T : DataCacheBaseEntity
         {
-            await _dataRepository.AddAsync<T>(entity);
+            await _sharedCacheDataRepository.AddAsync<T>(entity);
             await HandleLimits<T>();
         }
 
         public async Task Delete<T>(Expression<Func<T, bool>> predicate) where T : DataCacheBaseEntity
         {
-            await _dataRepository.DeleteAsync<T>(predicate);
+            await _sharedCacheDataRepository.DeleteAsync<T>(predicate);
         }
 
         public async Task Clear<T>() where T : DataCacheBaseEntity
         {
-            await _dataRepository.DeleteAllAsync<T>();
+            await _sharedCacheDataRepository.DeleteAllAsync<T>();
         }
 
         private async Task HandleLimits<T>() where T : DataCacheBaseEntity
         {
-            long count = await _dataRepository.CountAllAsync<T>(x => true);
+            long count = await _sharedCacheDataRepository.CountAllAsync<T>(x => true);
             if(count > _documentsMaxLimit)
             {
                 _logger.LogInformation($"Cache limit of {_documentsMaxLimit} documents is exceeded. Delete {_documentsToDeleteOnMaxLimit} documents to free up the space.");
-                await _dataRepository.DeleteNDocumentsAsync<T>(x => true, x => x.CreatedAt, deleteCount: _documentsToDeleteOnMaxLimit);
+                await _sharedCacheDataRepository.DeleteNDocumentsAsync<T>(x => true, x => x.CreatedAt, deleteCount: _documentsToDeleteOnMaxLimit);
             }
         }
     }

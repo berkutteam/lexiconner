@@ -97,7 +97,6 @@ namespace Lexiconner.Domain.Config
                 Indexes = new List<string> {
                 }
             },
-
         };
 
         private static List<MongoCollectionConfig> MainDbCollectionConfig = new List<MongoCollectionConfig>
@@ -118,6 +117,18 @@ namespace Lexiconner.Domain.Config
                 }
             },
 
+            // testing
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(SimpleTestEntity),
+                CollectionName = "simpleTest",
+                Indexes = new List<string> {
+                }
+            },
+        };
+
+        private static List<MongoCollectionConfig> SharedCacheDbCollectionConfig = new List<MongoCollectionConfig>
+        {
             // cache
              new MongoCollectionConfig
             {
@@ -141,15 +152,6 @@ namespace Lexiconner.Domain.Config
                 CollectionName = CacheContextualWebSearchImageSearchApi,
                 Indexes = new List<string> {
                     nameof(ContextualWebSearchImageSearchDataCacheEntity.CacheKey)
-                }
-            },
-
-            // testing
-            new MongoCollectionConfig
-            {
-                CollectionType = typeof(SimpleTestEntity),
-                CollectionName = "simpleTest",
-                Indexes = new List<string> {
                 }
             },
         };
@@ -188,6 +190,9 @@ namespace Lexiconner.Domain.Config
                 case ApplicationDb.Main:
                     config = MainDbCollectionConfig;
                     break;
+                case ApplicationDb.SharedCache:
+                    config = SharedCacheDbCollectionConfig;
+                    break;
             }
 
             if (config == null)
@@ -208,6 +213,9 @@ namespace Lexiconner.Domain.Config
                     break;
                 case ApplicationDb.Main:
                     config = MainDbCollectionConfig.FirstOrDefault(x => x.CollectionType == typeof(T));
+                    break;
+                case ApplicationDb.SharedCache:
+                    config = SharedCacheDbCollectionConfig.FirstOrDefault(x => x.CollectionType == typeof(T));
                     break;
             }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lexiconner.Application.Config;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,12 +22,6 @@ namespace Lexiconner.IdentityServer4
         }
 
         public List<string> AllowedOrigins { get; set; }
-    }
-
-    public class MongoDbSettings
-    {
-        public string ConnectionString { get; set; }
-        public string Database { get; set; }
     }
 
     public class UrlSettings

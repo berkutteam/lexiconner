@@ -8,5 +8,6 @@ namespace Lexiconner.Domain.Enums
     {
         Identity = 1,
         Main = 2,
+        SharedCache = 3,
     }
 }

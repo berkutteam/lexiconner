@@ -89,17 +89,18 @@ namespace Lexiconner.Persistence.UnitTests.Utils
             });
 
             // main repository
-            services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
-            {
-                var mongoClient = sp.GetService<MongoClient>();
-                ILogger<IMongoDataRepository> logger = Mock.Of<ILogger<IMongoDataRepository>>();
-                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
-                return new MongoDataRepository(
-                    mongoClient,
-                    config.MongoDb.Database,
-                    ApplicationDb.Main
-                );
-            });
+            // no need. Just cast IDataRepository to IMongoDataRepository if needed
+            //services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
+            //{
+            //    var mongoClient = sp.GetService<MongoClient>();
+            //    ILogger<IMongoDataRepository> logger = Mock.Of<ILogger<IMongoDataRepository>>();
+            //    ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+            //    return new MongoDataRepository(
+            //        mongoClient,
+            //        config.MongoDb.Database,
+            //        ApplicationDb.Main
+            //    );
+            //});
 
             // abstracted repository
             services.AddTransient<IDataRepository, MongoDataRepository>(sp =>

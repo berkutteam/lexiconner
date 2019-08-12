@@ -121,17 +121,18 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             });
 
             // main repository
-            services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
-            {
-                var mongoClient = sp.GetService<MongoClient>();
-                ApplicationSettings config = sp.GetService<IOptions<ApplicationSettings>>().Value;
-                ILogger<IMongoDataRepository> logger = Mock.Of<ILogger<IMongoDataRepository>>();
-                return new MongoDataRepository(
-                    mongoClient,
-                    config.MongoDb.Database,
-                    ApplicationDb.Main
-                );
-            });
+            // no need. Just cast IDataRepository to IMongoDataRepository if needed
+            //services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
+            //{
+            //    var mongoClient = sp.GetService<MongoClient>();
+            //    ApplicationSettings config = sp.GetService<IOptions<ApplicationSettings>>().Value;
+            //    ILogger<IMongoDataRepository> logger = Mock.Of<ILogger<IMongoDataRepository>>();
+            //    return new MongoDataRepository(
+            //        mongoClient,
+            //        config.MongoDb.Database,
+            //        ApplicationDb.Main
+            //    );
+            //});
 
             // abstracted repository
             services.AddTransient<IDataRepository, MongoDataRepository>(sp =>

@@ -243,12 +243,13 @@ namespace Lexiconner.IdentityServer4
             });
 
             // main repository
-            services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
-            {
-                var mongoClient = sp.GetService<MongoClient>();
-                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
-                return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Identity);
-            });
+            // no need. Just cast IDataRepository to IMongoDataRepository if needed
+            //services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
+            //{
+            //    var mongoClient = sp.GetService<MongoClient>();
+            //    ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+            //    return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Identity);
+            //});
 
             // abstracted repository
             services.AddTransient<IDataRepository, MongoDataRepository>(sp =>
