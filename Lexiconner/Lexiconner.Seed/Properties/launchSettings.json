@@ -1,10 +1,24 @@
 {
   "profiles": {
-    "Lexiconner.Seed": {
+    "Lexiconner.Seed_DevelopmentLocalhost": {
       "commandName": "Project",
       "environmentVariables": {
         // change this to seed different DB
         "Environment": "DevelopmentLocalhost"
+      }
+    },
+    "Lexiconner.Seed_DevelopmentHeroku": {
+      "commandName": "Project",
+      "environmentVariables": {
+        // change this to seed different DB
+        "Environment": "DevelopmentHeroku"
+      }
+    },
+    "Lexiconner.Seed_ProductionHeroku": {
+      "commandName": "Project",
+      "environmentVariables": {
+        // change this to seed different DB
+        "Environment": "ProductionHeroku"
       }
     }
   }
