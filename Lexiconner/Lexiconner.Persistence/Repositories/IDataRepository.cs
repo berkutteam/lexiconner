@@ -17,10 +17,10 @@ namespace Lexiconner.Persistence.Repositories
         /// <returns></returns>
         Task<bool> CollectionExistsAsync<T>() where T : class;
 
-        Task<IEnumerable<T>> GetAllAsync<T>() where T : class;
-        Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit) where T : class;
-        Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
-        Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit) where T : class;
+        Task<IEnumerable<T>> GetAllAsync<T>() where T : class, IIdentifiableEntity;
+        Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit) where T : class, IIdentifiableEntity;
+        Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class, IIdentifiableEntity;
+        Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit) where T : class, IIdentifiableEntity;
         Task<T> GetOneAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
         Task AddAsync<T>(T entity) where T : class;
         Task AddManyAsync<T>(IEnumerable<T> entities) where T : class;

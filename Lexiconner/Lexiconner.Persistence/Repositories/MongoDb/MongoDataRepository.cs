@@ -101,21 +101,25 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
         //    }
         //}
 
-        public async Task<IEnumerable<T>> GetAllAsync<T>() where T : class
+        public async Task<IEnumerable<T>> GetAllAsync<T>() where T : class, IIdentifiableEntity
         {
             CheckCollectionConfig<T>();
 
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).Find(x => true);
-            List<T> result = await query.ToListAsync();
+            List<T> result = await query
+                .SortByDescending(x => x.Id)
+                .ToListAsync();
             return result;
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit) where T : class
+        public async Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit) where T : class, IIdentifiableEntity
         {
             CheckCollectionConfig<T>();
 
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).Find(x => true);
-            var result = await query.Skip(offset)
+            var result = await query
+                .SortByDescending(x => x.Id)
+                .Skip(offset)
                 .Limit(limit > _maxPageSize ? _maxPageSize : limit)
                 .ToListAsync();
             return result;
@@ -130,21 +134,25 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             return result;
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class, IIdentifiableEntity
         {
             CheckCollectionConfig<T>();
 
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).Find(predicate);
-            List<T> result = await query.ToListAsync();
+            List<T> result = await query
+                .SortByDescending(x => x.Id)
+                .ToListAsync();
             return result;
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit) where T : class
+        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit) where T : class, IIdentifiableEntity
         {
             CheckCollectionConfig<T>();
 
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).Find(predicate);
-            var result = await query.Skip(offset)
+            var result = await query
+                .SortByDescending(x => x.Id)
+                .Skip(offset)
                 .Limit(limit > _maxPageSize ? _maxPageSize : limit)
                 .ToListAsync();
             return result;
