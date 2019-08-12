@@ -1,5 +1,6 @@
 ﻿using AspNetCore.Identity.MongoDbCore.Models;
 using Lexiconner.Domain.Config;
+using Lexiconner.Domain.Entitites.Base;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDbGenericRepository.Attributes;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 namespace Lexiconner.Domain.Entitites
 {
     [CollectionName(MongoConfig.IdentityRoles)]
-    public class ApplicationRoleEntity : MongoIdentityRole<string>
+    public class ApplicationRoleEntity : MongoIdentityRole<string>, IIdentifiableEntity
     {
         
         public ApplicationRoleEntity()

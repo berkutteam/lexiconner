@@ -5,6 +5,7 @@ using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Lexiconner.Application.Extensions;
 using Lexiconner.Domain.Entitites;
+using Lexiconner.Domain.Entitites.IdentityModel;
 using Lexiconner.IdentityServer4.Config;
 using Lexiconner.IdentityServer4.Exceptions;
 using Lexiconner.Persistence.Repositories;
@@ -47,27 +48,27 @@ namespace Lexiconner.IdentityServer4.Extensions
                 // Client
                 foreach (var client in identityServerConfig.GetClients())
                 {
-                    if(!dataRepository.ExistsAsync<Client>(x => x.ClientId == client.ClientId).GetAwaiter().GetResult())
+                    if(!dataRepository.ExistsAsync<ClientEntity>(x => x.Client.ClientId == client.ClientId).GetAwaiter().GetResult())
                     {
-                        dataRepository.AddAsync(client).GetAwaiter().GetResult();
+                        dataRepository.AddAsync<ClientEntity>(new ClientEntity(client)).GetAwaiter().GetResult();
                     }
                 }
 
                 // IdentityResource
                 foreach (var res in identityServerConfig.GetIdentityResources())
                 {
-                    if (!dataRepository.ExistsAsync<IdentityResource>(x => x.Name == res.Name).GetAwaiter().GetResult())
+                    if (!dataRepository.ExistsAsync<IdentityResourceEntity>(x => x.IdentityResource.Name == res.Name).GetAwaiter().GetResult())
                     {
-                        dataRepository.AddAsync(res).GetAwaiter().GetResult();
+                        dataRepository.AddAsync(new IdentityResourceEntity(res)).GetAwaiter().GetResult();
                     }
                 }
 
                 // ApiResource
                 foreach (var api in identityServerConfig.GetApiResources())
                 {
-                    if (!dataRepository.ExistsAsync<ApiResource>(x => x.Name == api.Name).GetAwaiter().GetResult())
+                    if (!dataRepository.ExistsAsync<ApiResourceEntity>(x => x.ApiResource.Name == api.Name).GetAwaiter().GetResult())
                     {
-                        dataRepository.AddAsync(api).GetAwaiter().GetResult();
+                        dataRepository.AddAsync(new ApiResourceEntity(api)).GetAwaiter().GetResult();
                     }
                 }
 
