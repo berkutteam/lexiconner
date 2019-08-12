@@ -18,13 +18,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Threading.Tasks;
 using Mongo2Go;
 using MongoDB.Driver;
-using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Lexiconner.Domain.Enums;
 using Lexiconner.Api.IntegrationTests.Auth;
 using Lexiconner.Application.ApiClients;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Lexiconner.Persistence.Repositories;
 
 namespace Lexiconner.Api.IntegrationTests.Utils
 {
@@ -74,48 +74,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
                 ApplicationSettings config = serviceProvider.GetService<IOptions<ApplicationSettings>>().Value;
                 IHostingEnvironment hostingEnvironment = serviceProvider.GetService<IHostingEnvironment>();
 
-                //// use MongoDb as repository
-
-                services.AddSingleton<MongoDbRunner>(sp => {
-                    return MongoDbRunner.Start();
-                });
-                /*
-                * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
-                * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.
-                */
-                services.AddTransient<MongoClient>(sp => {
-                    var mongoDbRunner = sp.GetService<MongoDbRunner>();
-                    return new MongoClient(mongoDbRunner.ConnectionString);
-                });
-
-                // main repository
-                services.AddTransient<IMongoRepository>(sp =>
-                {
-                    var mongoClient = sp.GetService<MongoClient>();
-                    ILogger<IMongoRepository> logger = Mock.Of<ILogger<IMongoRepository>>();
-                    return new MongoRepository(
-                        mongoClient,
-                        config.MongoDb.Database,
-                        ApplicationDb.Main
-                    );
-                });
-                services.AddTransient<IIdentityRepository, IdentityRepository>(sp =>
-                {
-                    var mongoClient = sp.GetService<MongoClient>();
-                    ILogger<IMongoRepository> logger = Mock.Of<ILogger<IMongoRepository>>();
-                    return new IdentityRepository(
-                        mongoClient, 
-                        config.MongoDb.DatabaseIdentity, 
-                        ApplicationDb.Identity
-                    );
-                });
-
-                // abstracted repository
-                // do not register, because it will rewrite CosmosDb implementation above
-                //services.AddTransient<IDataRepository>(sp =>
-                //{
-                //    return sp.GetService<IMongoDbDataRepository>();
-                //});
+                ConfigureMongoDb(services);
 
                 services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClientMock>(sp => {
                     return new GoogleTranslateApiClientMock();
@@ -144,6 +103,48 @@ namespace Lexiconner.Api.IntegrationTests.Utils
 
                 // use AddSingleton to acess the same object later usign DI
                 // and be able to use Moq to check number of calls, for example
+            });
+        }
+
+        private void ConfigureMongoDb(IServiceCollection services)
+        {
+            services.AddSingleton<MongoDbRunner>(sp => {
+                return MongoDbRunner.Start();
+            });
+            /*
+            * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
+            * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.
+            */
+            services.AddTransient<MongoClient>(sp => {
+                var mongoDbRunner = sp.GetService<MongoDbRunner>();
+                return new MongoClient(mongoDbRunner.ConnectionString);
+            });
+
+            // main repository
+            services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                ApplicationSettings config = sp.GetService<IOptions<ApplicationSettings>>().Value;
+                ILogger<IMongoDataRepository> logger = Mock.Of<ILogger<IMongoDataRepository>>();
+                return new MongoDataRepository(
+                    mongoClient,
+                    config.MongoDb.Database,
+                    ApplicationDb.Main
+                );
+            });
+
+            // abstracted repository
+            services.AddTransient<IDataRepository, MongoDataRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
+            });
+            services.AddTransient<IIdentityDataRepository, IdentityDataRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new IdentityDataRepository(mongoClient, config.MongoDb.DatabaseIdentity, ApplicationDb.Identity);
             });
         }
 

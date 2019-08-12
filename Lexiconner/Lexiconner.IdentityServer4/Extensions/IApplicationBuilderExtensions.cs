@@ -7,7 +7,7 @@ using Lexiconner.Application.Extensions;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.IdentityServer4.Config;
 using Lexiconner.IdentityServer4.Exceptions;
-using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -37,7 +37,7 @@ namespace Lexiconner.IdentityServer4.Extensions
             {
                 var hostingEnvironment = app.ApplicationServices.GetService<IHostingEnvironment>();
                 var identityServerConfig = app.ApplicationServices.GetService<IIdentityServerConfig>();
-                var repository = app.ApplicationServices.GetService<IMongoRepository>();
+                var dataRepository = app.ApplicationServices.GetService<IDataRepository>();
                 var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUserEntity>>();
                 var roleManager = scope.ServiceProvider.GetService<RoleManager<ApplicationRoleEntity>>();
 
@@ -47,27 +47,27 @@ namespace Lexiconner.IdentityServer4.Extensions
                 // Client
                 foreach (var client in identityServerConfig.GetClients())
                 {
-                    if(!repository.ExistsAsync<Client>(x => x.ClientId == client.ClientId).GetAwaiter().GetResult())
+                    if(!dataRepository.ExistsAsync<Client>(x => x.ClientId == client.ClientId).GetAwaiter().GetResult())
                     {
-                        repository.AddAsync(client).GetAwaiter().GetResult();
+                        dataRepository.AddAsync(client).GetAwaiter().GetResult();
                     }
                 }
 
                 // IdentityResource
                 foreach (var res in identityServerConfig.GetIdentityResources())
                 {
-                    if (!repository.ExistsAsync<IdentityResource>(x => x.Name == res.Name).GetAwaiter().GetResult())
+                    if (!dataRepository.ExistsAsync<IdentityResource>(x => x.Name == res.Name).GetAwaiter().GetResult())
                     {
-                        repository.AddAsync(res).GetAwaiter().GetResult();
+                        dataRepository.AddAsync(res).GetAwaiter().GetResult();
                     }
                 }
 
                 // ApiResource
                 foreach (var api in identityServerConfig.GetApiResources())
                 {
-                    if (!repository.ExistsAsync<ApiResource>(x => x.Name == api.Name).GetAwaiter().GetResult())
+                    if (!dataRepository.ExistsAsync<ApiResource>(x => x.Name == api.Name).GetAwaiter().GetResult())
                     {
-                        repository.AddAsync(api).GetAwaiter().GetResult();
+                        dataRepository.AddAsync(api).GetAwaiter().GetResult();
                     }
                 }
 
@@ -76,11 +76,11 @@ namespace Lexiconner.IdentityServer4.Extensions
                     //repository.DeleteAllAsync<ApplicationRoleEntity>().GetAwaiter().GetResult();
                     //repository.DeleteAllAsync<ApplicationUserEntity>().GetAwaiter().GetResult();
                 }
-                if (!repository.CollectionExistsAsync<ApplicationRoleEntity>().GetAwaiter().GetResult())
+                if (!dataRepository.CollectionExistsAsync<ApplicationRoleEntity>().GetAwaiter().GetResult())
                 {
                     AddInitialRoles(identityServerConfig, roleManager);
                 }
-                if (!repository.CollectionExistsAsync<ApplicationUserEntity>().GetAwaiter().GetResult())
+                if (!dataRepository.CollectionExistsAsync<ApplicationUserEntity>().GetAwaiter().GetResult())
                 {
                     AddInitialUsers(identityServerConfig, userManager);
                 }

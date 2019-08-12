@@ -7,7 +7,8 @@ using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.IdentityServer4.Config;
 using Lexiconner.Persistence.Cache;
-using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories;
+using Lexiconner.Persistence.Repositories.MongoDb;
 using Lexiconner.Seed.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -25,23 +26,23 @@ namespace Lexiconner.Seed.Seed
     {
         private readonly ILogger<ISeedService> _logger;
         private readonly IWordTxtImporter _wordTxtImporter;
-        private readonly IMongoRepository _mongoRepository;
-        private readonly IIdentityRepository _identityRepository;
+        private readonly IDataRepository _dataRepository;
+        private readonly IIdentityDataRepository _identityRepository;
         private readonly IIdentityServerConfig _identityServerConfig;
         private readonly IImageService _imageService;
 
         public SeedServiceDevelopmentLocalhost(
             ILogger<ISeedService> logger,
             IWordTxtImporter wordTxtImporter,
-            IMongoRepository mongoRepository,
-            IIdentityRepository identityRepository,
+            IDataRepository dataRepository,
+            IIdentityDataRepository identityRepository,
             IIdentityServerConfig identityServerConfig,
             IImageService imageService
         )
         {
             _logger = logger;
             _wordTxtImporter = wordTxtImporter;
-            _mongoRepository = mongoRepository;
+            _dataRepository = dataRepository;
             _identityRepository = identityRepository;
             _identityServerConfig = identityServerConfig;
             _imageService = imageService;
@@ -66,7 +67,7 @@ namespace Lexiconner.Seed.Seed
             IEnumerable<StudyItemEntity> studyItems = null;
             foreach (var user in usersWithImport)
             {
-                if (!_mongoRepository.ExistsAsync<StudyItemEntity>(x => x.UserId == user.Id).GetAwaiter().GetResult())
+                if (!_dataRepository.ExistsAsync<StudyItemEntity>(x => x.UserId == user.Id).GetAwaiter().GetResult())
                 {
                     studyItems = studyItems ?? GetStudyItems().GetAwaiter().GetResult();
                     studyItems = studyItems.Select(x =>
@@ -85,7 +86,7 @@ namespace Lexiconner.Seed.Seed
                     for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
                     {
                         var items = studyItems.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
-                        _mongoRepository.AddManyAsync(items).GetAwaiter().GetResult();
+                        _dataRepository.AddManyAsync(items).GetAwaiter().GetResult();
                         _logger.LogInformation($"StudyItems processed chunnk {chunkNumber + 1}/{chunkCount}.");
                     }
                     _logger.LogInformation($"StudyItems was added for user #{user.Email}.");

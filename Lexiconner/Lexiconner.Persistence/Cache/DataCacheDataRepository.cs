@@ -1,5 +1,6 @@
 ﻿using Lexiconner.Domain.Entitites.Cache;
-using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories;
+using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,11 @@ namespace Lexiconner.Persistence.Cache
         private readonly int _documentsToDeleteOnMaxLimit = 1000;
 
         private readonly ILogger<IDataCache> _logger;
-        private readonly IMongoRepository _dataRepository;
+        private readonly IDataRepository _dataRepository;
 
         public DataCacheDataRepository(
             ILogger<IDataCache> logger,
-            IMongoRepository dataRepository,
+            IDataRepository dataRepository,
             int documentsMaxLimit = 50_000,
             int documentsToDeleteOnMaxLimit = 1000
         )

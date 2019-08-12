@@ -5,7 +5,8 @@ using Lexiconner.Application.Services;
 using Lexiconner.Domain.Attributes;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Enums;
-using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories;
+using Lexiconner.Persistence.Repositories.MongoDb;
 using LinqKit;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -31,15 +32,15 @@ namespace Lexiconner.Api.Services
 
     public class StudyItemsService : IStudyItemsService
     {
-        private readonly IMongoRepository _mongoRepository;
+        private readonly IDataRepository _dataRepository;
         private readonly IImageService _imageService;
 
         public StudyItemsService(
-            IMongoRepository mongoRepository,
+            IDataRepository MongoDataRepository,
             IImageService imageService
         )
         {
-            _mongoRepository = mongoRepository;
+            _dataRepository = MongoDataRepository;
             _imageService = imageService;
         }
 
@@ -62,8 +63,8 @@ namespace Lexiconner.Api.Services
                 }
             }
 
-            var itemsTask = _mongoRepository.GetManyAsync<StudyItemEntity>(predicate, offset, limit);
-            var totalTask = _mongoRepository.CountAllAsync<StudyItemEntity>(predicate);
+            var itemsTask = _dataRepository.GetManyAsync<StudyItemEntity>(predicate, offset, limit);
+            var totalTask = _dataRepository.CountAllAsync<StudyItemEntity>(predicate);
 
             var total = await totalTask;
             var items = await itemsTask;
@@ -87,19 +88,19 @@ namespace Lexiconner.Api.Services
 
         public async Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId)
         {
-            long totalItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId);
-            long onTrainingItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.Progress != 1));
-            long trainedItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && !x.TrainingInfo.Trainings.Any(y => y.Progress != 1));
+            long totalItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId);
+            long onTrainingItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.Progress != 1));
+            long trainedItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && !x.TrainingInfo.Trainings.Any(y => y.Progress != 1));
 
             Func<string, TrainingType, Task<TrainingsStatisticsDto.TrainingStatisticsItemDto>> getTrainingStatisticsItem = async (_userId, trainingType) =>
             {
                 return new TrainingsStatisticsDto.TrainingStatisticsItemDto
                 {
                     TrainingType = trainingType,
-                    OnTrainingItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(
+                    OnTrainingItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(
                             x => x.UserId == _userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == trainingType && y.Progress != 1)
                         ),
-                    TrainedItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(
+                    TrainedItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(
                             x => x.UserId == _userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == trainingType && y.Progress == 1)
                         ),
                 };
@@ -124,7 +125,7 @@ namespace Lexiconner.Api.Services
 
         public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, int limit)
         {
-            var entities = await _mongoRepository.GetManyAsync<StudyItemEntity>(
+            var entities = await _dataRepository.GetManyAsync<StudyItemEntity>(
                 x => x.UserId == userId && 
                 (x.TrainingInfo == null || (x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow))),
                 0,
@@ -140,7 +141,7 @@ namespace Lexiconner.Api.Services
         public async Task SaveTrainingResultsForFlashCardsAsync(string userId, FlashCardsTrainingResultDto results)
         {
             var ids = results.ItemsResults.Select(x => x.ItemId);
-            var entities = (await _mongoRepository.GetManyAsync<StudyItemEntity>(
+            var entities = (await _dataRepository.GetManyAsync<StudyItemEntity>(
                 x => x.UserId == userId && ids.Contains(x.Id)
             )).ToList();
 
@@ -187,7 +188,7 @@ namespace Lexiconner.Api.Services
                 return x;
             }).ToList();
 
-            await _mongoRepository.UpdateManyAsync(entities);
+            await _dataRepository.UpdateManyAsync(entities);
         }
 
         #endregion
@@ -197,7 +198,7 @@ namespace Lexiconner.Api.Services
 
         public async Task AddToFavouritesAsync(string userId, IEnumerable<string> itemIds)
         {
-            var entities = (await _mongoRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == userId && itemIds.Contains(x.Id))).ToList();
+            var entities = (await _dataRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == userId && itemIds.Contains(x.Id))).ToList();
 
             entities = entities.Select(x =>
             {
@@ -205,12 +206,12 @@ namespace Lexiconner.Api.Services
                 return x;
             }).ToList();
 
-            await _mongoRepository.UpdateManyAsync<StudyItemEntity>(entities);
+            await _dataRepository.UpdateManyAsync<StudyItemEntity>(entities);
         }
 
         public async Task DeleteFromFavouritesAsync(string userId, IEnumerable<string> itemIds)
         {
-            var entities = (await _mongoRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == userId && itemIds.Contains(x.Id))).ToList();
+            var entities = (await _dataRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == userId && itemIds.Contains(x.Id))).ToList();
 
             entities = entities.Select(x =>
             {
@@ -218,7 +219,7 @@ namespace Lexiconner.Api.Services
                 return x;
             }).ToList();
 
-            await _mongoRepository.UpdateManyAsync<StudyItemEntity>(entities);
+            await _dataRepository.UpdateManyAsync<StudyItemEntity>(entities);
         }
 
         #endregion

@@ -5,7 +5,6 @@ using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Enums;
 using Lexiconner.IdentityServer4.Config;
 using Lexiconner.IdentityServer4.Store;
-using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -42,18 +41,19 @@ namespace Lexiconner.IdentityServer4.Extensions
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IIdentityServerBuilder AddMongoRepository(this IIdentityServerBuilder builder)
+        public static IIdentityServerBuilder AddMongoDataRepository(this IIdentityServerBuilder builder)
         {
-            // register repository if wasn't registred yet
-            if (!builder.Services.Any(x => x.ServiceType == typeof(IMongoRepository) && x.ImplementationType == typeof(MongoRepository)))
-            {
-                builder.Services.AddTransient<IMongoRepository, MongoRepository>(sp =>
-                {
-                    var config = sp.GetService<IOptions<ApplicationSettings>>().Value;
-                    var mongoClient = sp.GetService<MongoClient>();
-                    return new MongoRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Identity);
-                });
-            }
+            //// register repository if wasn't registred yet
+            //if (!builder.Services.Any(x => x.ServiceType == typeof(IMongoDataRepository) && x.ImplementationType == typeof(MongoDataRepository)))
+            //{
+            //    builder.Services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
+            //    {
+            //        var config = sp.GetService<IOptions<ApplicationSettings>>().Value;
+            //        var mongoClient = sp.GetService<MongoClient>();
+            //        return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Identity);
+            //    });
+            //    //throw new InvalidOperationException($"");
+            //}
 
             return builder;
         }
@@ -72,15 +72,15 @@ namespace Lexiconner.IdentityServer4.Extensions
             where TIdentity : ApplicationUserEntity, new ()
             where TRole : ApplicationRoleEntity, new()
         {
-
-            //User Mongodb for Asp.net identity in order to get users stored
-            var client = new MongoClient(config.MongoDb.ConnectionString);
-            var database = client.GetDatabase(config.MongoDb.Database);
-
             //// Configure Asp Net Core Identity / Role to use MongoDB
-            
+
+
             // Contrib.Microsoft.AspNetCore.Identity.MongoDB by thrixton (uses Mongo ObjectId)
             // https://github.com/thrixton/aspnetcore-identity-mongodb-netcore2plus
+
+            //var client = new MongoClient(config.MongoDb.ConnectionString);
+            //var database = client.GetDatabase(config.MongoDb.Database);
+
             //builder.Services.AddSingleton<IUserStore<TIdentity>>(x =>
             //{
             //    var usersCollection = database.GetCollection<TIdentity>(MongoConfig.GetCollectionName<TIdentity>());

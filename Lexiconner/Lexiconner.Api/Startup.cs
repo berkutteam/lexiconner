@@ -1,5 +1,4 @@
 ﻿using Lexiconner.Persistence.Repositories;
-using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -54,24 +53,7 @@ namespace Lexiconner.Api
             services.AddHttpClient();
             services.Configure<ApplicationSettings>(Configuration);
 
-            /*
-             * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
-             * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.
-            */
-            services.AddTransient<MongoClient>(serviceProvider => {
-                return new MongoClient(config.MongoDb.ConnectionString);
-            });
-
-            services.AddTransient<IMongoRepository, MongoRepository>(sp =>
-            {
-                var mongoClient = sp.GetService<MongoClient>();
-                return new MongoRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
-            });
-            services.AddTransient<IIdentityRepository, IdentityRepository>(sp =>
-            {
-                var mongoClient = sp.GetService<MongoClient>();
-                return new IdentityRepository(mongoClient, config.MongoDb.DatabaseIdentity, ApplicationDb.Identity);
-            });
+            ConfigureMongoDb(services);
 
             services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {
                 return new GoogleTranslateApiClient(
@@ -256,6 +238,40 @@ namespace Lexiconner.Api
                            description.GroupName.ToUpperInvariant());
                    }
                });
+        }
+
+        private void ConfigureMongoDb(IServiceCollection services)
+        {
+            /*
+            * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
+            * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.
+           */
+            services.AddTransient<MongoClient>(sp => {
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new MongoClient(config.MongoDb.ConnectionString);
+            });
+
+            // main repository
+            services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
+            });
+
+            // abstracted repository
+            services.AddTransient<IDataRepository, MongoDataRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
+            });
+            services.AddTransient<IIdentityDataRepository, IdentityDataRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new IdentityDataRepository(mongoClient, config.MongoDb.DatabaseIdentity, ApplicationDb.Identity);
+            });
         }
     }
 }

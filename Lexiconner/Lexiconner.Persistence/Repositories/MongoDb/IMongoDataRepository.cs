@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using Lexiconner.Domain.Config;
 using MongoDB.Driver;
 
-namespace Lexiconner.Persistence.Repositories.Base
+namespace Lexiconner.Persistence.Repositories.MongoDb
 {
     /// <summary>
     /// Basic interface with a few methods for adding, deleting, and querying data.
     /// </summary>
-    public interface IMongoRepository : IRepositoryBase
+    public interface IMongoDataRepository : IDataRepository
     {
         /// <summary>
         /// Returns Mongo database
@@ -24,13 +24,6 @@ namespace Lexiconner.Persistence.Repositories.Base
         /// </summary>
         /// <returns></returns>
         Task DropDatabaseAsync();
-
-        /// <summary>
-        /// Checks that collection exists
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        Task<bool> CollectionExistsAsync<T>() where T : class;
 
         Task InitializeCollectionAsync<T>();
        // Task InitializeCollections(List<MongoCollectionConfig> mongoCollectionConfigs);

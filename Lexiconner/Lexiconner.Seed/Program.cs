@@ -7,13 +7,14 @@ using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.Domain.Enums;
 using Lexiconner.IdentityServer4.Config;
 using Lexiconner.Persistence.Cache;
-using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Lexiconner.Seed.Seed;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Serilog;
 using System;
@@ -59,7 +60,7 @@ namespace Lexiconner.Seed
             logger.LogInformation("\n");
 
             var seedService = serviceProvider.GetService<ISeedService>();
-            var mongoRepository = serviceProvider.GetService<IMongoRepository>();
+            var mongoDataRepository = serviceProvider.GetService<IMongoDataRepository>();
 
             if (replaceDatabase)
             {
@@ -68,9 +69,9 @@ namespace Lexiconner.Seed
 
             // configure collections (set indexes, ...)
             logger.LogInformation("Configure collections (set indexes, ...)");
-            await mongoRepository.InitializeCollectionAsync<GoogleTranslateDataCacheEntity>();
-            await mongoRepository.InitializeCollectionAsync<GoogleTranslateDetectLangugaeDataCacheEntity>();
-            await mongoRepository.InitializeCollectionAsync<ContextualWebSearchImageSearchDataCacheEntity>();
+            await mongoDataRepository.InitializeCollectionAsync<GoogleTranslateDataCacheEntity>();
+            await mongoDataRepository.InitializeCollectionAsync<GoogleTranslateDetectLangugaeDataCacheEntity>();
+            await mongoDataRepository.InitializeCollectionAsync<ContextualWebSearchImageSearchDataCacheEntity>();
 
             // seed
             await seedService.SeedAsync();
@@ -106,25 +107,8 @@ namespace Lexiconner.Seed
             // Override the current ILogger implementation to use Serilog
             services.AddLogging(configure => configure.AddSerilog());
 
-            /*
-            * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
-            * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.
-           */
-            services.AddTransient<MongoClient>(serviceProvider => {
-                return new MongoClient(config.MongoDb.ConnectionString);
-            });
-
-            services.AddTransient<IMongoRepository, MongoRepository>(sp =>
-            {
-                var mongoClient = sp.GetService<MongoClient>();
-                return new MongoRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
-            });
-            services.AddTransient<IIdentityRepository, IdentityRepository>(sp =>
-            {
-                var mongoClient = sp.GetService<MongoClient>();
-                return new IdentityRepository(mongoClient, config.MongoDb.DatabaseIdentity, ApplicationDb.Identity);
-            });
-
+            ConfigureMongoDb(services);
+           
             services.AddTransient<IDataCache, DataCacheDataRepository>();
             services.AddTransient<IImageService, ImageService>();
 
@@ -173,6 +157,40 @@ namespace Lexiconner.Seed
                .WriteTo.Console();
 
             return logger.CreateLogger();
+        }
+
+        private static void ConfigureMongoDb(IServiceCollection services)
+        {
+            /*
+            * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
+            * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.
+           */
+            services.AddTransient<MongoClient>(sp => {
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new MongoClient(config.MongoDb.ConnectionString);
+            });
+
+            // main repository
+            services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
+            });
+
+            // abstracted repository
+            services.AddTransient<IDataRepository, MongoDataRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Main);
+            });
+            services.AddTransient<IIdentityDataRepository, IdentityDataRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new IdentityDataRepository(mongoClient, config.MongoDb.DatabaseIdentity, ApplicationDb.Identity);
+            });
         }
     }
 }

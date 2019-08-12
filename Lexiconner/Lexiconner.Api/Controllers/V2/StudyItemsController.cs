@@ -10,7 +10,7 @@ using Lexiconner.Api.Services;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
-using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,17 +23,17 @@ namespace Lexiconner.Api.Controllers.V2
     [Route("api/v{version:apiVersion}/[controller]")]
     public class StudyItemsController : ApiControllerBase
     {
-        private readonly IMongoRepository _mongoRepository;
+        private readonly IDataRepository _dataRepository;
         private readonly IStudyItemsService _studyItemsService;
         private readonly IImageService _imageService;
 
         public StudyItemsController(
-            IMongoRepository mongoRepository,
+            IDataRepository dataRepository,
             IStudyItemsService studyItemsService,
             IImageService imageService
         )
         {
-            _mongoRepository = mongoRepository;
+            _dataRepository = dataRepository;
             _studyItemsService = studyItemsService;
             _imageService = imageService;
         }
@@ -60,7 +60,7 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Get([FromRoute]string id)
         {
-            var result = await _mongoRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
+            var result = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
             return BaseResponse(result);
         }
 
@@ -92,7 +92,7 @@ namespace Lexiconner.Api.Controllers.V2
                 };
             }
 
-            await _mongoRepository.AddAsync(data);
+            await _dataRepository.AddAsync(data);
             return BaseResponse(data);
         }
 
@@ -125,7 +125,7 @@ namespace Lexiconner.Api.Controllers.V2
                 };
             }
 
-            await _mongoRepository.UpdateAsync(data);
+            await _dataRepository.UpdateAsync(data);
             return BaseResponse(data);
         }
 
@@ -137,8 +137,8 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Delete([FromRoute]string id)
         {
-            var existing = await _mongoRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
-            await _mongoRepository.DeleteAsync<StudyItemEntity>(x => x.Id == existing.Id);
+            var existing = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
+            await _dataRepository.DeleteAsync<StudyItemEntity>(x => x.Id == existing.Id);
             return StatusCodeBaseResponse();
         }
     }

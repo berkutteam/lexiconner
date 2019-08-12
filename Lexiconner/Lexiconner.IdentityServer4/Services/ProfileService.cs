@@ -2,7 +2,7 @@
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Lexiconner.Domain.Entitites;
-using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System;
@@ -18,13 +18,13 @@ namespace Lexiconner.IdentityServer4.Services
         protected ApplicationSettings _config;
         protected UserManager<ApplicationUserEntity> _userManager;
         private readonly IUserClaimsPrincipalFactory<ApplicationUserEntity> _claimsFactory;
-        protected IMongoRepository _dataRepository;
+        protected IDataRepository _dataRepository;
 
         public ProfileService(
             IOptions<ApplicationSettings> config,
             UserManager<ApplicationUserEntity> userManager,
             IUserClaimsPrincipalFactory<ApplicationUserEntity> claimsFactory,
-            IMongoRepository dataRepository
+            IDataRepository dataRepository
         )
         {
             _config = config.Value;

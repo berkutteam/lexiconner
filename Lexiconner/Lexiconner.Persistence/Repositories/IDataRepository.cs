@@ -6,10 +6,17 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lexiconner.Persistence.Repositories.Base
+namespace Lexiconner.Persistence.Repositories
 {
-    public interface IRepositoryBase
+    public interface IDataRepository
     {
+        /// <summary>
+        /// Checks that collection exists
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        Task<bool> CollectionExistsAsync<T>() where T : class;
+
         Task<IEnumerable<T>> GetAllAsync<T>() where T : class;
         Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit) where T : class;
         Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class;

@@ -10,7 +10,6 @@ using Lexiconner.Api.Services;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
-using Lexiconner.Persistence.Repositories.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
