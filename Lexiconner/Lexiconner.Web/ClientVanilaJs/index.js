@@ -225,68 +225,37 @@ function start(config) {
 
 
             var limit = 5;
-            var counter = 0;
-            var offsetCards = 0;
+            var counter = window.wordOrder.isFromWordList ? (window.wordOrder.length - Math.floor(window.wordOrder.length / limit) * limit) : 0;
+            var offsetCards = window.wordOrder.isFromWordList ? (Math.floor(window.wordOrder.length / limit) * limit) : 0;
 
             var pages = 0;
             var cardData = {};
 
-            function getTestData(countOfElmenets, testOffset = 0) {
-                var arrData = [];
-                for (var i = 0 + testOffset; i < countOfElmenets + testOffset; i++) {
-                    if (i % 3 === 0) {
-                        arrData.push({
-                            title: "title asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad f" + i,
-                            description: " itle asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad  " + i,
-                            example: "itle asdaaaa aaaa aaaaa aaaaa aaaaaaaaaa aaaaa asd asd asd asd asdasd asfnasdf sad  " + i
-                        });
-                    } else {
-                        arrData.push({
-                            title: "title " + i,
-                            description: " description " + i,
-                            example: "example " + i
-                        });
+            console.log('----1----', counter);
 
-                    }
-                }
-                return arrData;
-            }
 
-            var i = 0;
 
             function showNextCard(direction = 0) {// !!!!!!!!!!!!!!!!!!!!!!
+
                 counter = counter + direction * 1;
+                console.log('----2----', counter);
 
-                if (window.wordOrder.isFromWordList) {
-
-                    counter = window.wordOrder.length - Math.floor(window.wordOrder.length / limit) * limit;
-                    offsetCards = Math.floor(window.wordOrder.length / limit) * limit;
-                    window.wordOrder.isFromWordList = false;
-                    console.log('-----', i, counter);
-                    i++;
-
+                if (!cardData.items || (counter >= cardData.items.length || counter < 0)) {
+                    if (cardData.items && direction === -1) {
+                        offsetCards = offsetCards - limit;
+                        offsetCards = offsetCards < 0 ? ((pages - 1) * limit) : offsetCards;
+                    }
+                    if (cardData.items && direction === 1) {
+                        offsetCards = offsetCards + limit;
+                        offsetCards = offsetCards > cardData.totalCount ? 0 : offsetCards;
+                    }
                     getData(offsetCards, limit, function (response) {
-
                         cardData = response.data;
 
-                        pages = Math.ceil(cardData.totalCount / limit);
-                        showDataOnCard(cardData.items[counter]);
-
-                    });
-                } else {
-
-                    if (!cardData.items || (counter >= cardData.items.length || counter < 0)) {
-                        if (cardData.items && direction === -1) {
-                            offsetCards = offsetCards - limit;
-                            offsetCards = offsetCards < 0 ? ((pages - 1) * limit) : offsetCards;
-                        }
-                        if (cardData.items && direction === 1) {
-                            offsetCards = offsetCards + limit;
-                            offsetCards = offsetCards > cardData.totalCount ? 0 : offsetCards;
-                        }
-                        getData(offsetCards, limit, function (response) {
-
-                            cardData = response.data;
+                        if (window.wordOrder.isFromWordList) {
+                            counter = window.wordOrder.length - Math.floor(window.wordOrder.length / limit) * limit;
+                            window.wordOrder.isFromWordList = false;
+                        } else {
 
                             if (direction === -1) {
                                 counter = cardData.items.length - 1;
@@ -294,15 +263,19 @@ function start(config) {
                                 counter = 0;
                             }
 
-                            pages = Math.ceil(cardData.totalCount / limit);
-                            showDataOnCard(cardData.items[counter]);
+                        }
 
-                        });
+                        pages = Math.ceil(cardData.totalCount / limit);
 
-                    } else {
+                        console.log('----3---', counter);
                         showDataOnCard(cardData.items[counter]);
-                    }
+
+                    });
+
+                } else {
+                    showDataOnCard(cardData.items[counter]);
                 }
+
             }
 
             function showDataOnCard(card) {
@@ -369,6 +342,7 @@ function start(config) {
 
             function addDataItemsBlock(item, i) {
                 var clone = listItemTemplateEl.cloneNode(true);
+                var textContainer = clone.querySelector('.js-item-text');
                 var textEl = clone.querySelector('.list-item-text-span');
 
                 // begin edit picture elements (delete,put)
@@ -378,6 +352,8 @@ function start(config) {
                 // end edit picture elements (delete,put)
 
                 textEl.innerText = item.title;
+
+                textContainer.setAttribute('position-in-list', i);
                 textEl.setAttribute('position-in-list', i);
 
                 deletePictureEl.setAttribute('position-in-list', i);
