@@ -158,7 +158,7 @@ function start(config) {
          * @param {any} eventName
          * @param {any} eventHandler
          */
-       
+
 
         /**
          * Inits app menu, enables menu links
@@ -437,9 +437,9 @@ function start(config) {
                     deleteData(idItemUrl, user.access_token);
 
                     alert('Deleted');
+                    showPage(page, limit);
                 }
             });
-
 
             var idItemPutUrl = '';// used for put
             var postUrl = `${config.urls.api}/api/v2/StudyItems`;// used for add item
@@ -465,14 +465,22 @@ function start(config) {
                 formPutButtonEl.classList.replace('hidden', 'active');
                 modalWindowForm.showModal();
 
+                defaultFullfieldForm(pageData.items[numberOfItem1]);
+
                 domUtil.addBubleEventListener(formPutButtonEl, '.js-put-button', 'click', window.checkEventListener.formPutButton, function (e) {
 
                     idItemPutUrl = `${config.urls.api}/api/v2/StudyItems/${pageData.items[numberOfItem1].id}`;
 
-                    if (makeRequestBody(formDataSend)) {
+                    if (makeRequestBody(formDataSend, pageData.items[numberOfItem1])) {
 
                         updateData(idItemPutUrl, formDataSend, user.access_token);
                         modalWindowForm.close();
+
+                        var listItem = itemListEl.querySelectorAll('.js-list-item-template');
+                        var listItemTextSpan = listItem[numberOfItem1].querySelector('.list-item-text-span');
+
+                        listItemTextSpan.innerText = formDataSend.title;
+
                     }
                 });
 
@@ -492,11 +500,12 @@ function start(config) {
                 formAddButtonEl.classList.replace('hidden', 'active');
                 modalWindowForm.showModal();
 
-                domUtil.addBubleEventListener(formAddButtonEl, ".js-add-button", "click", window.checkEventListener.formAddButton, function (e) {
+                domUtil.addBubleEventListener(formAddButtonEl, ".js-add-button", "click", window.checkEventListener.formAddButton, function (e, desiredEl) {
 
                     if (makeRequestBody(formDataSend)) {
                         sendData(postUrl, formDataSend, user.access_token);
                         modalWindowForm.close();
+                        location.reload()
                     }
 
                 });
@@ -525,6 +534,18 @@ function start(config) {
                 }
 
             };// removes all input fields with red border when click on "reset"
+
+            function defaultFullfieldForm(data) {
+                var WordFormEl = document.forms.WordForm;
+
+                WordFormEl.elements.title.value = data.title;
+
+                WordFormEl.elements.description.value = data.description;
+
+                WordFormEl.elements.exampleText.value = data.exampleText;
+
+                //WordFormEl.elements.tags.value = data.tags;
+            }
 
             function makeRequestBody(formDataSend) {
 
@@ -574,6 +595,7 @@ function start(config) {
                     return true;
                 }
             }// makes request body and checks empty field(s)
+
 
             function sendData(url, data, authToken) {
                 helper.httpRequest(url, data, 'POST', authToken, function (request) {
