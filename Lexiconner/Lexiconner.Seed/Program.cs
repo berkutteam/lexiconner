@@ -3,6 +3,7 @@ using Lexiconner.Application.Helpers;
 using Lexiconner.Application.ImportAndExport;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Config;
+using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.Domain.Enums;
 using Lexiconner.IdentityServer4.Config;
@@ -11,11 +12,13 @@ using Lexiconner.Persistence.Repositories;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Lexiconner.Seed.Seed;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using MongoDbGenericRepository;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -105,11 +108,15 @@ namespace Lexiconner.Seed
             services.AddOptions();
             services.Configure<ApplicationSettings>(configuration);
 
+            // register directly to access using DI
+            services.AddTransient<IConfigurationRoot>(sp => configuration);
+
             // Override the current ILogger implementation to use Serilog
             services.AddLogging(configure => configure.AddSerilog());
 
             ConfigureMongoDb(services);
-           
+            AddMongoDbForAspIdentity<ApplicationUserEntity, ApplicationRoleEntity>(services, config);
+
             services.AddTransient<IDataCache, DataCacheDataRepository>(sp => {
                 var logger = sp.GetService<ILogger<IDataCache>>();
                 ISharedCacheDataRepository dataRepository = sp.GetService<ISharedCacheDataRepository>();
@@ -197,6 +204,28 @@ namespace Lexiconner.Seed
                 ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
                 return new SharedCacheDataRepository(mongoClient, config.MongoDb.DatabaseSharedCache, ApplicationDb.SharedCache);
             });
+        }
+
+        private static void AddMongoDbForAspIdentity<TIdentity, TRole>(IServiceCollection services, ApplicationSettings config)
+            where TIdentity : ApplicationUserEntity, new()
+            where TRole : ApplicationRoleEntity, new()
+        {
+            // AspNetCore.Identity.MongoDbCore by Alexandre Spieser (allows to set custom Ids)
+            // https://github.com/alexandre-spieser/AspNetCore.Identity.MongoDbCore
+            IMongoDbContext mongoDbContext = new MongoDbContext(config.MongoDb.ConnectionString, config.MongoDb.DatabaseIdentity);
+            //builder.Services.AddSingleton<IUserStore<TIdentity>>(x =>
+            //{
+            //    return new AspNetCore.Identity.MongoDbCore.MongoUserStore<TIdentity>(mongoDbContext);
+            //});
+
+            //builder.Services.AddSingleton<IRoleStore<TRole>>(x =>
+            //{
+            //    return new AspNetCore.Identity.MongoDbCore.MongoRoleStore<TRole>(mongoDbContext);
+            //});
+
+            services.AddIdentity<TIdentity, TRole>()
+                .AddMongoDbStores<TIdentity, TRole, string>(mongoDbContext)
+                .AddDefaultTokenProviders();
         }
     }
 }

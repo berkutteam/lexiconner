@@ -202,7 +202,6 @@ namespace Lexiconner.IdentityServer4
 
             // UseIdentityServer includes a call to UseAuthentication, so it’s not necessary to have both.
             app.UseIdentityServer();
-            app.UseMongoDbForIdentityServer();
 
             // Configure Google Auth
             //app.UseGoogleAuthentication(new GoogleOptions

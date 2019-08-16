@@ -33,6 +33,7 @@ namespace IdentityServer4.Quickstart.UI
     [AllowAnonymous]
     public class AccountController : Controller
     {
+        private readonly ApplicationSettings _config;
         private readonly UserManager<ApplicationUserEntity> _userManager;
         private readonly SignInManager<ApplicationUserEntity> _signInManager;
         private readonly IIdentityServerInteractionService _interaction;
@@ -41,6 +42,7 @@ namespace IdentityServer4.Quickstart.UI
         private readonly IEventService _events;
 
         public AccountController(
+            IOptions<ApplicationSettings> config,
             UserManager<ApplicationUserEntity> userManager,
             SignInManager<ApplicationUserEntity> signInManager,
             IIdentityServerInteractionService interaction,
@@ -48,6 +50,7 @@ namespace IdentityServer4.Quickstart.UI
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events)
         {
+            _config = config.Value;
             _userManager = userManager;
             _signInManager = signInManager;
             _interaction = interaction;
@@ -228,7 +231,7 @@ namespace IdentityServer4.Quickstart.UI
             tokenCreationRequest.IncludeAllIdentityClaims = true;
             tokenCreationRequest.ValidatedRequest = new ValidatedRequest();
             tokenCreationRequest.ValidatedRequest.Subject = tokenCreationRequest.Subject;
-            tokenCreationRequest.ValidatedRequest.SetClient(identityServerConfig.GetClients().First(x => x.ClientId == "webtestspa"));
+            tokenCreationRequest.ValidatedRequest.SetClient(identityServerConfig.GetClients(_config).First(x => x.ClientId == "webtestspa"));
             tokenCreationRequest.Resources = new Resources(identityServerConfig.GetIdentityResources(), identityServerConfig.GetApiResources());
             tokenCreationRequest.ValidatedRequest.Options = options;
             tokenCreationRequest.ValidatedRequest.ClientClaims = identityUser.AdditionalClaims;
@@ -239,7 +242,7 @@ namespace IdentityServer4.Quickstart.UI
             token3Identity.Issuer = issuer;
             var tokenValue3Access = await tokenService.CreateSecurityTokenAsync(token3Access);
             var tokenValue3Identity = await tokenService.CreateSecurityTokenAsync(token3Identity);
-            var tokenValue3Refresh = await refreshTokenService.CreateRefreshTokenAsync(tokenCreationRequest.Subject, token3Access, identityServerConfig.GetClients().First(x => x.ClientId == "webtestspa"));
+            var tokenValue3Refresh = await refreshTokenService.CreateRefreshTokenAsync(tokenCreationRequest.Subject, token3Access, identityServerConfig.GetClients(_config).First(x => x.ClientId == "webtestspa"));
 
             ////
             ///// DOESN'T contain info about user

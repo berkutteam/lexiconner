@@ -19,6 +19,7 @@ namespace Lexiconner.Application.Services
     public interface IImageService
     {
         Task<List<ImageSearchResponseItemDto>> FindImagesAsync(string sourceLanguageCode, string imageQuery);
+        ImageSearchResponseItemDto GetSuitableImages(List<ImageSearchResponseItemDto> imageResult);
     }
 
     public class ImageService : IImageService
@@ -250,6 +251,20 @@ namespace Lexiconner.Application.Services
             }
 
             return result;
+        }
+
+        public ImageSearchResponseItemDto GetSuitableImages(List<ImageSearchResponseItemDto> imageResult)
+        {
+            const int preferredImageWidth = 600;
+            const int maxImageWidth = 800;
+
+            // try to find suitable image
+            ImageSearchResponseDto.ImageSearchResponseItemDto image = null;
+            image = imageResult.FirstOrDefault(x => int.Parse(x.Width) <= preferredImageWidth);
+            image = image ?? imageResult.FirstOrDefault(x => int.Parse(x.Width) <= maxImageWidth);
+            // image = image ?? imagesResult.First(); // do not take big images
+
+            return image;
         }
     }
 }

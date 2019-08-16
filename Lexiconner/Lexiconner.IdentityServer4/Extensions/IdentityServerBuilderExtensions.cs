@@ -114,7 +114,7 @@ namespace Lexiconner.IdentityServer4.Extensions
             //});
 
             builder.Services.AddIdentity<TIdentity, TRole>()
-                .AddMongoDbStores<ApplicationUserEntity, ApplicationRoleEntity, string>(mongoDbContext)
+                .AddMongoDbStores<TIdentity, TRole, string>(mongoDbContext)
                 .AddDefaultTokenProviders();
 
             return builder;

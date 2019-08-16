@@ -34,8 +34,8 @@ namespace Lexiconner.Application.ApiClients
                     new ImageSearchResponseDto.ImageSearchResponseItemDto
                     {
                         Url = "FAKE",
-                        Height = "FAKE",
-                        Width = "FAKE",
+                        Height = "100",
+                        Width = "200",
                         Thumbnail = "FAKE",
                         ThumbnailHeight = "FAKE",
                         ThumbnailWidth ="FAKE",

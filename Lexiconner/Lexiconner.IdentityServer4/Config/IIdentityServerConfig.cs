@@ -11,8 +11,9 @@ namespace Lexiconner.IdentityServer4.Config
     {
         IEnumerable<IdentityResource> GetIdentityResources();
         IEnumerable<ApiResource> GetApiResources();
-        IEnumerable<Client> GetClients();
+        IEnumerable<Client> GetClients(ApplicationSettings config);
 
+        string DefaultUserPassword { get; }
         List<ApplicationRoleEntity> GetInitialIdentityRoles();
         List<ApplicationUserEntity> GetInitialdentityUsers();
     }
