@@ -1,5 +1,30 @@
+
+// polyfills must be included before all other code
+import "@babel/polyfill";
+
 import _ from 'lodash';
 import moment from 'moment';
+
+// Oidc
+import {
+    Version,
+    Log,
+    OidcClient,
+    OidcClientSettings,
+    WebStorageStateStore,
+    InMemoryWebStorage,
+    UserManager,
+    AccessTokenEvents,
+    MetadataService,
+    CordovaPopupNavigator,
+    CordovaIFrameNavigator,
+    CheckSessionIFrame,
+    TokenRevocationClient,
+    SessionMonitor,
+    Global,
+    User
+} from 'oidc-client';
+import Oidc from 'oidc-client';
 
 import HttpUtil from './modules/HttpUtil.js';
 let helper = new HttpUtil();
