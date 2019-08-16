@@ -107,6 +107,15 @@ namespace Lexiconner.IdentityServer4.Extensions
                     cm.SetIgnoreExtraElements(true);
                 });
             }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(ClientEntity)))
+            {
+                BsonClassMap.RegisterClassMap<ClientEntity>(cm =>
+                {
+                    cm.AutoMap();
+                    cm.SetIgnoreExtraElements(true);
+                });
+            }
+
             if (!BsonClassMap.IsClassMapRegistered(typeof(IdentityResource)))
             {
                 BsonClassMap.RegisterClassMap<IdentityResource>(cm =>
@@ -115,6 +124,15 @@ namespace Lexiconner.IdentityServer4.Extensions
                     cm.SetIgnoreExtraElements(true);
                 });
             }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(IdentityResourceEntity)))
+            {
+                BsonClassMap.RegisterClassMap<IdentityResourceEntity>(cm =>
+                {
+                    cm.AutoMap();
+                    cm.SetIgnoreExtraElements(true);
+                });
+            }
+
             if (!BsonClassMap.IsClassMapRegistered(typeof(ApiResource)))
             {
                 BsonClassMap.RegisterClassMap<ApiResource>(cm =>
@@ -123,9 +141,26 @@ namespace Lexiconner.IdentityServer4.Extensions
                     cm.SetIgnoreExtraElements(true);
                 });
             }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(ApiResourceEntity)))
+            {
+                BsonClassMap.RegisterClassMap<ApiResourceEntity>(cm =>
+                {
+                    cm.AutoMap();
+                    cm.SetIgnoreExtraElements(true);
+                });
+            }
+
             if (!BsonClassMap.IsClassMapRegistered(typeof(PersistedGrant)))
             {
                 BsonClassMap.RegisterClassMap<PersistedGrant>(cm =>
+                {
+                    cm.AutoMap();
+                    cm.SetIgnoreExtraElements(true);
+                });
+            }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(PersistedGrantEntity)))
+            {
+                BsonClassMap.RegisterClassMap<PersistedGrantEntity>(cm =>
                 {
                     cm.AutoMap();
                     cm.SetIgnoreExtraElements(true);
