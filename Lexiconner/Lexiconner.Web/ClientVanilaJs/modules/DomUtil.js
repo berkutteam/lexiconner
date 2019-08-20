@@ -1,4 +1,5 @@
 
+
 class DomUtil {
     constructor() {
 
@@ -6,7 +7,7 @@ class DomUtil {
 
     addBubleEventListener(sourceElSelector, targetElSelector, eventName, checkedHandler, eventHandler) {
 
-        if (!(checkedHandler.state)) {
+        if (!checkedHandler.state) {
             var sourceEl = (typeof sourceElSelector === "object") ? sourceElSelector : document.querySelector(sourceElSelector);
             checkedHandler.state = true;
 
