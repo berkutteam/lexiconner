@@ -79,7 +79,8 @@ namespace Lexiconner.Api.Controllers.V2
 
             if (imagesResult.Any())
             {
-                var image = imagesResult.First();
+                // try to find suitable image
+                var image = _imageService.GetSuitableImages(imagesResult);
                 data.Image = new StudyItemImageEntity
                 {
                     Url = image.Url,
@@ -112,7 +113,8 @@ namespace Lexiconner.Api.Controllers.V2
 
             if (imagesResult.Any())
             {
-                var image = imagesResult.First();
+                // try to find suitable image
+                var image = _imageService.GetSuitableImages(imagesResult);
                 data.Image = new StudyItemImageEntity
                 {
                     Url = image.Url,

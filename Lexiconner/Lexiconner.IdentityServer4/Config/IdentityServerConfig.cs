@@ -21,13 +21,9 @@ namespace Lexiconner.IdentityServer4.Config
 {
     public class IdentityServerConfig : IIdentityServerConfig
     {
-        private readonly ApplicationSettings _config;
-
         public IdentityServerConfig(
-            IOptions<ApplicationSettings> config
         )
         {
-            _config = config.Value;
         }
 
         public IEnumerable<IdentityResource> GetIdentityResources()
@@ -56,7 +52,7 @@ namespace Lexiconner.IdentityServer4.Config
             };
         }
 
-        public IEnumerable<Client> GetClients()
+        public IEnumerable<Client> GetClients(ApplicationSettings config)
         {
             var clients = new List<Client>
             {
@@ -94,7 +90,7 @@ namespace Lexiconner.IdentityServer4.Config
                 {
                     ClientId = "webspa",
                     ClientName = "Lexiconner Web SPA Client",
-                    ClientUri = _config.Urls.WebSpa,
+                    ClientUri = config.Urls.WebSpa,
 
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true, // Proof Key for Code Exchange (PKCE)
@@ -103,15 +99,15 @@ namespace Lexiconner.IdentityServer4.Config
 
                     RedirectUris =
                     {
-                        $"{_config.Urls.WebSpa}",
-                        $"{_config.Urls.WebSpa}/index.html",
-                        $"{_config.Urls.WebSpa}/callback.html",
-                        $"{_config.Urls.WebSpa}/silent.html",
-                        $"{_config.Urls.WebSpa}/popup.html",
+                        $"{config.Urls.WebSpa}",
+                        $"{config.Urls.WebSpa}/index.html",
+                        $"{config.Urls.WebSpa}/callback.html",
+                        $"{config.Urls.WebSpa}/silent.html",
+                        $"{config.Urls.WebSpa}/popup.html",
                     },
 
-                    PostLogoutRedirectUris = { $"{_config.Urls.WebSpa}/index.html" },
-                    AllowedCorsOrigins = { $"{_config.Urls.WebSpa}" },
+                    PostLogoutRedirectUris = { $"{config.Urls.WebSpa}/index.html" },
+                    AllowedCorsOrigins = { $"{config.Urls.WebSpa}" },
 
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
@@ -142,7 +138,7 @@ namespace Lexiconner.IdentityServer4.Config
                 {
                     ClientId = "webtestspa",
                     ClientName = "Lexiconner Web Test SPA Client",
-                    ClientUri = _config.Urls.WebTestSpa,
+                    ClientUri = config.Urls.WebTestSpa,
 
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true, // Proof Key for Code Exchange (PKCE)
@@ -151,15 +147,15 @@ namespace Lexiconner.IdentityServer4.Config
 
                     RedirectUris =
                     {
-                        $"{_config.Urls.WebTestSpa}",
-                        $"{_config.Urls.WebTestSpa}/index.html",
-                        $"{_config.Urls.WebTestSpa}/callback.html",
-                        $"{_config.Urls.WebTestSpa}/silent.html",
-                        $"{_config.Urls.WebTestSpa}/popup.html",
+                        $"{config.Urls.WebTestSpa}",
+                        $"{config.Urls.WebTestSpa}/index.html",
+                        $"{config.Urls.WebTestSpa}/callback.html",
+                        $"{config.Urls.WebTestSpa}/silent.html",
+                        $"{config.Urls.WebTestSpa}/popup.html",
                     },
 
-                    PostLogoutRedirectUris = { $"{_config.Urls.WebTestSpa}/index.html" },
-                    AllowedCorsOrigins = { $"{_config.Urls.WebTestSpa}" },
+                    PostLogoutRedirectUris = { $"{config.Urls.WebTestSpa}/index.html" },
+                    AllowedCorsOrigins = { $"{config.Urls.WebTestSpa}" },
 
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
@@ -185,6 +181,8 @@ namespace Lexiconner.IdentityServer4.Config
 
             return clients;
         }
+
+        public string DefaultUserPassword { get { return "Password_1"; } }
 
         public List<ApplicationRoleEntity> GetInitialIdentityRoles()
         {
