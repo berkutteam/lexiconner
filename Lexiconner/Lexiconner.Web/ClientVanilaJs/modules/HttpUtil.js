@@ -1,4 +1,5 @@
 
+import {userUtil} from '../index.js';
 
 class HttpUtil {
 
@@ -24,7 +25,7 @@ class HttpUtil {
             } else if (xhr.status === 401 || xhr.status === 403) {
                 console.error('Request failed.  Returned status of ' + xhr.status);
                 alert("Authentication time is up");
-                //logout();
+                userUtil.logout();
             }
         };
 
@@ -51,7 +52,7 @@ class HttpUtil {
             } else if (xhr.status === 401 || xhr.status === 403) {
                 console.error('Request failed.  Returned status of ' + xhr.status);
                 alert("Authentication time is up");
-                //logout();
+                userUtil.logout();
             }
         };
 
@@ -80,7 +81,7 @@ class HttpUtil {
             } else if (xhr.status === 401 || xhr.status === 403) {
                 console.error('Request failed.  Returned status of ' + xhr.status);
                 alert("Authentication time is up");
-                //console.log(222222, xhr.getResponseHeader('WWW-Authenticate')); returns
+                userUtil.logout();
             }
             else {
                 console.error('Request failed.  Returned status of ' + xhr.status);

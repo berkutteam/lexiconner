@@ -40,7 +40,7 @@ import Cards from './modules/pages/cards.js';
 import WordList from './modules/pages/word-list.js';
 
 import UserUtil from './modules/UserUtil.js';
-let userUtil = {};
+  export let userUtil = {};
 
 document.addEventListener("DOMContentLoaded", function (event) {
     helper.httpGet('/config', function (config) {
@@ -59,6 +59,7 @@ function start(config) {
         if (user) {
             userUtil.checkIdentityApi(user);
             initPageHandlers(user, config);
+            console.log('User:', user);
             runApp(user, config);
 
         } else {
