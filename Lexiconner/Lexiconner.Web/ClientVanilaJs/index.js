@@ -34,10 +34,8 @@ let domUtil = new DomUtil();
 
 import globalScopes from './modules/pages/global-scopes.js';
 
-
-import Dashboard from './modules/pages/dashboard.js';
-import Cards from './modules/pages/cards.js';
-import WordList from './modules/pages/word-list.js';
+import AppRouter from './modules/AppRouter.js';
+let appRouter = {};
 
 import UserUtil from './modules/UserUtil.js';
   export let userUtil = {};
@@ -48,18 +46,16 @@ document.addEventListener("DOMContentLoaded", function (event) {
     });
 });
 
-
 function start(config) {
 
-    var pageHandlers = {};
     userUtil = new UserUtil(config);
 
     userUtil.getUser(function (user) {
 
         if (user) {
             userUtil.checkIdentityApi(user);
-            initPageHandlers(user, config);
             console.log('User:', user);
+            appRouter = new AppRouter(user, config);
             runApp(user, config);
 
         } else {
@@ -68,12 +64,6 @@ function start(config) {
         }
     });
 
-
-    function initPageHandlers(user, config) {
-        pageHandlers['dashboard'] = new Dashboard();
-        pageHandlers['cards'] = new Cards(user, config);
-        pageHandlers['word-list'] = new WordList(user, config);
-    }
 
     function runApp(user, config) {
 
@@ -88,7 +78,7 @@ function start(config) {
                 e.stopPropagation();
 
                 var targetLinkEl = desiredEl;
-                goToRoute(targetLinkEl.dataset.routeLink);
+                appRouter.goToRoute(targetLinkEl.dataset.routeLink);
             });
         }
 
@@ -99,57 +89,16 @@ function start(config) {
 
         initAppMenu();
 
-        function goToRoute(route) {
-            if (route !== window.location.hash) {
-                window.location.hash = route;
-            }
-        }
-
-        function processRoute(route) {
-            // drop '#' from begining if exists
-            route = route.replace(/^#/gi, '');
-
-            // hide all menu links and all menu pages
-            var linkEls = document.querySelectorAll('[data-route-link]');
-            var pageEls = document.querySelectorAll('[data-route]');
-
-            linkEls.forEach(function (item) {
-                item.classList.remove('active');
-            });
-            pageEls.forEach(function (item) {
-                item.classList.remove('active');
-            });
-
-            // show clicked page
-            var targetLinkEls = document.querySelectorAll("[data-route-link='" + route + "']");
-            var targetPageEls = document.querySelectorAll("[data-route='" + route + "']");
-
-            targetLinkEls.forEach(function (item) {
-                item.classList.add('active');
-            });
-
-            targetPageEls.forEach(function (item) {
-                item.classList.add('active');
-                var pageHandler = pageHandlers[route];
-                if (!pageHandler) {
-                    console.error(`Can't find handler for page: ${route}`);
-                } else {
-                    pageHandler.pageHandler(item);
-                }
-            });
-        }
-
+        
         // listen hash changes
         window.addEventListener('hashchange', function (e) {
-            var oldURL = e.oldURL;
-            var newUrl = e.newUrl;
             var newHash = window.location.hash;
-            processRoute(newHash);
+            appRouter.processRoute(newHash);
         }, false);
 
         // run route that is already in hash
         if (!!window.location.hash) {
-            processRoute(window.location.hash);
+            appRouter.processRoute(window.location.hash);
         }
 
         function checkingServerResponse(user) {
@@ -169,7 +118,7 @@ function start(config) {
                     var descriptionIssue = document.querySelector('.js-empty-data');
                     descriptionIssue.classList.replace('hidden', 'active');
 
-                    window.location.hash = "#no-response";
+                    appRouter.goToRoute("#no-response");
                 }
             });
         }//checks server connection

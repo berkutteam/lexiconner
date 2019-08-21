@@ -18,13 +18,15 @@ class Cards {
     pageHandler() {
 
         var limit = 5;
-        var counter = globalScopes.getWordOrder().isFromWordList ? (globalScopes.getWordOrder().length - Math.floor(globalScopes.getWordOrder().length / limit) * limit) : 0;
-        var offsetCards = globalScopes.getWordOrder().isFromWordList ? (Math.floor(globalScopes.getWordOrder().length / limit) * limit) : 0;
+        var counter = globalScopes.getWordOrder().isFromWordList ?
+            (globalScopes.getWordOrder().length - Math.floor(globalScopes.getWordOrder().length / limit) * limit) : 0;
+        var offsetCards = globalScopes.getWordOrder().isFromWordList ?
+            (Math.floor(globalScopes.getWordOrder().length / limit) * limit) : 0;
         var pages = 0;
         var config = this.config;
         var user = this.user;
         var cardData = {};
-        
+
 
         function getData(offset = 0, limit = 2, callBack = null) {
             helper.httpGet(config.urls.api + '/api/v2/studyitems' + '?' + 'offset=' + offset + '&' + 'limit=' + limit, function (data) {
@@ -35,7 +37,7 @@ class Cards {
             }, user.access_token);
         }
 
-        function showNextCard(direction = 0) {// !!!!!!!!!!!!!!!!!!!!!!
+        function showNextCard(direction = 0) {// !! if order from 'Word-List' then the counter is not reset !!
 
             counter = counter + direction * 1;
 
@@ -109,14 +111,14 @@ class Cards {
 
         var rightButtonEl = document.querySelector(".card-button-right");
 
-        domUtil.addBubleEventListener(rightButtonEl, ".card-button-icon", "click",  globalScopes.getEventListenerState().cardRightButton, function (e) {
+        domUtil.addBubleEventListener(rightButtonEl, ".card-button-icon", "click", globalScopes.getEventListenerState().cardRightButton, function (e) {
             showNextCard(1);
         });
 
 
         var leftButtonElMobileVersion = document.getElementById("cardButtonLeftMobileVersion");
 
-        domUtil.addBubleEventListener(leftButtonElMobileVersion, ".card-button-icon", "click",  globalScopes.getEventListenerState().cardLeftButtonMobileVersion, function (e) {
+        domUtil.addBubleEventListener(leftButtonElMobileVersion, ".card-button-icon", "click", globalScopes.getEventListenerState().cardLeftButtonMobileVersion, function (e) {
             showNextCard(-1);
         });
 
