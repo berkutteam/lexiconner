@@ -25,7 +25,8 @@
                 <a href="#" class="menu-item" data-route-link="word-list">
                     <span>Show All Word</span>
                 </a>
-                
+
+
                 <a href="#" class="menu-item js-logout-button">
                     <span>Logout</span>
                 </a>
@@ -63,6 +64,17 @@
 
             <div class="menu-page-container" data-route="cards">
                 <div class="main-block-card" id="mainBlockCard">
+
+                    <div class="card-change-mode-button-container">
+                        <div class="card-change-mode-button study-mode active">
+                            Study mode
+                        </div>
+
+                        <div class="card-change-mode-button review-mode hidden">
+                            Review mode
+                        </div>
+                    </div>
+
                     <div class="card-block-container" id="cardBlockContainer">
 
                         <div class="card-button card-button-left" id="cardButtonLeft">
@@ -72,11 +84,9 @@
                         <div class="card-block" id="cardBlock">
                             <div id="cardTitle" class="title"></div>
                             <div id="cardDesc" class="description"></div>
-                            <div class="example-block">
-                                <div id="cardExampleText" class="example-text"></div>
-                                <div class="example-picture">
-                                    <img id="cardExampleImage" src="" />
-                                </div>
+                            <div id="cardExampleText" class="example-text"></div>
+                            <div class="example-picture">
+                                <img id="cardExampleImage" src="" />
                             </div>
                         </div>
 
@@ -95,6 +105,21 @@
                         </div>
 
                     </div>
+
+                    <div class="study-mode-control-block hidden" id="studyModeButtonBlock">
+                        <div class="study-button" id="studyButtonUnknow">
+                            No
+                        </div>
+
+                        <div class="study-button-next-item" id="studyButtonNextItem">
+                            Next
+                        </div>
+
+                        <div class="study-button " id="studyButtonKnow">
+                            Yes
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -178,6 +203,7 @@
 
                 </div>
             </div>
+
 
 
             <div class="menu-page-container js-error-page" data-route="no-response">

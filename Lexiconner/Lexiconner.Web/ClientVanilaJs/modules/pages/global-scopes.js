@@ -8,6 +8,11 @@ class GlobalScopes {
             cardRightButton: { state: false },
             cardLeftButtonMobileVersion: { state: false },
             cardRightButtonMobileVersion: { state: false },
+            cardChangeModeStudyButton: { state: false },
+            cardChangeModeReviewButton: { state: false },
+            studyButtonUnknow: { state: false },
+            studyButtonKnow: { state: false },
+            studyButtonNextItem: { state: false },
             itemListFirstButton: { state: false },
             itemListPrevButton: { state: false },
             itemListNextButton: { state: false },
@@ -18,19 +23,19 @@ class GlobalScopes {
             itemListAddButton: { state: false },
             formPutButton: { state: false },
             formAddButton: { state: false }
-        }
+        }// used in addBubleEventListener() for add once event listener caller
 
         this.wordOrder = {
             length: 0,
             isFromWordList: false
         }; // used in pageHandlers['word-list'] for eventListener
-    }; // used for addBubleEventListener() for add one event listener
+    }; 
 
-    getEventListenerState(){
+    getEventListenerState() {
         return this.eventListenerState;
     }
 
-    getWordOrder(){
+    getWordOrder() {
         return this.wordOrder;
     }
 

@@ -3,13 +3,21 @@ import Dashboard from './pages/dashboard.js';
 import Cards from './pages/cards.js';
 import WordList from './pages/word-list.js';
 
+class Learn {
+    constructor() {
+
+    }
+    pageHandler() { }
+}
+
 class AppRouter {
 
     constructor(user, config) {
         this.pages = {
-            'dashboard' : new Dashboard(),
-            'cards' : new Cards(user, config),
-            'word-list' : new WordList(user, config)
+            'dashboard': new Dashboard(),
+            'cards': new Cards(user, config),
+            'word-list': new WordList(user, config),
+            'learn': new Learn()
         };
     }
 

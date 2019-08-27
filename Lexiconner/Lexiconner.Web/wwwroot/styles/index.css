@@ -31,7 +31,8 @@ body {
     --bottom-color: #4f9da6;
     --example-background-color: #35849c;
     --menu-item-font-color: #fff;
-    --button-red-color: brown;
+    --button-red-color: rgb(163, 38, 38);
+    --button-red-color-hover: rgb(180, 61, 61);
     --input-field-color:#bec9ff;
     --input-field-border-color:#bec9ff;
     --block-bottom-width: 13%;
@@ -138,6 +139,42 @@ body {
     height: 100%;
 }
 
+.card-change-mode-button-container{
+    margin: 0em 1em 1em 1em;
+}
+.card-change-mode-button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    width: 7em;
+    color: var( --text-color);
+    padding: 0.25em;
+    background-color: var(--button-red-color);
+    border-radius: 2px;
+    cursor: pointer;
+}
+.card-change-mode-button:hover{
+    background-color: var(--button-red-color-hover);
+}
+
+.study-mode.active{
+    display: flex;
+}
+
+.study-mode.hidden{
+    display:none;
+}
+
+.review-mode.active{
+    display: flex;
+}
+
+.review-mode.hidden{
+    display:none;
+}
+
 .card-block-container{
 
     display: flex;
@@ -165,6 +202,15 @@ body {
     height: 31em;
     flex-grow: 1;
 }
+
+.card-button.hidden {
+    display: none;
+}
+
+.card-button.active {
+    display: flex;
+}
+
 .card-button:hover {
     opacity: 1;
 }
@@ -191,6 +237,14 @@ body {
     flex-direction: row;
     justify-content: center;
     margin: 1em 0 0 0;
+}
+
+.card-button-container.hidden{
+    display:none;
+}
+
+.card-button-container.active{
+    display:flex;
 }
 
 #cardButtonLeftMobileVersion{
@@ -272,14 +326,6 @@ body {
     margin-bottom: 0.5em;
 }
 
-.example-block{
-    font-size: 0.95em;
-    width: 100%;
-    height: auto;
-    border-radius: 1px;
-    overflow: auto;
-}
-
 .example-text{
     background-color: var(--example-background-color);
     padding: 0.25em;
@@ -289,17 +335,99 @@ body {
 }
 
 .example-picture {
-    width: 100%;
+    width:  250px;
+    height: 230px;
     padding: 0;
-    margin: 0;
+    margin: 1em 1em 1em 1em;
     box-sizing: border-box;
+    align-self: center;
 }
 
 .example-picture img {
+    max-width: 250px;
+    max-height: 230px;
     width: 100%;
     height: auto;
+   
 }
+
+.blur{
+    filter: blur(3.8px);
+    -webkit-filter: blur(3.8px);
+    -moz-filter: blur(3.8px);
+}
+
+.border-wrong{
+    border: 8px solid #fb0000;
+}
+
+.border-correct{
+    border: 8px solid #4ce406;
+}
+
+.study-mode-control-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 1em 0;
+}
+
+.study-mode-control-block.active {
+    display: flex;
+}
+
+.study-mode-control-block.hidden {
+    display: none;
+}
+
+.study-button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    color: var( --text-color);
+    padding: 0.25em;
+    background-color: var(--button-red-color);
+    margin: 0 0.25em 0 0;
+    border-radius: 2px;
+    height: 1.4em;
+    width: 5em;
+    cursor: pointer;
+}
+
+.study-button:hover {
+    background-color: var(--button-red-color-hover);
+}
+
+.study-button-next-item{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    color: var( --text-color);
+    padding: 0.25em;
+    background-color: var(--button-red-color);
+    border-radius: 2px;
+    margin: 0em 1em;
+    width: 8em;
+    cursor: pointer;
+}
+
+.study-button-next-item:hover{
+    background-color: var(--button-red-color-hover);
+}
+
+@media screen and (max-width: 720px){
+    .study-mode-control-block {
+        padding: 0em 1em;
+    }
+}
+
 /* cards end */
+
+
 
 /* menu */
 
@@ -489,6 +617,11 @@ body {
     border-radius: 2px;
     cursor: pointer;
 }
+
+.item-list-pager__button:hover{
+    background-color: var(--button-red-color-hover);
+}
+
 .item-list-pager__button:last-child {
     margin-right: 0;
 }
@@ -600,6 +733,11 @@ body {
     border-radius: 2px;
     cursor: pointer;
 }
+
+.item-list-pager__add-button:hover{
+    background-color: var(--button-red-color-hover);
+}
+
 
 @media screen and (max-width: 720px) {
     
