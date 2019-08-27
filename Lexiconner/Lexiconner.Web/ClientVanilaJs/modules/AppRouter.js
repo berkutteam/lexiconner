@@ -3,13 +3,6 @@ import Dashboard from './pages/dashboard.js';
 import Cards from './pages/cards.js';
 import WordList from './pages/word-list.js';
 
-class Learn {
-    constructor() {
-
-    }
-    pageHandler() { }
-}
-
 class AppRouter {
 
     constructor(user, config) {
@@ -17,7 +10,6 @@ class AppRouter {
             'dashboard': new Dashboard(),
             'cards': new Cards(user, config),
             'word-list': new WordList(user, config),
-            'learn': new Learn()
         };
     }
 
@@ -62,10 +54,6 @@ class AppRouter {
                 page.pageHandler(item);
             }
         });
-    }
-
-    registerRoute(strName, handler) {
-
     }
 }
 

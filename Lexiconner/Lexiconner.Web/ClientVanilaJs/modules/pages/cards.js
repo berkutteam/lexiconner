@@ -161,6 +161,7 @@ class Cards {
             studyModeButtonEl.classList.add('active');
 
             isShowExampleText = true;
+            removeBorder();
             setDefaultMode();
         });// event listener on REVIEW MODE button
 
@@ -220,16 +221,17 @@ class Cards {
             showNextCard(1, isShowExampleText);
         });
 
-
         domUtil.addBubleEventListener(studyButtonUnknowEl, "#studyButtonUnknow", 'click', globalScopes.getEventListenerState().studyButtonUnknow, function (e, actualEl, desiredEl) {
             e.stopPropagation();
             showAllCardItems();
+            removeBorder();
             cardBlockEl.classList.add('border-wrong');
         });
 
         domUtil.addBubleEventListener(studyButtonKnowEl, "#studyButtonKnow", 'click', globalScopes.getEventListenerState().studyButtonKnow, function (e, actualEl, desiredEl) {
             e.stopPropagation();
             showAllCardItems();
+            removeBorder();
             cardBlockEl.classList.add('border-correct');
         });
 

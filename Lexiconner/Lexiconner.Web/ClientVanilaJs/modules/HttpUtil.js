@@ -96,8 +96,6 @@ class HttpUtil {
         xhr.send();
     }
 
-   
-
 }
 
 export default HttpUtil;
