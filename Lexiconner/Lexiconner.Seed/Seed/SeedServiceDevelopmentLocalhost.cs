@@ -15,6 +15,7 @@ using Lexiconner.Seed.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,8 @@ namespace Lexiconner.Seed.Seed
 {
     public class SeedServiceDevelopmentLocalhost : ISeedService
     {
-        private readonly IConfigurationRoot _configuration;
+        private readonly ApplicationSettings _config;
+        private readonly Lexiconner.IdentityServer4.ApplicationSettings _identityConfig;
         private readonly ILogger<ISeedService> _logger;
         private readonly IWordTxtImporter _wordTxtImporter;
         private readonly IDataRepository _dataRepository;
@@ -40,7 +42,8 @@ namespace Lexiconner.Seed.Seed
         private readonly RoleManager<ApplicationRoleEntity> _roleManager;
 
         public SeedServiceDevelopmentLocalhost(
-            IConfigurationRoot configuration,
+            IOptions<ApplicationSettings> config,
+            IOptions<Lexiconner.IdentityServer4.ApplicationSettings> identityConfig,
             ILogger<ISeedService> logger,
             IWordTxtImporter wordTxtImporter,
             IDataRepository dataRepository,
@@ -51,7 +54,8 @@ namespace Lexiconner.Seed.Seed
             RoleManager<ApplicationRoleEntity> roleManager
         )
         {
-            _configuration = configuration;
+            _config = config.Value;
+            _identityConfig = identityConfig.Value;
             _logger = logger;
             _wordTxtImporter = wordTxtImporter;
             _dataRepository = dataRepository;
@@ -82,14 +86,12 @@ namespace Lexiconner.Seed.Seed
             _logger.LogInformation("\n\n");
             _logger.LogInformation("Start seeding identity DB...");
 
-            var identityConfig = _configuration.Get<Lexiconner.IdentityServer4.ApplicationSettings>();
-
             // Configure Classes to ignore Extra Elements (e.g. _Id) when deserializing
             ConfigureMongoDriver2IgnoreExtraElements();
 
             // Client
             _logger.LogInformation("Clients...");
-            foreach (var client in _identityServerConfig.GetClients(identityConfig))
+            foreach (var client in _identityServerConfig.GetClients(_identityConfig))
             {
                 if (!_identityRepository.ExistsAsync<ClientEntity>(x => x.Client.ClientId == client.ClientId).GetAwaiter().GetResult())
                 {

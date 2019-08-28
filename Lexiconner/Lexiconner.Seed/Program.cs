@@ -107,6 +107,7 @@ namespace Lexiconner.Seed
 
             services.AddOptions();
             services.Configure<ApplicationSettings>(configuration);
+            services.Configure<Lexiconner.IdentityServer4.ApplicationSettings>(configuration); // map current config to identity  config
 
             // register directly to access using DI
             services.AddTransient<IConfigurationRoot>(sp => configuration);
