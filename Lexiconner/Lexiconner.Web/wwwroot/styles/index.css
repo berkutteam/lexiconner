@@ -357,12 +357,16 @@ body {
     -moz-filter: blur(3.8px);
 }
 
+.сard-border{
+    border: 2px solid var(--card-background-color);
+}
+
 .border-wrong{
-    border: 8px solid #fb0000;
+    border: 2px solid #fb0000;
 }
 
 .border-correct{
-    border: 8px solid #4ce406;
+    border: 2px solid #4ce406;
 }
 
 .study-mode-control-block {
