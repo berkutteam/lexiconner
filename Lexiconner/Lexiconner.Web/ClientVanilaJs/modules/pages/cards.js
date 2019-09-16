@@ -225,14 +225,14 @@ class Cards {
             e.stopPropagation();
             showAllCardItems();
             removeBorder();
-            cardBlockEl.classList.add('border-wrong');
+            cardBlockEl.classList.replace('сard-border', 'border-wrong');
         });
 
         domUtil.addBubleEventListener(studyButtonKnowEl, "#studyButtonKnow", 'click', globalScopes.getEventListenerState().studyButtonKnow, function (e, actualEl, desiredEl) {
             e.stopPropagation();
             showAllCardItems();
             removeBorder();
-            cardBlockEl.classList.add('border-correct');
+            cardBlockEl.classList.replace('сard-border', 'border-correct');
         });
 
         function showAllCardItems() {
@@ -258,6 +258,7 @@ class Cards {
         function removeBorder() {
             cardBlockEl.classList.remove('border-wrong');
             cardBlockEl.classList.remove('border-correct');
+            cardBlockEl.classList.add('сard-border');
         }
     }
 }
