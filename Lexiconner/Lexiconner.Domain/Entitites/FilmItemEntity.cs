@@ -9,20 +9,20 @@ using System.Text;
 
 namespace Lexiconner.Domain.Entitites
 {
-    class FilmItemEntity: BaseEntity
+    class UserFilm : BaseEntity
     {
-        public FilmItemEntity()
+        public UserFilm()
         {
             Tags = new List<string>();
         }
 
 
         public string UserId { get; set; }
-        public string FilmName { get; set; }
+        public string Title { get; set; }
+        public string Genre { get; set; }
         public double Rating { get; set; }
-
         public DateTime WatchedAt { get; set; }
-
+        public DateTime ReleasedAt { get; set; }
         public FilmItemImageEntity Image { get; set; }
 
 
