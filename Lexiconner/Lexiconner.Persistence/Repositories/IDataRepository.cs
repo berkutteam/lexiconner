@@ -6,14 +6,21 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lexiconner.Persistence.Repositories.Base
+namespace Lexiconner.Persistence.Repositories
 {
-    public interface IRepositoryBase
+    public interface IDataRepository
     {
-        Task<IEnumerable<T>> GetAllAsync<T>() where T : class;
-        Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit, string search = "") where T : class;
-        Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
-        Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit, string search = "") where T : class;
+        /// <summary>
+        /// Checks that collection exists
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        Task<bool> CollectionExistsAsync<T>() where T : class;
+
+        Task<IEnumerable<T>> GetAllAsync<T>() where T : class, IIdentifiableEntity;
+        Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit) where T : class, IIdentifiableEntity;
+        Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class, IIdentifiableEntity;
+        Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit) where T : class, IIdentifiableEntity;
         Task<T> GetOneAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
         Task AddAsync<T>(T entity) where T : class;
         Task AddManyAsync<T>(IEnumerable<T> entities) where T : class;

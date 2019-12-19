@@ -31,7 +31,8 @@ body {
     --bottom-color: #4f9da6;
     --example-background-color: #35849c;
     --menu-item-font-color: #fff;
-    --button-red-color: brown;
+    --button-red-color: rgb(163, 38, 38);
+    --button-red-color-hover: rgb(180, 61, 61);
     --input-field-color:#bec9ff;
     --input-field-border-color:#bec9ff;
     --block-bottom-width: 13%;
@@ -119,17 +120,18 @@ body {
     color: #fff;
 }
 
-/* .hidden{
+.hidden{
     display: none;
 }
 
 .active{
     display: block;
-} */
+}
 /* error page  end*/
 
 
 /* cards begin */
+
 .main-block-card{
     /* display: none; */
     background-color: var(--background-color);
@@ -137,23 +139,58 @@ body {
     height: 100%;
 }
 
+.card-change-mode-button-container{
+    margin: 0em 1em 1em 1em;
+}
+.card-change-mode-button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    width: 7em;
+    color: var( --text-color);
+    padding: 0.25em;
+    background-color: var(--button-red-color);
+    border-radius: 2px;
+    cursor: pointer;
+}
+.card-change-mode-button:hover{
+    background-color: var(--button-red-color-hover);
+}
+
+.study-mode.active{
+    display: flex;
+}
+
+.study-mode.hidden{
+    display:none;
+}
+
+.review-mode.active{
+    display: flex;
+}
+
+.review-mode.hidden{
+    display:none;
+}
+
 .card-block-container{
 
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: flex-start;
+    align-items: stretch;
     height: auto;
     width: 100%;
     padding: 3em 0 0 0;
+    flex-grow: 1;
 }
 
 .card-button {
-    text-align: center;
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
     background: none;
     height: 100%;
     width: auto;
@@ -162,18 +199,37 @@ body {
     cursor: pointer;
     opacity: 0.75;
     color: #fff;
+    height: 31em;
+    flex-grow: 1;
 }
+
+.card-button.hidden {
+    display: none;
+}
+
+.card-button.active {
+    display: flex;
+}
+
 .card-button:hover {
     opacity: 1;
 }
+
 .card-button-left {
-    margin: 0 2em 0 2em;
+    justify-content: flex-end;
+    height: auto;
+    padding: 8em 2em 0 2em;
+    opacity: 0.75;
 }
 .card-button-right {
-    margin: 0 2em 0 2em;
+    justify-content: flex-start;
+    height: auto;
+    padding: 8em 2em 0 2em;
 }
+
 .card-button-icon {
     font-size: 3em;
+    
 }
 
 .card-button-container{
@@ -181,6 +237,14 @@ body {
     flex-direction: row;
     justify-content: center;
     margin: 1em 0 0 0;
+}
+
+.card-button-container.hidden{
+    display:none;
+}
+
+.card-button-container.active{
+    display:flex;
 }
 
 #cardButtonLeftMobileVersion{
@@ -201,11 +265,15 @@ body {
     }
 
     #cardButtonLeftMobileVersion{
-        display: block
+        display: block;
+        padding: 1em;
+        height: auto;
     }
     
     #cardButtonRightMobileVersion{
         display: block;
+        padding: 1em;
+        height: auto;
     }
 }
 
@@ -222,6 +290,7 @@ body {
     flex-direction: column;
     margin: 0;
     box-sizing: border-box;
+
 }
 
 @media screen and (max-width: 720px) {
@@ -257,14 +326,6 @@ body {
     margin-bottom: 0.5em;
 }
 
-.example-block{
-    font-size: 0.95em;
-    width: 100%;
-    height: auto;
-    border-radius: 1px;
-    overflow: auto;
-}
-
 .example-text{
     background-color: var(--example-background-color);
     padding: 0.25em;
@@ -274,17 +335,103 @@ body {
 }
 
 .example-picture {
-    width: 100%;
+    width:  250px;
+    height: 230px;
     padding: 0;
-    margin: 0;
+    margin: 1em 1em 1em 1em;
     box-sizing: border-box;
+    align-self: center;
 }
 
 .example-picture img {
+    max-width: 250px;
+    max-height: 230px;
     width: 100%;
     height: auto;
+   
 }
+
+.blur{
+    filter: blur(3.8px);
+    -webkit-filter: blur(3.8px);
+    -moz-filter: blur(3.8px);
+}
+
+.сard-border{
+    border: 2px solid var(--card-background-color);
+}
+
+.border-wrong{
+    border: 2px solid #fb0000;
+}
+
+.border-correct{
+    border: 2px solid #4ce406;
+}
+
+.study-mode-control-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 1em 0;
+}
+
+.study-mode-control-block.active {
+    display: flex;
+}
+
+.study-mode-control-block.hidden {
+    display: none;
+}
+
+.study-button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    color: var( --text-color);
+    padding: 0.25em;
+    background-color: var(--button-red-color);
+    margin: 0 0.25em 0 0;
+    border-radius: 2px;
+    height: 1.4em;
+    width: 5em;
+    cursor: pointer;
+}
+
+.study-button:hover {
+    background-color: var(--button-red-color-hover);
+}
+
+.study-button-next-item{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    color: var( --text-color);
+    padding: 0.25em;
+    background-color: var(--button-red-color);
+    border-radius: 2px;
+    margin: 0em 1em;
+    width: 8em;
+    cursor: pointer;
+}
+
+.study-button-next-item:hover{
+    background-color: var(--button-red-color-hover);
+}
+
+@media screen and (max-width: 720px){
+    .study-mode-control-block {
+        padding: 0em 1em;
+    }
+}
+
 /* cards end */
+
+
 
 /* menu */
 
@@ -310,7 +457,7 @@ body {
 .menu-item{
     height: 100%;
     margin: 0;
-    padding: 0.9%;
+    padding: 0.8em 1em;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -398,7 +545,7 @@ body {
     flex-grow: 1;
 }
 
-.container-edit-picture{
+.container-edit-icon{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -406,16 +553,15 @@ body {
 }
 
 .edit-picture{
+    opacity: 0.7;
     width: auto;
     height: 1.5em;
 }
 
-.list-item-picture-delete:hover {
-    background-color: var(--card-lighter-color-edit-control-button);
-}
 
-.list-item-picture-put:hover {
-    background-color: var(--card-lighter-color-edit-control-button);
+
+.edit-picture:hover {
+    opacity: 1;
 }
 
 .list-item:hover {
@@ -450,8 +596,10 @@ body {
 
 /* Begin Modal window */
 
-  .close:hover {background: #e6e6ff;}
+  .modal-window-close-button:hover {background: #e6e6ff;}
 /*End Modal window  */
+
+
 
 .item-list-pager {
     display: flex;
@@ -473,6 +621,11 @@ body {
     border-radius: 2px;
     cursor: pointer;
 }
+
+.item-list-pager__button:hover{
+    background-color: var(--button-red-color-hover);
+}
+
 .item-list-pager__button:last-child {
     margin-right: 0;
 }
@@ -546,23 +699,21 @@ body {
     font-size: 0.7em;
 }
 
-.input-field-id-item{
-    background-color: var(--input-field-color);
-    border-color: var(--input-field-border-color);
-    padding: 0em 0.5em;
-    margin: 1em 0em 0.5em;
-    height: 1.2em;
-    width: 16.6em;
-    font-size: 0.7em;
-}
-
 .input-field-empty-js {
     border-width: 0.12em;
     border-color: red; 
 }
 
 .reset-button{
-    width: 5em;
+    width: 7em;
+    height: 2em;
+    margin: 1em 0em 1em 11em;
+}
+
+.form-control-button{
+    width: 7em;
+    height: 2em;
+    margin: 1em 0em 1em 0em;
 }
 
 .form-button-container{
@@ -570,7 +721,48 @@ body {
     flex-direction: row;
 }
 
-.send-button{
+.item-list-add-button-container{
+    margin: 0em 1em 1em 1em;
+}
+.item-list-pager__add-button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    width: 3em;
+    color: var( --text-color);
+    padding: 0.25em;
+    background-color: var(--button-red-color);
+    border-radius: 2px;
+    cursor: pointer;
+}
 
+.item-list-pager__add-button:hover{
+    background-color: var(--button-red-color-hover);
+}
+
+
+@media screen and (max-width: 720px) {
+    
+    .input-field-title{
+        width: 14.5em;
+    }
+
+    .input-field-description{
+        width: 20.9em;
+    }
+
+    .input-field-example-text{
+        width: 20.9em;
+    }
+
+    .input-field-tags{
+        width: 14.5em;
+    }
+
+    .form-dialog{
+         width: 22em
+    }
 }
 /* end add word form */

@@ -4,9 +4,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel;
+using Lexiconner.Api.DTOs;
 using Lexiconner.Api.Models;
-using Lexiconner.Api.Models.RequestModels;
-using Lexiconner.Api.Models.ResponseModels;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +22,7 @@ namespace Lexiconner.Api.Controllers.V2
     public class IdentityController : ApiControllerBase
     {
         [HttpGet]
-        public async Task<BaseApiResponseModel<string>> Get()
+        public async Task<BaseApiResponseDto<string>> Get()
         {
             ClaimsPrincipal currentUser = this.User;
             string currentUserId = null;

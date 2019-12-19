@@ -5,7 +5,6 @@ using Lexiconner.Application.ImportAndExport;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.Persistence.Cache;
-using Lexiconner.Persistence.Repositories.Base;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -20,6 +19,7 @@ namespace Lexiconner.Application.Services
     public interface IImageService
     {
         Task<List<ImageSearchResponseItemDto>> FindImagesAsync(string sourceLanguageCode, string imageQuery);
+        ImageSearchResponseItemDto GetSuitableImages(List<ImageSearchResponseItemDto> imageResult);
     }
 
     public class ImageService : IImageService
@@ -172,7 +172,7 @@ namespace Lexiconner.Application.Services
                 {
                     string query = imageQueryEn;
                     int pageNumber = 1;
-                    int pageSize = 2;
+                    int pageSize = 10;
                     bool isAutoCorrect = false;
                     bool isSafeSearch = false;
 
@@ -251,6 +251,20 @@ namespace Lexiconner.Application.Services
             }
 
             return result;
+        }
+
+        public ImageSearchResponseItemDto GetSuitableImages(List<ImageSearchResponseItemDto> imageResult)
+        {
+            const int preferredImageWidth = 600;
+            const int maxImageWidth = 800;
+
+            // try to find suitable image
+            ImageSearchResponseDto.ImageSearchResponseItemDto image = null;
+            image = imageResult.FirstOrDefault(x => int.Parse(x.Width) <= preferredImageWidth);
+            image = image ?? imageResult.FirstOrDefault(x => int.Parse(x.Width) <= maxImageWidth);
+            // image = image ?? imagesResult.First(); // do not take big images
+
+            return image;
         }
     }
 }

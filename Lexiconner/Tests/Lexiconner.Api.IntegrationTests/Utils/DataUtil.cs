@@ -8,8 +8,9 @@ using NUlid;
 using Bogus;
 using System.Linq;
 using NUlid.Rng;
-using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Domain.Entitites;
+using Lexiconner.Persistence.Repositories.MongoDb;
+using Lexiconner.Persistence.Repositories;
 
 namespace Lexiconner.Api.IntegrationTests.Utils
 {
@@ -21,16 +22,20 @@ namespace Lexiconner.Api.IntegrationTests.Utils
     {
         private readonly CustomWebApplicationFactory<TStartup> _factory;
         private readonly ApplicationSettings _config;
-        private readonly IMongoRepository _dataRepository;
-        private readonly IIdentityRepository _identityRepository;
+        private readonly IIdentityDataRepository _identityDataRepository;
+        private readonly IDataRepository _dataRepository;
+        private readonly IMongoDataRepository _mongoIdentityDataRepository;
+        private readonly IMongoDataRepository _mongoDataRepository;
         private readonly Faker _faker;
 
         public DataUtil(CustomWebApplicationFactory<TStartup> factory)
         {
             _factory = factory;
             _config = factory.Server.Host.Services.GetService<IOptions<ApplicationSettings>>().Value;
-            _dataRepository = factory.Server.Host.Services.GetService<IMongoRepository>();
-            _identityRepository = factory.Server.Host.Services.GetService<IIdentityRepository>();
+            _identityDataRepository = factory.Server.Host.Services.GetService<IIdentityDataRepository>();
+            _dataRepository = factory.Server.Host.Services.GetService<IDataRepository>();
+            _mongoIdentityDataRepository = _identityDataRepository as IMongoDataRepository;
+            _mongoDataRepository = _dataRepository as IMongoDataRepository;
             _faker = new Faker();
         }
 
@@ -53,7 +58,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
 
             // do not set password
             // create user directly
-            await _identityRepository.AddAsync<ApplicationUserEntity>(entity);
+            await _identityDataRepository.AddAsync<ApplicationUserEntity>(entity);
 
             return entity;
         }
@@ -193,7 +198,8 @@ namespace Lexiconner.Api.IntegrationTests.Utils
         {
             await Task.WhenAll(new List<Task>()
             {
-                _dataRepository.DropDatabaseAsync()
+                _mongoIdentityDataRepository.DropDatabaseAsync(),
+                _mongoDataRepository.DropDatabaseAsync()
             });
         }
 

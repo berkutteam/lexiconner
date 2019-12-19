@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Lexiconner.Api.DTOs;
+using Lexiconner.Api.DTOs.StudyItems;
 using Lexiconner.Api.Models;
-using Lexiconner.Api.Models.RequestModels;
-using Lexiconner.Api.Models.ResponseModels;
+using Lexiconner.Api.Services;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
-using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,51 +23,49 @@ namespace Lexiconner.Api.Controllers.V2
     [Route("api/v{version:apiVersion}/[controller]")]
     public class StudyItemsController : ApiControllerBase
     {
-        private readonly IMongoRepository _mongoRepository;
+        private readonly IDataRepository _dataRepository;
+        private readonly IStudyItemsService _studyItemsService;
         private readonly IImageService _imageService;
 
         public StudyItemsController(
-            IMongoRepository mongoRepository,
+            IDataRepository dataRepository,
+            IStudyItemsService studyItemsService,
             IImageService imageService
         )
         {
-            _mongoRepository = mongoRepository;
+            _dataRepository = dataRepository;
+            _studyItemsService = studyItemsService;
             _imageService = imageService;
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(BaseApiResponseModel<GetAllResponseModel<StudyItemEntity>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<PaginationResponseDto<StudyItemEntity>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllRequestModel data)
+        public async Task<IActionResult> GetAll([FromQuery] StudyItemsRequestDto dto)
         {
-            var itemsTask = _mongoRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == GetUserId(), data.Offset.GetValueOrDefault(0), data.Limit.GetValueOrDefault(10), data.Search);
-            var totalTask = _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == GetUserId());
-            await Task.WhenAll(itemsTask, totalTask);
-            var result = new GetAllResponseModel<StudyItemEntity>
-            {
-                Items = await itemsTask,
-                TotalCount = await totalTask,
-            };
+            var searchFilter = new StudyItemsSearchFilter(dto.Search, dto.IsFavourite);
+
+            var result = await _studyItemsService.GetAllStudyItemsAsync(GetUserId(), dto.Offset, dto.Limit, searchFilter);
             return BaseResponse(result);
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(BaseApiResponseModel<StudyItemEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemEntity>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Get([FromRoute]string id)
         {
-            var result = await _mongoRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
+            var result = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
             return BaseResponse(result);
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(BaseApiResponseModel<StudyItemEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemEntity>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
@@ -80,7 +79,8 @@ namespace Lexiconner.Api.Controllers.V2
 
             if (imagesResult.Any())
             {
-                var image = imagesResult.First();
+                // try to find suitable image
+                var image = _imageService.GetSuitableImages(imagesResult);
                 data.Image = new StudyItemImageEntity
                 {
                     Url = image.Url,
@@ -93,12 +93,12 @@ namespace Lexiconner.Api.Controllers.V2
                 };
             }
 
-            await _mongoRepository.AddAsync(data);
+            await _dataRepository.AddAsync(data);
             return BaseResponse(data);
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(BaseApiResponseModel<StudyItemEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemEntity>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
@@ -113,7 +113,8 @@ namespace Lexiconner.Api.Controllers.V2
 
             if (imagesResult.Any())
             {
-                var image = imagesResult.First();
+                // try to find suitable image
+                var image = _imageService.GetSuitableImages(imagesResult);
                 data.Image = new StudyItemImageEntity
                 {
                     Url = image.Url,
@@ -126,7 +127,7 @@ namespace Lexiconner.Api.Controllers.V2
                 };
             }
 
-            await _mongoRepository.UpdateAsync(data);
+            await _dataRepository.UpdateAsync(data);
             return BaseResponse(data);
         }
 
@@ -138,8 +139,8 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Delete([FromRoute]string id)
         {
-            var existing = await _mongoRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
-            await _mongoRepository.DeleteAsync<StudyItemEntity>(x => x.Id == existing.Id);
+            var existing = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
+            await _dataRepository.DeleteAsync<StudyItemEntity>(x => x.Id == existing.Id);
             return StatusCodeBaseResponse();
         }
     }

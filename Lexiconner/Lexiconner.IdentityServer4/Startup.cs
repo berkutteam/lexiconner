@@ -16,7 +16,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using Lexiconner.Domain.Entitites;
 using MongoDB.Driver;
-using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -28,6 +27,7 @@ using Microsoft.AspNetCore.Http;
 using IdentityServer4.Extensions;
 using Microsoft.IdentityModel.Logging;
 using Lexiconner.Domain.Enums;
+using Lexiconner.Persistence.Repositories;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -49,19 +49,7 @@ namespace Lexiconner.IdentityServer4
             services.AddOptions();
             services.Configure<ApplicationSettings>(Configuration);
 
-            /*
-            * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
-            * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.
-           */
-            services.AddTransient<MongoClient>(serviceProvider => {
-                return new MongoClient(config.MongoDb.ConnectionString);
-            });
-
-            services.AddTransient<IMongoRepository, MongoRepository>(sp =>
-            {
-                var mongoClient = sp.GetService<MongoClient>();
-                return new MongoRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Identity);
-            });
+            ConfigureMongoDb(services);
 
             //services.AddIdentity<ApplicationUserEntity, ApplicationRoleEntity>(options =>
             //{
@@ -87,7 +75,7 @@ namespace Lexiconner.IdentityServer4
             });
             identityServerBuilder.AddSigningCredentialCustom(Environment, config);
             identityServerBuilder.AddConfig()
-            .AddMongoRepository()
+            .AddMongoDataRepository()
             .AddMongoDbForAspIdentity<ApplicationUserEntity, ApplicationRoleEntity>(config)
             .AddClients()
             .AddIdentityApiResources()
@@ -214,7 +202,6 @@ namespace Lexiconner.IdentityServer4
 
             // UseIdentityServer includes a call to UseAuthentication, so it’s not necessary to have both.
             app.UseIdentityServer();
-            app.UseMongoDbForIdentityServer();
 
             // Configure Google Auth
             //app.UseGoogleAuthentication(new GoogleOptions
@@ -241,6 +228,35 @@ namespace Lexiconner.IdentityServer4
                            description.GroupName.ToUpperInvariant());
                    }
                });
+        }
+
+        private void ConfigureMongoDb(IServiceCollection services)
+        {
+            /*
+            * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
+            * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.
+           */
+            services.AddTransient<MongoClient>(sp => {
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new MongoClient(config.MongoDb.ConnectionString);
+            });
+
+            // main repository
+            // no need. Just cast IDataRepository to IMongoDataRepository if needed
+            //services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
+            //{
+            //    var mongoClient = sp.GetService<MongoClient>();
+            //    ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+            //    return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Identity);
+            //});
+
+            // abstracted repository
+            services.AddTransient<IDataRepository, MongoDataRepository>(sp =>
+            {
+                var mongoClient = sp.GetService<MongoClient>();
+                ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Identity);
+            });
         }
     }
 }

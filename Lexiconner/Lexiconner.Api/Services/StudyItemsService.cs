@@ -1,9 +1,13 @@
-﻿using Lexiconner.Api.DTOs.StudyItemsTrainings;
+﻿using Lexiconner.Api.DTOs;
+using Lexiconner.Api.DTOs.StudyItemsTrainings;
+using Lexiconner.Api.Models;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Attributes;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Enums;
-using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories;
+using Lexiconner.Persistence.Repositories.MongoDb;
+using LinqKit;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -16,40 +20,87 @@ namespace Lexiconner.Api.Services
 {
     public interface IStudyItemsService
     {
-        Task<TrainingsStatisticsDto> GetTrainingStatistics(string userId);
-        Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCards(string userId);
-        Task SaveTrainingResultsForFlashCards(string userId, FlashCardsTrainingResultDto results);
+        Task<PaginationResponseDto<StudyItemEntity>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null);
+
+        Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId);
+        Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, int limit);
+        Task SaveTrainingResultsForFlashCardsAsync(string userId, FlashCardsTrainingResultDto results);
+
+        Task AddToFavouritesAsync(string userId, IEnumerable<string> itemIds);
+        Task DeleteFromFavouritesAsync(string userId, IEnumerable<string> itemIds);
     }
 
     public class StudyItemsService : IStudyItemsService
     {
-        private readonly IMongoRepository _mongoRepository;
+        private readonly IDataRepository _dataRepository;
         private readonly IImageService _imageService;
 
         public StudyItemsService(
-            IMongoRepository mongoRepository,
+            IDataRepository MongoDataRepository,
             IImageService imageService
         )
         {
-            _mongoRepository = mongoRepository;
+            _dataRepository = MongoDataRepository;
             _imageService = imageService;
         }
 
-        public async Task<TrainingsStatisticsDto> GetTrainingStatistics(string userId)
+        #region Study items
+
+        public async Task<PaginationResponseDto<StudyItemEntity>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null)
         {
-            long totalItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId);
-            long onTrainingItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.Progress != 1));
-            long trainedItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.All(y => y.Progress == 1));
+            var predicate = PredicateBuilder.New<StudyItemEntity>(x => x.UserId == userId);
+
+            if(searchFilter != null)
+            {
+                if (!String.IsNullOrEmpty(searchFilter.Search))
+                {
+                    string search = searchFilter.Search.Trim().ToLower();
+                    predicate.And(x => x.Title.ToLower().Contains(search) || x.Description.ToLower().Contains(search) || x.ExampleText.ToLower().Contains(search));
+                }
+                if (searchFilter.IsFavourite.GetValueOrDefault(false))
+                {
+                    predicate.And(x => x.IsFavourite);
+                }
+            }
+
+            var itemsTask = _dataRepository.GetManyAsync<StudyItemEntity>(predicate, offset, limit);
+            var totalTask = _dataRepository.CountAllAsync<StudyItemEntity>(predicate);
+
+            var total = await totalTask;
+            var items = await itemsTask;
+
+            var result = new PaginationResponseDto<StudyItemEntity>
+            {
+                TotalCount = total,
+                ReturnedCount = items.Count(),
+                Offset = offset,
+                Limit = limit,
+                Items = items,
+            };
+
+            return result;
+        }
+
+        #endregion
+
+
+        #region Trainings
+
+        public async Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId)
+        {
+            long totalItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId);
+            long onTrainingItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.Progress != 1));
+            long trainedItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && !x.TrainingInfo.Trainings.Any(y => y.Progress != 1));
 
             Func<string, TrainingType, Task<TrainingsStatisticsDto.TrainingStatisticsItemDto>> getTrainingStatisticsItem = async (_userId, trainingType) =>
             {
                 return new TrainingsStatisticsDto.TrainingStatisticsItemDto
                 {
-                    TrainingType = TrainingType.FlashCards,
-                    OnTrainingItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(
+                    TrainingType = trainingType,
+                    OnTrainingItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(
                             x => x.UserId == _userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == trainingType && y.Progress != 1)
                         ),
-                    TrainedItemCount = await _mongoRepository.CountAllAsync<StudyItemEntity>(
+                    TrainedItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(
                             x => x.UserId == _userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == trainingType && y.Progress == 1)
                         ),
                 };
@@ -72,14 +123,13 @@ namespace Lexiconner.Api.Services
             return result;
         }
 
-        public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCards(string userId)
+        public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, int limit)
         {
-            int count = 10;
-            var entities = await _mongoRepository.GetManyAsync<StudyItemEntity>(
+            var entities = await _dataRepository.GetManyAsync<StudyItemEntity>(
                 x => x.UserId == userId && 
                 (x.TrainingInfo == null || (x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow))),
                 0,
-                count
+                limit
             );
 
             return new FlashCardsTrainingDto
@@ -88,10 +138,10 @@ namespace Lexiconner.Api.Services
             };
         }
 
-        public async Task SaveTrainingResultsForFlashCards(string userId, FlashCardsTrainingResultDto results)
+        public async Task SaveTrainingResultsForFlashCardsAsync(string userId, FlashCardsTrainingResultDto results)
         {
             var ids = results.ItemsResults.Select(x => x.ItemId);
-            var entities = (await _mongoRepository.GetManyAsync<StudyItemEntity>(
+            var entities = (await _dataRepository.GetManyAsync<StudyItemEntity>(
                 x => x.UserId == userId && ids.Contains(x.Id)
             )).ToList();
 
@@ -138,7 +188,40 @@ namespace Lexiconner.Api.Services
                 return x;
             }).ToList();
 
-            await _mongoRepository.UpdateManyAsync(entities);
+            await _dataRepository.UpdateManyAsync(entities);
         }
+
+        #endregion
+
+
+        #region Favourites
+
+        public async Task AddToFavouritesAsync(string userId, IEnumerable<string> itemIds)
+        {
+            var entities = (await _dataRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == userId && itemIds.Contains(x.Id))).ToList();
+
+            entities = entities.Select(x =>
+            {
+                x.IsFavourite = true;
+                return x;
+            }).ToList();
+
+            await _dataRepository.UpdateManyAsync<StudyItemEntity>(entities);
+        }
+
+        public async Task DeleteFromFavouritesAsync(string userId, IEnumerable<string> itemIds)
+        {
+            var entities = (await _dataRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == userId && itemIds.Contains(x.Id))).ToList();
+
+            entities = entities.Select(x =>
+            {
+                x.IsFavourite = false;
+                return x;
+            }).ToList();
+
+            await _dataRepository.UpdateManyAsync<StudyItemEntity>(entities);
+        }
+
+        #endregion
     }
 }

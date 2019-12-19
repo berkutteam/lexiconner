@@ -1,6 +1,7 @@
 ﻿using IdentityServer4.Models;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
+using Lexiconner.Domain.Entitites.IdentityModel;
 using Lexiconner.Domain.Entitites.Testing;
 using Lexiconner.Domain.Enums;
 using System;
@@ -68,7 +69,7 @@ namespace Lexiconner.Domain.Config
                 }
             },
 
-            // Identity Server
+            // Identity model
             new MongoCollectionConfig
             {
                 CollectionType = typeof(ApiResource),
@@ -98,6 +99,35 @@ namespace Lexiconner.Domain.Config
                 }
             },
 
+             // Identity model wrappers
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(ApiResourceEntity),
+                CollectionName = IdentityApiResources,
+                Indexes = new List<string> {
+                }
+            },
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(ClientEntity),
+                CollectionName = IdentityClients,
+                Indexes = new List<string> {
+                }
+            },
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(IdentityResourceEntity),
+                CollectionName = IdentityIdentityResources,
+                Indexes = new List<string> {
+                }
+            },
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(PersistedGrantEntity),
+                CollectionName = IdentityPersistedGrant,
+                Indexes = new List<string> {
+                }
+            },
         };
 
         private static List<MongoCollectionConfig> MainDbCollectionConfig = new List<MongoCollectionConfig>
@@ -118,6 +148,18 @@ namespace Lexiconner.Domain.Config
                 }
             },
 
+            // testing
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(SimpleTestEntity),
+                CollectionName = "simpleTest",
+                Indexes = new List<string> {
+                }
+            },
+        };
+
+        private static List<MongoCollectionConfig> SharedCacheDbCollectionConfig = new List<MongoCollectionConfig>
+        {
             // cache
              new MongoCollectionConfig
             {
@@ -141,15 +183,6 @@ namespace Lexiconner.Domain.Config
                 CollectionName = CacheContextualWebSearchImageSearchApi,
                 Indexes = new List<string> {
                     nameof(ContextualWebSearchImageSearchDataCacheEntity.CacheKey)
-                }
-            },
-
-            // testing
-            new MongoCollectionConfig
-            {
-                CollectionType = typeof(SimpleTestEntity),
-                CollectionName = "simpleTest",
-                Indexes = new List<string> {
                 }
             },
         };
@@ -188,6 +221,9 @@ namespace Lexiconner.Domain.Config
                 case ApplicationDb.Main:
                     config = MainDbCollectionConfig;
                     break;
+                case ApplicationDb.SharedCache:
+                    config = SharedCacheDbCollectionConfig;
+                    break;
             }
 
             if (config == null)
@@ -208,6 +244,9 @@ namespace Lexiconner.Domain.Config
                     break;
                 case ApplicationDb.Main:
                     config = MainDbCollectionConfig.FirstOrDefault(x => x.CollectionType == typeof(T));
+                    break;
+                case ApplicationDb.SharedCache:
+                    config = SharedCacheDbCollectionConfig.FirstOrDefault(x => x.CollectionType == typeof(T));
                     break;
             }
 

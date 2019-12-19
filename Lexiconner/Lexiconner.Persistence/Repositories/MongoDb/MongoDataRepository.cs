@@ -3,7 +3,6 @@ using Lexiconner.Domain.Config;
 using Lexiconner.Domain.Entitites.Base;
 using Lexiconner.Domain.Enums;
 using Lexiconner.Persistence.Exceptions;
-using Lexiconner.Persistence.Repositories.Base;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -21,7 +20,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
     /// <summary>
     /// Provides functionality  to persist "IdentityServer4.Models" into a given MongoDB
     /// </summary>
-    public class MongoRepository : IMongoRepository
+    public class MongoDataRepository : IMongoDataRepository
     {
         protected readonly string _databseName;
         protected readonly ApplicationDb _applicationDb;
@@ -30,7 +29,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
 
         private const int _maxPageSize = 1000;
 
-        public MongoRepository(MongoClient client, string database, ApplicationDb applicationDb)
+        public MongoDataRepository(MongoClient client, string database, ApplicationDb applicationDb)
         {
             _databseName = database;
             _applicationDb = applicationDb;
@@ -102,21 +101,25 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
         //    }
         //}
 
-        public async Task<IEnumerable<T>> GetAllAsync<T>() where T : class
+        public async Task<IEnumerable<T>> GetAllAsync<T>() where T : class, IIdentifiableEntity
         {
             CheckCollectionConfig<T>();
 
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).Find(x => true);
-            List<T> result = await query.ToListAsync();
+            List<T> result = await query
+                .SortByDescending(x => x.Id)
+                .ToListAsync();
             return result;
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit, string search = "") where T : class
+        public async Task<IEnumerable<T>> GetAllAsync<T>(int offset, int limit) where T : class, IIdentifiableEntity
         {
             CheckCollectionConfig<T>();
 
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).Find(x => true);
-            var result = await query.Skip(offset)
+            var result = await query
+                .SortByDescending(x => x.Id)
+                .Skip(offset)
                 .Limit(limit > _maxPageSize ? _maxPageSize : limit)
                 .ToListAsync();
             return result;
@@ -131,21 +134,25 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             return result;
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class, IIdentifiableEntity
         {
             CheckCollectionConfig<T>();
 
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).Find(predicate);
-            List<T> result = await query.ToListAsync();
+            List<T> result = await query
+                .SortByDescending(x => x.Id)
+                .ToListAsync();
             return result;
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit, string search = "") where T : class
+        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate, int offset, int limit) where T : class, IIdentifiableEntity
         {
             CheckCollectionConfig<T>();
 
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).Find(predicate);
-            var result = await query.Skip(offset)
+            var result = await query
+                .SortByDescending(x => x.Id)
+                .Skip(offset)
                 .Limit(limit > _maxPageSize ? _maxPageSize : limit)
                 .ToListAsync();
             return result;
@@ -262,7 +269,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
         {
             if (!MongoConfig.IsCollectionConfigExists<T>(_applicationDb))
             {
-                throw new MongoDbCollectionException($"{nameof(MongoRepository)}: Collection config for type {typeof(T).Name} is not registered!");
+                throw new MongoDbCollectionException($"{nameof(MongoDataRepository)}: Collection config for type {typeof(T).Name} is not registered!");
             }
         }
 

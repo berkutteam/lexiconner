@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lexiconner.Api.DTOs;
 using Lexiconner.Api.Models;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
@@ -22,25 +23,25 @@ namespace Lexiconner.Api.Controllers.V1
         }
 
         [HttpGet]
-        public async Task<BaseApiResponseModel<IEnumerable<StudyItemEntity>>> GetAll()
+        public async Task<BaseApiResponseDto<IEnumerable<StudyItemEntity>>> GetAll()
         {
             throw new InvalidOperationException("Derecated! Use v2");
         }
 
         [HttpGet("{id}")]
-        public async Task<BaseApiResponseModel<StudyItemEntity>> Get(string id)
+        public async Task<BaseApiResponseDto<StudyItemEntity>> Get(string id)
         {
             throw new InvalidOperationException("Derecated! Use v2");
         }
 
         [HttpPost]
-        public async Task<BaseApiResponseModel<StudyItemEntity>> Post([FromBody] StudyItemEntity data)
+        public async Task<BaseApiResponseDto<StudyItemEntity>> Post([FromBody] StudyItemEntity data)
         {
             throw new InvalidOperationException("Derecated! Use v2");
         }
 
         [HttpPut("{id}")]
-        public async Task<BaseApiResponseModel<StudyItemEntity>> Put(string id, [FromBody] StudyItemEntity data)
+        public async Task<BaseApiResponseDto<StudyItemEntity>> Put(string id, [FromBody] StudyItemEntity data)
         {
             throw new InvalidOperationException("Derecated! Use v2");
         }

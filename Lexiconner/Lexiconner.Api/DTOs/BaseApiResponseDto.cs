@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lexiconner.Api.Models
+namespace Lexiconner.Api.DTOs
 {
-    public class BaseApiResponseModel<T>
+    public class BaseApiResponseDto<T>
     {
         public bool Ok { get; set; }
         public T Data { get; set; }

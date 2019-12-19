@@ -11,6 +11,8 @@ using System.IO;
 using System.Text;
 using Xunit;
 using Lexiconner.Persistence.UnitTests.Utils;
+using Lexiconner.Persistence.Repositories.MongoDb;
+using Lexiconner.Persistence.Repositories;
 
 namespace Lexiconner.Persistence.UnitTests
 {
@@ -19,13 +21,17 @@ namespace Lexiconner.Persistence.UnitTests
         protected readonly TestFixture _fixture;
         protected readonly Faker _faker;
         protected readonly ApplicationSettings _config;
+        protected readonly IDataRepository _dataRepository;
+        protected readonly IMongoDataRepository _mongoDataRepository;
+
 
         public TestBase(TestFixture fixture)
         {
             _fixture = fixture;
             _faker = new Faker();
             _config = _fixture.ServiceProvider.GetService<IOptions<ApplicationSettings>>().Value;
-
+            _dataRepository = _fixture.ServiceProvider.GetService<IDataRepository>();
+            _mongoDataRepository = _dataRepository as IMongoDataRepository;
 
             // Do "global" initialization here; Called before every test method.
         }

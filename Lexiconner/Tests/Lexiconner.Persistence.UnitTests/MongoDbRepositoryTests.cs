@@ -17,21 +17,19 @@ using FluentAssertions;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Lexiconner.Persistence.UnitTests.Utils;
-using Lexiconner.Persistence.Repositories.Base;
 using Lexiconner.Persistence.Exceptions;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Infrastructure.Tests.Assertions;
 using Lexiconner.Domain.Entitites.Testing;
+using Lexiconner.Persistence.Repositories.MongoDb;
+using Lexiconner.Persistence.Repositories;
 
 namespace Lexiconner.Persistence.UnitTests
 {
     public class MongoDbRepositoryTests : TestBase
     {
-        protected readonly IMongoRepository _mongoDbDataRepository;
-
         public MongoDbRepositoryTests(TestFixture fixture) : base(fixture)
         {
-            _mongoDbDataRepository = _fixture.ServiceProvider.GetService<IMongoRepository>();
         }
 
         [Fact(DisplayName = "Should throw MongoDbCollectionException if collection is not in config")]
@@ -42,22 +40,22 @@ namespace Lexiconner.Persistence.UnitTests
 
             await CustomAssert.AllThrowsAsync<MongoDbCollectionException>(new List<Task>()
             {
-                _mongoDbDataRepository.CollectionExistsAsync<UnexistingEntity>(),
-                _mongoDbDataRepository.InitializeCollectionAsync<UnexistingEntity>(),
-                _mongoDbDataRepository.GetAllAsync<UnexistingEntity>(),
-                _mongoDbDataRepository.GetAllAsync<UnexistingEntity>(0, 10),
-                _mongoDbDataRepository.GetOneAsync<UnexistingEntity>(x => true),
-                _mongoDbDataRepository.GetManyAsync<UnexistingEntity>(x => true),
-                _mongoDbDataRepository.GetManyAsync<UnexistingEntity>(x => true, 0, 10),
-                _mongoDbDataRepository.AddAsync<UnexistingEntity>(new UnexistingEntity()),
-                _mongoDbDataRepository.AddManyAsync<UnexistingEntity>(new List<UnexistingEntity>()),
-                _mongoDbDataRepository.UpdateAsync<UnexistingEntity>(new UnexistingEntity()),
-                _mongoDbDataRepository.UpdateManyAsync<UnexistingEntity>(new List<UnexistingEntity>()),
-                _mongoDbDataRepository.DeleteAsync<UnexistingEntity>(x => true),
-                _mongoDbDataRepository.DeleteAllAsync<UnexistingEntity>(),
-                _mongoDbDataRepository.DeleteNDocumentsAsync<UnexistingEntity>(x => true, x => x.Id, 100),
-                _mongoDbDataRepository.ExistsAsync<UnexistingEntity>(x => true),
-                _mongoDbDataRepository.CountAllAsync<UnexistingEntity>(x => true),
+                _mongoDataRepository.CollectionExistsAsync<UnexistingEntity>(),
+                _mongoDataRepository.InitializeCollectionAsync<UnexistingEntity>(),
+                _mongoDataRepository.GetAllAsync<UnexistingEntity>(),
+                _mongoDataRepository.GetAllAsync<UnexistingEntity>(0, 10),
+                _mongoDataRepository.GetOneAsync<UnexistingEntity>(x => true),
+                _mongoDataRepository.GetManyAsync<UnexistingEntity>(x => true),
+                _mongoDataRepository.GetManyAsync<UnexistingEntity>(x => true, 0, 10),
+                _mongoDataRepository.AddAsync<UnexistingEntity>(new UnexistingEntity()),
+                _mongoDataRepository.AddManyAsync<UnexistingEntity>(new List<UnexistingEntity>()),
+                _mongoDataRepository.UpdateAsync<UnexistingEntity>(new UnexistingEntity()),
+                _mongoDataRepository.UpdateManyAsync<UnexistingEntity>(new List<UnexistingEntity>()),
+                _mongoDataRepository.DeleteAsync<UnexistingEntity>(x => true),
+                _mongoDataRepository.DeleteAllAsync<UnexistingEntity>(),
+                _mongoDataRepository.DeleteNDocumentsAsync<UnexistingEntity>(x => true, x => x.Id, 100),
+                _mongoDataRepository.ExistsAsync<UnexistingEntity>(x => true),
+                _mongoDataRepository.CountAllAsync<UnexistingEntity>(x => true),
             });
         }
 
@@ -70,29 +68,29 @@ namespace Lexiconner.Persistence.UnitTests
         //    // test as read only
         //    await CustomAssert.AllThrowsAsync<AccessDeniedException>(new List<Task>()
         //    {
-        //        _mongoDbDataRepository.CreateDocumentIfNotExistsAsync<ReadOnlyTelemetryEntityTest>(collectionId, new ReadOnlyTelemetryEntityTest(), x => true),
-        //        _mongoDbDataRepository.CreateDocumentAsync<ReadOnlyTelemetryEntityTest>(collectionId, new ReadOnlyTelemetryEntityTest()),
-        //        _mongoDbDataRepository.UpdateDocumentAsync<ReadOnlyTelemetryEntityTest>(collectionId, new ReadOnlyTelemetryEntityTest()),
-        //        _mongoDbDataRepository.UpsertDocumentAsync<ReadOnlyTelemetryEntityTest>(collectionId, new ReadOnlyTelemetryEntityTest()),
-        //        _mongoDbDataRepository.DeleteDocumentAsync<ReadOnlyTelemetryEntityTest>(collectionId, new ReadOnlyTelemetryEntityTest()) ,
-        //        _mongoDbDataRepository.DeleteDocumentsAsync<ReadOnlyTelemetryEntityTest>(collectionId, x => true),
+        //        _mongoDataRepository.CreateDocumentIfNotExistsAsync<ReadOnlyTelemetryEntityTest>(collectionId, new ReadOnlyTelemetryEntityTest(), x => true),
+        //        _mongoDataRepository.CreateDocumentAsync<ReadOnlyTelemetryEntityTest>(collectionId, new ReadOnlyTelemetryEntityTest()),
+        //        _mongoDataRepository.UpdateDocumentAsync<ReadOnlyTelemetryEntityTest>(collectionId, new ReadOnlyTelemetryEntityTest()),
+        //        _mongoDataRepository.UpsertDocumentAsync<ReadOnlyTelemetryEntityTest>(collectionId, new ReadOnlyTelemetryEntityTest()),
+        //        _mongoDataRepository.DeleteDocumentAsync<ReadOnlyTelemetryEntityTest>(collectionId, new ReadOnlyTelemetryEntityTest()) ,
+        //        _mongoDataRepository.DeleteDocumentsAsync<ReadOnlyTelemetryEntityTest>(collectionId, x => true),
         //    });
         //}
 
 
-        #region IMongoRepository
+        #region IMongoDataRepository
 
         //[Fact(DisplayName = "Should return GetMongoClient")]
         //public void GetMongoClient()
         //{
-        //    var client = _mongoDbDataRepository.GetMongoClient();
+        //    var client = _mongoDataRepository.GetMongoClient();
         //    client.Should().NotBeNull();
         //}
 
         [Fact(DisplayName = "Should return IMongoDatabase")]
         public void GetMongoDatabase()
         {
-            var database = _mongoDbDataRepository.GetDatabase();
+            var database = _mongoDataRepository.GetDatabase();
             database.Should().NotBeNull();
         }
 
@@ -104,7 +102,7 @@ namespace Lexiconner.Persistence.UnitTests
         [Fact(DisplayName = "Should check that collection exists")]
         public async Task CollectionExistsAsync()
         {
-            var exists = await _mongoDbDataRepository.CollectionExistsAsync<SimpleTestEntity>();
+            var exists = await _mongoDataRepository.CollectionExistsAsync<SimpleTestEntity>();
             exists.Should().BeTrue();
         }
 
@@ -112,16 +110,16 @@ namespace Lexiconner.Persistence.UnitTests
         [Fact(DisplayName = "Should check initialize collection")]
         public async Task InitializeCollectionAsync()
         {
-            await _mongoDbDataRepository.InitializeCollectionAsync<SimpleTestEntity>();
-            var exists = await _mongoDbDataRepository.CollectionExistsAsync<SimpleTestEntity>();
+            await _mongoDataRepository.InitializeCollectionAsync<SimpleTestEntity>();
+            var exists = await _mongoDataRepository.CollectionExistsAsync<SimpleTestEntity>();
             exists.Should().BeTrue();
         }
 
         //[Fact(DisplayName = "Should delete collection")]
         //public async Task DeleteDocumentCollection()
         //{
-        //    await _mongoDbDataRepository.DeleteDocumentCollectionAsync(_config.CosmosDb.Collections.Telemetry);
-        //    var exists = await _mongoDbDataRepository.DocumentCollectionExistsAsync<TelemetryEntityTest>(_config.CosmosDb.Collections.Telemetry);
+        //    await _mongoDataRepository.DeleteDocumentCollectionAsync(_config.CosmosDb.Collections.Telemetry);
+        //    var exists = await _mongoDataRepository.DocumentCollectionExistsAsync<TelemetryEntityTest>(_config.CosmosDb.Collections.Telemetry);
         //    exists.Should().BeFalse();
         //}
 
@@ -133,7 +131,7 @@ namespace Lexiconner.Persistence.UnitTests
         [Fact(DisplayName = "Should return all documents")]
         public async Task GetAll()
         {
-            await _mongoDbDataRepository.DeleteAllAsync<SimpleTestEntity>();
+            await _mongoDataRepository.DeleteAllAsync<SimpleTestEntity>();
 
             var docs = Enumerable.Range(0, 3).Select(x =>
             {
@@ -141,12 +139,12 @@ namespace Lexiconner.Persistence.UnitTests
                 {
                     Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
                 };
-                _mongoDbDataRepository.AddAsync<SimpleTestEntity>(doc).GetAwaiter().GetResult();
+                _mongoDataRepository.AddAsync<SimpleTestEntity>(doc).GetAwaiter().GetResult();
                 return doc;
             }).ToList();
             var docIds = docs.Select(x => x.Id);
 
-            var dbDocs = await _mongoDbDataRepository.GetAllAsync<SimpleTestEntity>();
+            var dbDocs = await _mongoDataRepository.GetAllAsync<SimpleTestEntity>();
 
             Assert.True(docIds.All(x => dbDocs.Any(y => y.Id == x)));
         }
@@ -154,7 +152,7 @@ namespace Lexiconner.Persistence.UnitTests
         [Fact(DisplayName = "Should return all documents with offset, limit, search")]
         public async Task GetAllWithOffsetLimitSearch()
         {
-            await _mongoDbDataRepository.DeleteAllAsync<SimpleTestEntity>();
+            await _mongoDataRepository.DeleteAllAsync<SimpleTestEntity>();
 
             var docs = Enumerable.Range(0, 3).Select(x =>
             {
@@ -162,12 +160,12 @@ namespace Lexiconner.Persistence.UnitTests
                 {
                     Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
                 };
-                _mongoDbDataRepository.AddAsync<SimpleTestEntity>(doc).GetAwaiter().GetResult();
+                _mongoDataRepository.AddAsync<SimpleTestEntity>(doc).GetAwaiter().GetResult();
                 return doc;
             }).ToList();
             var docIds = docs.Select(x => x.Id);
 
-            var dbDocs = await _mongoDbDataRepository.GetAllAsync<SimpleTestEntity>(0, docs.Count, search: "");
+            var dbDocs = await _mongoDataRepository.GetAllAsync<SimpleTestEntity>(0, docs.Count);
 
             Assert.True(docIds.All(x => dbDocs.Any(y => y.Id == x)));
         }
@@ -179,8 +177,8 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
             };
-            await _mongoDbDataRepository.AddAsync<SimpleTestEntity>(doc);
-            var dbDoc = await _mongoDbDataRepository.GetOneAsync<SimpleTestEntity>(x => x.Id == doc.Id);
+            await _mongoDataRepository.AddAsync<SimpleTestEntity>(doc);
+            var dbDoc = await _mongoDataRepository.GetOneAsync<SimpleTestEntity>(x => x.Id == doc.Id);
             dbDoc.Should().NotBeNull();
             dbDoc.Id.Should().Be(doc.Id);
         }
@@ -188,7 +186,7 @@ namespace Lexiconner.Persistence.UnitTests
         [Fact(DisplayName = "Should return many documents")]
         public async Task GetMany()
         {
-            await _mongoDbDataRepository.DeleteAllAsync<SimpleTestEntity>();
+            await _mongoDataRepository.DeleteAllAsync<SimpleTestEntity>();
 
             var docs = Enumerable.Range(0, 5).Select(x =>
             {
@@ -196,12 +194,12 @@ namespace Lexiconner.Persistence.UnitTests
                 {
                     Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
                 };
-                _mongoDbDataRepository.AddAsync<SimpleTestEntity>(doc).GetAwaiter().GetResult();
+                _mongoDataRepository.AddAsync<SimpleTestEntity>(doc).GetAwaiter().GetResult();
                 return doc;
             }).ToList();
             var docIds = docs.Select(x => x.Id);
 
-            var dbDocs = await _mongoDbDataRepository.GetManyAsync<SimpleTestEntity>(x => true);
+            var dbDocs = await _mongoDataRepository.GetManyAsync<SimpleTestEntity>(x => true);
 
             Assert.True(docIds.All(x => dbDocs.Any(y => y.Id == x)));
         }
@@ -209,7 +207,7 @@ namespace Lexiconner.Persistence.UnitTests
         [Fact(DisplayName = "Should return many documents with offset, limit, search")]
         public async Task GetManyWithOffsetLimitSearch()
         {
-            await _mongoDbDataRepository.DeleteAllAsync<SimpleTestEntity>();
+            await _mongoDataRepository.DeleteAllAsync<SimpleTestEntity>();
 
             var docs = Enumerable.Range(0, 5).Select(x =>
             {
@@ -217,12 +215,12 @@ namespace Lexiconner.Persistence.UnitTests
                 {
                     Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
                 };
-                _mongoDbDataRepository.AddAsync<SimpleTestEntity>(doc).GetAwaiter().GetResult();
+                _mongoDataRepository.AddAsync<SimpleTestEntity>(doc).GetAwaiter().GetResult();
                 return doc;
             }).ToList();
             var docIds = docs.Select(x => x.Id);
 
-            var dbDocs = await _mongoDbDataRepository.GetManyAsync<SimpleTestEntity>(x => true, 0, docs.Count - 2);
+            var dbDocs = await _mongoDataRepository.GetManyAsync<SimpleTestEntity>(x => true, 0, docs.Count - 2);
 
             Assert.True(dbDocs.All(x => docIds.Any(y => y == x.Id)));
         }
@@ -239,8 +237,8 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
             };
-            await _mongoDbDataRepository.AddAsync<SimpleTestEntity>(doc);
-            var dbDoc = await _mongoDbDataRepository.GetOneAsync<SimpleTestEntity>(x => x.Id == doc.Id);
+            await _mongoDataRepository.AddAsync<SimpleTestEntity>(doc);
+            var dbDoc = await _mongoDataRepository.GetOneAsync<SimpleTestEntity>(x => x.Id == doc.Id);
 
             dbDoc.Should().NotBeNull();
             dbDoc.Id.Should().Be(doc.Id);
@@ -249,7 +247,7 @@ namespace Lexiconner.Persistence.UnitTests
         [Fact(DisplayName = "Should create many documents")]
         public async Task AddMany()
         {
-            await _mongoDbDataRepository.DeleteAllAsync<SimpleTestEntity>();
+            await _mongoDataRepository.DeleteAllAsync<SimpleTestEntity>();
 
             var docs = Enumerable.Range(0, 5).Select(x =>
             {
@@ -261,8 +259,8 @@ namespace Lexiconner.Persistence.UnitTests
             }).ToList();
             var docIds = docs.Select(x => x.Id);
           
-            await _mongoDbDataRepository.AddManyAsync<SimpleTestEntity>(docs);
-            var dbDocs = await _mongoDbDataRepository.GetAllAsync<SimpleTestEntity>();
+            await _mongoDataRepository.AddManyAsync<SimpleTestEntity>(docs);
+            var dbDocs = await _mongoDataRepository.GetAllAsync<SimpleTestEntity>();
 
             Assert.True(docIds.All(x => dbDocs.Any(y => y.Id == x)));
         }
@@ -274,15 +272,15 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
             };
-            await _mongoDbDataRepository.AddAsync<SimpleTestEntity>(doc);
+            await _mongoDataRepository.AddAsync<SimpleTestEntity>(doc);
             var docCreated = doc;
             var docUpdated = JsonConvert.DeserializeObject<SimpleTestEntity>(JsonConvert.SerializeObject(docCreated));
             docUpdated.Title = Ulid.NewUlid(new CSUlidRng()).ToString();
 
-            await _mongoDbDataRepository.UpdateAsync<SimpleTestEntity>(docUpdated);
+            await _mongoDataRepository.UpdateAsync<SimpleTestEntity>(docUpdated);
 
-            var dbDocInitial = await _mongoDbDataRepository.GetOneAsync<SimpleTestEntity>(x => x.Title == docCreated.Title);
-            var dbDocUpdated = await _mongoDbDataRepository.GetOneAsync<SimpleTestEntity>(x => x.Title == docUpdated.Title);
+            var dbDocInitial = await _mongoDataRepository.GetOneAsync<SimpleTestEntity>(x => x.Title == docCreated.Title);
+            var dbDocUpdated = await _mongoDataRepository.GetOneAsync<SimpleTestEntity>(x => x.Title == docUpdated.Title);
 
             dbDocInitial.Should().BeNull();
             dbDocUpdated.Should().NotBeNull();
@@ -292,7 +290,7 @@ namespace Lexiconner.Persistence.UnitTests
         [Fact(DisplayName = "Should update many documents")]
         public async Task UpdateMany()
         {
-            await _mongoDbDataRepository.DeleteAllAsync<SimpleTestEntity>();
+            await _mongoDataRepository.DeleteAllAsync<SimpleTestEntity>();
 
             var docs = Enumerable.Range(0, 5).Select(x =>
             {
@@ -303,7 +301,7 @@ namespace Lexiconner.Persistence.UnitTests
                 return doc;
             }).ToList();
 
-            await _mongoDbDataRepository.AddManyAsync<SimpleTestEntity>(docs);
+            await _mongoDataRepository.AddManyAsync<SimpleTestEntity>(docs);
 
             var docsCreated = JsonConvert.DeserializeObject<IEnumerable<SimpleTestEntity>>(JsonConvert.SerializeObject(docs));
             var docsUpdated = JsonConvert.DeserializeObject<IEnumerable<SimpleTestEntity>>(JsonConvert.SerializeObject(docs));
@@ -316,10 +314,10 @@ namespace Lexiconner.Persistence.UnitTests
             var docsCreatedTitles = docsCreated.Select(x => x.Title).ToList();
             var docsUpdatedTitles = docsUpdated.Select(x => x.Title).ToList();
 
-            await _mongoDbDataRepository.UpdateManyAsync<SimpleTestEntity>(docsUpdated);
+            await _mongoDataRepository.UpdateManyAsync<SimpleTestEntity>(docsUpdated);
 
-            var dbDocsInitial = await _mongoDbDataRepository.GetManyAsync<SimpleTestEntity>(x => docsCreatedTitles.Contains(x.Title));
-            var dbDocsUpdated = await _mongoDbDataRepository.GetManyAsync<SimpleTestEntity>(x => docsUpdatedTitles.Contains(x.Title));
+            var dbDocsInitial = await _mongoDataRepository.GetManyAsync<SimpleTestEntity>(x => docsCreatedTitles.Contains(x.Title));
+            var dbDocsUpdated = await _mongoDataRepository.GetManyAsync<SimpleTestEntity>(x => docsUpdatedTitles.Contains(x.Title));
 
             dbDocsInitial.Should().BeEmpty();
             dbDocsUpdated.Should().NotBeEmpty();
@@ -341,11 +339,11 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
             };
-            await _mongoDbDataRepository.AddAsync<SimpleTestEntity>(doc);
+            await _mongoDataRepository.AddAsync<SimpleTestEntity>(doc);
 
-            await _mongoDbDataRepository.DeleteAsync<SimpleTestEntity>(x => x.Id == doc.Id);
+            await _mongoDataRepository.DeleteAsync<SimpleTestEntity>(x => x.Id == doc.Id);
 
-            var dbDoc = await _mongoDbDataRepository.GetOneAsync<SimpleTestEntity>(x => x.Id == doc.Id);
+            var dbDoc = await _mongoDataRepository.GetOneAsync<SimpleTestEntity>(x => x.Id == doc.Id);
 
             dbDoc.Should().BeNull();
         }
@@ -361,11 +359,11 @@ namespace Lexiconner.Persistence.UnitTests
                 };
                 return doc;
             }).ToList();
-            await _mongoDbDataRepository.AddManyAsync<SimpleTestEntity>(docs);
+            await _mongoDataRepository.AddManyAsync<SimpleTestEntity>(docs);
 
-            await _mongoDbDataRepository.DeleteAllAsync<SimpleTestEntity>();
+            await _mongoDataRepository.DeleteAllAsync<SimpleTestEntity>();
 
-            var dbDocs = await _mongoDbDataRepository.GetAllAsync<SimpleTestEntity>();
+            var dbDocs = await _mongoDataRepository.GetAllAsync<SimpleTestEntity>();
 
             dbDocs.Should().BeEmpty();
         }
@@ -375,7 +373,7 @@ namespace Lexiconner.Persistence.UnitTests
         public async Task DeleteNDcouments()
         {
             // TODO: fix
-            await _mongoDbDataRepository.DeleteAllAsync<SimpleTestEntity>();
+            await _mongoDataRepository.DeleteAllAsync<SimpleTestEntity>();
 
             var docs = Enumerable.Range(0, 10).Select(x =>
             {
@@ -386,16 +384,16 @@ namespace Lexiconner.Persistence.UnitTests
                 };
                 return doc;
             }).ToList();
-            await _mongoDbDataRepository.AddManyAsync<SimpleTestEntity>(docs);
+            await _mongoDataRepository.AddManyAsync<SimpleTestEntity>(docs);
 
-            var dbDocs = (await _mongoDbDataRepository.GetAllAsync<SimpleTestEntity>()).ToList();
+            var dbDocs = (await _mongoDataRepository.GetAllAsync<SimpleTestEntity>()).ToList();
 
             Expression<Func<SimpleTestEntity, bool>> predicate = (x) => x.Order < 5;
             int beforeCount = dbDocs.Count(x => predicate.Compile()(x));
             int deleteCount = 2;
-            await _mongoDbDataRepository.DeleteNDocumentsAsync<SimpleTestEntity>(predicate, x => x.CreatedAt, deleteCount: deleteCount);
+            await _mongoDataRepository.DeleteNDocumentsAsync<SimpleTestEntity>(predicate, x => x.CreatedAt, deleteCount: deleteCount);
 
-            var dbDocs2 = await _mongoDbDataRepository.GetAllAsync<SimpleTestEntity>();
+            var dbDocs2 = await _mongoDataRepository.GetAllAsync<SimpleTestEntity>();
             int afterCount = dbDocs2.Count(x => predicate.Compile()(x));
 
             dbDocs2.Should().NotBeEmpty();
@@ -415,10 +413,10 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
             };
-            await _mongoDbDataRepository.AddAsync<SimpleTestEntity>(doc);
+            await _mongoDataRepository.AddAsync<SimpleTestEntity>(doc);
 
-            var exists1 = await _mongoDbDataRepository.ExistsAsync<SimpleTestEntity>(x => x.Title == doc.Title);
-            var exists2 = await _mongoDbDataRepository.ExistsAsync<SimpleTestEntity>(x => x.Title == "FAKE");
+            var exists1 = await _mongoDataRepository.ExistsAsync<SimpleTestEntity>(x => x.Title == doc.Title);
+            var exists2 = await _mongoDataRepository.ExistsAsync<SimpleTestEntity>(x => x.Title == "FAKE");
 
             exists1.Should().BeTrue();
             exists2.Should().BeFalse();
@@ -428,7 +426,7 @@ namespace Lexiconner.Persistence.UnitTests
         public async Task CountAllAsync()
         {
             // delete all first
-            await _mongoDbDataRepository.DeleteAllAsync<SimpleTestEntity>();
+            await _mongoDataRepository.DeleteAllAsync<SimpleTestEntity>();
 
             var docs = Enumerable.Range(0, 3).Select(x =>
             {
@@ -438,9 +436,9 @@ namespace Lexiconner.Persistence.UnitTests
                 };
                 return doc;
             }).ToList();
-            await _mongoDbDataRepository.AddManyAsync<SimpleTestEntity>(docs);
+            await _mongoDataRepository.AddManyAsync<SimpleTestEntity>(docs);
 
-            var count = await _mongoDbDataRepository.CountAllAsync<SimpleTestEntity>(x => true);
+            var count = await _mongoDataRepository.CountAllAsync<SimpleTestEntity>(x => true);
 
             count.Should().Be(docs.Count);
         }
@@ -449,7 +447,7 @@ namespace Lexiconner.Persistence.UnitTests
         public async Task DocumentCountByPredicate()
         {
             // delete all first
-            await _mongoDbDataRepository.DeleteAllAsync<SimpleTestEntity>();
+            await _mongoDataRepository.DeleteAllAsync<SimpleTestEntity>();
 
             var docs = Enumerable.Range(0, 10).Select(x =>
             {
@@ -460,9 +458,9 @@ namespace Lexiconner.Persistence.UnitTests
                 };
                 return doc;
             }).ToList();
-            await _mongoDbDataRepository.AddManyAsync<SimpleTestEntity>(docs);
+            await _mongoDataRepository.AddManyAsync<SimpleTestEntity>(docs);
 
-            var count = await _mongoDbDataRepository.CountAllAsync<SimpleTestEntity>(x => x.Order > docs.Count / 2);
+            var count = await _mongoDataRepository.CountAllAsync<SimpleTestEntity>(x => x.Order > docs.Count / 2);
 
             count.Should().Be(docs.Count(x => x.Order > docs.Count / 2));
         }

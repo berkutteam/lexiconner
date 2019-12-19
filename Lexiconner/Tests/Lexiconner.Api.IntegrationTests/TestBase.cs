@@ -1,8 +1,11 @@
 ﻿using Bogus;
 using FluentAssertions;
+using Lexiconner.Api.IntegrationTests.Auth;
 using Lexiconner.Api.IntegrationTests.Utils;
+using Lexiconner.Domain.Entitites;
 using Lexiconner.Infrastructure.Tests.Utils;
-using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Persistence.Repositories;
+using Lexiconner.Persistence.Repositories.MongoDb;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -28,7 +31,13 @@ namespace Lexiconner.Api.IntegrationTests
         protected readonly HttpUtil _httpUtil;
         protected readonly Faker _faker;
         protected readonly ApplicationSettings _config;
-        protected readonly IMongoRepository _dataRepository;
+        protected readonly IDataRepository _dataRepository;
+        protected readonly IMongoDataRepository _mongoDataRepository;
+
+
+        protected ApplicationUserEntity _userEntity;
+        protected UserInfoEntity _userInfoEntity;
+        protected string _accessToken;
 
         public TestBase(CustomWebApplicationFactory<Startup> factory)
         {
@@ -39,7 +48,8 @@ namespace Lexiconner.Api.IntegrationTests
             _httpUtil = new HttpUtil(_client);
             _faker = new Faker();
             _config = factory.Server.Host.Services.GetService<IOptions<ApplicationSettings>>().Value;
-            _dataRepository = factory.Server.Host.Services.GetService<IMongoRepository>();
+            _dataRepository = factory.Server.Host.Services.GetService<IDataRepository>();
+            _mongoDataRepository = _dataRepository as IMongoDataRepository;
 
             // Do "global" initialization here; Called before every test method.
         }
@@ -58,6 +68,13 @@ namespace Lexiconner.Api.IntegrationTests
         public void Dispose()
         {
             // Do "global" teardown here; Called after every test method.
+        }
+
+        protected async Task PrepareTestUser()
+        {
+            _userEntity = await _dataUtil.CreateUserAsync();
+            _userInfoEntity = await _dataUtil.CreateUserInfoAsync(_userEntity.Id);
+            _accessToken = TestAuthenticationHelper.GenerateAccessToken(_userEntity);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AspNetCore.Identity.MongoDbCore.Models;
 using Lexiconner.Domain.Config;
+using Lexiconner.Domain.Entitites.Base;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
@@ -15,7 +16,7 @@ using System.Threading.Tasks;
 namespace Lexiconner.Domain.Entitites
 {
     [CollectionName(MongoConfig.IdentityUsers)]
-    public class ApplicationUserEntity : MongoIdentityUser<string>
+    public class ApplicationUserEntity : MongoIdentityUser<string>, IIdentifiableEntity
     {
         public ApplicationUserEntity()
         {

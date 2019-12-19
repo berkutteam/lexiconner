@@ -1,3 +1,3 @@
 cd ..\Lexiconner\Lexiconner.Seed
-dotnet run --project . environment=DevelopmentLocalhost
+dotnet run --project . --launch-profile Lexiconner.Seed_DevelopmentLocalhost
 pause

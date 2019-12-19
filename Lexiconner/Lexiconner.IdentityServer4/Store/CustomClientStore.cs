@@ -4,23 +4,24 @@ using System.Linq;
 using System.Threading.Tasks;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
-using Lexiconner.Persistence.Repositories.Base;
+using Lexiconner.Domain.Entitites.IdentityModel;
+using Lexiconner.Persistence.Repositories;
 
 namespace Lexiconner.IdentityServer4.Store
 {
     public class CustomClientStore : IClientStore
     {
-        protected IMongoRepository _dbRepository;
+        protected IDataRepository _dataRepository;
 
-        public CustomClientStore(IMongoRepository repository)
+        public CustomClientStore(IDataRepository dataRepository)
         {
-            _dbRepository = repository;
+            _dataRepository = dataRepository;
         }
 
         public async Task<Client> FindClientByIdAsync(string clientId)
         {
-            var client = await _dbRepository.GetOneAsync<Client>(c => c.ClientId == clientId);
-            return client;
+            var client = await _dataRepository.GetOneAsync<ClientEntity>(c => c.Client.ClientId == clientId);
+            return client.Client;
         }
     }
 }

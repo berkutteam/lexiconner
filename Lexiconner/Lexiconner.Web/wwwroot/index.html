@@ -25,9 +25,8 @@
                 <a href="#" class="menu-item" data-route-link="word-list">
                     <span>Show All Word</span>
                 </a>
-                <a href="#" class="menu-item" data-route-link="add-word">
-                    <span>Add Word</span>
-                </a>
+
+
                 <a href="#" class="menu-item js-logout-button">
                     <span>Logout</span>
                 </a>
@@ -65,23 +64,36 @@
 
             <div class="menu-page-container" data-route="cards">
                 <div class="main-block-card" id="mainBlockCard">
+
+                    <div class="card-change-mode-button-container">
+                        <div class="card-change-mode-button study-mode active">
+                            Study mode
+                        </div>
+
+                        <div class="card-change-mode-button review-mode hidden">
+                            Review mode
+                        </div>
+                    </div>
+
                     <div class="card-block-container" id="cardBlockContainer">
+
                         <div class="card-button card-button-left" id="cardButtonLeft">
                             <i class="fas fa-chevron-left card-button-icon"></i>
                         </div>
-                        <div class="card-block" id="cardBlock">
+
+                        <div class="card-block сard-border" id="cardBlock">
                             <div id="cardTitle" class="title"></div>
                             <div id="cardDesc" class="description"></div>
-                            <div class="example-block">
-                                <div id="cardExampleText" class="example-text"></div>
-                                <div class="example-picture">
-                                    <img id="cardExampleImage" src="" />
-                                </div>
+                            <div id="cardExampleText" class="example-text"></div>
+                            <div class="example-picture">
+                                <img id="cardExampleImage" src="" />
                             </div>
                         </div>
+
                         <div class="card-button card-button-right" id="cardButtonRight">
                             <i class="fas fa-chevron-right card-button-icon"></i>
                         </div>
+
                     </div>
 
                     <div class="card-button-container">
@@ -93,29 +105,48 @@
                         </div>
 
                     </div>
+
+                    <div class="study-mode-control-block hidden" id="studyModeButtonBlock">
+                        <div class="study-button" id="studyButtonUnknow">
+                            No
+                        </div>
+
+                        <div class="study-button-next-item" id="studyButtonNextItem">
+                            Next
+                        </div>
+
+                        <div class="study-button " id="studyButtonKnow">
+                            Yes
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
             <div class="menu-page-container" data-route="word-list">
                 <div class="item-list-container js-item-list-container">
-
+                    <div class="item-list-add-button-container">
+                        <div class="item-list-pager__add-button">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                    </div>
                     <!-- Template el -->
 
                     <div class="list-item list-item--hidden js-list-item-template">
+
                         <div class="list-item-text js-item-text">
                             <span class="list-item-text-span"></span>
                         </div>
 
-                        <div class="container-edit-picture">
-                            <div class="list-item-picture-delete">
-                                <img class="edit-picture" src="images/icons8-delete.png">
+                        <div class="container-edit-icon">
+                            <div class="list-item-icon-delete">
+                                <i class="far fa-trash-alt edit-picture"></i>
                             </div>
-                            <div class="list-item-picture-put">
-                                <img class="edit-picture" src="images/icons8-put.png">
+                            <div class="list-item-icon-put">
+                                <i class="fas fa-pencil-alt edit-picture"></i>
                             </div>
                         </div>
 
-                        <!-- picture -->
                     </div>
 
                     <div class="item-list js-item-list">
@@ -124,9 +155,9 @@
 
                     <div class="modal-window">
 
-                        <dialog class="js-form-dialog">
+                        <dialog class="form-dialog">
 
-                            <form method="post" class="put-word-form" name="putWordForm">
+                            <form method="post" class="put-word-form" name="WordForm">
                                 <div class="form-container">
                                     <input class="input-field-title" type="text" name="title" placeholder="Title">
                                     <textarea class="input-field-description" name="description"
@@ -134,21 +165,20 @@
                                     <textarea class="input-field-example-text" name="exampleText"
                                         placeholder="Example Text"></textarea>
                                     <input class="input-field-tags" type="text" name="tags" placeholder="Tags">
-                                   
+
                                 </div>
 
                                 <div class="form-button-container">
+                                    <input type="button" class="form-control-button js-put-button hidden" value="Put" />
+                                    <input type="button" class="form-control-button js-add-button hidden" value="Add" />
                                     <input class="reset-button" type="reset" value="reset">
-                                    <input type="button" class="js-put-button" value="Put" />
 
                                 </div>
                             </form>
 
-                            <button id="close">Close</button>
+                            <button class="modal-window-close-button" id="close">Close</button>
                         </dialog>
                     </div>
-
-
 
                     <div class="item-list-pager" id="dataItemsButtonBlock">
                         <div class="item-list-pager__button js-first-page-button">
@@ -164,30 +194,12 @@
                             <i class="fas fa-angle-right button-icon"></i>
                         </div>
                         <div class="item-list-pager__button js-last-page-button">
-                            <i class="fas fa-angle-double-right button-icon"></i></div>
+                            <i class="fas fa-angle-double-right button-icon"></i>
+                        </div>
+
                     </div>
-                </div>
-            </div>
 
-            <div class="menu-page-container" data-route="add-word">
-                <div class="data-form-container">
-                    <form method="post" class="add-word-form" name="addWordForm">
-                        <div class="form-container">
-                            <input class="input-field-title" type="text" name="title" placeholder="Title">
-                            <textarea class="input-field-description" name="description"
-                                placeholder="Description"></textarea>
-                            <textarea class="input-field-example-text" name="exampleText"
-                                placeholder="Example Text"></textarea>
-                            <input class="input-field-tags" type="text" name="tags" placeholder="Tags">
-                            
-                        </div>
 
-                        <div class="form-button-container">
-                            <input class="reset-button" type="reset" value="reset">
-                            <input type="button" class="js-send-word-button" value="Send" />
-
-                        </div>
-                    </form>
 
                 </div>
             </div>
@@ -206,13 +218,11 @@
 
         </div>
 
-
-
-    </div>
     </div>
 
-    <script src="lib/oidc-client.min.js"></script>
+    <!--<script src="lib/oidc-client.min.js"></script>-->
     <script src="dist/bundle.js"></script>
+
 </body>
 
 </html>
