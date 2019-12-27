@@ -118,7 +118,7 @@ namespace Lexiconner.IdentityServer4.Config
 
                     // access_token settings
                     AccessTokenType = AccessTokenType.Jwt,
-                    AccessTokenLifetime = Convert.ToInt32((new TimeSpan(24, 0, 0)).TotalSeconds),
+                    AccessTokenLifetime = Convert.ToInt32((new TimeSpan(7, 0, 0, 0)).TotalSeconds),
                     UpdateAccessTokenClaimsOnRefresh = true,
 
                     // refresh token settings

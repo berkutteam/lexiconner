@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.Persistence.Unit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.Infrastructure.Tests", "Tests\Lexiconner.Infrastructure.Tests\Lexiconner.Infrastructure.Tests.csproj", "{97BF74D2-C693-47C3-8B6D-E14960FDC3C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexiconner.Api.IntegrationTests", "Tests\Lexiconner.Api.IntegrationTests\Lexiconner.Api.IntegrationTests.csproj", "{1F94FF5B-EB72-437F-AEF6-EACD2AC4FDC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexiconner.Api.IntegrationTests", "Tests\Lexiconner.Api.IntegrationTests\Lexiconner.Api.IntegrationTests.csproj", "{1F94FF5B-EB72-437F-AEF6-EACD2AC4FDC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,6 +90,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{C60BB5F6-DCDE-43BA-B40E-63A97890E752} = {C7F80535-3CCF-470F-9FD7-AFEEF0C37B70}
 		{E97E4EF7-8F9A-4977-9E16-21784C4B06AF} = {C7F80535-3CCF-470F-9FD7-AFEEF0C37B70}
 		{149641D5-2207-44B4-9891-4A8BEE35D0F5} = {5BDCCAEE-5A74-47F9-A6FF-94B1D0388B5C}
 		{97BF74D2-C693-47C3-8B6D-E14960FDC3C5} = {5BDCCAEE-5A74-47F9-A6FF-94B1D0388B5C}
