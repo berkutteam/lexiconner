@@ -14,6 +14,7 @@ namespace Lexiconner.Application.Config
     public class ImportSettings
     {
         public string FilePath { get; set; }
+        public string FilmsFilePath { get; set; }
     }
 
     public class GoogleSettings

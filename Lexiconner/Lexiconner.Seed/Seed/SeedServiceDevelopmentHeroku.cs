@@ -31,6 +31,7 @@ namespace Lexiconner.Seed.Seed
         private readonly IConfigurationRoot _configuration;
         private readonly ILogger<ISeedService> _logger;
         private readonly IWordTxtImporter _wordTxtImporter;
+       // private readonly IFilmTxtImporter _filmTxtImporter;
         private readonly IDataRepository _dataRepository;
         private readonly IIdentityDataRepository _identityRepository;
         private readonly IIdentityServerConfig _identityServerConfig;
@@ -43,6 +44,7 @@ namespace Lexiconner.Seed.Seed
             IConfigurationRoot configuration,
             ILogger<ISeedService> logger,
             IWordTxtImporter wordTxtImporter,
+            //IFilmTxtImporter filmTxtImporter,
             IDataRepository dataRepository,
             IIdentityDataRepository identityRepository,
             IIdentityServerConfig identityServerConfig,

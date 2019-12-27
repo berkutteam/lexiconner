@@ -23,6 +23,7 @@ namespace Lexiconner.Domain.Config
 
         private const string StudyItems = "studyItems";
         private const string UserInfo = "userInfo";
+        private const string UserFilm = "userFilm";
 
         private const string CacheGoogleTranslateApi = "cacheGoogleTranslateApi";
         private const string CacheGoogleTranslateDetectLanguageApi = "cacheGoogleTranslateDetectLanguageApi";
@@ -147,6 +148,15 @@ namespace Lexiconner.Domain.Config
                 Indexes = new List<string> {
                 }
             },
+
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(UserFilm),
+                CollectionName = UserFilm,
+                Indexes = new List<string>{
+                }
+            },
+
 
             // testing
             new MongoCollectionConfig
