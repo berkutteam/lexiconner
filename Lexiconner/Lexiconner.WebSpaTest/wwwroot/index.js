@@ -19,7 +19,7 @@ function login() {
 
 function api() {
     mgr.getUser().then(function (user) {
-        var url = "https://localhost:5006/api/v2/identity";
+        var url = "http://localhost:5005/api/v2/identity";
 
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url);
@@ -40,12 +40,12 @@ document.getElementById("api").addEventListener("click", api, false);
 document.getElementById("logout").addEventListener("click", logout, false);
 
 var config = {
-    authority: "https://localhost:5004",
+    authority: "http://localhost:5004",
     client_id: "webtestspa",
-    redirect_uri: "https://localhost:5022/callback.html",
+    redirect_uri: "http://localhost:5021/callback.html",
     response_type: "code",
     scope: "openid profile webapi",
-    post_logout_redirect_uri: "https://localhost:5022/index.html",
+    post_logout_redirect_uri: "http://localhost:5021/index.html",
 };
 var mgr = new Oidc.UserManager(config);
 
