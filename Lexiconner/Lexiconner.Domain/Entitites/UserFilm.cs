@@ -13,20 +13,19 @@ namespace Lexiconner.Domain.Entitites
     {
         public UserFilm()
         {
-            Tags = new List<string>();
+            Genre = new List<string>();
         }
 
 
         public string UserId { get; set; }
         public string Title { get; set; }
-        public string Genre { get; set; }
+        public string Comment { get; set; }
         public double Rating { get; set; }
         public DateTime WatchedAt { get; set; }
         public DateTime ReleasedAt { get; set; }
         public FilmItemImageEntity Image { get; set; }
 
-
-        public List<string> Tags { get; set; }
+        public List<string> Genre { get; set; }
     }
 
     public class FilmItemImageEntity : BaseEntity

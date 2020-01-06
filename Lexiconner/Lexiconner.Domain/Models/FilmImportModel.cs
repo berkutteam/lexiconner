@@ -8,13 +8,15 @@ namespace Lexiconner.Domain.Models
     {
         public FilmImportModel()
         {
-            Tags = new List<string>();
+            Genres = new List<string>();
         }
 
         public string Title { get; set; }
-        public double Rating { get; set; }
+        public string Comment { get; set; }
+        public string Rating { get; set; }
+        public string WatchedAt { get; set; }
+        public string ReleasedAt { get; set; }
 
-        public DateTime WatchedAt { get; set; }
-        public List<string> Tags { get; set; }
+        public List<string> Genres { get; set; }
     }
 }
