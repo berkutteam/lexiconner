@@ -21,6 +21,7 @@ namespace Lexiconner.Domain.Entitites
         public string Description { get; set; }
         public string ExampleText { get; set; }
         public bool IsFavourite { get; set; }
+        public string LanguageCode { get; set; }
 
         public List<string> Tags { get; set; }
 

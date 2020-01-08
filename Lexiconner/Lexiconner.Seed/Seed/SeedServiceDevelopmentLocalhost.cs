@@ -299,6 +299,7 @@ namespace Lexiconner.Seed.Seed
                 Title = x.Word,
                 Description = x.Description,
                 ExampleText = x.ExampleText,
+                LanguageCode = _wordTxtImporter.SourceLanguageCode,
                 Tags = x.Tags,
             }).ToList();
 
