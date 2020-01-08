@@ -57,7 +57,7 @@ namespace Lexiconner.Api
 
             if (HostingEnvironmentHelper.IsDevelopmentLocalhost())
             {
-                builder.UseUrls($"http://localhost:5005;https://localhost:5006");
+                builder.UseUrls($"http://localhost:5005");
             }
 
             if (Environment.GetEnvironmentVariable("RUNTIME_ENV") == "heroku")

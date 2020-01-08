@@ -122,7 +122,7 @@ namespace Lexiconner.Api
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     options.Authority = config.JwtBearerAuth.Authority;
-                    options.RequireHttpsMetadata = true;
+                    options.RequireHttpsMetadata = false;
                     options.Audience = config.JwtBearerAuth.Audience;
                     options.Events = new JwtBearerEvents
                     {

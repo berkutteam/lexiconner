@@ -149,7 +149,7 @@ namespace Lexiconner.Application.ApiClients
                 });
 
             // looks like for service account authUri can be empty
-            // accessToken = await credential.UnderlyingCredential.GetAccessTokenForRequestAsync(authUri: "https://localhost:5006");
+            // accessToken = await credential.UnderlyingCredential.GetAccessTokenForRequestAsync(authUri: "http://localhost:5005");
             string accessToken = await credential.UnderlyingCredential.GetAccessTokenForRequestAsync(authUri: string.Empty);
 
             return accessToken;
