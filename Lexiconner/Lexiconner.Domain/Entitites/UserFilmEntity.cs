@@ -9,9 +9,9 @@ using System.Text;
 
 namespace Lexiconner.Domain.Entitites
 {
-    class UserFilm : BaseEntity
+    class UserFilmEntity : BaseEntity
     {
-        public UserFilm()
+        public UserFilmEntity()
         {
             Genre = new List<string>();
         }

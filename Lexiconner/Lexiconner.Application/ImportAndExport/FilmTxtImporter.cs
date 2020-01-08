@@ -38,7 +38,7 @@ namespace Lexiconner.Application.ImportAndExport
             {
                 while (!reader.EndOfStream)
                 {
-                    List<string> genres = new List<string>();
+                    List<string> genres = null;
                     string watchedAt = "";
                     string rating = "";
                     string comment = "";
@@ -49,6 +49,8 @@ namespace Lexiconner.Application.ImportAndExport
 
                     if (GenresRegEx.IsMatch(line))
                     {
+                        genres = new List<string>();
+
                         var genresMatchStr = GenresRegEx.Match(line).Groups.Skip(1).First().Value;
 
                         line = line.Replace(genresMatchStr, "");
@@ -111,8 +113,7 @@ namespace Lexiconner.Application.ImportAndExport
                         Rating = rating ?? null,
                         WatchedAt = watchedAt ?? null,
                         ReleasedAt = releasedAt ?? null,
-                        Genres = genres.ToList()?? null
-
+                        Genres = genres?.ToList()
                     });
 
                 }
