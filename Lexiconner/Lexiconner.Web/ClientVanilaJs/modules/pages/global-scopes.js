@@ -13,6 +13,7 @@ class GlobalScopes {
             studyButtonUnknow: { state: false },
             studyButtonKnow: { state: false },
             studyButtonNextItem: { state: false },
+            
             itemListFirstButton: { state: false },
             itemListPrevButton: { state: false },
             itemListNextButton: { state: false },
@@ -21,6 +22,16 @@ class GlobalScopes {
             itemListPutButton: { state: false },
             itemListDeleteButton: { state: false },
             itemListAddButton: { state: false },
+
+            FilmItemListFirstButton: { state: false },
+            FilmItemListPrevButton: { state: false },
+            FilmItemListNextButton: { state: false },
+            FilmItemListLastButton: { state: false },
+            FilmItemListButtonFromListToCard: { state: false },
+            FilmItemListPutButton: { state: false },
+            FilmItemListDeleteButton: { state: false },
+            FilmItemListAddButton: { state: false },
+
             formPutButton: { state: false },
             formAddButton: { state: false }
         }// used in addBubleEventListener() for add once event listener caller

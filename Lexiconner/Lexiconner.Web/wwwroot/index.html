@@ -25,6 +25,9 @@
                 <a href="#" class="menu-item" data-route-link="word-list">
                     <span>Show All Word</span>
                 </a>
+                <a href="#" class="menu-item" data-route-link="film-list">
+                    <span>Film list</span>
+                </a>
 
 
                 <a href="#" class="menu-item js-logout-button">
@@ -195,6 +198,122 @@
                         </div>
                         <div class="item-list-pager__button js-last-page-button">
                             <i class="fas fa-angle-double-right button-icon"></i>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+            </div>
+
+            <div class="menu-page-container" data-route="film-list">
+
+                <div class="film-item-list-container js-film-item-list-container">
+                    <div class="film-item-list-add-button-container">
+                        <div class="film-item-list-pager__add-button">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                    </div>
+                    <!-- Template el -->
+
+                    <div class="film-list-item film-list-item--hidden js-film-list-item-template"> 
+
+                        <div class="film-item-container">
+                            
+                            <div class="film-item-title-released-container">
+
+                                <div class="film-item-title"></div>
+
+                                <div class="film-item-release"></div>
+
+                            </div>
+
+                            <div class="film-item-watched-rating-container">
+
+                                <div class="film-item-watched-container">
+                                    <span class="film-item-watched-span">Watched at: </span> 
+                                    <span class="film-item-watched-text"> </span> 
+                                   
+                                </div>
+
+                                <div class="film-item-rating-container"> 
+                                    <span class="film-item-rating-span">Rating: </span> 
+                                    <span class="film-item-rating-text"> </span> 
+                                </div>
+
+                            </div>
+
+                            <div class="film-item-genre-container">
+                                <span class="film-item-genre-span">Genre: </span> 
+                                <span class="film-item-genre-text">  </span> 
+                                 
+                            </div>
+
+                            <div class="film-item-comment">  </div>
+
+
+                        </div>
+
+                       
+
+                        <div class="film-container-edit-icon">
+                            <div class="film-list-item-icon-delete">
+                                <i class="far fa-trash-alt edit-picture"></i>
+                            </div>
+                            <div class="film-list-item-icon-put">
+                                <i class="fas fa-pencil-alt edit-picture"></i>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="film-item-list js-film-item-list">
+                        <!-- Items will be inserted dynamically -->
+                    </div>
+
+                    <div class="modal-window">
+
+                        <dialog class="form-dialog">
+
+                            <form method="post" class="put-word-form" name="WordForm">
+                                <div class="form-container">
+                                    <input class="input-field-title" type="text" name="title" placeholder="Title">
+                                    <textarea class="input-field-description" name="description"
+                                        placeholder="Description"></textarea>
+                                    <textarea class="input-field-example-text" name="exampleText"
+                                        placeholder="Example Text"></textarea>
+                                    <input class="input-field-tags" type="text" name="tags" placeholder="Tags">
+
+                                </div>
+
+                                <div class="form-button-container">
+                                    <input type="button" class="form-control-button js-film-put-button hidden" value="Put" />
+                                    <input type="button" class="form-control-button js-film-add-button hidden" value="Add" />
+                                    <input class="reset-button" type="reset" value="reset">
+
+                                </div>
+                            </form>
+
+                            <button class="modal-window-close-button" id="close">Close</button>
+                        </dialog>
+                    </div>
+
+                    <div class="film-item-list-pager" id="dataItemsButtonBlock">
+                        <div class="film-item-list-pager__button js-film-first-page-button">
+                            <i class="fas fa-angle-double-left film-button-icon"></i>
+                        </div>
+                        <div class="film-item-list-pager__button js-film-prev-page-button">
+                            <i class="fas fa-angle-left film-button-icon"></i>
+                        </div>
+                        <div class="film-item-list-pager__button js-film-current-page-button">
+                            <span class="js-film-current-page-text">0</span>
+                        </div>
+                        <div class="film-item-list-pager__button js-film-next-page-button">
+                            <i class="fas fa-angle-right film-button-icon"></i>
+                        </div>
+                        <div class="film-item-list-pager__button js-film-last-page-button">
+                            <i class="fas fa-angle-double-right film-button-icon"></i>
                         </div>
 
                     </div>

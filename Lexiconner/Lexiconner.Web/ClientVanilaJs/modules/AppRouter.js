@@ -2,6 +2,7 @@
 import Dashboard from './pages/dashboard.js';
 import Cards from './pages/cards.js';
 import WordList from './pages/word-list.js';
+import FilmList from './pages/film-list.js';
 
 class AppRouter {
 
@@ -10,6 +11,7 @@ class AppRouter {
             'dashboard': new Dashboard(),
             'cards': new Cards(user, config),
             'word-list': new WordList(user, config),
+            'film-list': new  FilmList(user, config)
         };
     }
 

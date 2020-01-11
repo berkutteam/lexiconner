@@ -492,7 +492,7 @@ body {
         flex-grow: 1;
     }
 }
-/* all data items review*/
+/*begin all word data items review*/
 
 .item-list-container {
     margin: 0 1% 0 1%;
@@ -633,7 +633,7 @@ body {
 .item-list-pager__button .button-icon {
 }
 
-/*begin add word form */
+    /*begin add word form */
 .data-form-container{
     display: flex;
     flex-direction: row;
@@ -765,4 +765,377 @@ body {
          width: 22em
     }
 }
-/* end add word form */
+    /* end add word form */
+/*end all word data items review*/
+
+/*begin all film data items review*/
+.film-item-list-container {
+    margin: 0 1% 0 1%;
+    padding: 0;
+}
+
+.film-item-list {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+
+.film-list-item {
+    
+    background-color: var(--card-background-color);
+    color: var(--text-color);
+    border-radius: 3px;
+    width: 459px;
+    max-width: 459px;
+    /* height: 100%; */
+    padding: 0.75em;
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    box-sizing: border-box;
+    margin: 0.5% 0.5% 0 0;
+}
+
+.film-list-item-text {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+    height: 4em;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    
+}
+
+/* begin film template item */
+
+.film-item-container{
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+    padding: 0em 0.7em 0em 0em;
+}
+
+.film-item-title-released-container{
+    display: flex;
+    flex-direction: row;
+    height: 66px;
+    font-size: 2.1em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 0em 0em 0.3em 0em;
+}
+
+.film-item-title{
+    height: auto;
+    width: 78%;
+    text-align: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+}
+
+.film-item-release{
+    padding: 0em 0em 0em 0.4em;
+    flex-grow: 4;
+}
+
+.film-item-watched-rating-container{
+    display: flex;
+    flex-direction: row;
+    height: 1.6em;
+    font-size: 1.2em;
+    margin: 0.7em 0em 0em 0em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 0em 0em 0.3em 0em;
+}
+
+.film-item-watched-container{
+    height: auto;
+    width: 50%;
+    padding: 0em 0.5em 0em 0.5em;
+    box-sizing: border-box;
+    flex-grow: 1;
+}
+
+.film-item-watched-span{
+
+}
+
+.film-item-watched-text{
+
+}
+
+.film-item-rating-container{
+    height: auto;
+    width: 50%;
+    padding: 0em 0.5em 0em 0.5em;
+    box-sizing: border-box;
+    flex-grow: 1;
+}
+
+.film-item-rating-span{
+
+}
+
+.film-item-rating-text{
+    
+}
+
+.film-item-genre-container{
+    display: flex;
+    flex-direction: row;
+    height: 1.6em;
+    font-size: 1.2em;
+    margin: 0.7em 0em 0em 0em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 0em 0.5em 0.3em 0.5em;
+}
+
+.film-item-genre-span{
+
+}
+
+.film-item-genre-text{
+    padding: 0em 0em 0em 0.5em;
+}
+
+.film-item-comment{
+    height: 1.6em;
+    font-size: 1.2em;
+    margin: 0.7em 0em 0em 0em;
+    padding: 0em 0.5em 0.3em 0.5em;
+    height: auto;
+    background-color: var(--example-background-color);
+}
+
+
+/* end film template item */
+
+.film-container-edit-icon{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--card-list-item-control-button-background-color);
+}
+
+.edit-picture{
+    opacity: 0.7;
+    width: auto;
+    height: 1.5em;
+}
+
+
+
+.edit-picture:hover {
+    opacity: 1;
+}
+
+.film-list-item:hover {
+    background-color: var(--card-lighter-color);
+}
+
+.film-list-item--hidden {
+    display: none;
+}
+@media screen and (min-width: 721px) {
+    .film-list-item:nth-child(-n + 4) {
+        margin-top: 0;
+    }
+    .film-list-item:nth-child(4n) {
+        margin-right: 0;
+    }
+}
+@media screen and (max-width: 720px) {
+    .film-list-item {
+        width: 49.5%;
+        height: 60px;
+        margin: 1% 1% 0 0;
+    }
+    .film-list-item:nth-child(-n + 2) {
+        margin-top: 0;
+    }
+    .film-list-item:nth-child(2n) {
+        margin-right: 0;
+    }
+
+}
+
+/* Begin Modal window */
+
+  .modal-window-close-button:hover {background: #e6e6ff;}
+/*End Modal window  */
+
+
+
+.film-item-list-pager {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 1em 0;
+}
+
+.film-item-list-pager__button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    color: var( --text-color);
+    padding: 0.25em;
+    background-color: var(--button-red-color);
+    margin: 0 0.25em 0 0;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.film-item-list-pager__button:hover{
+    background-color: var(--button-red-color-hover);
+}
+
+.film-item-list-pager__button:last-child {
+    margin-right: 0;
+}
+
+.film-item-list-pager__button .film-button-icon {
+}
+
+    /*begin add word form */
+.data-form-container{
+    display: flex;
+    flex-direction: row;
+}
+.add-word-form{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 1em 4em 0em;
+    
+}
+
+.form-container{
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-size: 2em;
+}
+
+.form-text{
+    margin: 0em 0em 0.5em;
+}
+
+.input-field-title{
+    background-color: var(--input-field-color);
+    border-color: var(--input-field-border-color);
+    padding: 0em 0.5em;
+    margin: 1em 0em 0.5em;
+    height: 1.2em;
+    width: 16.1em;
+    font-size: 0.7em;
+}
+
+.input-field-description{
+    background-color: var(--input-field-color);
+    border-color: var(--input-field-border-color);
+    height: 7em;
+    width: 23em;
+    padding: 0.5em;
+    font-size: 0.5em;
+    word-spacing: -0.09em;
+    margin: 0.5em 0em;
+}
+
+.input-field-example-text{
+    background-color: var(--input-field-color);
+    border-color: var(--input-field-border-color);
+    height: 7em;
+    width: 23em;
+    padding: 0.5em;
+    font-size: 0.5em;
+    word-spacing: -0.09em;
+    margin: 0.5em 0em;
+}
+
+.input-field-tags{
+    background-color: var(--input-field-color);
+    border-color: var(--input-field-border-color);
+    padding: 0em 0.5em;
+    margin: 0.5em 0em 0.5em;
+    height: 1.2em;
+    width: 16.1em;
+    font-size: 0.7em;
+}
+
+.input-field-empty-js {
+    border-width: 0.12em;
+    border-color: red; 
+}
+
+.reset-button{
+    width: 7em;
+    height: 2em;
+    margin: 1em 0em 1em 11em;
+}
+
+.form-control-button{
+    width: 7em;
+    height: 2em;
+    margin: 1em 0em 1em 0em;
+}
+
+.form-button-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.film-item-list-add-button-container{
+    margin: 0em 1em 1em 1em;
+}
+.film-item-list-pager__add-button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    width: 3em;
+    color: var( --text-color);
+    padding: 0.25em;
+    background-color: var(--button-red-color);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.film-item-list-pager__add-button:hover{
+    background-color: var(--button-red-color-hover);
+}
+
+
+@media screen and (max-width: 720px) {
+    
+    .input-field-title{
+        width: 14.5em;
+    }
+
+    .input-field-description{
+        width: 20.9em;
+    }
+
+    .input-field-example-text{
+        width: 20.9em;
+    }
+
+    .input-field-tags{
+        width: 14.5em;
+    }
+
+    .form-dialog{
+         width: 22em
+    }
+}
+/*end all film data items review*/
