@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 
 namespace Lexiconner.IdentityServer4.Config
@@ -84,61 +85,85 @@ namespace Lexiconner.IdentityServer4.Config
                 //    AllowOfflineAccess = true,
                 //    AllowedScopes = { "openid", "profile", "api1" }
                 //},
+            };
 
-                // SPA client using code flow
-                new Client
-                {
-                    ClientId = "webspa",
-                    ClientName = "Lexiconner Web SPA Client",
-                    ClientUri = config.Urls.WebSpa,
+            // SPA client using code flow
+            var spaClient = new Client
+            {
+                ClientId = "webspa",
+                ClientName = "Lexiconner Web SPA Client",
+                ClientUri = config.Urls.WebSpaExternalUrl,
 
-                    AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = true, // Proof Key for Code Exchange (PKCE)
-                    RequireClientSecret = false,
-                    RequireConsent = false,
+                AllowedGrantTypes = GrantTypes.Code,
+                RequirePkce = true, // Proof Key for Code Exchange (PKCE)
+                RequireClientSecret = false,
+                RequireConsent = false,
 
-                    RedirectUris =
+                RedirectUris =
                     {
-                        $"{config.Urls.WebSpa}",
-                        $"{config.Urls.WebSpa}/index.html",
-                        $"{config.Urls.WebSpa}/callback.html",
-                        $"{config.Urls.WebSpa}/silent.html",
-                        $"{config.Urls.WebSpa}/popup.html",
+                        $"{config.Urls.WebSpaExternalUrl}",
+                        $"{config.Urls.WebSpaExternalUrl}/index.html",
+                        $"{config.Urls.WebSpaExternalUrl}/callback.html",
+                        $"{config.Urls.WebSpaExternalUrl}/silent.html",
+                        $"{config.Urls.WebSpaExternalUrl}/popup.html",
                     },
 
-                    PostLogoutRedirectUris = { $"{config.Urls.WebSpa}/index.html" },
-                    AllowedCorsOrigins = { $"{config.Urls.WebSpa}" },
+                PostLogoutRedirectUris = { $"{config.Urls.WebSpaExternalUrl}/index.html" },
+                AllowedCorsOrigins = { $"{config.Urls.WebSpaExternalUrl}" },
 
-                    AllowedScopes = {
+                AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OfflineAccess, // refresh token
                         "webapi"
                     },
 
-                    // access_token settings
-                    AccessTokenType = AccessTokenType.Jwt,
-                    AccessTokenLifetime = Convert.ToInt32((new TimeSpan(7, 0, 0, 0)).TotalSeconds),
-                    UpdateAccessTokenClaimsOnRefresh = true,
+                // access_token settings
+                AccessTokenType = AccessTokenType.Jwt,
+                AccessTokenLifetime = Convert.ToInt32((new TimeSpan(7, 0, 0, 0)).TotalSeconds),
+                UpdateAccessTokenClaimsOnRefresh = true,
 
-                    // refresh token settings
-                    // refresh tokens are supported for the following flows: authorization code, hybrid and resource owner password credential flow.
-                    AllowOfflineAccess = true,
-                    RefreshTokenUsage = TokenUsage.ReUse,
-                    RefreshTokenExpiration = TokenExpiration.Absolute,
-                    AbsoluteRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(30, 0, 0, 0)).TotalSeconds),
-                    SlidingRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(15, 0, 0, 0)).TotalSeconds),
-                },
+                // refresh token settings
+                // refresh tokens are supported for the following flows: authorization code, hybrid and resource owner password credential flow.
+                AllowOfflineAccess = true,
+                RefreshTokenUsage = TokenUsage.ReUse,
+                RefreshTokenExpiration = TokenExpiration.Absolute,
+                AbsoluteRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(30, 0, 0, 0)).TotalSeconds),
+                SlidingRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(15, 0, 0, 0)).TotalSeconds),
             };
 
-            if(HostingEnvironmentHelper.IsDevelopmentAny())
+            // add local url for dev, because we use 1 db for dev and localhost for now,
+            // but urls are different
+            if (HostingEnvironmentHelper.IsDevelopmentAny())
+            {
+                spaClient.RedirectUris = spaClient.RedirectUris.Concat(new List<string>() {
+                    $"{config.Urls.WebSpaLocalUrl}",
+                    $"{config.Urls.WebSpaLocalUrl}/index.html",
+                    $"{config.Urls.WebSpaLocalUrl}/callback.html",
+                    $"{config.Urls.WebSpaLocalUrl}/silent.html",
+                    $"{config.Urls.WebSpaLocalUrl}/popup.html",
+                }).ToList();
+
+                spaClient.PostLogoutRedirectUris = spaClient.PostLogoutRedirectUris.Concat(new List<string>() {
+                    $"{config.Urls.WebSpaLocalUrl}",
+                    $"{config.Urls.WebSpaLocalUrl}/index.html",
+                }).ToList();
+
+                spaClient.AllowedCorsOrigins = spaClient.AllowedCorsOrigins.Concat(new List<string>() {
+                    $"{config.Urls.WebSpaLocalUrl}"
+                }).ToList();
+            }
+
+            clients.Add(spaClient);
+
+            if (HostingEnvironmentHelper.IsDevelopmentAny())
             {
                 // SPA client using code flow
                 clients.Add(new Client
                 {
                     ClientId = "webtestspa",
                     ClientName = "Lexiconner Web Test SPA Client",
-                    ClientUri = config.Urls.WebTestSpa,
+                    ClientUri = config.Urls.WebTestSpaExternalUrl,
 
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true, // Proof Key for Code Exchange (PKCE)
@@ -147,15 +172,15 @@ namespace Lexiconner.IdentityServer4.Config
 
                     RedirectUris =
                     {
-                        $"{config.Urls.WebTestSpa}",
-                        $"{config.Urls.WebTestSpa}/index.html",
-                        $"{config.Urls.WebTestSpa}/callback.html",
-                        $"{config.Urls.WebTestSpa}/silent.html",
-                        $"{config.Urls.WebTestSpa}/popup.html",
+                        $"{config.Urls.WebTestSpaExternalUrl}",
+                        $"{config.Urls.WebTestSpaExternalUrl}/index.html",
+                        $"{config.Urls.WebTestSpaExternalUrl}/callback.html",
+                        $"{config.Urls.WebTestSpaExternalUrl}/silent.html",
+                        $"{config.Urls.WebTestSpaExternalUrl}/popup.html",
                     },
 
-                    PostLogoutRedirectUris = { $"{config.Urls.WebTestSpa}/index.html" },
-                    AllowedCorsOrigins = { $"{config.Urls.WebTestSpa}" },
+                    PostLogoutRedirectUris = { $"{config.Urls.WebTestSpaExternalUrl}/index.html" },
+                    AllowedCorsOrigins = { $"{config.Urls.WebTestSpaExternalUrl}" },
 
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,

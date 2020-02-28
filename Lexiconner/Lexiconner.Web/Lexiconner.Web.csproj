@@ -8,13 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="ClientVanilaJs\index.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="ClientVanilaJs\index.js">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
+    <Compile Remove="ClientVanilaJs\**" />
+    <Content Remove="ClientVanilaJs\**" />
+    <EmbeddedResource Remove="ClientVanilaJs\**" />
+    <None Remove="ClientVanilaJs\**" />
   </ItemGroup>
 
 
@@ -28,12 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lexiconner.Application\Lexiconner.Application.csproj" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <Folder Include="ClientVanilaJs\components\" />
-    <Folder Include="ClientVanilaJs\pages\" />
   </ItemGroup>
 
 </Project>

@@ -50,6 +50,6 @@ namespace Lexiconner.Api
 
     public class UrlsSettings
     {
-        public string Self { get; set; }
+        public string SelfExternalUrl { get; set; }
     }
 }

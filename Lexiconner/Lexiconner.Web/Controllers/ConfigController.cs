@@ -9,7 +9,9 @@ using Microsoft.Extensions.Options;
 
 namespace Lexiconner.Web.Controllers
 {
-    public class ConfigController : Controller
+    [ApiController]
+    [Route("api/v1/[controller]")]
+    public class ConfigController : ApiControllerBase
     {
         private readonly ApplicationClientSettings _settings;
 
@@ -20,7 +22,7 @@ namespace Lexiconner.Web.Controllers
 
         public IActionResult Index()
         {
-            return Json(_settings);
+            return BaseResponse(_settings);
         }
     }
 }

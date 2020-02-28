@@ -71,11 +71,15 @@ namespace Lexiconner.Api.Services
 
             var result = new PaginationResponseDto<StudyItemEntity>
             {
-                TotalCount = total,
-                ReturnedCount = items.Count(),
-                Offset = offset,
-                Limit = limit,
+              
                 Items = items,
+                Pagination = new PaginationInfoDto()
+                {
+                    TotalCount = total,
+                    ReturnedCount = items.Count(),
+                    Offset = offset,
+                    Limit = limit,
+                }
             };
 
             return result;
