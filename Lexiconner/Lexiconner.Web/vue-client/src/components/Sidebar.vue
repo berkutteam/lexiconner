@@ -25,7 +25,7 @@
       </div>
 
       <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
-        <router-link v-bind:to="{ name: 'study-items'}" class="sidebar-link">Study items</router-link>
+        <router-link v-bind:to="{ name: 'study-items-dashboard'}" class="sidebar-link">Study items</router-link>
       </div>
 
       <!-- <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">

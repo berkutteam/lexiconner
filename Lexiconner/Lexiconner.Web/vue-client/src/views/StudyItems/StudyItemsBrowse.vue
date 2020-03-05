@@ -120,7 +120,7 @@ import LoadingButton from '@/components/LoadingButton';
 import PaginationWrapper from '@/components/PaginationWrapper';
 
 export default {
-    name: 'study-items',
+    name: 'study-items-browse',
     components: {
         RowLoader,
         // LoadingButton,

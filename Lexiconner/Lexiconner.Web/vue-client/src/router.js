@@ -8,7 +8,11 @@ import TermsOfUse from './views/TermsOfUse.vue';
 import Login from './views/Login.vue';
 import Register from './views/Register.vue';
 import Logout from './views/Logout.vue';
-import StudyItems from './views/StudyItems.vue';
+
+import StudyItemsDashboard from './views/StudyItems/StudyItemsDashboard.vue';
+import StudyItemsBrowse from './views/StudyItems/StudyItemsBrowse.vue';
+import StudyItemsLearnCards from './views/StudyItems/StudyItemsLearnCards.vue';
+
 import Dashboard from './views/Dashboard.vue';
 import DashboardHome from './views/Dashboard/Home.vue';
 import DashboardGateways from './views/Dashboard/Gateways.vue';
@@ -137,12 +141,39 @@ export default new Router({
             meta: { layout: 'no-sidebar' },
         },
         {
-            path: '/study-items',
-            name: 'study-items',
-            component: StudyItems,
+            path: '/study-items-dashboard',
+            name: 'study-items-dashboard',
+            component: StudyItemsDashboard,
             props: true,
             meta: { layout: 'default' },
+            beforeEnter: async (to, from, next) => {
+                await waitAppInitialization({ to, from, next });
+                checkAuthenticated({ to, from, next });
+            },
         },
+        {
+            path: '/study-items/browse',
+            name: 'study-items-browse',
+            component: StudyItemsBrowse,
+            props: true,
+            meta: { layout: 'default' },
+            beforeEnter: async (to, from, next) => {
+                await waitAppInitialization({ to, from, next });
+                checkAuthenticated({ to, from, next });
+            },
+        },
+        {
+            path: '/study-items/learn/cards',
+            name: 'study-items-learn-cards',
+            component: StudyItemsLearnCards,
+            props: true,
+            meta: { layout: 'default' },
+            beforeEnter: async (to, from, next) => {
+                await waitAppInitialization({ to, from, next });
+                checkAuthenticated({ to, from, next });
+            },
+        },
+
         {
             path: '/dashboard',
             name: 'dashboard',
