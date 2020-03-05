@@ -253,60 +253,47 @@ class AuthService {
      * - <identity-url>/connect/token to get tokens
      * - <identity-url>/connect/userinfo to user claims
      */
-    refreshTokens({withFullscreenLoader = false} = {}) {
+    async refreshTokens({withFullscreenLoader = false} = {}) {
         let self = this;
-        return new Promise(async (resolve, reject) => {
-            if(withFullscreenLoader) {
-                Vue.appFullscreenLoader({
-                    isVisible: true,
-                    title: 'Updating your profile info...',
-                });
-            }
+        if(withFullscreenLoader) {
+            Vue.appFullscreenLoader({
+                isVisible: true,
+                title: 'Updating your profile info...',
+            });
+        }
 
-            let isAuthenticated = await this.isAuthenticated();
-            if(isAuthenticated) {
-                this.userManager.signinSilent().then(async (user) => {
-                    console.log("AuthService:.refreshTokens: Silent token renewal successful. ", user);
+        let isAuthenticated = await this.isAuthenticated();
+        if(isAuthenticated) {
+            try {
+                let user = await this.userManager.signinSilent();
+                
+                console.log("AuthService:.refreshTokens: Silent token renewal successful. ", user);
 
-                    // manually update profile with the new claims
-                    // (profile isn't updated after token refresh)
-                    let nextClaims = await self.userInfoService.getClaims(user.access_token)
+                // manually update profile with the new claims
+                // (profile isn't updated after token refresh)
+                let nextClaims = await self.userInfoService.getClaims(user.access_token)
 
-                    console.log("AuthService:.refreshTokens: user.profile", user.profile);
-                    console.log("AuthService:.refreshTokens: nextClaims", nextClaims);
-                    user.profile = {
-                        ...user.profile,
-                        ...nextClaims,
-                        'test': 'test',
-                    };
-                    self.userManager.storeUser(user);
+                console.log("AuthService:.refreshTokens: user.profile", user.profile);
+                console.log("AuthService:.refreshTokens: nextClaims", nextClaims);
+                user.profile = {
+                    ...user.profile,
+                    ...nextClaims,
+                    'test': 'test',
+                };
+                self.userManager.storeUser(user);
 
-                    // reload user
-                    await self.getUser();
-                    // self.userManager.events._raiseUserLoaded();
+                // reload user
+                await self.getUser();
+                // self.userManager.events._raiseUserLoaded();
 
-                    if(withFullscreenLoader) {
-                        Vue.appFullscreenLoader({
-                            isVisible: false,
-                        });
-                    }
-
-                    resolve();
-                }, err => {
-                    console.error("AuthService:.refreshTokens: Error from signinSilent:", err);
-                    this.userManager.events._raiseSilentRenewError(err);
-
-                    if(withFullscreenLoader) {
-                        Vue.appFullscreenLoader({
-                            isVisible: false,
-                        });
-                    }
-
-                    reject();
-                });
-            }
-            else {
-                console.error("AuthService:.refreshTokens: Can't refresh token. User isn't authenticated.");
+                if(withFullscreenLoader) {
+                    Vue.appFullscreenLoader({
+                        isVisible: false,
+                    });
+                }
+            } catch(err) {
+                console.error("AuthService:.refreshTokens: Error from signinSilent:", err);
+                this.userManager.events._raiseSilentRenewError(err);
 
                 if(withFullscreenLoader) {
                     Vue.appFullscreenLoader({
@@ -314,9 +301,21 @@ class AuthService {
                     });
                 }
 
-                reject();
+                throw err;
             }
-        });
+        }
+        else {
+            let msg = "AuthService:.refreshTokens: Can't refresh token. User isn't authenticated.";
+            console.error(msg);
+
+            if(withFullscreenLoader) {
+                Vue.appFullscreenLoader({
+                    isVisible: false,
+                });
+            }
+
+            throw new Error(msg);
+        }
     }
 }
 

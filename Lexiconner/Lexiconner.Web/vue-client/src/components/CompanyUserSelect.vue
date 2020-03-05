@@ -30,6 +30,7 @@ import authService from '@/services/authService';
 import notification from '@/utils/notification';
 import RowLoader from '@/components/loaders/RowLoader';
 import LoadingButton from '@/components/LoadingButton';
+import _ from 'lodash';
 
 export default {
     name: 'company-user-select',
@@ -66,8 +67,8 @@ export default {
         },
     },
     components: {
-        RowLoader,
-        LoadingButton,
+        // RowLoader,
+        // LoadingButton,
     },
     data: function() {
         return {

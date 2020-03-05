@@ -40,8 +40,8 @@ export default {
         },
     },
     components: {
-        RowLoader,
-        LoadingButton,
+        // RowLoader,
+        // LoadingButton,
     },
     data: function() {
         return {

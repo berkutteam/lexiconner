@@ -93,7 +93,7 @@ export default {
                 if(nextValue && !this.isUserTimeZoneSet(nextValue)) {
                     console.log('Auto detected timezone: ', this.timezoneDetected);
 
-                    if(!!this.timezoneDetected) {
+                    if(this.timezoneDetected) {
                         // modal timeout
                         setTimeout(() => {
                             this.showModal();
@@ -134,7 +134,7 @@ export default {
                     this.$modal.hide('user-timezone-confirm');
                 }).catch(err => {
                     console.error(err);
-                    notification.showErrorIfServerErrorResponseOrDefaultError(err);
+                    notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
                 });
             } else {
                 this.$modal.hide('user-timezone-confirm');

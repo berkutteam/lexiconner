@@ -65,7 +65,7 @@ export default {
     props: {
     },
     components: {
-        RowLoader,
+        // RowLoader,
         LoadingButton,
     },
     data: function() {
