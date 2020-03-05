@@ -143,7 +143,7 @@ export default {
             return `${option.name || 'No name'} (${option.email})`;
         },
         onInput: function(value, id) {
-            // tell parent that calue was changed and it can update its v-model property
+            // tell parent that value was changed and it can update its v-model property
             // value is user
             this.$emit('input', value.id);
         },

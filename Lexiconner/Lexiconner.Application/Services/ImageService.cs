@@ -2,6 +2,7 @@
 using Lexiconner.Application.ApiClients.Dtos;
 using Lexiconner.Application.Exceptions;
 using Lexiconner.Application.ImportAndExport;
+using Lexiconner.Domain.Config;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.Persistence.Cache;
@@ -94,7 +95,8 @@ namespace Lexiconner.Application.Services
                         };
                     }
 
-                    if (detectLanguageResult.Languages.Any())
+                    //when lang is undefined - don't use it
+                    if (!detectLanguageResult.IsUndefinedLanguage && detectLanguageResult.Languages.Any())
                     {
                         var lang = detectLanguageResult.Languages.Where(x => x.Confidence >= 0.5).FirstOrDefault();
                         if(lang != null)
@@ -164,8 +166,11 @@ namespace Lexiconner.Application.Services
                         imageQueryEn = translateResult.Translations.First().TranslatedText;
                     }
                 }
-               
-
+                else
+                {
+                    // en already
+                    imageQueryEn = imageQuery;
+                }
 
                 // make contextual search
                 if (!String.IsNullOrEmpty(imageQueryEn))

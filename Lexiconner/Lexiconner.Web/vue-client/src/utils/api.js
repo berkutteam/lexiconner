@@ -232,6 +232,10 @@ class API {
             //     return axiosRequest({ url: buildUrl(url, `enums`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             // },
 
+            getLanguages() {
+                return axiosRequest({ url: buildUrl(url, `languages`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+
             // getTermsOfUse() {
             //     return axiosRequest({ url: buildUrl(url, `referenceinformation/terms-of-use`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             // },

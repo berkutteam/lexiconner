@@ -1,5 +1,7 @@
 ﻿using Lexiconner.Api.DTOs;
+using Lexiconner.Api.DTOs.StudyItems;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
+using Lexiconner.Api.Mappers;
 using Lexiconner.Api.Models;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Attributes;
@@ -20,7 +22,7 @@ namespace Lexiconner.Api.Services
 {
     public interface IStudyItemsService
     {
-        Task<PaginationResponseDto<StudyItemEntity>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null);
+        Task<PaginationResponseDto<StudyItemDto>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null);
 
         Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId);
         Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, int limit);
@@ -46,7 +48,7 @@ namespace Lexiconner.Api.Services
 
         #region Study items
 
-        public async Task<PaginationResponseDto<StudyItemEntity>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null)
+        public async Task<PaginationResponseDto<StudyItemDto>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null)
         {
             var predicate = PredicateBuilder.New<StudyItemEntity>(x => x.UserId == userId);
 
@@ -69,10 +71,10 @@ namespace Lexiconner.Api.Services
             var total = await totalTask;
             var items = await itemsTask;
 
-            var result = new PaginationResponseDto<StudyItemEntity>
+            var result = new PaginationResponseDto<StudyItemDto>
             {
               
-                Items = items,
+                Items = CustomMapper.MapToDto(items),
                 Pagination = new PaginationInfoDto()
                 {
                     TotalCount = total,

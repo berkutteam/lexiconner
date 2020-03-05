@@ -15,19 +15,22 @@ export default new Vuex.Store({
             // <storeType>: bool
         },
 
-        // contains enums elements that is loaded from server
-        // E.g. {'measurementUnit': ['none','celsius','fahrenheit'],}
-        enums: null,
-
         // app config from server
         config: {
             clientAuth: null,
             urls: null,
         },
 
+        // contains enums elements that is loaded from server
+        // E.g. {'measurementUnit': ['none','celsius','fahrenheit'],}
+        enums: null,
+
         termsOfUse: null,
         countries: null,
+
+        // list of language DTO
         languages: null,
+        
         timeZones: null,
 
         auth: {
@@ -81,6 +84,7 @@ export default new Vuex.Store({
         myCompanyInvitations: null,
 
         // paginationResult (store only current page)
+        // {items: [], pagination: {}}
         studyItemsPaginationResult: null,
 
         nav: {
@@ -127,17 +131,29 @@ export default new Vuex.Store({
             };
         },
 
-        [storeTypes.ENUMS_SET](state, payload) {
-            let { data } = payload;
-            state.enums = data;
-        },
-
+      
         //#region Config
 
         [storeTypes.CONFIG_SET](state, payload) {
             let { config } = payload;
             state.config = config;
         },
+
+        //#endregion
+
+
+        //#region Reference info
+
+        // [storeTypes.ENUMS_SET](state, payload) {
+        //     let { data } = payload;
+        //     state.enums = data;
+        // },
+
+        [storeTypes.LANGUAGES_SET](state, payload) {
+            let { data } = payload;
+            state.languages = data;
+        },
+
 
         //#endregion
 
@@ -200,15 +216,11 @@ export default new Vuex.Store({
             let { data } = payload;
             state.studyItemsPaginationResult = data;
         },
-
-        //#endregion
-
-
-        //#region Nav
-
-        [storeTypes.STUDY_ITEMS_LOAD](state, payload) {
-            let { isVisible } = payload;
-            state.nav.isVisible = isVisible;
+        [storeTypes.STUDY_ITEMS_CREATE_SET](state, payload) {
+            let { data } = payload;
+            if(state.studyItemsPaginationResult !== null) {
+                state.studyItemsPaginationResult.items.unshift(data);
+            }
         },
 
         //#endregion
@@ -237,30 +249,6 @@ export default new Vuex.Store({
         //#endregion
     },
     actions: {
-        [storeTypes.ENUMS_LOAD](context) {
-            let { commit, dispatch, getters } = context;
-            commit(storeTypes.LOADING_SET, {
-                target: storeTypes.ENUMS_LOAD,
-                loading: true,
-            });
-            return api.accountManager().getEnums().then(({ data, ok }) => {
-                commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.ENUMS_LOAD,
-                    loading: false,
-                });
-                commit(storeTypes.ENUMS_SET, {
-                    data: data
-                });
-                return data;
-            }).catch(err => {
-                commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.ENUMS_LOAD,
-                    loading: false,
-                });
-                throw err;
-            });
-        },
-
         //#region Config
 
         [storeTypes.CONFIG_LOAD](context) {
@@ -288,6 +276,60 @@ export default new Vuex.Store({
         },
 
         //#endregion
+
+
+        //#region Reference info
+
+        // [storeTypes.ENUMS_LOAD](context) {
+        //     let { commit, dispatch, getters } = context;
+        //     commit(storeTypes.LOADING_SET, {
+        //         target: storeTypes.ENUMS_LOAD,
+        //         loading: true,
+        //     });
+        //     return api.accountManager().getEnums().then(({ data, ok }) => {
+        //         commit(storeTypes.LOADING_SET, {
+        //             target: storeTypes.ENUMS_LOAD,
+        //             loading: false,
+        //         });
+        //         commit(storeTypes.ENUMS_SET, {
+        //             data: data
+        //         });
+        //         return data;
+        //     }).catch(err => {
+        //         commit(storeTypes.LOADING_SET, {
+        //             target: storeTypes.ENUMS_LOAD,
+        //             loading: false,
+        //         });
+        //         throw err;
+        //     });
+        // },
+
+        [storeTypes.LANGUAGES_LOAD](context) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.LANGUAGES_LOAD,
+                loading: true,
+            });
+            return api.webApi().getLanguages().then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.LANGUAGES_LOAD,
+                    loading: false,
+                });
+                commit(storeTypes.LANGUAGES_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.LANGUAGES_LOAD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        //#endregion
+
 
         //#region Auth
 
@@ -440,6 +482,30 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEMS_LOAD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        [storeTypes.STUDY_ITEM_CREATE](context, {data}) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_CREATE,
+                loading: true,
+            });
+            return api.webApi().createStudyItem({data}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_CREATE,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEMS_CREATE_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_CREATE,
                     loading: false,
                 });
                 throw err;

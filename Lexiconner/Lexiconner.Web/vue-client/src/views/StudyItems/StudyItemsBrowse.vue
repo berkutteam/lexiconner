@@ -6,24 +6,37 @@
 
                 <div v-if="studyItems" class="study-items-wrapper">
                     <h5 class="mb-3">Study items:</h5>
-                    <div class="btn-group mb-3" role="group" aria-label="Basic example">
-                        <button 
-                            v-on:click="toggleView" 
-                            v-bind:class="{'btn-primary': privateState.currentView === 'list', 'btn-secondary' : privateState.currentView !== 'list'}"
-                            type="button" 
-                            class="btn"
-                        >
-                            <i class="fas fa-list"></i>
-                        </button>
-                        <button 
-                            v-on:click="toggleView" 
-                            v-bind:class="{'btn-primary': privateState.currentView === 'cards', 'btn-secondary' : privateState.currentView !== 'cards'}"
-                            type="button" 
-                            class="btn"
-                        >
-                            <i class="fas fa-th"></i>
-                        </button>
+                    
+                    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group mr-2" role="group" aria-label="View toggle">
+                            <button 
+                                v-on:click="toggleView" 
+                                v-bind:class="{'btn-primary': privateState.currentView === 'list', 'btn-secondary' : privateState.currentView !== 'list'}"
+                                type="button" 
+                                class="btn"
+                            >
+                                <i class="fas fa-list"></i>
+                            </button>
+                            <button 
+                                v-on:click="toggleView" 
+                                v-bind:class="{'btn-primary': privateState.currentView === 'cards', 'btn-secondary' : privateState.currentView !== 'cards'}"
+                                type="button" 
+                                class="btn"
+                            >
+                                <i class="fas fa-th"></i>
+                            </button>
+                        </div>
+                        <div class="btn-group mr-2" role="group" aria-label="Create a new item">
+                            <button 
+                                v-on:click="onCreateStudyItem" 
+                                type="button" 
+                                class="btn btn-success"
+                            >
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
                     </div>
+                    
                     <div>
                         <pagination-wrapper
                             v-bind:paginationResult="sharedState.studyItemsPaginationResult"
@@ -94,7 +107,7 @@
                                             <span
                                                 v-for="(tag) in item.tags"
                                                 v-bind:key="tag"
-                                                class="badge badge-secondary"
+                                                class="badge badge-secondary mr-1"
                                             >{{tag}}</span>
                                         </div>
                                     </div>
@@ -103,6 +116,63 @@
                         </pagination-wrapper>
                     </div>
                 </div>
+
+                <modal 
+                    name="create-study-item" 
+                    height="auto"
+                    width="450px"
+                    v-bind:classes="['v--modal', 'v--modal-box', 'v--modal-box--overflow-visible', 'v--modal-box--sm-fullwidth']"
+                    v-bind:clickToClose="false"
+                >
+                    <div class="app-modal">
+                        <div class="app-modal-header">
+                            <div class="app-modal-title">Create item</div>
+                            <div v-on:click="$modal.hide('create-study-item')" class="app-modal-close">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="app-modal-content">
+                            <form v-on:submit.prevent="createStudyItem()">
+                                <div class="form-group">
+                                    <label for="studyItemModel__title">Title</label>
+                                    <input v-model="privateState.studyItemModel.title" type="text" class="form-control" id="studyItemModel__title" placeholder="Title" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="studyItemModel__description">Description</label>
+                                    <textarea v-model="privateState.studyItemModel.description" type="text" class="form-control" id="studyItemModel__description" placeholder="Description" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="studyItemModel__exampleText">Example text</label>
+                                    <textarea v-model="privateState.studyItemModel.exampleText" type="text" class="form-control" id="studyItemModel__exampleText" placeholder="Example text" />
+                                </div>
+                                <div class="form-group form-check">
+                                    <input v-model="privateState.studyItemModel.isFavourite" class="form-check-input" type="checkbox" id="studyItemModel__isFavourite">
+                                    <label class="form-check-label" for="studyItemModel__isFavourite">
+                                        Favourite
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Language</label>
+                                    <language-code-select
+                                        v-model="privateState.studyItemModel.languageCode"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Tags</label>
+                                    <tags-multiselect 
+                                        v-model="privateState.studyItemModel.tags" 
+                                    ></tags-multiselect>
+                                </div>
+                                <loading-button 
+                                    type="submit"
+                                    v-bind:loading="sharedState.loading[privateState.storeTypes.STUDY_ITEM_CREATE]"
+                                    class="btn btn-outline-success btn-block"
+                                >Create</loading-button>
+                            </form>
+                        </div>
+                    </div>
+                </modal>
             </div>
         </div>
     </div>
@@ -118,19 +188,35 @@ import datetimeUtil from '@/utils/datetime';
 import RowLoader from '@/components/loaders/RowLoader';
 import LoadingButton from '@/components/LoadingButton';
 import PaginationWrapper from '@/components/PaginationWrapper';
+import LanguageCodeSelect from '@/components/LanguageCodeSelect';
+import TagsMultiselect from '@/components/TagsMultiselect';
+
+const studyItemModelDefault = {
+    title: null,
+    description: null,
+    exampleText: null,
+    isFavourite: false,
+    languageCode: "en",
+    tags: [],
+};
 
 export default {
     name: 'study-items-browse',
     components: {
         RowLoader,
-        // LoadingButton,
+        LoadingButton,
         PaginationWrapper,
+        LanguageCodeSelect,
+        TagsMultiselect,
     },
     data: function() {
         return {
             privateState: {
                 storeTypes: storeTypes,
                 currentView: 'list', // ['list', 'cards']
+                studyItemModel: {
+                    ...studyItemModelDefault,
+                },
             },
         };
     },
@@ -167,6 +253,39 @@ export default {
         },
         toggleView: function() {
             this.privateState.currentView = this.privateState.currentView === 'list' ? 'cards' : 'list';
+        },
+        onCreateStudyItem: function() {
+            this.$modal.show('create-study-item');
+        },
+        createStudyItem: function() {
+            this.$store.dispatch(storeTypes.STUDY_ITEM_CREATE, {
+                data: {
+                    title: this.privateState.studyItemModel.title,
+                    description: this.privateState.studyItemModel.description,
+                    exampleText: this.privateState.studyItemModel.exampleText,
+                    isFavourite: this.privateState.studyItemModel.isFavourite,
+                    languageCode: this.privateState.studyItemModel.languageCode,
+                    tags: this.privateState.studyItemModel.tags,
+                },
+            }).then(() => {
+                 this.$notify({
+                    group: 'app',
+                    type: 'success',
+                    title: `Item '${this.privateState.studyItemModel.title}' has been created!`,
+                    text: '',
+                    duration: 5000,
+                });
+
+                this.$modal.hide('create-study-item');
+
+                // reset
+                this.privateState.studyItemModel = {
+                    ...studyItemModelDefault,
+                };
+            }).catch(err => {
+                console.error(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            });
         },
     },
 }

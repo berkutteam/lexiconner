@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Lexiconner.Domain.Config;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Lexiconner.Application.ApiClients.Dtos
@@ -43,6 +45,8 @@ namespace Lexiconner.Application.ApiClients.Dtos
         /// </summary>
         [JsonProperty("languages")]
         public List<GoogleTranslateDetectLanguageResponseItemDto> Languages { get; set; }
+
+        public bool IsUndefinedLanguage => Languages.Count == 1 && Languages.Any(x => x.LanguageCode == LanguageConfig.UndefinedLanguageCode && x.Confidence.ToString() == "1");
 
         public class GoogleTranslateDetectLanguageResponseItemDto
         {
