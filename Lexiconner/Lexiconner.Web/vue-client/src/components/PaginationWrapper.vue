@@ -1,9 +1,19 @@
 <template>
-     <div>
+     <div class="app-pagination-wrapper">
          <div v-bind:id="scrollTopElId"></div>
+
+        <!-- Go bottom -->
+        <div v-if="showGoToButtons" v-on:click="scrollBottom" class="scroll-to-button">
+            <i class="fas fa-angle-double-down"></i>
+        </div> 
 
          <!-- Content -->
          <slot/>
+
+        <!-- Go up -->
+        <div v-if="showGoToButtons" v-on:click="scrollTop" class="scroll-to-button">
+            <i class="fas fa-angle-double-up"></i>
+        </div> 
 
          <!-- Pagination -->
          <div v-if="pageCount !== 0" class="d-flex justify-content-center mt-4">
@@ -52,6 +62,11 @@ export default {
         paginationResult: Object, // must return promise
         loadItemsF: Function, // required args: {offset, limit}
         onPageChanged: Function,
+        showGoToButtons: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
         // loading: Boolean,
     },
     components: {
@@ -122,7 +137,13 @@ export default {
         scrollTo(direction = 'top') {
             let elSelector = direction === 'top' ? `#${this.scrollTopElId}` : `#${this.scrollBottomElId}`;
             this.$scrollTo(elSelector);
-        }
+        },
+        scrollBottom: function() {
+            this.$scrollTo(`#${this.scrollBottomElId}`);
+        },
+        scrollTop: function() {
+            this.$scrollTo(`#${this.scrollTopElId}`);
+        },
     },
 }
 </script>

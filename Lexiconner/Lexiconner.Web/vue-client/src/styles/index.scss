@@ -12,6 +12,14 @@
 
 //#region Variables
 
+// Main colors according to 
+// https://colorhunt.co/palette/171392
+$main-color1: #142850;
+$main-color2: #27496d;
+$main-color3: #0c7b93;
+$main-color4: #00a8cc;
+
+// Semantic colors
 $backgroung-color-main: #FBFBFB;
 $border-color-gray: #EDEDED;
 
@@ -178,8 +186,8 @@ a {
 }
 
 .app-sidebar {
-    $app-sidebar-bg: #0099b1;
-    $app-sidebar-bg-dark: #028498;
+    $app-sidebar-bg-dark: $main-color1;
+    $app-sidebar-bg: $main-color2;
 
     min-width: 250px;
     max-width: 250px;
@@ -437,6 +445,21 @@ a {
     // color: #444;
 }
 
+.app-pagination-wrapper {
+    .scroll-to-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 0;
+        margin: 0.5rem 0;
+        font-size: 1rem;
+        cursor: pointer;
+
+        &:hover, &:active, &:focus {
+            background-color: rgba(165, 165, 165, 0.22);
+        }
+    }
+}
 .app-pagination {
     display: inline-block;
     padding-left: 0;
@@ -584,5 +607,49 @@ a {
 
     .company-select {
         width: 400px;
+    }
+}
+
+.study-items-wrapper {
+    .study-items-list {
+        // display: flex;
+        // flex-direction: column;
+        // flex-wrap: nowrap;
+        // justify-content: start;
+        // align-items: start;
+
+        .study-item {
+        }
+    }
+    .study-items-card-list {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: start;
+        align-items: start;
+
+        .study-item-card {
+            width: 19.6%;
+            margin: 0 0 0.5% 0;
+
+            &:not(:nth-child(5n)) {
+                margin-right: 0.5%;
+            }
+
+            &:nth-last-child(-n + 5) {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .study-item-card {
+                width: 100%;
+                margin: 0 0 0 0 !important;
+
+                &:not(:last-child) {
+                    margin-bottom: 0.75rem !important;
+                }
+            }
+        }
     }
 }
