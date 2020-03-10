@@ -60,16 +60,16 @@
                                                 v-bind:key="tag"
                                                 class="badge badge-secondary mr-1"
                                             >{{tag}}</span>
-                                            <span>
-                                                 <i v-if="item.isFavourite" class="fas fa-star text-warning mr-1"></i>
+                                            <span v-on:click="onStudyItemFavoriteClick(item)" class="cursor-pointer">
+                                                <i v-if="item.isFavourite" class="fas fa-star text-warning"></i>
                                                 <i v-else class="far fa-star text-warning"></i>
                                             </span>
                                             <span class="ml-2 mr-2">|</span>
                                             <span>
-                                                <span v-on:click="onUpdateStudyItem(item.id)" class="badge badge-secondary mr-1">
+                                                <span v-on:click="onUpdateStudyItem(item.id)" class="badge badge-secondary mr-1 cursor-pointer">
                                                     <i class="fas fa-pencil-alt"></i>
                                                 </span>
-                                                <span v-on:click="onDeleteStudyItem(item.id)" class="badge badge-secondary">
+                                                <span v-on:click="onDeleteStudyItem(item.id)" class="badge badge-secondary cursor-pointer">
                                                     <i class="fas fa-times"></i>
                                                 </span>
                                             </span>
@@ -108,10 +108,6 @@
                                             <em>{{ item.exampleText }}</em>
                                         </div>
                                         <div class="card-text">
-                                            <span class="mr-1">
-                                                <i v-if="item.isFavourite" class="fas fa-star text-warning mr-1"></i>
-                                                <i v-else class="far fa-star text-warning"></i>
-                                            </span>
                                             <span class="badge badge-info mr-1">{{ item.languageCode }}</span>
                                             <span
                                                 v-for="(tag) in item.tags"
@@ -121,6 +117,10 @@
                                         </div>
                                     </div>
                                     <div class="card-bottom-controls">
+                                        <span v-on:click="onStudyItemFavoriteClick(item)" class="card-bottom-control-item">
+                                            <i v-if="item.isFavourite" class="fas fa-star text-warning"></i>
+                                            <i v-else class="far fa-star text-warning"></i>
+                                        </span>
                                         <span v-on:click="onUpdateStudyItem(item.id)" class="card-bottom-control-item">
                                             <i class="fas fa-pencil-alt"></i>
                                         </span>
@@ -290,6 +290,13 @@ export default {
                 this.deleteStudyItem(studyItemId);
             }
         },
+        onStudyItemFavoriteClick: function(studyItem) {
+            if(studyItem.isFavourite) {
+                this.deleteStudyItemFromFavourites(studyItem.id);
+            } else {
+                this.addStudyItemToFavourites(studyItem.id);
+            }
+        },
         createEditStudyItem: function(mode) {
             if(mode === 'create') {
                 this.createStudyItem();
@@ -365,6 +372,24 @@ export default {
                     // reload
                     this.loadStudyItems();
                 }
+            }).catch(err => {
+                console.error(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            });
+        },
+        addStudyItemToFavourites: function(studyItemId) {
+            this.$store.dispatch(storeTypes.STUDY_ITEM_ADD_TO_FAVOURITES, {
+                studyItemId: studyItemId,
+            }).then(() => {
+            }).catch(err => {
+                console.error(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            });
+        },
+        deleteStudyItemFromFavourites: function(studyItemId) {
+            this.$store.dispatch(storeTypes.STUDY_ITEM_DELETE_FROM_FAVOURITES, {
+                studyItemId: studyItemId,
+            }).then(() => {
             }).catch(err => {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);

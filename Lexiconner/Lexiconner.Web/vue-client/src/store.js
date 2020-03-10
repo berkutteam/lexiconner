@@ -240,6 +240,18 @@ export default new Vuex.Store({
             }
         },
 
+        [storeTypes.STUDY_ITEM_IS_FAVOURITE_SET](state, payload) {
+            let { studyItemId, isFavourite } = payload;
+            if(state.studyItemsPaginationResult !== null) {
+                state.studyItemsPaginationResult.items = state.studyItemsPaginationResult.items.map(x => {
+                    if(x.id === studyItemId) {
+                        return {...x, isFavourite: isFavourite};
+                    }
+                    return x;
+                });
+            }
+        },
+
         //#endregion
 
 
@@ -571,6 +583,55 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEM_DELETE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        [storeTypes.STUDY_ITEM_ADD_TO_FAVOURITES](context, {studyItemId}) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_ADD_TO_FAVOURITES,
+                loading: true,
+            });
+            return api.webApi().addStudyItemToFavourites({studyItemId}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_ADD_TO_FAVOURITES,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEM_IS_FAVOURITE_SET, {
+                    studyItemId: studyItemId,
+                    isFavourite: true,
+                });
+                // returns nothing
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_ADD_TO_FAVOURITES,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.STUDY_ITEM_DELETE_FROM_FAVOURITES](context, {studyItemId}) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_DELETE_FROM_FAVOURITES,
+                loading: true,
+            });
+            return api.webApi().deleteStudyItemFromFavourites({studyItemId}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_DELETE_FROM_FAVOURITES,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEM_IS_FAVOURITE_SET, {
+                    studyItemId: studyItemId,
+                    isFavourite: false,
+                });
+                // returns nothing
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_DELETE_FROM_FAVOURITES,
                     loading: false,
                 });
                 throw err;
