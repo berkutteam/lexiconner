@@ -70,10 +70,12 @@ async function main() {
         console.error(data);
     });
     child.on('close', async (code) => {
-        console.log(`child process exited with code ${code}`);
+        console.log(`child process exited with code '${code}'.`);
 
         if(code === 0 && publish) {
             await publishDistToWwwRoot(distPath, wwwrootPath);
+        } else if(code !== 0) {
+            throw new Error(`Build error. vue-cli exited with code '${code}'.`);
         }
     });
 }

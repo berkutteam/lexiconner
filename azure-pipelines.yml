@@ -37,13 +37,11 @@ steps:
     echo "#################### Building SPA projects... ####################"
     cd Lexiconner/Lexiconner.Web/vue-client
     npm install
-    ls
     npm run build_DevelopmentHeroku 
     echo "wwwroot files:"
-    #ls Lexiconner/Lexiconner.Web/wwwroot
+    ls Lexiconner/Lexiconner.Web/wwwroot
   displayName: 'build SPA'
 - script: |
-    echo "#################### Building project... ####################"
     docker build -f Lexiconner/Lexiconner.Web/Dockerfile.ci -t $(imageName3) .
     docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
     docker tag $(imageName3) registry.heroku.com/$(HEROKU_APP_NAME_WEB)/web
