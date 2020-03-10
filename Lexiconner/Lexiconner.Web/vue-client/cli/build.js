@@ -33,7 +33,18 @@ async function main() {
     });
 
     // run vue cli build
-    let commandPath = path.join('./node_modules/.bin/vue-cli-service.cmd'); // fix Unix/Windows separator (/ vs \)
+    
+    let commandName = '';
+    if(process.platform === 'win32') {
+        commandName ='vue-cli-service.cmd';
+    }
+    else if(process.platform === 'linux') {
+        commandName ='vue-cli-service';
+    }
+    else {
+        throw new Error(`Unsupported platform '${process.platform}'.`);
+    }
+    let commandPath = path.join(`./node_modules/.bin/${commandName}`); // fix Unix/Windows separator (/ vs \)
     let command = `${commandPath} build --mode=${mode}`;
 
     console.log('command: ', command);
