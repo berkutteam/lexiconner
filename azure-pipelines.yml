@@ -14,7 +14,13 @@ variables:
   imageName2: 'lexiconner/identity:$(build.buildId)'
   imageName3: 'lexiconner/web:$(build.buildId)'
 
+  
 steps:
+  # # use this only if specific version is required as it slows down deployment
+  # - task: NodeTool@0 
+  #   inputs:
+  #     versionSpec: '8.x'
+
 # - script: |
 #     docker build -f Lexiconner/Lexiconner.Api/Dockerfile.ci -t $(imageName1) .
 #     docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
@@ -32,6 +38,7 @@ steps:
     echo "#################### Building SPA projects... ####################"
     # use a sub-shell
     (cd Lexiconner/Lexiconner.Web/vue-client ; npm install; npm run build_DevelopmentHeroku)
+    ls Lexiconner/Lexiconner.Web/wwwroot
     printf "\n"
 
     echo "#################### Building project... ####################"
