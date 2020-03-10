@@ -35,6 +35,9 @@ steps:
 #   displayName: 'docker build Identity'
 - script: |
     echo "#################### Building SPA projects... ####################"
+    echo "Node version:"
+    node -v
+    
     cd Lexiconner/Lexiconner.Web/vue-client
     npm install
     npm run build_DevelopmentHeroku 
