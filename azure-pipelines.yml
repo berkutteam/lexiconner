@@ -21,18 +21,6 @@ steps:
   #   inputs:
   #     versionSpec: '8.x'
 
-# - script: |
-#     docker build -f Lexiconner/Lexiconner.Api/Dockerfile.ci -t $(imageName1) .
-#     docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
-#     docker tag $(imageName1) registry.heroku.com/$(HEROKU_APP_NAME_API)/web
-#     docker push registry.heroku.com/$HEROKU_APP_NAME_API/web           
-#   displayName: 'docker build Api'
-# - script: |
-#     docker build -f Lexiconner/Lexiconner.IdentityServer4/Dockerfile.ci -t $(imageName2) .
-#     docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
-#     docker tag $(imageName2) registry.heroku.com/$(HEROKU_APP_NAME_IDENTITY)/web
-#     docker push registry.heroku.com/$HEROKU_APP_NAME_IDENTITY/web           
-#   displayName: 'docker build Identity'
 - script: |
     echo "#################### Building SPA projects... ####################"
     echo "Node version:"
@@ -44,6 +32,18 @@ steps:
     echo "wwwroot files:"
     ls Lexiconner/Lexiconner.Web/wwwroot
   displayName: 'build SPA'
+- script: |
+    docker build -f Lexiconner/Lexiconner.Api/Dockerfile.ci -t $(imageName1) .
+    docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
+    docker tag $(imageName1) registry.heroku.com/$(HEROKU_APP_NAME_API)/web
+    docker push registry.heroku.com/$HEROKU_APP_NAME_API/web           
+  displayName: 'docker build Api'
+- script: |
+    docker build -f Lexiconner/Lexiconner.IdentityServer4/Dockerfile.ci -t $(imageName2) .
+    docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
+    docker tag $(imageName2) registry.heroku.com/$(HEROKU_APP_NAME_IDENTITY)/web
+    docker push registry.heroku.com/$HEROKU_APP_NAME_IDENTITY/web           
+  displayName: 'docker build Identity'
 - script: |
     docker build -f Lexiconner/Lexiconner.Web/Dockerfile.ci -t $(imageName3) .
     docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
