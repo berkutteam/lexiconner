@@ -5,8 +5,10 @@ using System.Net;
 using System.Threading.Tasks;
 using Lexiconner.Api.DTOs;
 using Lexiconner.Api.DTOs.StudyItems;
+using Lexiconner.Api.Mappers;
 using Lexiconner.Api.Models;
 using Lexiconner.Api.Services;
+using Lexiconner.Application.Exceptions;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
@@ -47,7 +49,6 @@ namespace Lexiconner.Api.Controllers.V2
         public async Task<IActionResult> GetAll([FromQuery] StudyItemsRequestDto dto)
         {
             var searchFilter = new StudyItemsSearchFilter(dto.Search, dto.IsFavourite);
-
             var result = await _studyItemsService.GetAllStudyItemsAsync(GetUserId(), dto.Offset, dto.Limit, searchFilter);
             return BaseResponse(result);
         }
@@ -60,8 +61,9 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Get([FromRoute]string id)
         {
-            var result = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
-            return BaseResponse(result);
+            var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
+            var dto = CustomMapper.MapToDto(entity);
+            return BaseResponse(dto);
         }
 
         [HttpPost]
@@ -70,31 +72,37 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> Post([FromBody] StudyItemEntity data)
+        public async Task<IActionResult> Create([FromBody] StudyItemCreateDto data)
         {
-            data.UserId = GetUserId();
+            var entity = CustomMapper.MapToEntity(data);
+
+            entity.UserId = GetUserId();
 
             // set image
-            var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: null, data.Title);
+            var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: entity.LanguageCode, entity.Title);
 
             if (imagesResult.Any())
             {
                 // try to find suitable image
                 var image = _imageService.GetSuitableImages(imagesResult);
-                data.Image = new StudyItemImageEntity
+                if (image != null)
                 {
-                    Url = image.Url,
-                    Height = image.Height,
-                    Width = image.Width,
-                    Thumbnail = image.Thumbnail,
-                    ThumbnailHeight = image.ThumbnailHeight,
-                    ThumbnailWidth = image.ThumbnailWidth,
-                    Base64Encoding = image.Base64Encoding,
-                };
+                    entity.Image = new StudyItemImageEntity
+                    {
+                        Url = image.Url,
+                        Height = image.Height,
+                        Width = image.Width,
+                        Thumbnail = image.Thumbnail,
+                        ThumbnailHeight = image.ThumbnailHeight,
+                        ThumbnailWidth = image.ThumbnailWidth,
+                        Base64Encoding = image.Base64Encoding,
+                    };
+                }
             }
 
-            await _dataRepository.AddAsync(data);
-            return BaseResponse(data);
+            await _dataRepository.AddAsync(entity);
+            var dto = CustomMapper.MapToDto(entity);
+            return BaseResponse(dto);
         }
 
         [HttpPut("{id}")]
@@ -103,32 +111,54 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> Put([FromRoute]string id, [FromBody] StudyItemEntity data)
+        public async Task<IActionResult> Put([FromRoute]string id, [FromBody] StudyItemUpdateDto data)
         {
-            data.Id = id;
-            data.UserId = GetUserId();
-
-            // set image
-            var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: null, data.Title);
-
-            if (imagesResult.Any())
+            var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id);
+            if(entity.UserId != GetUserId())
             {
-                // try to find suitable image
-                var image = _imageService.GetSuitableImages(imagesResult);
-                data.Image = new StudyItemImageEntity
-                {
-                    Url = image.Url,
-                    Height = image.Height,
-                    Width = image.Width,
-                    Thumbnail = image.Thumbnail,
-                    ThumbnailHeight = image.ThumbnailHeight,
-                    ThumbnailWidth = image.ThumbnailWidth,
-                    Base64Encoding = image.Base64Encoding,
-                };
+                throw new AccessDeniedException("Can't edit the item that you don't own!");
             }
 
-            await _dataRepository.UpdateAsync(data);
-            return BaseResponse(data);
+            // update
+            if (entity.Title != data.Title)
+            {
+                entity.Image = null;
+            }
+            entity.Title = data.Title;
+            entity.Description = data.Description;
+            entity.ExampleText = data.ExampleText;
+            entity.IsFavourite = data.IsFavourite;
+            entity.LanguageCode = data.LanguageCode;
+            entity.Tags = data.Tags;
+
+            // set image
+            if (entity.Image == null)
+            {
+                var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: entity.LanguageCode, entity.Title);
+
+                if (imagesResult.Any())
+                {
+                    // try to find suitable image
+                    var image = _imageService.GetSuitableImages(imagesResult);
+                    if(image != null)
+                    {
+                        entity.Image = new StudyItemImageEntity
+                        {
+                            Url = image.Url,
+                            Height = image.Height,
+                            Width = image.Width,
+                            Thumbnail = image.Thumbnail,
+                            ThumbnailHeight = image.ThumbnailHeight,
+                            ThumbnailWidth = image.ThumbnailWidth,
+                            Base64Encoding = image.Base64Encoding,
+                        };
+                    }
+                }
+            }
+
+            await _dataRepository.UpdateAsync(entity);
+            var dto = CustomMapper.MapToDto(entity);
+            return BaseResponse(dto);
         }
 
         [HttpDelete("{id}")]
@@ -140,6 +170,10 @@ namespace Lexiconner.Api.Controllers.V2
         public async Task<IActionResult> Delete([FromRoute]string id)
         {
             var existing = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
+            if(existing == null)
+            {
+                throw new NotFoundException();
+            }
             await _dataRepository.DeleteAsync<StudyItemEntity>(x => x.Id == existing.Id);
             return StatusCodeBaseResponse();
         }

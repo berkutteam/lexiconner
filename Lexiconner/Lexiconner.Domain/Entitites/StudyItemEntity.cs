@@ -21,12 +21,28 @@ namespace Lexiconner.Domain.Entitites
         public string Description { get; set; }
         public string ExampleText { get; set; }
         public bool IsFavourite { get; set; }
+
+        /// <summary>
+        /// ISO 639-1 two-letter code.
+        /// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+        /// https://developers.google.com/admin-sdk/directory/v1/languages
+        /// </summary>
         public string LanguageCode { get; set; }
 
         public List<string> Tags { get; set; }
 
         public StudyItemImageEntity Image { get; set; }
         public StudyItemTrainingInfoEntity TrainingInfo { get; set; }
+
+
+        #region Helper methods
+
+        //public void Update(StudyItemUpdateDto dto)
+        //{
+
+        //}
+
+        #endregion
 
     }
 

@@ -1,0 +1,57 @@
+﻿
+<!--This HTML file is the designated redirect_uri page once the user has logged into IdentityServer. 
+It will complete the OpenID Connect protocol sign-in handshake with IdentityServer. 
+The code for this is all provided by the UserManager class we used earlier. 
+Once the sign-in is complete, we can then redirect the user back to the main index.html page. 
+Add this code to complete the signin process-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title>Lexiconner</title>
+
+    <!-- FontAwesome5 -->
+    <link href="<%= BASE_URL %>lib/fontawesome-free-5.10.2-web/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- put styles here (css files load takes time) -->
+    <style>
+        .app-initial-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .app-initial-loader .loader {
+            font-size: 140px;
+            color: #13B1E8;
+            margin: 20px 0 0 0;
+        }
+    </style>
+    <div class="app-initial-loader">
+        <i class="fas fa-circle-notch fa-spin loader"></i>
+    </div>
+
+    <!-- <script src="lib/oidc-client.min.js"></script>
+    <script>
+        new Oidc.UserManager({ response_mode: "query" }).signinRedirectCallback().then(function (user) {
+            console.log('Callback: user ', user);
+            window.location = "<%= BASE_URL %>";
+        }).catch(function (e) {
+            console.error(e);
+            // TODO - handle error
+        });
+    </script> -->
+</body>
+</html>
