@@ -35,6 +35,7 @@ steps:
 #   displayName: 'docker build Identity'
 - script: |
     echo "#################### Building SPA projects... ####################"
+    cd Lexiconner/Lexiconner.Web/vue-client
     npm install
     npm run build_DevelopmentHeroku
     echo "wwwroot files:"
