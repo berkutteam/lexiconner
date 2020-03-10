@@ -261,7 +261,7 @@ namespace Lexiconner.Application.Services
         public ImageSearchResponseItemDto GetSuitableImages(List<ImageSearchResponseItemDto> imageResult)
         {
             const int preferredImageWidth = 600;
-            const int maxImageWidth = 800;
+            const int maxImageWidth = 1000;
 
             // try to find suitable image
             ImageSearchResponseDto.ImageSearchResponseItemDto image = null;

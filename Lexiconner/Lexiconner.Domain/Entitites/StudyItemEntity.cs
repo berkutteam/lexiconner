@@ -34,6 +34,16 @@ namespace Lexiconner.Domain.Entitites
         public StudyItemImageEntity Image { get; set; }
         public StudyItemTrainingInfoEntity TrainingInfo { get; set; }
 
+
+        #region Helper methods
+
+        //public void Update(StudyItemUpdateDto dto)
+        //{
+
+        //}
+
+        #endregion
+
     }
 
     public class StudyItemImageEntity : BaseEntity

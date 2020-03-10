@@ -64,6 +64,15 @@
                                                  <i v-if="item.isFavourite" class="fas fa-star text-warning mr-1"></i>
                                                 <i v-else class="far fa-star text-warning"></i>
                                             </span>
+                                            <span class="ml-2 mr-2">|</span>
+                                            <span>
+                                                <span v-on:click="onUpdateStudyItem(item.id)" class="badge badge-secondary mr-1">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                </span>
+                                                <span v-on:click="onDeleteStudyItem(item.id)" class="badge badge-secondary">
+                                                    <i class="fas fa-times"></i>
+                                                </span>
+                                            </span>
                                         </div>
                                     </div>
                                     <div>
@@ -111,6 +120,14 @@
                                             >{{tag}}</span>
                                         </div>
                                     </div>
+                                    <div class="card-bottom-controls">
+                                        <span v-on:click="onUpdateStudyItem(item.id)" class="card-bottom-control-item">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </span>
+                                        <span v-on:click="onDeleteStudyItem(item.id)" class="card-bottom-control-item">
+                                            <i class="fas fa-times"></i>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </pagination-wrapper>
@@ -118,7 +135,7 @@
                 </div>
 
                 <modal 
-                    name="create-study-item" 
+                    name="study-item-create-edit" 
                     height="auto"
                     width="450px"
                     v-bind:classes="['v--modal', 'v--modal-box', 'v--modal-box--overflow-visible', 'v--modal-box--sm-fullwidth']"
@@ -126,14 +143,17 @@
                 >
                     <div class="app-modal">
                         <div class="app-modal-header">
-                            <div class="app-modal-title">Create item</div>
-                            <div v-on:click="$modal.hide('create-study-item')" class="app-modal-close">
+                            <div class="app-modal-title">
+                                <span v-if="privateState.modalMode === 'create'">Create item</span>
+                                <span v-if="privateState.modalMode === 'edit'">Edit item</span>
+                            </div>
+                            <div v-on:click="$modal.hide('study-item-create-edit')" class="app-modal-close">
                                 <i class="fas fa-times"></i>
                             </div>
                         </div>
                         
                         <div class="app-modal-content">
-                            <form v-on:submit.prevent="createStudyItem()">
+                            <form v-on:submit.prevent="createEditStudyItem(privateState.modalMode)">
                                 <div class="form-group">
                                     <label for="studyItemModel__title">Title</label>
                                     <input v-model="privateState.studyItemModel.title" type="text" class="form-control" id="studyItemModel__title" placeholder="Title" />
@@ -166,9 +186,9 @@
                                 </div>
                                 <loading-button 
                                     type="submit"
-                                    v-bind:loading="sharedState.loading[privateState.storeTypes.STUDY_ITEM_CREATE]"
+                                    v-bind:loading="sharedState.loading[privateState.storeTypes.STUDY_ITEM_CREATE] || sharedState.loading[privateState.storeTypes.STUDY_ITEM_UPDATE]"
                                     class="btn btn-outline-success btn-block"
-                                >Create</loading-button>
+                                >Save</loading-button>
                             </form>
                         </div>
                     </div>
@@ -217,6 +237,7 @@ export default {
                 studyItemModel: {
                     ...studyItemModelDefault,
                 },
+                modalMode: 'create', // ['create', 'edit']
             },
         };
     },
@@ -230,7 +251,7 @@ export default {
         }),
     },
     created: async function() {
-        this.loadStudyItems({offset: 0, limit: 100});
+        this.loadStudyItems();
     },
     mounted: function() {
     },
@@ -240,7 +261,7 @@ export default {
     },
 
     methods: {
-        loadStudyItems: function({offset = 0, limit = 100} = {}) {
+        loadStudyItems: function({offset = 0, limit = 50} = {}) {
             return this.$store.dispatch(storeTypes.STUDY_ITEMS_LOAD, {
                 offset: offset, 
                 limit: limit, 
@@ -255,17 +276,31 @@ export default {
             this.privateState.currentView = this.privateState.currentView === 'list' ? 'cards' : 'list';
         },
         onCreateStudyItem: function() {
-            this.$modal.show('create-study-item');
+            this.privateState.modalMode = 'create';
+            this.$modal.show('study-item-create-edit');
+        },
+        onUpdateStudyItem: function(studyItemId) {
+            this.privateState.modalMode = 'edit';
+            let studyItem = this.studyItems.find(x => x.id === studyItemId);
+            this.privateState.studyItemModel = {id: studyItem.id, ...studyItem};
+            this.$modal.show('study-item-create-edit');
+        },
+        onDeleteStudyItem: function(studyItemId) {
+            if(confirm('Are you sure?')) {
+                this.deleteStudyItem(studyItemId);
+            }
+        },
+        createEditStudyItem: function(mode) {
+            if(mode === 'create') {
+                this.createStudyItem();
+            } else if(mode === 'edit') {
+                this.updateStudyItem();
+            }
         },
         createStudyItem: function() {
             this.$store.dispatch(storeTypes.STUDY_ITEM_CREATE, {
                 data: {
-                    title: this.privateState.studyItemModel.title,
-                    description: this.privateState.studyItemModel.description,
-                    exampleText: this.privateState.studyItemModel.exampleText,
-                    isFavourite: this.privateState.studyItemModel.isFavourite,
-                    languageCode: this.privateState.studyItemModel.languageCode,
-                    tags: this.privateState.studyItemModel.tags,
+                    ...this.privateState.studyItemModel,
                 },
             }).then(() => {
                  this.$notify({
@@ -276,12 +311,60 @@ export default {
                     duration: 5000,
                 });
 
-                this.$modal.hide('create-study-item');
+                this.$modal.hide('study-item-create-edit');
 
                 // reset
                 this.privateState.studyItemModel = {
                     ...studyItemModelDefault,
                 };
+            }).catch(err => {
+                console.error(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            });
+        },
+        updateStudyItem: function() {
+            this.$store.dispatch(storeTypes.STUDY_ITEM_UPDATE, {
+                studyItemId: this.privateState.studyItemModel.id,
+                data: {
+                    ...this.privateState.studyItemModel,
+                },
+            }).then(() => {
+                 this.$notify({
+                    group: 'app',
+                    type: 'success',
+                    title: `Item '${this.privateState.studyItemModel.title}' has been updated!`,
+                    text: '',
+                    duration: 5000,
+                });
+
+                this.$modal.hide('study-item-create-edit');
+
+                // reset
+                this.privateState.studyItemModel = {
+                    ...studyItemModelDefault,
+                };
+            }).catch(err => {
+                console.error(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            });
+        },
+        deleteStudyItem: function(studyItemId) {
+            this.$store.dispatch(storeTypes.STUDY_ITEM_DELETE, {
+                studyItemId: studyItemId,
+            }).then(() => {
+                 this.$notify({
+                    group: 'app',
+                    type: 'success',
+                    title: `Item has been deleted!`,
+                    text: '',
+                    duration: 5000,
+                });
+
+                const itemCountThresholdBeforeReload = 3;
+                if(this.studyItems.length <= itemCountThresholdBeforeReload) {
+                    // reload
+                    this.loadStudyItems();
+                }
             }).catch(err => {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);

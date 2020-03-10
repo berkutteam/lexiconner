@@ -621,6 +621,7 @@ a {
         .study-item {
         }
     }
+
     .study-items-card-list {
         display: flex;
         flex-direction: row;
@@ -638,6 +639,31 @@ a {
 
             &:nth-last-child(-n + 5) {
                 margin-bottom: 0;
+            }
+
+            .card-bottom-controls {
+                display: flex;
+                align-items: start;
+                justify-content: stretch;
+
+                .card-bottom-control-item {
+                    flex-grow: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    //padding: 0rem 1rem 1.25rem 1rem;
+                    height: 3rem;
+                    border-top: 1px solid $border-color-gray;
+                    cursor: pointer;
+
+                    &:hover, &:active, &:focus {
+                        background-color: rgba(165, 165, 165, 0.22);
+                    }
+
+                    &:not(:last-child) {
+                        border-right: 1px solid $border-color-gray;
+                    }
+                }
             }
         }
 

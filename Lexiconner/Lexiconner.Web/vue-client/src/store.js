@@ -219,7 +219,24 @@ export default new Vuex.Store({
         [storeTypes.STUDY_ITEMS_CREATE_SET](state, payload) {
             let { data } = payload;
             if(state.studyItemsPaginationResult !== null) {
-                state.studyItemsPaginationResult.items.unshift(data);
+                state.studyItemsPaginationResult.items.unshift({...data});
+            }
+        },
+        [storeTypes.STUDY_ITEM_UPDATE_SET](state, payload) {
+            let { data } = payload;
+            if(state.studyItemsPaginationResult !== null) {
+                state.studyItemsPaginationResult.items = state.studyItemsPaginationResult.items.map(x => {
+                    if(x.id === data.id) {
+                        return {...data};
+                    }
+                    return x;
+                });
+            }
+        },
+        [storeTypes.STUDY_ITEM_DELETE_SET](state, payload) {
+            let { studyItemId } = payload;
+            if(state.studyItemsPaginationResult !== null) {
+                state.studyItemsPaginationResult.items = state.studyItemsPaginationResult.items.filter(x => x.id !== studyItemId);
             }
         },
 
@@ -506,6 +523,54 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEM_CREATE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        [storeTypes.STUDY_ITEM_UPDATE](context, {studyItemId, data}) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_UPDATE,
+                loading: true,
+            });
+            return api.webApi().updateStudyItem({studyItemId, data}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_UPDATE,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEM_UPDATE_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_UPDATE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        [storeTypes.STUDY_ITEM_DELETE](context, {studyItemId}) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_DELETE,
+                loading: true,
+            });
+            return api.webApi().deleteStudyItem({studyItemId}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_DELETE,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEM_DELETE_SET, {
+                    studyItemId: studyItemId
+                });
+                // returns nothing
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_DELETE,
                     loading: false,
                 });
                 throw err;
