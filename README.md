@@ -41,6 +41,60 @@ The web process must listen for HTTP traffic on $PORT, which is set by Heroku. E
  - https://dev.azure.com (AzureDevOps)
 
 # Azure Dev Ops
-- Set env variables in format: $(name), because $name, ${name} doesn't work
+- Use env variables in format: $(name), because $name, ${name} doesn't work
 - Name variables in uppercase
 - In string use $(name) format in code $name
+- In YAML use $(name) format.
+
+## Overiview
+- Azure DevOps Pipeline: Builds Docker images and pushes them to registry.heroku.com. These steps are defined in `azure-pipelines.yml`.
+- Azure DevOps Release: Logins to heroku and puts Heroku app in a release mode.
+
+## Explained steps
+
+### Pipeline for Build
+
+Pipelines -> Pipelines -> New pipeline.
+
+Connect project repository from GitHub. `azure-pipelines.yml` is picked up automatically from repository root.
+
+Setup env varibles:
+- `HEROKU_USERNAME`
+- `HEROKU_API_KEY` (secret)
+- `HEROKU_APP_NAME_API`
+- `HEROKU_APP_NAME_IDENTITY`
+- `HEROKU_APP_NAME_WEB`
+
+In `azure-pipelines.yml` setup Docker build, tag and publish steps.
+
+### Pipeline for Release
+
+Connect with build pipeline.
+
+Setup env varibles:
+- `HEROKU_USERNAME`
+- `HEROKU_API_KEY` (secret)
+- `HEROKU_APP_NAME_API`
+- `HEROKU_APP_NAME_IDENTITY`
+- `HEROKU_APP_NAME_WEB`
+
+Setup 3 tasks for api, identity, web which are Bash scripts. Each script creates login for heroku CLI (creates `~/.netrc` file with API login and key), releases Heroku app with images previously published on registry.heroku.com.
+
+Script:
+```bash
+echo 'create heroku _netrc file - $(HEROKU_APP_NAME_API)'
+content="
+machine api.heroku.com
+  login $(HEROKU_USERNAME)
+  password $(HEROKU_API_KEY)
+machine git.heroku.com
+  login $(HEROKU_USERNAME)
+  password $(HEROKU_API_KEY)
+"
+
+echo $content> ~/.netrc
+cat ~/.netrc
+
+echo 'Heroku release'
+heroku container:release web -a $HEROKU_APP_NAME_API
+```
