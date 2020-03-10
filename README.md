@@ -80,6 +80,9 @@ Setup env varibles:
 
 Setup 3 tasks for api, identity, web which are Bash scripts. Each script creates login for heroku CLI (creates `~/.netrc` file with API login and key), releases Heroku app with images previously published on registry.heroku.com.
 
+Read more about `~/.netrc` here:
+https://stackoverflow.com/questions/46290445/automate-heroku-cli-login
+
 Script:
 ```bash
 echo 'create heroku _netrc file - $(HEROKU_APP_NAME_API)'

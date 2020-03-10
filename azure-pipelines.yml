@@ -15,23 +15,23 @@ variables:
   imageName3: 'lexiconner/web:$(build.buildId)'
 
 steps:
-- script: |
-    docker build -f Lexiconner/Lexiconner.Api/Dockerfile.ci -t $(imageName1) .
-    docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
-    docker tag $(imageName1) registry.heroku.com/$(HEROKU_APP_NAME_API)/web
-    docker push registry.heroku.com/$HEROKU_APP_NAME_API/web           
-  displayName: 'docker build Api'
-- script: |
-    docker build -f Lexiconner/Lexiconner.IdentityServer4/Dockerfile.ci -t $(imageName2) .
-    docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
-    docker tag $(imageName2) registry.heroku.com/$(HEROKU_APP_NAME_IDENTITY)/web
-    docker push registry.heroku.com/$HEROKU_APP_NAME_IDENTITY/web           
-  displayName: 'docker build Identity'
+# - script: |
+#     docker build -f Lexiconner/Lexiconner.Api/Dockerfile.ci -t $(imageName1) .
+#     docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
+#     docker tag $(imageName1) registry.heroku.com/$(HEROKU_APP_NAME_API)/web
+#     docker push registry.heroku.com/$HEROKU_APP_NAME_API/web           
+#   displayName: 'docker build Api'
+# - script: |
+#     docker build -f Lexiconner/Lexiconner.IdentityServer4/Dockerfile.ci -t $(imageName2) .
+#     docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
+#     docker tag $(imageName2) registry.heroku.com/$(HEROKU_APP_NAME_IDENTITY)/web
+#     docker push registry.heroku.com/$HEROKU_APP_NAME_IDENTITY/web           
+#   displayName: 'docker build Identity'
 - script: |
     # build SPA
     echo "#################### Building SPA projects... ####################"
     # use a sub-shell
-    (cd Lexiconner/Lexiconner.Web/vue-client ; npm run build_DevelopmentHeroku)
+    (cd Lexiconner/Lexiconner.Web/vue-client ; npm install; npm run build_DevelopmentHeroku)
     printf "\n"
 
     echo "#################### Building project... ####################"
