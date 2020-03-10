@@ -34,11 +34,17 @@ steps:
 #     docker push registry.heroku.com/$HEROKU_APP_NAME_IDENTITY/web           
 #   displayName: 'docker build Identity'
 - script: |
+    echo "Current path:"
+    pwd
+    echo "Current path files:"
+    ls
+    printf "\n"
+    
     # build SPA
     echo "#################### Building SPA projects... ####################"
     # use a sub-shell
     (cd Lexiconner/Lexiconner.Web/vue-client ; npm install; npm run build_DevelopmentHeroku)
-    ls Lexiconner/Lexiconner.Web/wwwroot
+    #ls Lexiconner/Lexiconner.Web/wwwroot
     printf "\n"
 
     echo "#################### Building project... ####################"
