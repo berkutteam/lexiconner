@@ -305,8 +305,6 @@ namespace Lexiconner.Seed.Seed
 
             _logger.LogInformation("Making translations and adding images to StudyItems...");
 
-            // get translation ru -> en
-            // https://cloud.google.com/translate/docs/languages
             string sourceLanguageCode = _wordTxtImporter.SourceLanguageCode;
             string targetLanguageCode = "en";
 

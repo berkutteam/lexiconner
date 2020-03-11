@@ -297,13 +297,12 @@ namespace Lexiconner.Seed.Seed
                 Title = x.Word,
                 Description = x.Description,
                 ExampleText = x.ExampleText,
+                LanguageCode = _wordTxtImporter.SourceLanguageCode,
                 Tags = x.Tags,
             }).ToList();
 
             _logger.LogInformation("Making translations and adding images to StudyItems...");
 
-            // get translation ru -> en
-            // https://cloud.google.com/translate/docs/languages
             string sourceLanguageCode = _wordTxtImporter.SourceLanguageCode;
             string targetLanguageCode = "en";
 
