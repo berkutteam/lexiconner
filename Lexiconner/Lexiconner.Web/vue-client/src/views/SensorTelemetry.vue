@@ -96,7 +96,7 @@
 
 import { mapState, mapGetters } from 'vuex';
 import moment from 'moment';
-import print from 'print-js';
+import printJS from 'print-js';
 import { storeTypes } from '@/constants/index';
 import authService from '@/services/authService';
 import notificationUtil from '@/utils/notification';

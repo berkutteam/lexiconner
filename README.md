@@ -3,9 +3,9 @@ The project is aimed to help save and study words.
 
 ## DevelopmentLocalhost
 
-- Api -      https://localhost:5006;http://localhost:5005
-- Identity - https://localhost:5004;http://localhost:5003
-- Web -      https://localhost:5008;http://localhost:5007
+- Api -      http://localhost:5005
+- Identity - http://localhost:5004
+- Web -      http://localhost:5007
 
 ## DevelopmentHeroku
 
