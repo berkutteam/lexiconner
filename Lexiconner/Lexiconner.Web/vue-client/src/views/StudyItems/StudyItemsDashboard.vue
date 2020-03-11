@@ -2,16 +2,7 @@
     <div class="dashboard-wrapper">
         <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.STUDY_ITEM_TRAINING_STATS_LOAD]"></row-loader>
 
-        <ul class="nav">
-            <li class="nav-item">
-                <router-link v-bind:to="{ name: 'study-items-browse', params: {}}" class="nav-link">Browse items</router-link>
-            </li>
-            <li class="nav-item">
-                <router-link v-bind:to="{ name: 'study-items-learn-cards', params: {}}" class="nav-link">Cards</router-link>
-            </li>
-        </ul>
-
-        <!-- TODO -->
+        <!-- Stats -->
         <div class="mb-2">
             <div v-if="trainingStats">
                 <div class="card mb-4">
@@ -52,6 +43,30 @@
                         </div>
                     </div>
                 </div>             
+            </div>
+        </div>
+
+        <!-- Nav -->
+        <div class="app-card-nav">
+            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-browse-folder-96.png)`}">
+                <router-link v-bind:to="{ name: 'study-items-browse', params: {}}" class="app-card-nav-link">
+                    <span>Browse items</span>
+                </router-link>
+            </div>
+            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-red-card-80.png)`}">
+                <router-link v-bind:to="{ name: 'study-items-learn-falshcards', params: {}}" class="app-card-nav-link">
+                    <span>Flash cards</span>
+                </router-link>
+            </div>
+            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-rich-text-converter-96.png)`}">
+                <router-link v-bind:to="{ name: 'study-items-learn-falshcards', params: {}}" class="app-card-nav-link">
+                    <span>Word meaning</span>
+                </router-link>
+            </div>
+            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-dictionary-64.png)`}">
+                <router-link v-bind:to="{ name: 'study-items-learn-falshcards', params: {}}" class="app-card-nav-link">
+                    <span>Meaning of a word</span>
+                </router-link>
             </div>
         </div>
     </div>

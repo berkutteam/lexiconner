@@ -294,7 +294,7 @@ class API {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/stats`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             flashcardsTrainingStart({limit}) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/flashcards`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/flashcards`, {limit}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             flashcardsTrainingSave({data}) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/flashcards/save`, {}), method: "post", data: {...data} }).then(handleApiResponse).catch(handleApiErrorResponse);
