@@ -134,6 +134,7 @@
                     </div>
                 </div>
 
+
                 <modal 
                     name="study-item-create-edit" 
                     height="auto"
