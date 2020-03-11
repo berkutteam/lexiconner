@@ -30,7 +30,7 @@ steps:
     npm install
     npm run build_DevelopmentHeroku 
     echo "wwwroot files:"
-    ls Lexiconner/Lexiconner.Web/wwwroot
+    ls ../wwwroot
   displayName: 'build SPA'
 - script: |
     docker build -f Lexiconner/Lexiconner.Api/Dockerfile.ci -t $(imageName1) .
