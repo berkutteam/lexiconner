@@ -219,7 +219,7 @@ namespace Lexiconner.Api
 
             if (HostingEnvironmentHelper.IsDevelopmentAny())
             {
-                app.UseDeveloperExceptionPage();
+                // app.UseDeveloperExceptionPage();
             }
             else
             {

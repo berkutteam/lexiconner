@@ -1,6 +1,6 @@
 <template>
     <div class="home-wrapper">
-       <img src="img/logo.png" alt="">
+       <!-- <img src="img/logo.png" alt=""> -->
     </div>
 </template>
 

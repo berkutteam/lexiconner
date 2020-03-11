@@ -87,6 +87,9 @@ export default new Vuex.Store({
         // {items: [], pagination: {}}
         studyItemsPaginationResult: null,
 
+        trainingStats: null, // object
+        trainingFlashcards: null, // object
+
         nav: {
             isVisible: true,
         },
@@ -250,6 +253,20 @@ export default new Vuex.Store({
                     return x;
                 });
             }
+        },
+
+        //#endregion
+
+
+        //#region Trainings
+
+        [storeTypes.STUDY_ITEM_TRAINING_STATS_SET](state, payload) {
+            let { data } = payload;
+            state.trainingStats = data;
+        },
+        [storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START_SET](state, payload) {
+            let { data } = payload;
+            state.trainingFlashcards = data;
         },
 
         //#endregion
@@ -516,7 +533,6 @@ export default new Vuex.Store({
                 throw err;
             });
         },
-
         [storeTypes.STUDY_ITEM_CREATE](context, {data}) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
@@ -540,7 +556,6 @@ export default new Vuex.Store({
                 throw err;
             });
         },
-
         [storeTypes.STUDY_ITEM_UPDATE](context, {studyItemId, data}) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
@@ -564,7 +579,6 @@ export default new Vuex.Store({
                 throw err;
             });
         },
-
         [storeTypes.STUDY_ITEM_DELETE](context, {studyItemId}) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
@@ -632,6 +646,82 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEM_DELETE_FROM_FAVOURITES,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        //#endregion
+
+
+        //#region Trainings
+
+        [storeTypes.STUDY_ITEM_TRAINING_STATS_LOAD](context, params) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_TRAINING_STATS_LOAD,
+                loading: true,
+            });
+            return api.webApi().getTrainingStatistics().then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_STATS_LOAD,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEM_TRAINING_STATS_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_STATS_LOAD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START](context, params) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START,
+                loading: true,
+            });
+            return api.webApi().flashcardsTrainingStart({...params}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_SAVE](context, {data}) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_SAVE,
+                loading: true,
+            });
+            return api.webApi().flashcardsTrainingSave({data}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_SAVE,
+                    loading: false,
+                });
+                // reset
+                commit(storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START_SET, {
+                    data: null
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_SAVE,
                     loading: false,
                 });
                 throw err;

@@ -265,6 +265,7 @@ class API {
             //     return axiosAuthRequest({ url: buildUrl(url, `userinfo/current-company`, {}), method: "put", data: { companyId } }).then(handleApiResponse).catch(handleApiErrorResponse);
             // },
 
+            // study items
             getStudyItems({ offset, limit, search, isFavourite }) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems`, {offset, limit, search, isFavourite}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
@@ -286,6 +287,17 @@ class API {
             },
             deleteStudyItemFromFavourites({ studyItemId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/${studyItemId}/favourites`, {}), method: "delete", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+
+            // trainings
+            getTrainingStatistics() {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/stats`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            flashcardsTrainingStart({limit}) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/flashcards`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            flashcardsTrainingSave({data}) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/flashcards/save`, {}), method: "post", data: {...data} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
         };
     }

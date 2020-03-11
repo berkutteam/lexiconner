@@ -3,6 +3,7 @@ using Lexiconner.Api.DTOs.StudyItems;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
 using Lexiconner.Api.Mappers;
 using Lexiconner.Api.Models;
+using Lexiconner.Application.Helpers;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Attributes;
 using Lexiconner.Domain.Entitites;
@@ -103,6 +104,7 @@ namespace Lexiconner.Api.Services
                 return new TrainingsStatisticsDto.TrainingStatisticsItemDto
                 {
                     TrainingType = trainingType,
+                    TrainingTypeFormatted = EnumHelper<TrainingType>.GetDisplayValue(trainingType),
                     OnTrainingItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(
                             x => x.UserId == _userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == trainingType && y.Progress != 1)
                         ),
