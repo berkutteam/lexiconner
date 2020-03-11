@@ -163,7 +163,7 @@ export default new Router({
             },
         },
         {
-            path: '/study-items/learn/cards',
+            path: '/study-items/learn/falshcards',
             name: 'study-items-learn-falshcards',
             component: StudyItemsLearnFlashCards,
             props: true,
