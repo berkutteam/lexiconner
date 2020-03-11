@@ -50,7 +50,6 @@ export default {
     name: 'my-permissions',
     components: {
         RowLoader,
-        LoadingButton,
         UserScopedPermissions,
     },
     data: function() {

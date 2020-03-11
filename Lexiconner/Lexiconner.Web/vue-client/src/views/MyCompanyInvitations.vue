@@ -70,6 +70,7 @@
 import { mapState, mapGetters } from 'vuex';
 import { storeTypes } from '@/constants/index';
 import authService from '@/services/authService';
+import notificationUtil from '@/utils/notification';
 import RowLoader from '@/components/loaders/RowLoader';
 import LoadingButton from '@/components/LoadingButton';
 
@@ -110,7 +111,7 @@ export default {
             this.$store.dispatch(storeTypes.MY_COMPANY_INVITATIONS_LOAD, {}).then(() => {
             }).catch((err) => {
                 console.error(err);
-                notification.showErrorIfServerErrorResponseOrDefaultError(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
         },
         acceptInvitation: function(invitationId) {
@@ -123,7 +124,7 @@ export default {
                 this.$store.dispatch(storeTypes.USER_INFO_LOAD, {});
             }).catch((err) => {
                 console.error(err);
-                notification.showErrorIfServerErrorResponseOrDefaultError(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
         },
         rejectInvitation: function(invitationId) {
@@ -133,7 +134,7 @@ export default {
                 this.loadInitialData();
             }).catch((err) => {
                 console.error(err);
-                notification.showErrorIfServerErrorResponseOrDefaultError(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
         },
     },

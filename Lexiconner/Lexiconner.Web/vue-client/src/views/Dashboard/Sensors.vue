@@ -90,7 +90,6 @@ export default {
     name: 'dashboard-sensors',
     components: {
         RowLoader,
-        LoadingButton,
         PaginationWrapper,
     },
     props: {

@@ -122,7 +122,6 @@ export default {
         RowLoader,
         LoadingButton,
         CompanyUserSelect,
-        PaginationWrapper,
     },
     props: {
         // route props:

@@ -46,7 +46,6 @@ export default {
     name: 'company-user-rofile',
     components: {
         RowLoader,
-        LoadingButton,
         UserScopedPermissions,
     },
     props: {

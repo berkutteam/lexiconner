@@ -19,8 +19,6 @@ import LoadingButton from '@/components/LoadingButton';
 export default {
     name: 'dashboard-home',
     components: {
-        RowLoader,
-        LoadingButton,
     },
     data: function() {
         return {

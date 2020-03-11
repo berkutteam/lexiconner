@@ -46,7 +46,6 @@ export default {
     name: 'manage-permissions',
     components: {
         RowLoader,
-        LoadingButton,
     },
     data: function() {
         return {

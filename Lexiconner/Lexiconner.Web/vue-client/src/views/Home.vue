@@ -7,13 +7,11 @@
 <script>
 // @ is an alias to /src
 import { mapState, mapGetters } from 'vuex';
-import HelloWorld from '@/components/HelloWorld.vue';
 import { storeTypes } from '@/constants/index';
 
 export default {
   name: 'home',
   components: {
-    HelloWorld
   },
   data: function() {
         return {

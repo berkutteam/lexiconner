@@ -47,7 +47,6 @@ export default {
     name: 'dashboard-gateways',
     components: {
         RowLoader,
-        LoadingButton,
     },
     props: {
         // route props:

@@ -23,7 +23,6 @@ export default {
     name: 'terms-of-use',
     components: {
         RowLoader,
-        LoadingButton,
     },
     data: function() {
         return {

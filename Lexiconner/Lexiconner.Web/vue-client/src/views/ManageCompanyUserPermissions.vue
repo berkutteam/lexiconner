@@ -72,8 +72,6 @@ import LoadingButton from '@/components/LoadingButton';
 export default {
     name: 'manage-user-permissions',
     components: {
-        RowLoader,
-        LoadingButton,
     },
     props: {
         // route props:

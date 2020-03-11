@@ -46,8 +46,6 @@ import LoadingButton from '@/components/LoadingButton';
 export default {
     name: 'dashboard',
     components: {
-        RowLoader,
-        LoadingButton,
         CurrentCompanyControl,
     },
     data: function() {

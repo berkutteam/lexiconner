@@ -33,7 +33,6 @@ async function main() {
     });
 
     // run vue cli build
-    
     let commandName = '';
     if(process.platform === 'win32') {
         commandName ='vue-cli-service.cmd';
@@ -46,7 +45,6 @@ async function main() {
     }
     let commandPath = path.join(`./node_modules/.bin/${commandName}`); // fix Unix/Windows separator (/ vs \)
     let command = `${commandPath} build --mode=${mode}`;
-
     console.log('command: ', command);
 
     // won't show stdout interactively

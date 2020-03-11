@@ -33,7 +33,6 @@ import LoadingButton from '@/components/LoadingButton';
 export default {
     name: 'company-create',
      components: {
-        RowLoader,
         LoadingButton,
     },
     data: function() {
