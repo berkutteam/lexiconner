@@ -13,7 +13,8 @@ namespace Lexiconner.Application.Config
 
     public class ImportSettings
     {
-        public string FilePath { get; set; }
+        public string RuWordsFilePath { get; set; }
+        public string EnWordsFilePath { get; set; }
     }
 
     public class GoogleSettings

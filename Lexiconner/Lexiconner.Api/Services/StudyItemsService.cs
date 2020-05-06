@@ -53,7 +53,7 @@ namespace Lexiconner.Api.Services
                 if (!String.IsNullOrEmpty(searchFilter.Search))
                 {
                     string search = searchFilter.Search.Trim().ToLower();
-                    predicate.And(x => x.Title.ToLower().Contains(search) || x.Description.ToLower().Contains(search) || x.ExampleText.ToLower().Contains(search));
+                    predicate.And(x => x.Title.ToLower().Contains(search) || x.Description.ToLower().Contains(search));
                 }
                 if (searchFilter.IsFavourite.GetValueOrDefault(false))
                 {

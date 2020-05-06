@@ -86,7 +86,12 @@
                                         <small>{{ item.description }}</small>
                                     </div>
                                     <div class="text-secondary">
-                                        <small><em>{{ item.exampleText }}</em></small>
+                                        <div
+                                            v-for="(exampleText, index2) in item.exampleTexts"
+                                            v-bind:key="`card-${item.id}-exampleText-${index2}`"
+                                        >
+                                            <small><em>{{ exampleText }}</em></small>
+                                        </div>
                                     </div>
                                 </a>
                             </div>
@@ -111,8 +116,13 @@
                                         <div class="card-text small mb-1">
                                             <div>{{ item.description }}</div>
                                         </div>
-                                        <div class="card-text small text-secondary mb-1">
-                                            <em>{{ item.exampleText }}</em>
+                                        <div class="card-text text-secondary mb-1">
+                                            <div
+                                                v-for="(exampleText, index2) in item.exampleTexts"
+                                                v-bind:key="`card-${item.id}-exampleText-${index2}`"
+                                            >
+                                                <small><em>{{ exampleText }}</em></small>
+                                            </div>
                                         </div>
                                         <div class="card-text">
                                             <span class="badge badge-info mr-1">{{ item.languageCode }}</span>
@@ -172,7 +182,31 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="studyItemModel__exampleText">Example text</label>
-                                    <textarea v-model="privateState.studyItemModel.exampleText" type="text" class="form-control" id="studyItemModel__exampleText" placeholder="Example text" />
+                                    <textarea 
+                                        v-for="(exampleText, exampleTextIndex) in privateState.studyItemModel.exampleTexts"
+                                        v-bind:key="`study-item-exampleText-${exampleTextIndex}`"
+                                        v-model="privateState.studyItemModel.exampleTexts[exampleTextIndex]" 
+                                        v-bind:placeholder="`Example text ${exampleTextIndex + 1}`"
+                                        type="text" 
+                                        class="form-control mb-1" 
+                                        id="studyItemModel__exampleText" 
+                                    />
+                                    <div class="btn-group" role="group">
+                                        <button 
+                                            v-on:click="onAddStudyItemExampleText" 
+                                            type="button" 
+                                            class="btn btn-secondary mr-0"
+                                        >
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                        <button 
+                                            v-on:click="onRemoveStudyItemExampleText" 
+                                            type="button" 
+                                            class="btn btn-secondary"
+                                        >
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="form-group form-check">
                                     <input v-model="privateState.studyItemModel.isFavourite" class="form-check-input" type="checkbox" id="studyItemModel__isFavourite">
@@ -209,6 +243,7 @@
 <script>
 // @ is an alias to /src
 import { mapState, mapGetters } from 'vuex';
+import _ from 'lodash';
 import { storeTypes } from '@/constants/index';
 import authService from '@/services/authService';
 import notificationUtil from '@/utils/notification';
@@ -223,7 +258,7 @@ import CustomCollections from '@/components/CustomCollections';
 const studyItemModelDefault = {
     title: null,
     description: null,
-    exampleText: null,
+    exampleTexts: [""],
     isFavourite: false,
     languageCode: "en",
     tags: [],
@@ -244,9 +279,7 @@ export default {
             privateState: {
                 storeTypes: storeTypes,
                 currentView: 'list', // ['list', 'cards']
-                studyItemModel: {
-                    ...studyItemModelDefault,
-                },
+                studyItemModel: _.cloneDeep(studyItemModelDefault),
                 modalMode: 'create', // ['create', 'edit']
             },
         };
@@ -301,6 +334,12 @@ export default {
             this.privateState.studyItemModel = {id: studyItem.id, ...studyItem};
             this.$modal.show('study-item-create-edit');
         },
+        onAddStudyItemExampleText: function() {
+            this.privateState.studyItemModel.exampleTexts.push("");
+        },
+        onRemoveStudyItemExampleText: function() {
+            this.privateState.studyItemModel.exampleTexts.pop();
+        },
         onDeleteStudyItem: function(studyItemId) {
             if(confirm('Are you sure?')) {
                 this.deleteStudyItem(studyItemId);
@@ -337,9 +376,7 @@ export default {
                 this.$modal.hide('study-item-create-edit');
 
                 // reset
-                this.privateState.studyItemModel = {
-                    ...studyItemModelDefault,
-                };
+                this.privateState.studyItemModel = _.cloneDeep(studyItemModelDefault);
             }).catch(err => {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
@@ -363,9 +400,7 @@ export default {
                 this.$modal.hide('study-item-create-edit');
 
                 // reset
-                this.privateState.studyItemModel = {
-                    ...studyItemModelDefault,
-                };
+                this.privateState.studyItemModel = _.cloneDeep(studyItemModelDefault);
             }).catch(err => {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);

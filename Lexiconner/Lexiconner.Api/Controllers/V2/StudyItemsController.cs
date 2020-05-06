@@ -78,26 +78,30 @@ namespace Lexiconner.Api.Controllers.V2
             var entity = CustomMapper.MapToEntity(GetUserId(), data);
 
             // set image
-            var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: entity.LanguageCode, entity.Title);
-
-            if (imagesResult.Any())
+            if(entity.Title.Length > 3)
             {
-                // try to find suitable image
-                var image = _imageService.GetSuitableImages(imagesResult);
-                if (image != null)
+                var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: entity.LanguageCode, entity.Title);
+
+                if (imagesResult.Any())
                 {
-                    entity.Image = new StudyItemImageEntity
+                    // try to find suitable image
+                    var image = _imageService.GetSuitableImages(imagesResult);
+                    if (image != null)
                     {
-                        Url = image.Url,
-                        Height = image.Height,
-                        Width = image.Width,
-                        Thumbnail = image.Thumbnail,
-                        ThumbnailHeight = image.ThumbnailHeight,
-                        ThumbnailWidth = image.ThumbnailWidth,
-                        Base64Encoding = image.Base64Encoding,
-                    };
+                        entity.Image = new StudyItemImageEntity
+                        {
+                            Url = image.Url,
+                            Height = image.Height,
+                            Width = image.Width,
+                            Thumbnail = image.Thumbnail,
+                            ThumbnailHeight = image.ThumbnailHeight,
+                            ThumbnailWidth = image.ThumbnailWidth,
+                            Base64Encoding = image.Base64Encoding,
+                        };
+                    }
                 }
             }
+            
 
             await _dataRepository.AddAsync(entity);
             var dto = CustomMapper.MapToDto(entity);
@@ -125,7 +129,7 @@ namespace Lexiconner.Api.Controllers.V2
             }
             entity.Title = data.Title;
             entity.Description = data.Description;
-            entity.ExampleText = data.ExampleText;
+            entity.ExampleTexts = data.ExampleTexts;
             entity.IsFavourite = data.IsFavourite;
             entity.LanguageCode = data.LanguageCode;
             entity.Tags = data.Tags;
@@ -133,24 +137,27 @@ namespace Lexiconner.Api.Controllers.V2
             // set image
             if (entity.Image == null)
             {
-                var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: entity.LanguageCode, entity.Title);
-
-                if (imagesResult.Any())
+                if (entity.Title.Length > 3)
                 {
-                    // try to find suitable image
-                    var image = _imageService.GetSuitableImages(imagesResult);
-                    if(image != null)
+                    var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: entity.LanguageCode, entity.Title);
+
+                    if (imagesResult.Any())
                     {
-                        entity.Image = new StudyItemImageEntity
+                        // try to find suitable image
+                        var image = _imageService.GetSuitableImages(imagesResult);
+                        if (image != null)
                         {
-                            Url = image.Url,
-                            Height = image.Height,
-                            Width = image.Width,
-                            Thumbnail = image.Thumbnail,
-                            ThumbnailHeight = image.ThumbnailHeight,
-                            ThumbnailWidth = image.ThumbnailWidth,
-                            Base64Encoding = image.Base64Encoding,
-                        };
+                            entity.Image = new StudyItemImageEntity
+                            {
+                                Url = image.Url,
+                                Height = image.Height,
+                                Width = image.Width,
+                                Thumbnail = image.Thumbnail,
+                                ThumbnailHeight = image.ThumbnailHeight,
+                                ThumbnailWidth = image.ThumbnailWidth,
+                                Base64Encoding = image.Base64Encoding,
+                            };
+                        }
                     }
                 }
             }

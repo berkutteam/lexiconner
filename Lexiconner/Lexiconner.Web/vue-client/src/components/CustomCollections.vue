@@ -50,13 +50,13 @@
 <script>
 // @ is an alias to /src
 import { mapState, mapGetters } from 'vuex';
+import _ from 'lodash';
 import { storeTypes } from '@/constants/index';
 import authService from '@/services/authService';
 import notificationUtil from '@/utils/notification';
 import RowLoader from '@/components/loaders/RowLoader';
 import LoadingButton from '@/components/LoadingButton';
 import FolderTreeView from '@/components/FolderTreeView';
-import _ from 'lodash';
 
 const customCollectionModelDefault = {
     name: null,
@@ -81,9 +81,7 @@ export default {
         return {
             privateState: {
                 storeTypes: storeTypes,
-                customCollectionModel: {
-                    ...customCollectionModelDefault,
-                },
+                customCollectionModel: _.cloneDeep(customCollectionModelDefault),
                 modalMode: 'create', // ['create', 'edit']
                 
             },
@@ -193,9 +191,7 @@ export default {
                 this.$modal.hide('custom-collection-edit');
 
                 // reset
-                this.privateState.customCollectionModel = {
-                    ...customCollectionModelDefault,
-                };
+                this.privateState.customCollectionModel = _.cloneDeep(customCollectionModelDefault);
             }).catch(err => {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
@@ -219,9 +215,7 @@ export default {
                 this.$modal.hide('custom-collection-edit');
 
                 // reset
-                this.privateState.customCollectionModel = {
-                    ...customCollectionModelDefault,
-                };
+                this.privateState.customCollectionModel = _.cloneDeep(customCollectionModelDefault);
             }).catch(err => {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);

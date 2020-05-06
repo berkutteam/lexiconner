@@ -14,12 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="ImportData\words.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Lexiconner.Application\Lexiconner.Application.csproj" />
     <ProjectReference Include="..\Lexiconner.Domain\Lexiconner.Domain.csproj" />
     <ProjectReference Include="..\Lexiconner.IdentityServer4\Lexiconner.IdentityServer4.csproj" />
@@ -57,7 +51,13 @@
     <None Update=".env__ProductionHeroku">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="ImportData\en-words.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ImportData\films.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ImportData\ru-words.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

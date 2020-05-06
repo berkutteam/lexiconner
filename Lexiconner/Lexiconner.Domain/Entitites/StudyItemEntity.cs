@@ -13,6 +13,7 @@ namespace Lexiconner.Domain.Entitites
     {
         public StudyItemEntity()
         {
+            ExampleTexts = new List<string>();
             Tags = new List<string>();
         }
 
@@ -20,7 +21,7 @@ namespace Lexiconner.Domain.Entitites
         public string CustomCollectionId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string ExampleText { get; set; }
+        public List<string> ExampleTexts { get; set; }
         public bool IsFavourite { get; set; }
 
         /// <summary>

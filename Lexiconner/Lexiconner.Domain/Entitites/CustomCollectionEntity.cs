@@ -12,13 +12,13 @@ namespace Lexiconner.Domain.Entitites
     {
         public CustomCollectionEntity()
         {
-            ChildrenCollections = new List<CustomCollectionEntity>();
+            Children = new List<CustomCollectionEntity>();
         }
 
         public string UserId { get; set; }
         public string Name { get; set; }
         public bool IsRoot { get; set; }
-        public List<CustomCollectionEntity> ChildrenCollections { get; set; }
+        public List<CustomCollectionEntity> Children { get; set; }
 
 
         #region Helper methods
@@ -27,11 +27,11 @@ namespace Lexiconner.Domain.Entitites
         {
             if(parentCollectionId == null || this.Id == parentCollectionId)
             {
-                this.ChildrenCollections.Add(entity);
+                this.Children.Add(entity);
             }
             else
             {
-                this.ChildrenCollections.ForEach(x =>
+                this.Children.ForEach(x =>
                 {
                     x.AddChildCollection(parentCollectionId, entity);
                 });
@@ -51,7 +51,7 @@ namespace Lexiconner.Domain.Entitites
             }
             else
             {
-                this.ChildrenCollections.ForEach(x =>
+                this.Children.ForEach(x =>
                 {
                     x.UpdateChildCollection(collectionId, updateDto);
                 });
@@ -60,14 +60,14 @@ namespace Lexiconner.Domain.Entitites
 
         public void RemoveChildCollection(string collectionId)
         {
-            var existing = this.ChildrenCollections.FirstOrDefault(x => x.Id == collectionId);
+            var existing = this.Children.FirstOrDefault(x => x.Id == collectionId);
             if(existing != null)
             {
-                this.ChildrenCollections.Remove(existing);
+                this.Children.Remove(existing);
             }
             else
             {
-                this.ChildrenCollections.ForEach(x =>
+                this.Children.ForEach(x =>
                 {
                     x.RemoveChildCollection(collectionId);
                 });
@@ -80,25 +80,25 @@ namespace Lexiconner.Domain.Entitites
             {
                 // do nothing
             }
-            else if (this.ChildrenCollections.Any(x => x.Id == collectionId))
+            else if (this.Children.Any(x => x.Id == collectionId))
             {
-                int sourceIndex = this.ChildrenCollections.FindIndex(0, x => x.Id == collectionId);
-                var source = this.ChildrenCollections.First(x => x.Id == collectionId);
+                int sourceIndex = this.Children.FindIndex(0, x => x.Id == collectionId);
+                var source = this.Children.First(x => x.Id == collectionId);
                 var duplicate = JsonConvert.DeserializeObject<CustomCollectionEntity>(JsonConvert.SerializeObject(source));
                 
                 // assign new ids
                 duplicate.RegenerateId();
-                duplicate.ChildrenCollections.ForEach(x =>
+                duplicate.Children.ForEach(x =>
                 {
                     x.RegenerateId();
                 });
                 duplicate.Name += " (Duplicate)";
 
-                this.ChildrenCollections.Insert(sourceIndex + 1, duplicate);
+                this.Children.Insert(sourceIndex + 1, duplicate);
             }
             else
             {
-                this.ChildrenCollections.ForEach(x =>
+                this.Children.ForEach(x =>
                 {
                     x.DuplicateCollection(collectionId);
                 });

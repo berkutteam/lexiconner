@@ -25,7 +25,12 @@
                                 <div>{{ currentItem.description }}</div>
                             </div>
                             <div v-if="privateState.isShowCurrentItemDetails" class="card-text small text-secondary mb-1">
-                                <em>{{ currentItem.exampleText }}</em>
+                                <div
+                                    v-for="(exampleText, index2) in currentItem.exampleTexts"
+                                    v-bind:key="`card-${currentItem.id}-exampleText-${index2}`"
+                                >
+                                    <small><em>{{ exampleText }}</em></small>
+                                </div>
                             </div>
                         </div>
                         <div class="card-bottom-controls">

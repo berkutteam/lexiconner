@@ -10,13 +10,14 @@ namespace Lexiconner.Api.DTOs.StudyItems
     {
         public StudyItemDto()
         {
+            ExampleTexts = new List<string>();
             Tags = new List<string>();
         }
 
         public string Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string ExampleText { get; set; }
+        public List<string> ExampleTexts { get; set; }
         public bool IsFavourite { get; set; }
         public string LanguageCode { get; set; }
         public List<string> Tags { get; set; }

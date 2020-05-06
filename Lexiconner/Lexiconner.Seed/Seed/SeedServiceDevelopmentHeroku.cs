@@ -200,7 +200,7 @@ namespace Lexiconner.Seed.Seed
                         UserId = user.Id,
                         Name = CustomCollectionConfig.RootCollectionName,
                         IsRoot = true,
-                        ChildrenCollections = new List<CustomCollectionEntity>()
+                        Children = new List<CustomCollectionEntity>()
                         {
                             russianWordsCollection,
                             englishWordsCollection,
@@ -319,13 +319,13 @@ namespace Lexiconner.Seed.Seed
         private async Task<IEnumerable<StudyItemEntity>> GetStudyItems()
         {
             _logger.LogInformation("Importing StudyItems...");
-            var wordImports = await _wordTxtImporter.Import();
-            var entities = wordImports.Select(x => new StudyItemEntity
+            var wordImports = await _wordTxtImporter.ImportTxtFormatWords();
+            var entities = wordImports.Words.Select(x => new StudyItemEntity
             {
                 UserId = null,
                 Title = x.Word,
                 Description = x.Description,
-                ExampleText = x.ExampleText,
+                ExampleTexts = x.ExampleTexts,
                 LanguageCode = _wordTxtImporter.SourceLanguageCode,
                 Tags = x.Tags,
             }).ToList();

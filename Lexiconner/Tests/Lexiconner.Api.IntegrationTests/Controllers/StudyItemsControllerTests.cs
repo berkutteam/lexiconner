@@ -89,7 +89,7 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
             string search = "sEaRcH";
             searchEntities[0].Title = $"xxx yyy x {search}";
             searchEntities[1].Description = $"xxx yyy x {search}fgfrr";
-            searchEntities[2].ExampleText = $"xxxRRRR444{search}__sd";
+            searchEntities[2].ExampleTexts = new List<string>() { $"xxxRRRR444{search}__sd" };
             await _dataRepository.UpdateManyAsync(searchEntities);
 
             var response = await _apiUtil.GetStudyItemsAsync(_accessToken, new StudyItemsRequestDto { Offset = 0, Limit = 10, Search = search });

@@ -17,7 +17,7 @@ namespace Lexiconner.Api.Mappers
                 UserId = entity.UserId,
                 Name = entity.Name,
                 IsRoot = entity.IsRoot,
-                Children = entity.ChildrenCollections.Select(x => CustomMapper.MapToDto(x)).ToList(),
+                Children = entity.Children.Select(x => CustomMapper.MapToDto(x)).ToList(),
             };
         }
 

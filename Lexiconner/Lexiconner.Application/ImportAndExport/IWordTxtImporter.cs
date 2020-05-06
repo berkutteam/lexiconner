@@ -9,6 +9,7 @@ namespace Lexiconner.Application.ImportAndExport
     public interface IWordTxtImporter
     {
         string SourceLanguageCode { get; }
-        Task<IEnumerable<WordImportModel>> Import();
+        Task<WordImportResultModel> ImportTxtFormatWords();
+        Task<WordImportResultModel> ImportMdFormatWords();
     }
 }
