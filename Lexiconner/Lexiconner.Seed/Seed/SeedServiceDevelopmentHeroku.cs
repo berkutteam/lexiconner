@@ -4,6 +4,7 @@ using Lexiconner.Application.ApiClients.Dtos;
 using Lexiconner.Application.Exceptions;
 using Lexiconner.Application.ImportAndExport;
 using Lexiconner.Application.Services;
+using Lexiconner.Domain.Config;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.Domain.Entitites.IdentityModel;
@@ -181,6 +182,33 @@ namespace Lexiconner.Seed.Seed
             IEnumerable<StudyItemEntity> studyItems = null;
             foreach (var user in usersWithImport)
             {
+                // create custom collections
+                var russianWordsCollection = new CustomCollectionEntity()
+                {
+                    UserId = user.Id,
+                    Name = CustomCollectionConfig.RussianWordsCollectionName,
+                };
+                var englishWordsCollection = new CustomCollectionEntity()
+                {
+                    UserId = user.Id,
+                    Name = CustomCollectionConfig.EnglishWordsCollectionName,
+                };
+                var customCollections = new List<CustomCollectionEntity>()
+                {
+                    new CustomCollectionEntity()
+                    {
+                        UserId = user.Id,
+                        Name = CustomCollectionConfig.RootCollectionName,
+                        IsRoot = true,
+                        ChildrenCollections = new List<CustomCollectionEntity>()
+                        {
+                            russianWordsCollection,
+                            englishWordsCollection,
+                        },
+                    },
+                };
+                await _dataRepository.AddManyAsync(customCollections);
+
                 if (!_dataRepository.ExistsAsync<StudyItemEntity>(x => x.UserId == user.Id).GetAwaiter().GetResult())
                 {
                     studyItems = studyItems ?? GetStudyItems().GetAwaiter().GetResult();
@@ -191,6 +219,7 @@ namespace Lexiconner.Seed.Seed
                         x.Image?.RegenerateId();
 
                         x.UserId = user.Id;
+                        x.CustomCollectionId = russianWordsCollection.Id;
                         return x;
                     });
 
