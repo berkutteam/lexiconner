@@ -28,6 +28,7 @@ using IdentityServer4.Extensions;
 using Microsoft.IdentityModel.Logging;
 using Lexiconner.Domain.Enums;
 using Lexiconner.Persistence.Repositories;
+using Lexiconner.Application.Helpers;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -188,7 +189,10 @@ namespace Lexiconner.IdentityServer4
                 //////
 
                 app.UseHsts();
-                app.UseHttpsRedirection();
+                if (!HostingEnvironmentHelper.IsDevelopmentLocalhost() && !HostingEnvironmentHelper.IsTestingAny())
+                {
+                    app.UseHttpsRedirection();
+                }
             }
 
             if (Environment.IsProductionAny())

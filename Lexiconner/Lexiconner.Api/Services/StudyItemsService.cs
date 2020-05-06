@@ -3,6 +3,7 @@ using Lexiconner.Api.DTOs.StudyItems;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
 using Lexiconner.Api.Mappers;
 using Lexiconner.Api.Models;
+using Lexiconner.Api.Services.Interfaces;
 using Lexiconner.Application.Helpers;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Attributes;
@@ -21,18 +22,6 @@ using System.Threading.Tasks;
 
 namespace Lexiconner.Api.Services
 {
-    public interface IStudyItemsService
-    {
-        Task<PaginationResponseDto<StudyItemDto>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null);
-
-        Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId);
-        Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, int limit);
-        Task SaveTrainingResultsForFlashCardsAsync(string userId, FlashCardsTrainingResultDto results);
-
-        Task AddToFavouritesAsync(string userId, IEnumerable<string> itemIds);
-        Task DeleteFromFavouritesAsync(string userId, IEnumerable<string> itemIds);
-    }
-
     public class StudyItemsService : IStudyItemsService
     {
         private readonly IDataRepository _dataRepository;
@@ -49,7 +38,13 @@ namespace Lexiconner.Api.Services
 
         #region Study items
 
-        public async Task<PaginationResponseDto<StudyItemDto>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null)
+        public async Task<PaginationResponseDto<StudyItemDto>> GetAllStudyItemsAsync(
+            string userId, 
+            int offset, 
+            int limit, 
+            StudyItemsSearchFilter searchFilter = null, 
+            string collectionId = null
+        )
         {
             var predicate = PredicateBuilder.New<StudyItemEntity>(x => x.UserId == userId);
 
@@ -64,6 +59,11 @@ namespace Lexiconner.Api.Services
                 {
                     predicate.And(x => x.IsFavourite);
                 }
+            }
+
+            if(collectionId != null)
+            {
+                predicate.And(x => x.CustomCollectionId == collectionId);
             }
 
             var itemsTask = _dataRepository.GetManyAsync<StudyItemEntity>(predicate, offset, limit);

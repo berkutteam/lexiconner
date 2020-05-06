@@ -4,6 +4,13 @@
             <div class="col-12">
                 <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.STUDY_ITEMS_LOAD]"></row-loader>
 
+                <div>
+                    <custom-collections
+                        v-bind:onSelectedCollectionChange="onSelectedCollectionChange"
+                    >
+                    </custom-collections>
+                </div>
+
                 <div v-if="studyItems" class="study-items-wrapper">
                     <h5 class="mb-3">Study items:</h5>
                     
@@ -211,6 +218,7 @@ import LoadingButton from '@/components/LoadingButton';
 import PaginationWrapper from '@/components/PaginationWrapper';
 import LanguageCodeSelect from '@/components/LanguageCodeSelect';
 import TagsMultiselect from '@/components/TagsMultiselect';
+import CustomCollections from '@/components/CustomCollections';
 
 const studyItemModelDefault = {
     title: null,
@@ -229,6 +237,7 @@ export default {
         PaginationWrapper,
         LanguageCodeSelect,
         TagsMultiselect,
+        CustomCollections,
     },
     data: function() {
         return {
@@ -262,15 +271,21 @@ export default {
     },
 
     methods: {
-        loadStudyItems: function({offset = 0, limit = 50} = {}) {
+        loadStudyItems: function({offset = 0, limit = 50, collectionId = null} = {}) {
             return this.$store.dispatch(storeTypes.STUDY_ITEMS_LOAD, {
                 offset: offset, 
                 limit: limit, 
                 search: null,
                 isFavourite: null,
+                collectionId: collectionId,
             }).then().catch(err => {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            });
+        },
+        onSelectedCollectionChange: function(nextCollectionId) {
+            this.loadStudyItems({
+                collectionId: nextCollectionId,
             });
         },
         toggleView: function() {

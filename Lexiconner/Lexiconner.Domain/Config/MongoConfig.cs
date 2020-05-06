@@ -21,8 +21,9 @@ namespace Lexiconner.Domain.Config
         private const string IdentityIdentityResources = "identityIdentityResources";
         private const string IdentityPersistedGrant = "identityPersistedGrant";
 
-        private const string StudyItems = "studyItems";
         private const string UserInfo = "userInfo";
+        private const string StudyItems = "studyItems";
+        private const string CustomCollections = "customCollections";
 
         private const string CacheGoogleTranslateApi = "cacheGoogleTranslateApi";
         private const string CacheGoogleTranslateDetectLanguageApi = "cacheGoogleTranslateDetectLanguageApi";
@@ -133,7 +134,7 @@ namespace Lexiconner.Domain.Config
         private static List<MongoCollectionConfig> MainDbCollectionConfig = new List<MongoCollectionConfig>
         {
             // custom entities
-              new MongoCollectionConfig
+            new MongoCollectionConfig
             {
                 CollectionType = typeof(UserInfoEntity),
                 CollectionName = UserInfo,
@@ -144,6 +145,13 @@ namespace Lexiconner.Domain.Config
             {
                 CollectionType = typeof(StudyItemEntity),
                 CollectionName = StudyItems,
+                Indexes = new List<string> {
+                }
+            },
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(CustomCollectionEntity),
+                CollectionName = CustomCollections,
                 Indexes = new List<string> {
                 }
             },

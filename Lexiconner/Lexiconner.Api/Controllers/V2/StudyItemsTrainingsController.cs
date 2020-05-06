@@ -7,6 +7,7 @@ using Lexiconner.Api.DTOs;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
 using Lexiconner.Api.Models;
 using Lexiconner.Api.Services;
+using Lexiconner.Api.Services.Interfaces;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;

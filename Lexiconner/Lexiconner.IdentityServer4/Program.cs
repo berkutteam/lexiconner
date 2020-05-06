@@ -20,6 +20,9 @@ namespace Lexiconner.IdentityServer4
 {
     public class Program
     {
+        // not changing unique app name.
+        private static readonly string _appName = "Lexiconner.Identity";
+
         public static void Main(string[] args)
         {
             try
@@ -76,7 +79,7 @@ namespace Lexiconner.IdentityServer4
                     .MinimumLevel.Override("System", LogEventLevel.Warning)
                     .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
                     .Enrich.FromLogContext()
-                    .WriteTo.File(@"serilog-logs/identityserver4_log.txt")
+                    .WriteTo.File($"serilog-logs/log-{_appName}.txt")
                     // .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Literate);
                     .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss}|{Level} RequestPath:{RequestPath} => {SourceContext}{NewLine} {Message}{NewLine}{Exception}", theme: AnsiConsoleTheme.Literate);
             });

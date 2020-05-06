@@ -3,6 +3,7 @@
 import Http from './http.js';
 
 import ServerValidationErrorModel from '../models/ServerValidationErrorModel.js';
+import NetworkErrorModel from '../models/NetworkErrorModel';
 import ServerErrorModel from '../models/ServerErrorModel';
 import ServerUnknownErrorModel from '../models/ServerUnknownErrorModel.js';
 import ServerNotFoundErrorModel from '../models/ServerNotFoundErrorModel.js';
@@ -120,15 +121,15 @@ function handleApiErrorResponse(err) {
     // TODO - add new models if needed
     let { config, isAxiosError, request, response, message, stack } = err;
 
+    // Network erorr or something else
+    if(response === null || message === 'Network Error') {
+        throw new NetworkErrorModel(err);
+    }
+
     // log auth errors in headers
     // www-authenticate can contain message or object with errors
     if (response.headers['www-authenticate']) {
         console.error(`www-authenticate error: ${response.headers['www-authenticate']}`);
-    }
-
-    // Network erorr or something else
-    if (!response) {
-        throw err;
     }
 
     // throw if not success status code
@@ -266,8 +267,8 @@ class API {
             // },
 
             // study items
-            getStudyItems({ offset, limit, search, isFavourite }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems`, {offset, limit, search, isFavourite}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            getStudyItems({ offset, limit, search, isFavourite, collectionId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems`, {offset, limit, search, isFavourite, collectionId}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             getStudyItem({ studyItemId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/${studyItemId}`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
@@ -298,6 +299,23 @@ class API {
             },
             flashcardsTrainingSave({data}) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/flashcards/save`, {}), method: "post", data: {...data} }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+
+            // custom collections
+            getCustomCollections() {
+                return axiosAuthRequest({ url: buildUrl(url, `customcollections`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            createCustomCollection({ data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `customcollections`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            updateCustomCollection({ customCollectionId, data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `customcollections/${customCollectionId}`, {}), method: "put", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            deleteCustomCollection({ customCollectionId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `customcollections/${customCollectionId}`, {}), method: "delete", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            duplicateCustomCollection({ customCollectionId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `customcollections/${customCollectionId}/duplicate`, {}), method: "post", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
         };
     }

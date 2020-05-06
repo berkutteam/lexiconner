@@ -31,6 +31,7 @@ using Lexiconner.Api.Services;
 using Autofac;
 using Lexiconner.Application.Helpers;
 using FluentValidation.AspNetCore;
+using Lexiconner.Api.Services.Interfaces;
 
 namespace Lexiconner.Api
 {
@@ -78,6 +79,7 @@ namespace Lexiconner.Api
             });
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IStudyItemsService, StudyItemsService>();
+            services.AddTransient<ICustomCollectionsService, CustomCollectionsService>();
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
@@ -227,7 +229,10 @@ namespace Lexiconner.Api
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            if (!HostingEnvironmentHelper.IsDevelopmentLocalhost() && !HostingEnvironmentHelper.IsTestingAny())
+            {
+                app.UseHttpsRedirection();
+            }
 
             if (!HostingEnvironmentHelper.IsTestingAny())
             {

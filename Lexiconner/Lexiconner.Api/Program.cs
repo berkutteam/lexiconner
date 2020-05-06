@@ -11,6 +11,8 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Serilog.Events;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Lexiconner.Api
 {
@@ -66,6 +68,19 @@ namespace Lexiconner.Api
             }
 
             builder.UseStartup<Startup>();
+
+            builder.UseSerilog((context, configuration) =>
+            {
+                configuration
+                    .MinimumLevel.Debug()
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                    .MinimumLevel.Override("System", LogEventLevel.Warning)
+                    .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+                    .Enrich.FromLogContext()
+                    .WriteTo.File($"serilog-logs/log-{_appName}.txt")
+                    // .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Literate);
+                    .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss}|{Level} RequestPath:{RequestPath} => {SourceContext}{NewLine} {Message}{NewLine}{Exception}", theme: AnsiConsoleTheme.Literate);
+            });
 
             return builder;
         }

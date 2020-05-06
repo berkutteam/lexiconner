@@ -2,7 +2,8 @@
 
 import Vue from 'vue';
 import _ from 'lodash';
-import ServerBaseErrorModel from '@/models/ServerBaseErrorModel.js';
+import ServerBaseErrorModel from '@/models/ServerBaseErrorModel';
+import NetworkErrorModel from '@/models/NetworkErrorModel';
 import { stringify } from 'querystring';
 
 // Server error response
@@ -34,6 +35,10 @@ class Notification {
 
     }
 
+    isNetworkError(err) {
+        return err instanceof NetworkErrorModel;
+    }
+
     isServerErrorResponse(err) {
         if(
             err instanceof ServerBaseErrorModel &&
@@ -47,6 +52,15 @@ class Notification {
             return true;
         }
         return false;
+    }
+
+    showNetworkError() {
+        Vue.notify({
+            group: 'error',
+            type: 'error',
+            title: 'Network error',
+            text: 'Check your internet connection or try later.',
+        });
     }
 
     showDefaultError() {
@@ -97,6 +111,8 @@ class Notification {
     showErrorIfServerErrorResponseOrDefaultError(err) {
         if(this.isServerErrorResponse(err)) {
            this.showErrorIfServerErrorResponse(err);
+        } else if(this.isNetworkError(err)) {
+            this.showNetworkError();
         } else {
             this.showDefaultError();
         }

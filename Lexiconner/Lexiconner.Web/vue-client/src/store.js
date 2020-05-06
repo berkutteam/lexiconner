@@ -90,6 +90,8 @@ export default new Vuex.Store({
         trainingStats: null, // object
         trainingFlashcards: null, // object
 
+        customCollectionsResult: null, // object
+
         nav: {
             isVisible: true,
         },
@@ -272,6 +274,16 @@ export default new Vuex.Store({
         //#endregion
 
 
+        //#region Custom collections
+
+        [storeTypes.CUSTOM_COLLECTIONS_SET](state, payload) {
+            let { data } = payload;
+            state.customCollectionsResult = data;
+        },
+
+        //#endregion
+
+
        //#region Nav
 
         [storeTypes.NAV_VISIBILITY_SET](state, payload) {
@@ -279,7 +291,7 @@ export default new Vuex.Store({
             state.nav.isVisible = isVisible;
         },
 
-        //#endregion
+        
 
 
         //#region Error page
@@ -722,6 +734,126 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_SAVE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        //#endregion
+        
+        //#region Custom collections
+
+        [storeTypes.CUSTOM_COLLECTIONS_LOAD](context, params) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.CUSTOM_COLLECTIONS_LOAD,
+                loading: true,
+            });
+            return api.webApi().getCustomCollections(params).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.CUSTOM_COLLECTIONS_LOAD,
+                    loading: false,
+                });
+                commit(storeTypes.CUSTOM_COLLECTIONS_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.CUSTOM_COLLECTIONS_LOAD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.CUSTOM_COLLECTION_CREATE](context, {data}) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.CUSTOM_COLLECTION_CREATE,
+                loading: true,
+            });
+            return api.webApi().createCustomCollection({data}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.CUSTOM_COLLECTION_CREATE,
+                    loading: false,
+                });
+                commit(storeTypes.CUSTOM_COLLECTIONS_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.CUSTOM_COLLECTION_CREATE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.CUSTOM_COLLECTION_UPDATE](context, {customCollectionId, data}) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.CUSTOM_COLLECTION_UPDATE,
+                loading: true,
+            });
+            return api.webApi().updateCustomCollection({customCollectionId, data}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.CUSTOM_COLLECTION_UPDATE,
+                    loading: false,
+                });
+                commit(storeTypes.CUSTOM_COLLECTIONS_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.CUSTOM_COLLECTION_UPDATE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.CUSTOM_COLLECTION_DELETE](context, {customCollectionId}) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.CUSTOM_COLLECTION_DELETE,
+                loading: true,
+            });
+            return api.webApi().deleteCustomCollection({customCollectionId}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.CUSTOM_COLLECTION_DELETE,
+                    loading: false,
+                });
+                commit(storeTypes.CUSTOM_COLLECTIONS_SET, {
+                    data: data
+                });
+                // returns nothing
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.CUSTOM_COLLECTION_DELETE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.CUSTOM_COLLECTION_DUPLICATE](context, {customCollectionId}) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.CUSTOM_COLLECTION_DUPLICATE,
+                loading: true,
+            });
+            return api.webApi().duplicateCustomCollection({customCollectionId}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.CUSTOM_COLLECTION_DUPLICATE,
+                    loading: false,
+                });
+                commit(storeTypes.CUSTOM_COLLECTIONS_SET, {
+                    data: data
+                });
+                // returns nothing
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.CUSTOM_COLLECTION_DUPLICATE,
                     loading: false,
                 });
                 throw err;

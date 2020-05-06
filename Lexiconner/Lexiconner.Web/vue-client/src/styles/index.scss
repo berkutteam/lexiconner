@@ -777,3 +777,44 @@ a {
         }
     }
 }
+
+//#region Custom components
+
+.folder-tree-view {
+    &.folder-tree-view--root {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .tree-item {
+        cursor: pointer;
+        &:hover {
+            .tree-item-name {
+                color: $color-blue-dark;
+            }
+        }
+
+        .tree-item-toggle {
+            &:hover {
+                color: $color-green-dark;
+            }
+        }
+
+        .tree-item-name {
+
+        }
+
+        .tree-item-controls {
+            .control-item {
+                font-size: 1.1rem;
+                opacity: 0.8;
+
+                &:hover {
+                    color: $color-green-dark;
+                }
+            }
+        }
+    }
+}
+
+//#endregion

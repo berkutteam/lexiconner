@@ -29,7 +29,7 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
 
             var response = await _apiUtil.GetStudyItemsAsync(_accessToken, new StudyItemsRequestDto { Offset = 0, Limit = count });
 
-            response.TotalCount.Should().Be(count);
+            response.Pagination.TotalCount.Should().Be(count);
             response.Items.Should().NotBeEmpty();
             response.Items.ToList().ForEach(x =>
             {
@@ -47,7 +47,7 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
 
             var response = await _apiUtil.GetStudyItemsAsync(_accessToken, new StudyItemsRequestDto { Offset = 0, Limit = count, IsFavourite = true });
 
-            response.TotalCount.Should().Be(0);
+            response.Pagination.TotalCount.Should().Be(0);
             response.Items.Should().BeEmpty();
         }
 
@@ -68,8 +68,8 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
 
             var response = await _apiUtil.GetStudyItemsAsync(_accessToken, new StudyItemsRequestDto { Offset = 0, Limit = 10, IsFavourite = true });
 
-            response.TotalCount.Should().Be(favouriteEntities.Count);
-            response.ReturnedCount.Should().Be(favouriteEntities.Count);
+            response.Pagination.TotalCount.Should().Be(favouriteEntities.Count);
+            response.Pagination.ReturnedCount.Should().Be(favouriteEntities.Count);
             response.Items.Should().NotBeEmpty();
             response.Items.ToList().ForEach(x =>
             {
@@ -94,8 +94,8 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
 
             var response = await _apiUtil.GetStudyItemsAsync(_accessToken, new StudyItemsRequestDto { Offset = 0, Limit = 10, Search = search });
 
-            response.TotalCount.Should().Be(searchEntities.Count);
-            response.ReturnedCount.Should().Be(searchEntities.Count);
+            response.Pagination.TotalCount.Should().Be(searchEntities.Count);
+            response.Pagination.ReturnedCount.Should().Be(searchEntities.Count);
             response.Items.Count().Should().Be(searchEntities.Count);
             response.Items.ToList().ForEach(x =>
             {

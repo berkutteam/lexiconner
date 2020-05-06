@@ -8,6 +8,7 @@ using Lexiconner.Api.DTOs.StudyItems;
 using Lexiconner.Api.Mappers;
 using Lexiconner.Api.Models;
 using Lexiconner.Api.Services;
+using Lexiconner.Api.Services.Interfaces;
 using Lexiconner.Application.Exceptions;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Entitites;
@@ -49,7 +50,7 @@ namespace Lexiconner.Api.Controllers.V2
         public async Task<IActionResult> GetAll([FromQuery] StudyItemsRequestDto dto)
         {
             var searchFilter = new StudyItemsSearchFilter(dto.Search, dto.IsFavourite);
-            var result = await _studyItemsService.GetAllStudyItemsAsync(GetUserId(), dto.Offset, dto.Limit, searchFilter);
+            var result = await _studyItemsService.GetAllStudyItemsAsync(GetUserId(), dto.Offset, dto.Limit, searchFilter, dto.CollectionId);
             return BaseResponse(result);
         }
 
@@ -74,9 +75,7 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Create([FromBody] StudyItemCreateDto data)
         {
-            var entity = CustomMapper.MapToEntity(data);
-
-            entity.UserId = GetUserId();
+            var entity = CustomMapper.MapToEntity(GetUserId(), data);
 
             // set image
             var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: entity.LanguageCode, entity.Title);

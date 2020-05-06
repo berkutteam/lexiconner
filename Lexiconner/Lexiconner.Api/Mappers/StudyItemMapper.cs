@@ -29,10 +29,11 @@ namespace Lexiconner.Api.Mappers
             return entities.Select(x => MapToDto(x)).ToList();
         }
 
-        public static StudyItemEntity MapToEntity(StudyItemCreateDto dto)
+        public static StudyItemEntity MapToEntity(string userId, StudyItemCreateDto dto)
         {
             return new StudyItemEntity
             {
+                UserId = userId,
                 Title = dto.Title,
                 Description = dto.Description,
                 ExampleText = dto.ExampleText,
