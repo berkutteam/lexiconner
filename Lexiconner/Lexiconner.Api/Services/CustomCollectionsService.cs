@@ -38,6 +38,8 @@ namespace Lexiconner.Api.Services
                 AsTree = dto,
                 AsList = dto.FlattenToList(),
             };
+
+            // TODO: calc items count in each collection using System.Threading.Tasks.Dataflow
         }
 
         public async Task<CustomCollectionsAllResponseDto> CreateCustomCollectionAsync(string userId, CustomCollectionCreateDto createDto)

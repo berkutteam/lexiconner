@@ -781,8 +781,9 @@ a {
 //#region Custom components
 
 .folder-tree-view {
+    list-style-type: none;
+
     &.folder-tree-view--root {
-        list-style-type: none;
         padding: 0;
     }
 

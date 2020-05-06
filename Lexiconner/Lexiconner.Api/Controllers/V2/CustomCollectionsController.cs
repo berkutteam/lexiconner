@@ -57,6 +57,7 @@ namespace Lexiconner.Api.Controllers.V2
             return BaseResponse(result);
         }
 
+        // TODO: delete nested items?
         [HttpPost]
         [Route("{collectionId}/duplicate")]
         public async Task<IActionResult> Duplicate([FromRoute]string collectionId)
