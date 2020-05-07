@@ -1,4 +1,5 @@
-﻿using Lexiconner.Domain.Extensions;
+﻿using FluentValidation;
+using Lexiconner.Domain.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,19 +19,28 @@ namespace Lexiconner.Domain.Models
         public List<CustomCollectionImportModel> Collections { get; set; }
         public List<WordImportModel> Words { get; set; }
 
-        public void AddCollection(string name, string parentName = null)
+        public CustomCollectionImportModel AddCollection(string name, string parentName = null)
         {
+            CustomCollectionImportModel addedCollection = null;
             var flatten = this.Collections.SelectMany(x => x.Flatten()).ToList();
+
+            // validate name is unique
+            if(flatten.Any(x => x.Name == name))
+            {
+                throw new ValidationException("All collection names must be unique!");
+            }
+
             var parent = flatten.FirstOrDefault(x => x.Name == parentName);
             if(parent != null)
             {
                 var existing = parent.Children.FirstOrDefault(x => x.Name == name);
                 if(existing == null)
                 {
-                    parent.Children.Add(new CustomCollectionImportModel()
+                    addedCollection = new CustomCollectionImportModel()
                     {
                         Name = name,
-                    });
+                    };
+                    parent.Children.Add(addedCollection);
                 }
             }
             else
@@ -38,12 +48,14 @@ namespace Lexiconner.Domain.Models
                 var existing = flatten.FirstOrDefault(x => x.Name == name);
                 if (existing == null)
                 {
-                    this.Collections.Add(new CustomCollectionImportModel()
+                    addedCollection = new CustomCollectionImportModel()
                     {
                         Name = name,
-                    });
+                    };
+                    this.Collections.Add(addedCollection);
                 }
             }
+            return addedCollection;
         }
     }
 }

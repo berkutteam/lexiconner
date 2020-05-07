@@ -20,14 +20,11 @@ namespace Lexiconner.Application.ImportAndExport
             _config = config;
         }
 
-        public string SourceLanguageCode => "ru";
-
-        public async Task<WordImportResultModel> ImportTxtFormatWords()
+        public async Task<WordImportResultModel> ImportTxtFormatWords(string filePath)
         {
             // TODO: handle collections
 
             var result = new WordImportResultModel();
-            string filePath = _config.RuWordsFilePath;
 
             // word === desc[ === example]
             var regex = new Regex(@"(?<word>[^=]+)\s+===\s+(?<description>[^=]+)(?:\s{0,}(:?===)?\s{0,}(?<example>[^=]+)?)", RegexOptions.IgnoreCase);
@@ -68,7 +65,7 @@ namespace Lexiconner.Application.ImportAndExport
 
                     result.Words.Add(new WordImportModel
                     {
-                        Word = match.Groups.FirstOrDefault(x => x.Name == "word")?.Value,
+                        Title = match.Groups.FirstOrDefault(x => x.Name == "word")?.Value,
                         Description = match.Groups.FirstOrDefault(x => x.Name == "description")?.Value,
                         ExampleTexts = new List<string>() 
                         {
@@ -82,10 +79,9 @@ namespace Lexiconner.Application.ImportAndExport
             return result;
         }
 
-        public async Task<WordImportResultModel> ImportMdFormatWords()
+        public async Task<WordImportResultModel> ImportMdFormatWords(string filePath)
         {
             var result = new WordImportResultModel();
-            string filePath = _config.EnWordsFilePath;
 
             // #Header1
             // ##Header2
@@ -122,12 +118,14 @@ namespace Lexiconner.Application.ImportAndExport
             string currentHeader5 = null;
             string currentHeader6 = null;
 
+            CustomCollectionImportModel lastAddedCollection = null;
             bool isWordEntered = false;
             string currentTitle = null;
             string currentDescription = null;
             List<string> currentExamples = new List<string>();
             var resetCurrentWord = new Action(() =>
             {
+                lastAddedCollection = null;
                 isWordEntered = false;
                 currentTitle = null;
                 currentDescription = null;
@@ -175,7 +173,7 @@ namespace Lexiconner.Application.ImportAndExport
                         currentHeader5 = null;
                         currentHeader6 = null;
 
-                        result.AddCollection(currentHeader1, null);
+                        lastAddedCollection = result.AddCollection(currentHeader1, null);
 
                         continue;
                     }
@@ -187,7 +185,7 @@ namespace Lexiconner.Application.ImportAndExport
                         currentHeader5 = null;
                         currentHeader6 = null;
 
-                        result.AddCollection(currentHeader2, currentHeader1);
+                        lastAddedCollection = result.AddCollection(currentHeader2, currentHeader1);
 
                         continue;
                     }
@@ -198,7 +196,7 @@ namespace Lexiconner.Application.ImportAndExport
                         currentHeader5 = null;
                         currentHeader6 = null;
 
-                        result.AddCollection(currentHeader3, currentHeader2);
+                        lastAddedCollection = result.AddCollection(currentHeader3, currentHeader2);
 
                         continue;
                     }
@@ -208,7 +206,7 @@ namespace Lexiconner.Application.ImportAndExport
                         currentHeader5 = null;
                         currentHeader6 = null;
 
-                        result.AddCollection(currentHeader4, currentHeader3);
+                        lastAddedCollection = result.AddCollection(currentHeader4, currentHeader3);
 
                         continue;
                     }
@@ -217,7 +215,7 @@ namespace Lexiconner.Application.ImportAndExport
                         currentHeader5 = header5Regex.Match(line).Groups.Skip(1).First().Value;
                         currentHeader6 = null;
 
-                        result.AddCollection(currentHeader5, currentHeader4);
+                        lastAddedCollection = result.AddCollection(currentHeader5, currentHeader4);
 
                         continue;
                     }
@@ -225,7 +223,7 @@ namespace Lexiconner.Application.ImportAndExport
                     {
                         currentHeader6 = header6Regex.Match(line).Groups.Skip(1).First().Value;
 
-                        result.AddCollection(currentHeader6, currentHeader5);
+                        lastAddedCollection = result.AddCollection(currentHeader6, currentHeader5);
 
                         continue;
                     }
@@ -244,7 +242,8 @@ namespace Lexiconner.Application.ImportAndExport
                         // save word
                         result.Words.Add(new WordImportModel
                         {
-                            Word = currentTitle,
+                            CollectionTempId = lastAddedCollection?.TempId,
+                            Title = currentTitle,
                             Description = currentDescription,
                             ExampleTexts = currentExamples,
                             Tags = new List<string>(),

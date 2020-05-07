@@ -105,6 +105,46 @@ namespace Lexiconner.Domain.Entitites
             }
         }
 
+        public CustomCollectionEntity FindCollectionById(string collectionId)
+        {
+            if(this.Id == collectionId)
+            {
+                return this;
+            }
+            else
+            {
+                foreach (var item in this.Children)
+                {
+                    var result = item.FindCollectionById(collectionId);
+                    if(result != null)
+                    {
+                        return result;
+                    }
+                }
+                return null;
+            }
+        }
+
+        public CustomCollectionEntity FindCollectionByName(string collectionName)
+        {
+            if (this.Name == collectionName)
+            {
+                return this;
+            }
+            else
+            {
+                foreach (var item in this.Children)
+                {
+                    var result = item.FindCollectionByName(collectionName);
+                    if (result != null)
+                    {
+                        return result;
+                    }
+                }
+                return null;
+            }
+        }
+
         #endregion
     }
 }

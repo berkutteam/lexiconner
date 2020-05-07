@@ -8,6 +8,7 @@ using Lexiconner.Domain.Config;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.Domain.Entitites.IdentityModel;
+using Lexiconner.Domain.Models;
 using Lexiconner.IdentityServer4.Config;
 using Lexiconner.Persistence.Cache;
 using Lexiconner.Persistence.Repositories;
@@ -21,6 +22,7 @@ using MongoDB.Bson.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using static Lexiconner.Application.ApiClients.Dtos.GoogleTranslateResponseDto;
@@ -181,60 +183,96 @@ namespace Lexiconner.Seed.Seed
             // seed imported data for marked users
             _logger.LogInformation("StudyItems...");
             var usersWithImport = _identityServerConfig.GetInitialdentityUsers().Where(x => x.IsImportInitialData);
-            IEnumerable<StudyItemEntity> studyItems = null;
+
             foreach (var user in usersWithImport)
             {
-                // create custom collections
-                var russianWordsCollection = new CustomCollectionEntity()
+                // create default custom collections
+                var ruWordsCollection = new CustomCollectionEntity()
                 {
                     UserId = user.Id,
                     Name = CustomCollectionConfig.RussianWordsCollectionName,
+                    IsRoot = false,
                 };
-                var englishWordsCollection = new CustomCollectionEntity()
+                var enWordsCollection = new CustomCollectionEntity()
                 {
                     UserId = user.Id,
                     Name = CustomCollectionConfig.EnglishWordsCollectionName,
+                    IsRoot = false,
                 };
-                var customCollections = new List<CustomCollectionEntity>()
+                var rootCollection = new CustomCollectionEntity()
                 {
-                    new CustomCollectionEntity()
-                    {
-                        UserId = user.Id,
-                        Name = CustomCollectionConfig.RootCollectionName,
-                        IsRoot = true,
-                        Children = new List<CustomCollectionEntity>()
+                    UserId = user.Id,
+                    Name = CustomCollectionConfig.RootCollectionName,
+                    IsRoot = true,
+                    Children = new List<CustomCollectionEntity>()
                         {
-                            russianWordsCollection,
-                            englishWordsCollection,
+                            ruWordsCollection,
+                            enWordsCollection,
                         },
-                    },
                 };
-                await _dataRepository.AddManyAsync(customCollections);
-
-                if (!_dataRepository.ExistsAsync<StudyItemEntity>(x => x.UserId == user.Id).GetAwaiter().GetResult())
+                var exisintgRootCollection = await _dataRepository.GetOneAsync<CustomCollectionEntity>(x => x.UserId == user.Id && x.IsRoot);
+                if (exisintgRootCollection == null)
                 {
-                    studyItems = studyItems ?? GetStudyItems().GetAwaiter().GetResult();
-                    studyItems = studyItems.Select(x =>
+                    await _dataRepository.AddAsync(rootCollection);
+                }
+                else
+                {
+                    rootCollection = exisintgRootCollection;
+
+                    // ru
+                    var existingRuWordsCollection = rootCollection.FindCollectionByName(ruWordsCollection.Name);
+                    if(existingRuWordsCollection == null)
                     {
-                        // fix same ids for different users
-                        x.RegenerateId();
-                        x.Image?.RegenerateId();
-
-                        x.UserId = user.Id;
-                        x.CustomCollectionId = russianWordsCollection.Id;
-                        return x;
-                    });
-
-                    const int chunkSize = 50;
-                    int chunkCount = (int)(Math.Ceiling((double)studyItems.Count() / (double)chunkSize));
-
-                    for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
-                    {
-                        var items = studyItems.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
-                        _dataRepository.AddManyAsync(items).GetAwaiter().GetResult();
-                        _logger.LogInformation($"StudyItems processed chunk {chunkNumber + 1}/{chunkCount}.");
+                        rootCollection.AddChildCollection(rootCollection.Id, ruWordsCollection);
+                        await _dataRepository.UpdateAsync(rootCollection);
                     }
-                    _logger.LogInformation($"StudyItems was added for user #{user.Email}.");
+                    else
+                    {
+                        ruWordsCollection = existingRuWordsCollection;
+                    }
+
+                    // en
+                    var existingEnWordsCollection = rootCollection.FindCollectionByName(enWordsCollection.Name);
+                    if (existingEnWordsCollection == null)
+                    {
+                        rootCollection.AddChildCollection(rootCollection.Id, enWordsCollection);
+                        await _dataRepository.UpdateAsync(rootCollection);
+                    }
+                    else
+                    {
+                        enWordsCollection = existingEnWordsCollection;
+                    }
+                }
+
+                var imports = new[] 
+                { 
+                    new 
+                    {
+                        SourceLanguageCode = "ru",
+                        ImportFilePath = _config.Import.RuWordsFilePath,
+                        ImportFormat = ".txt",
+                        ParentCollectionId = ruWordsCollection.Id,
+                    },
+                    new
+                    {
+                        SourceLanguageCode = "en",
+                        ImportFilePath = _config.Import.EnWordsFilePath,
+                        ImportFormat = ".md",
+                        ParentCollectionId = enWordsCollection.Id,
+                    }
+                };
+
+                // import
+                foreach (var import in imports)
+                {
+                    await SeedStudyItemsForCollection(
+                        user,
+                        rootCollection,
+                        import.SourceLanguageCode,
+                        import.ImportFilePath,
+                        import.ImportFormat,
+                        import.ParentCollectionId
+                    );
                 }
             }
             _logger.LogInformation("StudyItems Done.");
@@ -318,38 +356,109 @@ namespace Lexiconner.Seed.Seed
             }
         }
 
-        private async Task<IEnumerable<StudyItemEntity>> GetStudyItems()
+        private async Task SeedStudyItemsForCollection(
+            ApplicationUserEntity user,
+            CustomCollectionEntity rootCollection,
+            string sourceLanguageCode, 
+            string importFilePath, 
+            string importFormat, 
+            string parentCollectionId
+        )
         {
             _logger.LogInformation("Importing StudyItems...");
-            var wordImports = await _wordTxtImporter.ImportTxtFormatWords();
-            var entities = wordImports.Words.Select(x => new StudyItemEntity
+            WordImportResultModel importResult = null;
+            if(importFormat == ".txt")
             {
-                UserId = null,
-                Title = x.Word,
-                Description = x.Description,
-                ExampleTexts = x.ExampleTexts,
-                LanguageCode = _wordTxtImporter.SourceLanguageCode,
-                Tags = x.Tags,
-            }).ToList();
+                importResult = await _wordTxtImporter.ImportTxtFormatWords(importFilePath);
+            }
+            else if (importFormat == ".md")
+            {
+                importResult = await _wordTxtImporter.ImportMdFormatWords(importFilePath);
+            }
 
-            _logger.LogInformation("Making translations and adding images to StudyItems...");
+            // create imported custom collections
+            var collectionMap = new Dictionary<string, CustomCollectionEntity>();
+            Action<CustomCollectionEntity, string, IEnumerable<CustomCollectionImportModel>> createCollections = null;
+            createCollections = (rootCollectionLocal, parentCollectionIdLocal, collections) =>
+            {
+                foreach (var collection in collections)
+                {
+                    var exsitingEntity = rootCollectionLocal.FindCollectionByName(collection.Name);
+                    if (exsitingEntity != null)
+                    {
+                        collectionMap[collection.TempId] = exsitingEntity;
+                    }
+                    else
+                    {
+                        var newEntity = new CustomCollectionEntity()
+                        {
+                            UserId = user.Id,
+                            IsRoot = false,
+                            Name = collection.Name,
+                            Children = new List<CustomCollectionEntity>(), // add in recursive call below
+                        };
+                        rootCollectionLocal.AddChildCollection(parentCollectionIdLocal, newEntity);
+                        collectionMap[collection.TempId] = newEntity;
+                    }
 
-            string sourceLanguageCode = _wordTxtImporter.SourceLanguageCode;
-            string targetLanguageCode = "en";
+                    // add child collections separately
+                    var currentEntity = collectionMap[collection.TempId];
+                    createCollections(rootCollectionLocal, currentEntity.Id, collection.Children);
+                }
+            };
+            createCollections(rootCollection, parentCollectionId, importResult.Collections);
+            await _dataRepository.UpdateAsync(rootCollection);
 
-            foreach (StudyItemEntity entity in entities)
+            if (!await _dataRepository.ExistsAsync<StudyItemEntity>(x => x.UserId == user.Id))
+            {
+                var studyItemEntities = importResult.Words.Select(x => new StudyItemEntity
+                {
+                    UserId = user.Id,
+                    CustomCollectionId = collectionMap[x.CollectionTempId].Id,
+                    Title = x.Title,
+                    Description = x.Description,
+                    ExampleTexts = x.ExampleTexts,
+                    LanguageCode = sourceLanguageCode,
+                    Tags = x.Tags,
+                    Image = null,
+                }).ToList();
+
+                // fix same ids for different users
+                studyItemEntities.ToList().ForEach(x =>
+                {
+                    x.RegenerateId();
+                    x.Image?.RegenerateId();
+                });
+
+                // set images
+                await SetStudyItemsImages(studyItemEntities);
+
+                const int chunkSize = 50;
+                int chunkCount = (int)(Math.Ceiling((double)studyItemEntities.Count() / (double)chunkSize));
+                for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
+                {
+                    var items = studyItemEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
+                    _dataRepository.AddManyAsync(items).GetAwaiter().GetResult();
+                    _logger.LogInformation($"StudyItems processed chunk {chunkNumber + 1}/{chunkCount}.");
+                }
+                _logger.LogInformation($"StudyItems was added for user #{user.Email}.");
+            }
+        }
+
+        private async Task SetStudyItemsImages(IEnumerable<StudyItemEntity> studyItemEntities)
+        {
+            foreach (StudyItemEntity entity in studyItemEntities)
             {
                 try
                 {
-                    sourceLanguageCode = "";
-                    var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode, entity.Title);
+                    var imagesResult = await _imageService.FindImagesAsync(entity.LanguageCode, entity.Title);
 
                     if (imagesResult.Any())
                     {
                         // try to find suitable image
                         ImageSearchResponseDto.ImageSearchResponseItemDto image = _imageService.GetSuitableImages(imagesResult);
 
-                        if(image != null)
+                        if (image != null)
                         {
                             entity.Image = new StudyItemImageEntity
                             {
@@ -367,12 +476,12 @@ namespace Lexiconner.Seed.Seed
                 catch (ApiRateLimitExceededException ex)
                 {
                     // break
-                    return entities;
+                    break;
                 }
                 catch (ApiErrorException ex)
                 {
                     // break
-                    return entities;
+                    break;
                 }
                 catch (Exception ex)
                 {
@@ -381,7 +490,7 @@ namespace Lexiconner.Seed.Seed
                 }
             }
 
-            return entities;
         }
+        
     }
 }

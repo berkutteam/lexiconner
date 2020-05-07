@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Lexiconner.Api.Controllers.V2
 {
+    // TODO: add tests
     [ApiController]
     [Authorize]
     [ApiVersion("2.0")]

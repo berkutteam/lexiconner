@@ -13,7 +13,8 @@ namespace Lexiconner.Domain.Models
             Tags = new List<string>();
         }
 
-        public string Word { get; set; }
+        public string CollectionTempId { get; set; }
+        public string Title { get; set; }
         public string Description { get; set; }
         public List<string> ExampleTexts { get; set; }
         public List<string> Tags { get; set; }
