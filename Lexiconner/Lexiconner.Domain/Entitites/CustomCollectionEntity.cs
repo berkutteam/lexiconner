@@ -145,6 +145,37 @@ namespace Lexiconner.Domain.Entitites
             }
         }
 
+        /// <summary>
+        /// Returns id of given colelction and all parent collections counting the current collection as root.
+        /// </summary>
+        /// <param name="collectionId"></param>
+        /// <returns></returns>
+        public List<string> GetCollectionChainIds(string collectionId)
+        {
+            if(this.Id == collectionId)
+            {
+                return new List<string>() { this.Id };
+            }
+            else
+            {
+                if (this.Children.Count == 0)
+                {
+                    return new List<string>();
+                }
+
+                var childrenResults = this.Children.SelectMany(x => x.GetCollectionChainIds(collectionId).Where(y => y != null).ToList()).ToList();
+                if(childrenResults.Any())
+                {
+                    childrenResults.Add(this.Id);
+                    return childrenResults;
+                }
+                else
+                {
+                    return new List<string>();
+                }
+            }
+        }
+
         #endregion
     }
 }

@@ -245,8 +245,8 @@ namespace Lexiconner.Seed.Seed
                 }
 
                 var imports = new[] 
-                { 
-                    new 
+                {
+                    new
                     {
                         SourceLanguageCode = "ru",
                         ImportFilePath = _config.Import.RuWordsFilePath,
@@ -263,17 +263,21 @@ namespace Lexiconner.Seed.Seed
                 };
 
                 // import
-                foreach (var import in imports)
+                if (!await _dataRepository.ExistsAsync<StudyItemEntity>(x => x.UserId == user.Id))
                 {
-                    await SeedStudyItemsForCollection(
-                        user,
-                        rootCollection,
-                        import.SourceLanguageCode,
-                        import.ImportFilePath,
-                        import.ImportFormat,
-                        import.ParentCollectionId
-                    );
+                    foreach (var import in imports)
+                    {
+                        await SeedStudyItemsForCollection(
+                            user,
+                            rootCollection,
+                            import.SourceLanguageCode,
+                            import.ImportFilePath,
+                            import.ImportFormat,
+                            import.ParentCollectionId
+                        );
+                    }
                 }
+                
             }
             _logger.LogInformation("StudyItems Done.");
 
@@ -365,7 +369,7 @@ namespace Lexiconner.Seed.Seed
             string parentCollectionId
         )
         {
-            _logger.LogInformation("Importing StudyItems...");
+            _logger.LogInformation($"Importing StudyItems {sourceLanguageCode}, {importFilePath}, {importFormat}...");
             WordImportResultModel importResult = null;
             if(importFormat == ".txt")
             {
@@ -409,40 +413,45 @@ namespace Lexiconner.Seed.Seed
             createCollections(rootCollection, parentCollectionId, importResult.Collections);
             await _dataRepository.UpdateAsync(rootCollection);
 
-            if (!await _dataRepository.ExistsAsync<StudyItemEntity>(x => x.UserId == user.Id))
+            var studyItemEntities = importResult.Words.Select(x => 
             {
-                var studyItemEntities = importResult.Words.Select(x => new StudyItemEntity
+                List<string> customCollectionIds = new List<string>();
+                if(x.CollectionTempId != null && collectionMap.ContainsKey(x.CollectionTempId))
+                {
+                    customCollectionIds = rootCollection.GetCollectionChainIds(collectionMap[x.CollectionTempId].Id);
+                }
+                return new StudyItemEntity
                 {
                     UserId = user.Id,
-                    CustomCollectionId = collectionMap[x.CollectionTempId].Id,
+                    CustomCollectionIds = customCollectionIds,
                     Title = x.Title,
                     Description = x.Description,
                     ExampleTexts = x.ExampleTexts,
                     LanguageCode = sourceLanguageCode,
                     Tags = x.Tags,
                     Image = null,
-                }).ToList();
+                };
+            }).ToList();
 
-                // fix same ids for different users
-                studyItemEntities.ToList().ForEach(x =>
-                {
-                    x.RegenerateId();
-                    x.Image?.RegenerateId();
-                });
+            // fix same ids for different users
+            studyItemEntities.ToList().ForEach(x =>
+            {
+                x.RegenerateId();
+                x.Image?.RegenerateId();
+            });
 
-                // set images
-                await SetStudyItemsImages(studyItemEntities);
+            // set images
+            await SetStudyItemsImages(studyItemEntities);
 
-                const int chunkSize = 50;
-                int chunkCount = (int)(Math.Ceiling((double)studyItemEntities.Count() / (double)chunkSize));
-                for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
-                {
-                    var items = studyItemEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
-                    _dataRepository.AddManyAsync(items).GetAwaiter().GetResult();
-                    _logger.LogInformation($"StudyItems processed chunk {chunkNumber + 1}/{chunkCount}.");
-                }
-                _logger.LogInformation($"StudyItems was added for user #{user.Email}.");
+            const int chunkSize = 50;
+            int chunkCount = (int)(Math.Ceiling((double)studyItemEntities.Count() / (double)chunkSize));
+            for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
+            {
+                var items = studyItemEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
+                _dataRepository.AddManyAsync(items).GetAwaiter().GetResult();
+                _logger.LogInformation($"StudyItems processed chunk {chunkNumber + 1}/{chunkCount}.");
             }
+            _logger.LogInformation($"StudyItems was added for user #{user.Email}.");
         }
 
         private async Task SetStudyItemsImages(IEnumerable<StudyItemEntity> studyItemEntities)
@@ -475,17 +484,19 @@ namespace Lexiconner.Seed.Seed
                 }
                 catch (ApiRateLimitExceededException ex)
                 {
-                    // break
-                    break;
+                    _logger.LogWarning($"Api rate limited. {ex.Message}.");
+                    continue;
                 }
                 catch (ApiErrorException ex)
                 {
                     // break
-                    break;
+                    _logger.LogWarning($"Api error. {ex.Message}.");
+                    continue;
                 }
                 catch (Exception ex)
                 {
                     // rethrow
+                    _logger.LogError($"Error. {ex.Message}.");
                     throw;
                 }
             }

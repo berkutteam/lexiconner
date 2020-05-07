@@ -63,7 +63,7 @@ namespace Lexiconner.Api.Services
 
             if(collectionId != null)
             {
-                predicate.And(x => x.CustomCollectionId == collectionId);
+                predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
             }
 
             var itemsTask = _dataRepository.GetManyAsync<StudyItemEntity>(predicate, offset, limit);
