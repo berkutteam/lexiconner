@@ -14,6 +14,7 @@ namespace Lexiconner.Domain.Models
         }
 
         public string CollectionTempId { get; set; }
+        public string CollectionName { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public List<string> ExampleTexts { get; set; }

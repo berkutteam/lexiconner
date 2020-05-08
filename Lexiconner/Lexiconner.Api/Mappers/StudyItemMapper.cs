@@ -14,6 +14,7 @@ namespace Lexiconner.Api.Mappers
             return new StudyItemDto
             {
                 Id = entity.Id,
+                CustomCollectionIds = entity.CustomCollectionIds,
                 Title = entity.Title,
                 Description = entity.Description,
                 ExampleTexts = entity.ExampleTexts,

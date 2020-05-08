@@ -420,6 +420,10 @@ namespace Lexiconner.Seed.Seed
                 {
                     customCollectionIds = rootCollection.GetCollectionChainIds(collectionMap[x.CollectionTempId].Id);
                 }
+                else
+                {
+                    customCollectionIds = new List<string>() { parentCollectionId };
+                }
                 return new StudyItemEntity
                 {
                     UserId = user.Id,

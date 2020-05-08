@@ -125,7 +125,6 @@ namespace Lexiconner.Application.ImportAndExport
             List<string> currentExamples = new List<string>();
             var resetCurrentWord = new Action(() =>
             {
-                lastAddedCollection = null;
                 isWordEntered = false;
                 currentTitle = null;
                 currentDescription = null;
@@ -243,6 +242,7 @@ namespace Lexiconner.Application.ImportAndExport
                         result.Words.Add(new WordImportModel
                         {
                             CollectionTempId = lastAddedCollection?.TempId,
+                            CollectionName = lastAddedCollection?.Name,
                             Title = currentTitle,
                             Description = currentDescription,
                             ExampleTexts = currentExamples,
