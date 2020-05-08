@@ -1,11 +1,12 @@
 ﻿using Lexiconner.Api.DTOs;
-using Lexiconner.Api.DTOs.StudyItems;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
 using Lexiconner.Api.Mappers;
 using Lexiconner.Api.Models;
 using Lexiconner.Application.Helpers;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Attributes;
+using Lexiconner.Domain.Dtos;
+using Lexiconner.Domain.Dtos.StudyItems;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Enums;
 using Lexiconner.Persistence.Repositories;
@@ -25,6 +26,9 @@ namespace Lexiconner.Api.Services.Interfaces
     public interface IStudyItemsService
     {
         Task<PaginationResponseDto<StudyItemDto>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null, string collectionId = null);
+        Task<StudyItemDto> CreateStudyItemAsync(string userId, StudyItemCreateDto createDto);
+        Task<StudyItemDto> UpdateStudyItemAsync(string userId, string studyItemId, StudyItemUpdateDto updateDto);
+        Task DeleteStudyItem(string userId, string sutyItemId);
 
         Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId);
         Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, string collectionId, int limit);

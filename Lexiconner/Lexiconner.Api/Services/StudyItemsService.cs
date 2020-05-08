@@ -1,12 +1,15 @@
 ﻿using Lexiconner.Api.DTOs;
-using Lexiconner.Api.DTOs.StudyItems;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
 using Lexiconner.Api.Mappers;
 using Lexiconner.Api.Models;
 using Lexiconner.Api.Services.Interfaces;
+using Lexiconner.Application.Exceptions;
 using Lexiconner.Application.Helpers;
 using Lexiconner.Application.Services;
+using Lexiconner.Application.Validation;
 using Lexiconner.Domain.Attributes;
+using Lexiconner.Domain.Dtos;
+using Lexiconner.Domain.Dtos.StudyItems;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Enums;
 using Lexiconner.Persistence.Repositories;
@@ -86,6 +89,94 @@ namespace Lexiconner.Api.Services
             };
 
             return result;
+        }
+
+        public async Task<StudyItemDto> CreateStudyItemAsync(string userId, StudyItemCreateDto createDto)
+        {
+            var entity = CustomMapper.MapToEntity(userId, createDto);
+            CustomValidationHelper.Validate(entity);
+
+            // set image
+            if (entity.Title.Length > 3)
+            {
+                var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: entity.LanguageCode, entity.Title);
+
+                if (imagesResult.Any())
+                {
+                    // try to find suitable image
+                    var image = _imageService.GetSuitableImages(imagesResult);
+                    if (image != null)
+                    {
+                        entity.Image = new StudyItemImageEntity
+                        {
+                            Url = image.Url,
+                            Height = image.Height,
+                            Width = image.Width,
+                            Thumbnail = image.Thumbnail,
+                            ThumbnailHeight = image.ThumbnailHeight,
+                            ThumbnailWidth = image.ThumbnailWidth,
+                            Base64Encoding = image.Base64Encoding,
+                        };
+                    }
+                }
+            }
+
+
+            await _dataRepository.AddAsync(entity);
+            return CustomMapper.MapToDto(entity);
+        }
+
+        public async Task<StudyItemDto> UpdateStudyItemAsync(string userId, string studyItemId, StudyItemUpdateDto updateDto)
+        {
+            var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == studyItemId);
+            if (entity.UserId != userId)
+            {
+                throw new AccessDeniedException("Can't edit the item that you don't own!");
+            }
+
+            // update
+            entity.UpdateSelf(updateDto);
+
+            // set image
+            if (entity.Image == null)
+            {
+                if (entity.Title.Length > 3)
+                {
+                    var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: entity.LanguageCode, entity.Title);
+
+                    if (imagesResult.Any())
+                    {
+                        // try to find suitable image
+                        var image = _imageService.GetSuitableImages(imagesResult);
+                        if (image != null)
+                        {
+                            entity.Image = new StudyItemImageEntity
+                            {
+                                Url = image.Url,
+                                Height = image.Height,
+                                Width = image.Width,
+                                Thumbnail = image.Thumbnail,
+                                ThumbnailHeight = image.ThumbnailHeight,
+                                ThumbnailWidth = image.ThumbnailWidth,
+                                Base64Encoding = image.Base64Encoding,
+                            };
+                        }
+                    }
+                }
+            }
+
+            await _dataRepository.UpdateAsync(entity);
+            return CustomMapper.MapToDto(entity);
+        }
+
+        public async Task DeleteStudyItem(string userId, string sutyItemId)
+        {
+            var existing = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == sutyItemId && x.UserId == userId);
+            if (existing == null)
+            {
+                throw new NotFoundException();
+            }
+            await _dataRepository.DeleteAsync<StudyItemEntity>(x => x.Id == existing.Id);
         }
 
         #endregion

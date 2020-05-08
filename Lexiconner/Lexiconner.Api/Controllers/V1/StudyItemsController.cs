@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lexiconner.Api.DTOs;
 using Lexiconner.Api.Models;
+using Lexiconner.Domain.Dtos;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;

@@ -1,4 +1,4 @@
-﻿using Lexiconner.Api.DTOs.StudyItems;
+﻿using Lexiconner.Domain.Dtos.StudyItems;
 using Lexiconner.Domain.Entitites;
 using System;
 using System.Collections.Generic;

@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lexiconner.Api.DTOs.StudyItems.Validators
+namespace Lexiconner.Domain.Dtos.StudyItems.Validators
 {
-    public class StudyItemCreateDtoValidator : AbstractValidator<StudyItemCreateDto>
+    public class StudyItemUpdateDtoValidator : AbstractValidator<StudyItemUpdateDto>
     {
-        public StudyItemCreateDtoValidator()
+        public StudyItemUpdateDtoValidator()
         {
             RuleFor(x => x.Title).NotEmpty().MaximumLength(50);
             RuleFor(x => x.Description).NotEmpty().MaximumLength(200);

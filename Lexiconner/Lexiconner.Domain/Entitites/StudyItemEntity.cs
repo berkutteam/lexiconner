@@ -1,4 +1,5 @@
-﻿using Lexiconner.Domain.Entitites.Base;
+﻿using Lexiconner.Domain.Dtos.StudyItems;
+using Lexiconner.Domain.Entitites.Base;
 using Lexiconner.Domain.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -41,10 +42,19 @@ namespace Lexiconner.Domain.Entitites
 
         #region Helper methods
 
-        //public void Update(StudyItemUpdateDto dto)
-        //{
-
-        //}
+        public void UpdateSelf(StudyItemUpdateDto dto)
+        {
+            if (this.Title != dto.Title)
+            {
+                this.Image = null;
+            }
+            this.Title = dto.Title;
+            this.Description = dto.Description;
+            this.ExampleTexts = dto.ExampleTexts;
+            this.IsFavourite = dto.IsFavourite;
+            this.LanguageCode = dto.LanguageCode;
+            this.Tags = dto.Tags;
+        }
 
         public bool RemoveCollection(string collectionId)
         {

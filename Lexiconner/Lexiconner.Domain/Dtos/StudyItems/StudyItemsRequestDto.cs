@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lexiconner.Api.DTOs.StudyItems
+namespace Lexiconner.Domain.Dtos.StudyItems
 {
     public class StudyItemsRequestDto : PaginationRequestDto
     {

@@ -1,6 +1,7 @@
 ﻿using IdentityModel;
 using Lexiconner.Api.DTOs;
 using Lexiconner.Api.Models;
+using Lexiconner.Domain.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;

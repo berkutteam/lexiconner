@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lexiconner.Api.DTOs.StudyItems
+namespace Lexiconner.Domain.Dtos.StudyItems
 {
-    public class StudyItemUpdateDto
+    public class StudyItemCreateDto
     {
-        public StudyItemUpdateDto()
+        public StudyItemCreateDto()
         {
             ExampleTexts = new List<string>();
             Tags = new List<string>();
