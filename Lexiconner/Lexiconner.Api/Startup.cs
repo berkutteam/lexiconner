@@ -32,6 +32,7 @@ using Autofac;
 using Lexiconner.Application.Helpers;
 using FluentValidation.AspNetCore;
 using Lexiconner.Api.Services.Interfaces;
+using Lexiconner.Api.Attributes;
 
 namespace Lexiconner.Api
 {
@@ -192,13 +193,17 @@ namespace Lexiconner.Api
                 });
             }
 
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddFluentValidation(options =>
-                {
-                    options.RegisterValidatorsFromAssembly(typeof(Startup).Assembly); // register all validators in assembly
-                    options.RunDefaultMvcValidationAfterFluentValidationExecutes = true; // allow default validation to run
-                });
+            services.AddMvc((options) =>
+            {
+                options.Filters.Add<ApiExceptionFilterAttribute>();
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            .AddFluentValidation(options =>
+            {
+                options.RegisterValidatorsFromAssembly(typeof(Startup).Assembly); // register all validators in assembly
+                options.RegisterValidatorsFromAssembly(typeof(Lexiconner.Domain.Anchor).Assembly); // register all validators in assembly
+                options.RunDefaultMvcValidationAfterFluentValidationExecutes = true; // allow default validation to run
+            });
         }
 
         // ConfigureContainer is where you can register things directly
