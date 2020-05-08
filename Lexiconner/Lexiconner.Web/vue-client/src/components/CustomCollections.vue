@@ -2,6 +2,7 @@
     <div v-if="sharedState.customCollectionsResult">
         <folder-tree-view
             v-bind:treeItem="customCollectionsTree"
+            v-bind:activeTreeItemId="$store.getters.currentCustomCollectionId"
             v-bind:onFolderClick="onFolderClick"
             v-bind:onCreateFolder="onCreateFolder"
             v-bind:onUpdateFolder="onUpdateFolder"
@@ -11,6 +12,7 @@
         >
         </folder-tree-view>
 
+        <!-- Custom collection edit -->
         <modal 
             name="custom-collection-edit" 
             height="auto"
@@ -44,6 +46,43 @@
                 </div>
             </div>
         </modal>
+
+        <!-- Custom collection delete  -->
+        <modal 
+            name="custom-collection-delete" 
+            height="auto"
+            width="450px"
+            v-bind:classes="['v--modal', 'v--modal-box', 'v--modal-box--overflow-visible', 'v--modal-box--sm-fullwidth']"
+            v-bind:clickToClose="false"
+        >
+            <div class="app-modal">
+                <div class="app-modal-header">
+                    <div class="app-modal-title">
+                        <span>Delete collection</span>
+                    </div>
+                    <div v-on:click="$modal.hide('custom-collection-delete')" class="app-modal-close">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                
+                <div class="app-modal-content">
+                    <form v-on:submit.prevent="deleteCustomCollection(privateState.modalMode)">
+                        <div class="form-check">
+                            <input v-model="privateState.customCollectionDeleteModel.isDeleteItems" class="form-check-input" type="checkbox" name="customCollectionDeleteModel_isDeleteItems" id="customCollectionDeleteModel_isDeleteItems">
+                            <label class="form-check-label" for="customCollectionDeleteModel_isDeleteItems">
+                                Move items to parent collection
+                            </label>
+                            <small class="form-text text-muted">If not checked the items in collection will be deleted.</small>
+                        </div>
+                        <loading-button 
+                            type="submit"
+                            v-bind:loading="sharedState.loading[privateState.storeTypes.CUSTOM_COLLECTION_DELETE]"
+                            class="btn btn-outline-danger btn-block mt-3"
+                        >Delete</loading-button>
+                    </form>
+                </div>
+            </div>
+        </modal>
     </div>
 </template>
 
@@ -61,6 +100,10 @@ import FolderTreeView from '@/components/FolderTreeView';
 const customCollectionModelDefault = {
     name: null,
     parentCollectionId: null,
+};
+const customCollectionDeleteModelDefault = {
+    customCollectionId: null,
+    isDeleteItems: null,
 };
 
 export default {
@@ -82,8 +125,8 @@ export default {
             privateState: {
                 storeTypes: storeTypes,
                 customCollectionModel: _.cloneDeep(customCollectionModelDefault),
+                customCollectionDeleteModel: _.cloneDeep(customCollectionDeleteModelDefault),
                 modalMode: 'create', // ['create', 'edit']
-                
             },
         };
     },
@@ -119,6 +162,9 @@ export default {
             if(this.onSelectedCollectionChange) {
                 this.onSelectedCollectionChange(sourceFolder.id);
             }
+            this.$store.commit(storeTypes.CUSTOM_COLLECTION_CURRENT_SET, {
+                customCollection: sourceFolder,
+            });
         },
         onCreateFolder: function(parentFolder) {
             this.privateState.modalMode = 'create';
@@ -132,6 +178,7 @@ export default {
             this.$modal.show('custom-collection-edit');
         },
         onCreateFolderItem: function(parentFolder) {
+
         },
         onDuplicateFolder: function(sourceFolder) {
             this.$store.dispatch(storeTypes.CUSTOM_COLLECTION_DUPLICATE, {
@@ -150,22 +197,11 @@ export default {
                 });
         },
         onDeleteFolder: function(sourceFolder) {
-            if(confirm('Are you sure?')) {
-                this.$store.dispatch(storeTypes.CUSTOM_COLLECTION_DELETE, {
-                    customCollectionId: sourceFolder.id,
-                }).then(() => {
-                    this.$notify({
-                        group: 'app',
-                        type: 'success',
-                        title: `Collection has been deleted!`,
-                        text: '',
-                        duration: 5000,
-                    });
-                }).catch(err => {
-                    console.error(err);
-                    notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
-                });
-            }
+            this.privateState.customCollectionDeleteModel = {
+                customCollectionId: sourceFolder.id,
+                isDeleteItems: false,
+            };
+            this.$modal.show('custom-collection-delete');
         },
         createEditCustomCollection: function(mode) {
             if(mode === 'create') {
@@ -216,6 +252,28 @@ export default {
 
                 // reset
                 this.privateState.customCollectionModel = _.cloneDeep(customCollectionModelDefault);
+            }).catch(err => {
+                console.error(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            });
+        },
+        deleteCustomCollection: function() {
+            this.$store.dispatch(storeTypes.CUSTOM_COLLECTION_DELETE, {
+                customCollectionId: this.privateState.customCollectionDeleteModel.customCollectionId,
+                isDeleteItems: this.privateState.customCollectionDeleteModel.isDeleteItems,
+            }).then(() => {
+                this.$notify({
+                    group: 'app',
+                    type: 'success',
+                    title: `Collection has been deleted!`,
+                    text: '',
+                    duration: 5000,
+                });
+
+                this.$modal.hide('custom-collection-delete');
+
+                // reset
+                this.privateState.customCollectionDeleteModel = _.cloneDeep(customCollectionDeleteModelDefault);
             }).catch(err => {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);

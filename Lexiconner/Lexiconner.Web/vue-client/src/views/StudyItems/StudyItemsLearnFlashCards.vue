@@ -12,7 +12,7 @@
                         </div>
                     </div>
                     <div v-if="!isAllTrained && currentItem" class="card bg-light training-card">
-                        <img v-if="currentItem.image" class="card-img-top" v-bind:src="currentItem.image.url" v-bind:alt="currentItem.title">
+                        <img v-if="currentItem.image" class="card-img-top training-image" v-bind:src="currentItem.image.url" v-bind:alt="currentItem.title">
                         <img v-else class="card-img-top" src="/img/empty-image.png">
                         <div class="card-body">
                             <div class="d-flex w-100 justify-content-between align-items-center mb-1">
@@ -150,6 +150,7 @@ export default {
     methods: {
         loadTraining: function({limit = 10} = {}) {
             return this.$store.dispatch(storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START, {
+                collectionId: this.$store.getters.currentCustomCollectionId,
                 limit: limit, 
             }).then().catch(err => {
                 console.error(err);

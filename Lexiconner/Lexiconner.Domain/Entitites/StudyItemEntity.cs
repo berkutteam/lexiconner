@@ -16,6 +16,7 @@ namespace Lexiconner.Domain.Entitites
             CustomCollectionIds = new List<string>();
             ExampleTexts = new List<string>();
             Tags = new List<string>();
+            TrainingInfo = new StudyItemTrainingInfoEntity();
         }
 
         public string UserId { get; set; }
@@ -45,8 +46,19 @@ namespace Lexiconner.Domain.Entitites
 
         //}
 
-        #endregion
+        public bool RemoveCollection(string collectionId)
+        {
+            bool isUpdated = false;
+            var existing = this.CustomCollectionIds.FirstOrDefault(x => x == collectionId);
+            if(existing != null)
+            {
+                this.CustomCollectionIds.Remove(existing);
+                isUpdated = true;
+            }
+            return isUpdated;
+        }
 
+        #endregion
     }
 
     public class StudyItemImageEntity : BaseEntity
@@ -74,8 +86,6 @@ namespace Lexiconner.Domain.Entitites
             var progress = Math.Round(Trainings.Select(x => x.Progress).Sum() / Trainings.Count, 2);
             return progress;
         }
-
-
 
         public class StudyItemTrainingProgressItemEntity : BaseEntity
         {

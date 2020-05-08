@@ -294,8 +294,8 @@ class API {
             getTrainingStatistics() {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/stats`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
-            flashcardsTrainingStart({limit}) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/flashcards`, {limit}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            flashcardsTrainingStart({collectionId, limit}) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/flashcards`, {collectionId, limit}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             flashcardsTrainingSave({data}) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/flashcards/save`, {}), method: "post", data: {...data} }).then(handleApiResponse).catch(handleApiErrorResponse);
@@ -311,8 +311,8 @@ class API {
             updateCustomCollection({ customCollectionId, data }) {
                 return axiosAuthRequest({ url: buildUrl(url, `customcollections/${customCollectionId}`, {}), method: "put", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
-            deleteCustomCollection({ customCollectionId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `customcollections/${customCollectionId}`, {}), method: "delete", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
+            deleteCustomCollection({ customCollectionId, isDeleteItems }) {
+                return axiosAuthRequest({ url: buildUrl(url, `customcollections/${customCollectionId}`, {isDeleteItems}), method: "delete", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             duplicateCustomCollection({ customCollectionId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `customcollections/${customCollectionId}/duplicate`, {}), method: "post", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);

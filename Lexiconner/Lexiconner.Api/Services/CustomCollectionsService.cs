@@ -81,7 +81,7 @@ namespace Lexiconner.Api.Services
             };
         }
 
-        public async Task<CustomCollectionsAllResponseDto> DeleteCustomCollectionAsync(string userId, string customCollectionId)
+        public async Task<CustomCollectionsAllResponseDto> DeleteCustomCollectionAsync(string userId, string customCollectionId, bool isDeleteItems)
         {
             var rootEntity = await _dataRepository.GetOneAsync<CustomCollectionEntity>(x => x.UserId == userId);
             if (rootEntity == null)
@@ -90,6 +90,20 @@ namespace Lexiconner.Api.Services
             }
             rootEntity.RemoveChildCollection(customCollectionId);
             await _dataRepository.UpdateAsync(rootEntity);
+
+            // handle items
+            if(isDeleteItems)
+            {
+                // delete items
+                await _dataRepository.DeleteAsync<StudyItemEntity>(x => x.CustomCollectionIds.Contains(customCollectionId));
+            }
+            else
+            {
+                // delete deleted collection from items
+                var itemEntities = await _dataRepository.GetManyAsync<StudyItemEntity>(x => x.CustomCollectionIds.Contains(customCollectionId));
+                itemEntities.ToList().ForEach(x => x.RemoveCollection(customCollectionId));
+                await _dataRepository.UpdateManyAsync(itemEntities);
+            }
 
             var dto = CustomMapper.MapToDto(rootEntity);
             return new CustomCollectionsAllResponseDto()

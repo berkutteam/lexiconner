@@ -91,6 +91,7 @@ export default new Vuex.Store({
         trainingFlashcards: null, // object
 
         customCollectionsResult: null, // object
+        currentCustomCollection: null, // object
 
         nav: {
             isVisible: true,
@@ -125,6 +126,12 @@ export default new Vuex.Store({
             }
             let { access_token, id_token, refresh_token } = state.auth.user;
             return { access_token, id_token, refresh_token };
+        },
+        currentCustomCollectionId(state, getters) {
+            if (!state.currentCustomCollection) {
+                return null;
+            }
+            return state.currentCustomCollection.id;
         },
     },
     mutations: {
@@ -280,6 +287,10 @@ export default new Vuex.Store({
             let { data } = payload;
             state.customCollectionsResult = data;
         },
+        [storeTypes.CUSTOM_COLLECTION_CURRENT_SET](state, payload) {
+            let { customCollection } = payload;
+            state.currentCustomCollection = {...customCollection};
+        },
 
         //#endregion
 
@@ -290,8 +301,6 @@ export default new Vuex.Store({
             let { isVisible } = payload;
             state.nav.isVisible = isVisible;
         },
-
-        
 
 
         //#region Error page
@@ -836,13 +845,13 @@ export default new Vuex.Store({
                 throw err;
             });
         },
-        [storeTypes.CUSTOM_COLLECTION_DUPLICATE](context, {customCollectionId}) {
+        [storeTypes.CUSTOM_COLLECTION_DUPLICATE](context, {customCollectionId, isDeleteItems}) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
                 target: storeTypes.CUSTOM_COLLECTION_DUPLICATE,
                 loading: true,
             });
-            return api.webApi().duplicateCustomCollection({customCollectionId}).then(({ data, ok }) => {
+            return api.webApi().duplicateCustomCollection({customCollectionId, isDeleteItems}).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.CUSTOM_COLLECTION_DUPLICATE,
                     loading: false,

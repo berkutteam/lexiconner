@@ -195,6 +195,11 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
         {
             CheckCollectionConfig<T>();
 
+            if(entities.Count() == 0)
+            {
+                return;
+            }
+
             var ids = entities.Select(x => x.Id).ToList();
             var updates = new List<WriteModel<T>>();
             var filterBuilder = Builders<T>.Filter;

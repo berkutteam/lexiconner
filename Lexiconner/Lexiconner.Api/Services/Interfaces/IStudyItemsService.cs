@@ -27,7 +27,7 @@ namespace Lexiconner.Api.Services.Interfaces
         Task<PaginationResponseDto<StudyItemDto>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null, string collectionId = null);
 
         Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId);
-        Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, int limit);
+        Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, string collectionId, int limit);
         Task SaveTrainingResultsForFlashCardsAsync(string userId, FlashCardsTrainingResultDto results);
 
         Task AddToFavouritesAsync(string userId, IEnumerable<string> itemIds);

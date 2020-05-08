@@ -17,7 +17,7 @@ namespace Lexiconner.Api.Services.Interfaces
         Task<CustomCollectionsAllResponseDto> GetAllCustomCollectionsAsync(string userId);
         Task<CustomCollectionsAllResponseDto> CreateCustomCollectionAsync(string userId, CustomCollectionCreateDto createDto);
         Task<CustomCollectionsAllResponseDto> UpdateCustomCollectionAsync(string userId, string collectionId, CustomCollectionUpdateDto updateDto);
-        Task<CustomCollectionsAllResponseDto> DeleteCustomCollectionAsync(string userId, string customCollectionId);
+        Task<CustomCollectionsAllResponseDto> DeleteCustomCollectionAsync(string userId, string customCollectionId, bool isDeleteItems);
         Task<CustomCollectionsAllResponseDto> DuplicateCustomCollectionAsync(string userId, string collectionId);
     }
 }

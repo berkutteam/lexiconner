@@ -52,9 +52,9 @@ namespace Lexiconner.Api.Controllers.V2
 
         [HttpDelete]
         [Route("{collectionId}")]
-        public async Task<IActionResult> Delete([FromRoute]string collectionId)
+        public async Task<IActionResult> Delete([FromRoute]string collectionId, [FromQuery]bool isDeleteItems)
         {
-            var result = await _customCollectionsService.DeleteCustomCollectionAsync(GetUserId(), collectionId);
+            var result = await _customCollectionsService.DeleteCustomCollectionAsync(GetUserId(), collectionId, isDeleteItems);
             return BaseResponse(result);
         }
 

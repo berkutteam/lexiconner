@@ -6,21 +6,26 @@
     >
         <li>
             <div
-                v-bind:class="{'font-weight-bold': true}"
+                v-bind:class="{'font-weight-bold': false}"
                 class="tree-item"
             >
                 <span v-if="hasChildren" v-on:click="toggle" class="tree-item-toggle mr-1">
                     <i v-if="!privateState.isOpen" class="fas fa-chevron-down"></i>
                     <i v-if="privateState.isOpen" class="fas fa-chevron-up"></i>
                 </span>
-                <span class="tree-item-name" v-on:click="folderClicked(treeItem)">
-                    <i v-if="hasChildren" class="fas fa-folder"></i>
-                    <i v-if="!hasChildren" class="far fa-folder"></i>
-                    {{treeItem.name}}
+                <span 
+                    class="tree-item-name" 
+                    v-on:click="folderClicked(treeItem)"
+                >
+                    <i v-if="hasChildren" class="fas fa-folder mr-1"></i>
+                    <i v-if="!hasChildren" class="far fa-folder mr-1"></i>
+                    <span v-bind:class="{'font-weight-bold': treeItem.id === activeTreeItemId}">
+                        {{treeItem.name}}
+                    </span>
                 </span>
                 <!-- <span v-if="hasChildren">[{{ privateState.isOpen ? '-' : '+' }}]</span> -->
                 
-                <span class="tree-item-controls ml-3">
+                <!-- <span class="tree-item-controls ml-3">
                     <span 
                         v-on:click="createFolder(treeItem)"
                         class="control-item mr-2"
@@ -53,6 +58,44 @@
                     >
                         <i class="fas fa-folder-minus"></i>
                     </span>
+                </span> -->
+                
+                <span class="dropdown ml-2">
+                    <a class="dropdown-toggle text-secondary" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-sliders-h"></i>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a v-on:click="createFolder(treeItem)" class="dropdown-item" href="#">
+                            <i class="fas fa-folder-plus text-secondary mr-1" style="width: 20px"></i>
+                            <span>Create collection</span>
+                        </a>
+                        <a v-on:click="updateFolder(treeItem)" class="dropdown-item" href="#">
+                            <i class="fas fa-edit text-secondary mr-1" style="width: 20px"></i>
+                            <span>Edit collection</span>
+                        </a>
+                        <a v-on:click="createFolderItem(treeItem)" class="dropdown-item" href="#">
+                            <i class="fas fa-plus-square text-secondary mr-1" style="width: 20px"></i>
+                            <span>Add item</span>
+                        </a>
+                        <a 
+                            v-if="!treeItem.isRoot"
+                            v-on:click="duplicateFolder(treeItem)"
+                            class="dropdown-item" 
+                            href="#"
+                        >
+                            <i class="far fa-copy text-secondary mr-1" style="width: 20px"></i>
+                            <span>Duplicate collection</span>
+                        </a>
+                        <a 
+                            v-if="!treeItem.isRoot"
+                            v-on:click="deleteFolder(treeItem)"
+                            class="dropdown-item" 
+                            href="#"
+                        >
+                            <i class="fas fa-folder-minus text-secondary mr-1" style="width: 20px"></i>
+                            <span>Delete collection</span>
+                        </a>
+                    </div>
                 </span>
             </div>
             <!--If `children` is undefined this will not render-->
@@ -63,6 +106,7 @@
                     v-for="child in treeItem.children" 
                     v-bind:key="child.id"
                     v-bind:treeItem="child"
+                    v-bind:activeTreeItemId="$store.getters.currentCustomCollectionId"
                     v-bind:onFolderClick="folderClicked"
                     v-bind:onCreateFolder="createFolder"
                     v-bind:onUpdateFolder="updateFolder"
@@ -117,6 +161,10 @@ export default {
         treeItem: {
             type: Object,
             required: true,
+        },
+        activeTreeItemId: {
+            required: false,
+            default: null,
         },
         onFolderClick: {
             type: Function,

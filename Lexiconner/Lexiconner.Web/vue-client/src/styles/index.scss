@@ -702,6 +702,10 @@ a {
                 margin-bottom: 0;
             }
 
+            .study-item-image {
+                max-height: 20rem;
+            }
+
             .card-bottom-controls {
                 display: flex;
                 align-items: start;
@@ -751,6 +755,10 @@ a {
         width: 80%;
         max-width: 400px;
 
+        .training-image {
+            max-height: 20rem;
+        }
+
         .card-bottom-controls {
             display: flex;
             align-items: start;
@@ -790,9 +798,6 @@ a {
     .tree-item {
         cursor: pointer;
         &:hover {
-            .tree-item-name {
-                color: $color-blue-dark;
-            }
         }
 
         .tree-item-toggle {
@@ -802,7 +807,9 @@ a {
         }
 
         .tree-item-name {
-
+            &:hover {
+                color: $color-blue-dark;
+            }
         }
 
         .tree-item-controls {

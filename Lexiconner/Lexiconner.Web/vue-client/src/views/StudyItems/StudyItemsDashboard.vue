@@ -2,6 +2,10 @@
     <div class="dashboard-wrapper">
         <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.STUDY_ITEM_TRAINING_STATS_LOAD]"></row-loader>
 
+        <!-- Collections -->
+        <custom-collections>
+        </custom-collections>
+
         <!-- Stats -->
         <div class="mb-2">
             <div v-if="trainingStats">
@@ -80,11 +84,13 @@ import authService from '@/services/authService';
 import notificationUtil from '@/utils/notification';
 import RowLoader from '@/components/loaders/RowLoader';
 import LoadingButton from '@/components/LoadingButton';
+import CustomCollections from '@/components/CustomCollections';
 
 export default {
     name: 'study-items-dashboard',
     components: {
         RowLoader,
+        CustomCollections,
     },
     data: function() {
         return {

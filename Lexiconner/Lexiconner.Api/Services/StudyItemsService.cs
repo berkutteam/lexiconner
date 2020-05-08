@@ -131,14 +131,22 @@ namespace Lexiconner.Api.Services
             return result;
         }
 
-        public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, int limit)
+        public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, string collectionId, int limit)
         {
-            var entities = await _dataRepository.GetManyAsync<StudyItemEntity>(
-                x => x.UserId == userId && 
-                (x.TrainingInfo == null || (x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow))),
-                0,
-                limit
+            var predicate = PredicateBuilder.New<StudyItemEntity>(x =>
+                x.UserId == userId &&
+                (
+                    x.TrainingInfo == null ||
+                    (x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow))
+                )
             );
+
+            if (collectionId != null)
+            {
+                predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+
+            var entities = await _dataRepository.GetManyAsync<StudyItemEntity>(predicate, 0, limit);
 
             return new FlashCardsTrainingDto
             {

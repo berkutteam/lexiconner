@@ -104,8 +104,8 @@
                                     class="card bg-light study-item-card" 
                                 >
                                     <!-- <div class="card-header"></div> -->
-                                    <img v-if="item.image" class="card-img-top" v-bind:src="item.image.url" v-bind:alt="item.title">
-                                    <img v-else class="card-img-top" src="/img/empty-image.png">
+                                    <img v-if="item.image" class="card-img-top study-item-image" v-bind:src="item.image.url" v-bind:alt="item.title">
+                                    <img v-else class="card-img-top study-item-image" src="/img/empty-image.png">
                                     <div class="card-body">
                                         <div class="d-flex w-100 justify-content-between align-items-center mb-1">
                                             <h6 class="card-title mb-0">
@@ -152,6 +152,7 @@
                 </div>
 
 
+                <!-- Study item create/edit -->
                 <modal 
                     name="study-item-create-edit" 
                     height="auto"
@@ -293,12 +294,26 @@ export default {
             studyItems: state => state.studyItemsPaginationResult ? state.studyItemsPaginationResult.items : null,
         }),
     },
-    created: async function() {
-        this.loadStudyItems();
+    created: function() {
+        this.loadStudyItems({
+            collectionId: this.$store.getters.currentCustomCollectionId,
+        });
+
+        this.unwatch = this.$store.watch(
+            (state, getters) => getters.currentCustomCollectionId,
+            (newValue, oldValue) => {
+                this.loadStudyItems({
+                    collectionId: newValue,
+                });
+            }
+        );
     },
     mounted: function() {
     },
     updated: function() {
+    },
+    beforeDestroy: function() {
+        this.unwatch();
     },
     destroyed: function() {
     },
@@ -317,9 +332,6 @@ export default {
             });
         },
         onSelectedCollectionChange: function(nextCollectionId) {
-            this.loadStudyItems({
-                collectionId: nextCollectionId,
-            });
         },
         toggleView: function() {
             this.privateState.currentView = this.privateState.currentView === 'list' ? 'cards' : 'list';

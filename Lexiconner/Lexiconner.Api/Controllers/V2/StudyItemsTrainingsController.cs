@@ -53,9 +53,9 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> FlashcardsTrainingStart([FromQuery]int limit)
+        public async Task<IActionResult> FlashcardsTrainingStart([FromQuery]string collectionId, [FromQuery]int limit)
         {
-            var result = await _studyItemsService.GetTrainingItemsForFlashCardsAsync(GetUserId(), limit);
+            var result = await _studyItemsService.GetTrainingItemsForFlashCardsAsync(GetUserId(), collectionId, limit);
             return BaseResponse(result);
         }
 
