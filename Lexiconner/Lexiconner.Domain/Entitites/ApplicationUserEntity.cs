@@ -6,6 +6,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDbGenericRepository.Attributes;
 using MongoDbGenericRepository.Utils;
+using Newtonsoft.Json;
 using NUlid;
 using NUlid.Rng;
 using System;
@@ -30,6 +31,14 @@ namespace Lexiconner.Domain.Entitites
             // we can rewrite Id in constructor as it is intialised in base constructor
             Id = Ulid.NewUlid(new NUlid.Rng.CSUlidRng()).ToString();
         }
+
+        /// <summary>
+        /// User is used for demo
+        /// NB: This prop doesn't go to DB
+        /// </summary>
+        [JsonIgnore]
+        [BsonIgnore]
+        public bool IsDemo { get; set; }
 
         public string Name { get; set; }
 

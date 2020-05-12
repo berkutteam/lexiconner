@@ -256,10 +256,11 @@ namespace Lexiconner.IdentityServer4
             // UseRouting must go before any authorization. Otherwise authorization won't work properly.
             app.UseRouting();
 
-            // UseIdentityServer includes a call to UseAuthentication, so it’s not necessary to have both.
-            app.UseIdentityServer();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // UseIdentityServer includes a call to UseAuthentication, so it’s not necessary to have both.
+            app.UseIdentityServer();
 
             // Configure Google Auth
             //app.UseGoogleAuthentication(new GoogleOptions
@@ -276,6 +277,10 @@ namespace Lexiconner.IdentityServer4
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                   name: "default",
+                   pattern: "{controller=Home}/{action=Index}/{id?}"
+               );
             });
 
             // Swagger

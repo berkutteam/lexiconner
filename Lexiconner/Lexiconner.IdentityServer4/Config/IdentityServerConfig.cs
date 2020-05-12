@@ -310,6 +310,7 @@ namespace Lexiconner.IdentityServer4.Config
             {
                 new ApplicationUserEntity
                 {
+                    IsDemo = true,
                     Id = "01DGMH8EQAZS9M4VS6X5FB2HDA",
                     Name = "John Doe1",
                     UserName = "johndoe1",
@@ -339,6 +340,7 @@ namespace Lexiconner.IdentityServer4.Config
                 },
                 new ApplicationUserEntity
                 {
+                    IsDemo = false,
                     Id = "01DGMH8EQC7V8N3R6RHQYY2VH7",
                     Name = "Vadym Berkut",
                     UserName = "vadymberkut",
@@ -368,6 +370,7 @@ namespace Lexiconner.IdentityServer4.Config
                 },
                 new ApplicationUserEntity
                 {
+                    IsDemo = false,
                     Id = "01DGMH8EQC2B6F26KAPF9PRW59",
                     Name = "Bogdan Berkut",
                     UserName = "bogdanberkut",

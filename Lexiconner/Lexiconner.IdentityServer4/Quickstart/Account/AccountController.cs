@@ -40,6 +40,7 @@ namespace IdentityServer4.Quickstart.UI
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
+        private readonly IIdentityServerConfig _identityServerConfig;
 
         public AccountController(
             IOptions<ApplicationSettings> config,
@@ -48,7 +49,9 @@ namespace IdentityServer4.Quickstart.UI
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
-            IEventService events)
+            IEventService events,
+            IIdentityServerConfig identityServerConfig
+        )
         {
             _config = config.Value;
             _userManager = userManager;
@@ -57,6 +60,7 @@ namespace IdentityServer4.Quickstart.UI
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
             _events = events;
+            _identityServerConfig = identityServerConfig;
         }
 
         /// <summary>
@@ -282,7 +286,7 @@ namespace IdentityServer4.Quickstart.UI
         /// Show logout page
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> Logout(string logoutId)
+        public async Task<IActionResult> Logout([FromQuery]string logoutId)
         {
             // build a model so the logout page knows what to display
             var vm = await BuildLogoutViewModelAsync(logoutId);
@@ -378,13 +382,28 @@ namespace IdentityServer4.Quickstart.UI
                 }
             }
 
+            // demo user
+            var demoUser = _identityServerConfig.GetInitialdentityUsers().FirstOrDefault(x => x.IsDemo);
+            LoginInputModel demoUserModel = null;
+            if (demoUser != null)
+            {
+                demoUserModel = new LoginInputModel()
+                {
+                    Username = demoUser.UserName,
+                    Password = _identityServerConfig.DefaultUserPassword,
+                    RememberLogin = false,
+                    ReturnUrl = returnUrl,
+                };
+            }
+
             return new LoginViewModel
             {
                 AllowRememberLogin = AccountOptions.AllowRememberLogin,
                 EnableLocalLogin = allowLocal && AccountOptions.AllowLocalLogin,
                 ReturnUrl = returnUrl,
                 Username = context?.LoginHint,
-                ExternalProviders = providers.ToArray()
+                ExternalProviders = providers.ToArray(),
+                DemoUser = demoUserModel,
             };
         }
 
