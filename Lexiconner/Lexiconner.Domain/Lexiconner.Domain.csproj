@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.Identity.MongoDbCore" Version="1.1.1" />
+    <PackageReference Include="AspNetCore.Identity.MongoDbCore" Version="2.1.0" />
     <PackageReference Include="IdentityServer4" Version="2.4.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.10.4" />
     <PackageReference Include="NUlid" Version="1.4.1" />
