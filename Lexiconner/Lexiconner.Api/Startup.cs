@@ -277,6 +277,7 @@ namespace Lexiconner.Api
             app.UseRouting();
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
