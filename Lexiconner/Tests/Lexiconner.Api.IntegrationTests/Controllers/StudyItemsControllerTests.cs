@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
-using Lexiconner.Api.DTOs.StudyItems;
 using Lexiconner.Api.IntegrationTests.Auth;
 using Lexiconner.Api.IntegrationTests.Utils;
+using Lexiconner.Domain.Dtos.StudyItems;
 using Lexiconner.Domain.Entitites;
 using System;
 using System.Collections.Generic;

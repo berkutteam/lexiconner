@@ -6,7 +6,6 @@ using Lexiconner.IdentityServer4;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -29,15 +28,22 @@ using Microsoft.IdentityModel.Logging;
 using Lexiconner.Domain.Enums;
 using Lexiconner.Persistence.Repositories;
 using Lexiconner.Application.Helpers;
+using System.Reflection;
+using System.IO;
+using Microsoft.OpenApi.Models;
+using FluentValidation.AspNetCore;
+using System.Collections.Generic;
+using Serilog;
+using Autofac;
 
 namespace Lexiconner.IdentityServer4
 {
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        public IHostingEnvironment Environment { get; }
+        public IWebHostEnvironment Environment { get; }
 
-        public Startup(IConfiguration configuration, IHostingEnvironment environment)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
             Environment = environment;
@@ -48,8 +54,10 @@ namespace Lexiconner.IdentityServer4
             var config = Configuration.Get<ApplicationSettings>();
 
             services.AddOptions();
+            services.AddHttpClient();
             services.Configure<ApplicationSettings>(Configuration);
 
+            ConfigureLogger(services);
             ConfigureMongoDb(services);
 
             //services.AddIdentity<ApplicationUserEntity, ApplicationRoleEntity>(options =>
@@ -99,7 +107,25 @@ namespace Lexiconner.IdentityServer4
                 IdentityModelEventSource.ShowPII = true; // show detail of error and see the problem
             }
 
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(options =>
+            {
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
+
+                //Here we set the response schema for DateTime
+                //We are using ISO 8601 format for DateTime strings in response.
+                options.MapType<DateTime>(() => new OpenApiSchema
+                {
+                    Type = "string",
+                    Format = "date-time",
+                    Description =
+                        @"Date-time string in <a href=""https://en.wikipedia.org/wiki/ISO_8601#UTC\"">ISO 8601 format</a>."
+                });
+
+                options.EnableAnnotations();
+            });
 
             services.AddApiVersioning(options =>
             {
@@ -131,7 +157,31 @@ namespace Lexiconner.IdentityServer4
                 });
             });
 
-            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
+            services.AddControllersWithViews(options =>
+            {
+                //options.Filters.Add<ApiExceptionFilterAttribute>();
+            })
+            .AddNewtonsoftJson(options =>
+            {
+                // SerializationConfig.GetDefaultJsonSerializerSettings(options.SerializerSettings);
+            })
+            .AddFluentValidation(options =>
+            {
+                options.RegisterValidatorsFromAssembly(typeof(Startup).Assembly); // register all validators in assembly
+                options.RegisterValidatorsFromAssembly(typeof(Lexiconner.Domain.Anchor).Assembly); // register all validators in assembly
+                options.RunDefaultMvcValidationAfterFluentValidationExecutes = true; // allow default validation to run
+            });
+        }
+
+        // ConfigureContainer is where you can register things directly
+        // with Autofac. This runs after ConfigureServices so the things
+        // here will override registrations made in ConfigureServices.
+        // Don't build the container; that gets done for you. If you
+        // need a reference to the container, you need to use the
+        // "Without ConfigureContainer" mechanism (see docs).
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new AutofacDefaultModule());
         }
 
         public void Configure(IApplicationBuilder app, IApiVersionDescriptionProvider provider)
@@ -139,7 +189,6 @@ namespace Lexiconner.IdentityServer4
             if (Environment.IsDevelopmentAny())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
 
             if (Environment.IsDevelopmentHeroku() || Environment.IsProductionHeroku())
@@ -204,6 +253,9 @@ namespace Lexiconner.IdentityServer4
 
             app.UseCors("default");
 
+            // UseRouting must go before any authorization. Otherwise authorization won't work properly.
+            app.UseRouting();
+
             // UseIdentityServer includes a call to UseAuthentication, so it’s not necessary to have both.
             app.UseIdentityServer();
 
@@ -219,19 +271,45 @@ namespace Lexiconner.IdentityServer4
             //    Scope = { "openid", "profile", "email" }
             //});
 
-            app.UseMvcWithDefaultRoute();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
-            app.UseSwagger();
+            // Swagger
+            app.UseSwagger(options =>
+            {
+                options.RouteTemplate = "swagger/{documentName}/swagger.json";
+                options.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+                {
+                    swaggerDoc.Servers = new List<OpenApiServer>
+                    {
+                        new OpenApiServer
+                        {
+                            Url = $"{httpReq.Scheme}://{httpReq.Host.Value}{httpReq.PathBase}"
+                        }
+                    };
+                });
+            });
             app.UseSwaggerUI(
-               options =>
-               {
-                   foreach (ApiVersionDescription description in provider.ApiVersionDescriptions)
-                   {
-                       options.SwaggerEndpoint(
-                           $"/swagger/{description.GroupName}/swagger.json",
-                           description.GroupName.ToUpperInvariant());
-                   }
-               });
+              options =>
+              {
+                  foreach (var description in provider.ApiVersionDescriptions)
+                  {
+                      options.SwaggerEndpoint(
+                          $"/swagger/{description.GroupName}/swagger.json",
+                          description.GroupName.ToUpperInvariant());
+                  }
+              });
+        }
+
+        private void ConfigureLogger(IServiceCollection services)
+        {
+            // Override the current ILogger implementation to use Serilog
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddSerilog(dispose: true);
+            });
         }
 
         private void ConfigureMongoDb(IServiceCollection services)

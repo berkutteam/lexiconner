@@ -8,9 +8,11 @@
 .gitignore
 .vs
 .vscode
+.idea
+docker-compose.yml
+docker-compose.*.yml
 **/bin
 **/obj
-**/.toolstarget
 
 **/serilog-logs
 
@@ -18,4 +20,6 @@
 
 healthchecksdb
 healthchecksdb-journal
+
+**/elasticsearch-local-data
 

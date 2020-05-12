@@ -162,7 +162,7 @@ namespace Lexiconner.IdentityServer4.Extensions
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IIdentityServerBuilder AddSigningCredentialCustom(this IIdentityServerBuilder builder, IHostingEnvironment hostingEnvironment, ApplicationSettings config)
+        public static IIdentityServerBuilder AddSigningCredentialCustom(this IIdentityServerBuilder builder, IWebHostEnvironment hostingEnvironment, ApplicationSettings config)
         {
             X509Certificate2 cert = null;
 

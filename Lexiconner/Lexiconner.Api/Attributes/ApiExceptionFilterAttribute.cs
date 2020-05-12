@@ -15,10 +15,9 @@ namespace Lexiconner.Api.Attributes
     public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
     {
         private readonly ILogger<ApiExceptionFilterAttribute> _logger;
-        //private readonly IWebHostEnvironment _hostingEnvironment;
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> logger, IHostingEnvironment hostingEnvironment)
+        public ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> logger, IWebHostEnvironment hostingEnvironment)
         {
             _logger = logger;
             _hostingEnvironment = hostingEnvironment;

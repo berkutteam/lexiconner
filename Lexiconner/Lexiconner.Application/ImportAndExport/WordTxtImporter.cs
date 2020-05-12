@@ -45,7 +45,7 @@ namespace Lexiconner.Application.ImportAndExport
                     }
                     if(tagRegex.IsMatch(line))
                     {
-                        var tag = tagRegex.Match(line).Groups.Skip(1).First().Value;
+                        var tag = tagRegex.Match(line).Groups.Values.Skip(1).First().Value;
                         currentTags.Add(tag);
                         continue;
                     }
@@ -56,7 +56,7 @@ namespace Lexiconner.Application.ImportAndExport
                     }
 
                     var match = regex.Match(line);
-                    var parts = match.Groups.Skip(1).Select(x => x.Value).ToList();
+                    var parts = match.Groups.Values.Skip(1).Select(x => x.Value).ToList();
 
                     if (parts.Count < 2)
                     {
@@ -65,11 +65,11 @@ namespace Lexiconner.Application.ImportAndExport
 
                     result.Words.Add(new WordImportModel
                     {
-                        Title = match.Groups.FirstOrDefault(x => x.Name == "word")?.Value,
-                        Description = match.Groups.FirstOrDefault(x => x.Name == "description")?.Value,
+                        Title = match.Groups.Values.FirstOrDefault(x => x.Name == "word")?.Value,
+                        Description = match.Groups.Values.FirstOrDefault(x => x.Name == "description")?.Value,
                         ExampleTexts = new List<string>() 
                         {
-                            match.Groups.FirstOrDefault(x => x.Name == "example")?.Value
+                            match.Groups.Values.FirstOrDefault(x => x.Name == "example")?.Value
                         },
                         Tags = currentTags.ToList()
                     });
@@ -165,7 +165,7 @@ namespace Lexiconner.Application.ImportAndExport
                     // headers
                     else if (header1Regex.IsMatch(line))
                     {
-                        currentHeader1 = header1Regex.Match(line).Groups.Skip(1).First().Value;
+                        currentHeader1 = header1Regex.Match(line).Groups.Values.Skip(1).First().Value;
                         currentHeader2 = null;
                         currentHeader3 = null;
                         currentHeader4 = null;
@@ -178,7 +178,7 @@ namespace Lexiconner.Application.ImportAndExport
                     }
                     else if (header2Regex.IsMatch(line))
                     {
-                        currentHeader2 = header2Regex.Match(line).Groups.Skip(1).First().Value;
+                        currentHeader2 = header2Regex.Match(line).Groups.Values.Skip(1).First().Value;
                         currentHeader3 = null;
                         currentHeader4 = null;
                         currentHeader5 = null;
@@ -190,7 +190,7 @@ namespace Lexiconner.Application.ImportAndExport
                     }
                     else if (header3Regex.IsMatch(line))
                     {
-                        currentHeader3 = header3Regex.Match(line).Groups.Skip(1).First().Value;
+                        currentHeader3 = header3Regex.Match(line).Groups.Values.Skip(1).First().Value;
                         currentHeader4 = null;
                         currentHeader5 = null;
                         currentHeader6 = null;
@@ -201,7 +201,7 @@ namespace Lexiconner.Application.ImportAndExport
                     }
                     else if (header4Regex.IsMatch(line))
                     {
-                        currentHeader4 = header4Regex.Match(line).Groups.Skip(1).First().Value;
+                        currentHeader4 = header4Regex.Match(line).Groups.Values.Skip(1).First().Value;
                         currentHeader5 = null;
                         currentHeader6 = null;
 
@@ -211,7 +211,7 @@ namespace Lexiconner.Application.ImportAndExport
                     }
                     else if (header5Regex.IsMatch(line))
                     {
-                        currentHeader5 = header5Regex.Match(line).Groups.Skip(1).First().Value;
+                        currentHeader5 = header5Regex.Match(line).Groups.Values.Skip(1).First().Value;
                         currentHeader6 = null;
 
                         lastAddedCollection = result.AddCollection(currentHeader5, currentHeader4);
@@ -220,7 +220,7 @@ namespace Lexiconner.Application.ImportAndExport
                     }
                     else if (header6Regex.IsMatch(line))
                     {
-                        currentHeader6 = header6Regex.Match(line).Groups.Skip(1).First().Value;
+                        currentHeader6 = header6Regex.Match(line).Groups.Values.Skip(1).First().Value;
 
                         lastAddedCollection = result.AddCollection(currentHeader6, currentHeader5);
 

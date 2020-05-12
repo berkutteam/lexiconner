@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
 using Lexiconner.Api.DTOs;
-using Lexiconner.Api.DTOs.StudyItems;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
+using Lexiconner.Domain.Dtos;
+using Lexiconner.Domain.Dtos.StudyItems;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Infrastructure.Tests.Utils;
 using Newtonsoft.Json;

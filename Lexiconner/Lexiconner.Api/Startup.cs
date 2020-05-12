@@ -33,19 +33,25 @@ using Lexiconner.Application.Helpers;
 using FluentValidation.AspNetCore;
 using Lexiconner.Api.Services.Interfaces;
 using Lexiconner.Api.Attributes;
+using Lexiconner.Domain.Config;
+using System;
+using System.IO;
+using System.Reflection;
+using Microsoft.OpenApi.Models;
+using Serilog;
 
 namespace Lexiconner.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             Configuration = configuration;
             HostingEnvironment = hostingEnvironment;
         }
 
         public IConfiguration Configuration { get; }
-        public IHostingEnvironment HostingEnvironment { get; }
+        public IWebHostEnvironment HostingEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -56,9 +62,11 @@ namespace Lexiconner.Api
             services.AddHttpClient();
             services.Configure<ApplicationSettings>(Configuration);
 
+            ConfigureLogger(services);
             ConfigureMongoDb(services);
 
-            services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {
+            services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp =>
+            {
                 return new GoogleTranslateApiClient(
                     config.Google.ProjectId,
                     config.Google.WebApiServiceAccount,
@@ -158,7 +166,25 @@ namespace Lexiconner.Api
                 IdentityModelEventSource.ShowPII = true; // show detail of error and see the problem
             }
 
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(options =>
+            {
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
+
+                //Here we set the response schema for DateTime
+                //We are using ISO 8601 format for DateTime strings in response.
+                options.MapType<DateTime>(() => new OpenApiSchema
+                {
+                    Type = "string",
+                    Format = "date-time",
+                    Description =
+                        @"Date-time string in <a href=""https://en.wikipedia.org/wiki/ISO_8601#UTC\"">ISO 8601 format</a>."
+                });
+
+                options.EnableAnnotations();
+            });
 
             services.AddApiVersioning(options =>
             {
@@ -193,11 +219,14 @@ namespace Lexiconner.Api
                 });
             }
 
-            services.AddMvc((options) =>
+            services.AddControllersWithViews(options =>
             {
                 options.Filters.Add<ApiExceptionFilterAttribute>();
             })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            .AddNewtonsoftJson(options =>
+            {
+                SerializationConfig.GetDefaultJsonSerializerSettings(options.SerializerSettings);
+            })
             .AddFluentValidation(options =>
             {
                 options.RegisterValidatorsFromAssembly(typeof(Startup).Assembly); // register all validators in assembly
@@ -244,20 +273,50 @@ namespace Lexiconner.Api
                 app.UseCors("default");
             }
 
-            app.UseAuthentication();
-            app.UseMvc();
+            // UseRouting must go before any authorization. Otherwise authorization won't work properly.
+            app.UseRouting();
 
-            app.UseSwagger();
+            app.UseAuthentication();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
+            // Swagger
+            app.UseSwagger(options =>
+            {
+                options.RouteTemplate = "swagger/{documentName}/swagger.json";
+                options.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+                {
+                    swaggerDoc.Servers = new List<OpenApiServer>
+                    {
+                        new OpenApiServer
+                        {
+                            Url = $"{httpReq.Scheme}://{httpReq.Host.Value}{httpReq.PathBase}"
+                        }
+                    };
+                });
+            });
             app.UseSwaggerUI(
-               options =>
-               {
-                   foreach (ApiVersionDescription description in provider.ApiVersionDescriptions)
-                   {
-                       options.SwaggerEndpoint(
-                           $"/swagger/{description.GroupName}/swagger.json",
-                           description.GroupName.ToUpperInvariant());
-                   }
-               });
+              options =>
+              {
+                  foreach (var description in provider.ApiVersionDescriptions)
+                  {
+                      options.SwaggerEndpoint(
+                          $"/swagger/{description.GroupName}/swagger.json",
+                          description.GroupName.ToUpperInvariant());
+                  }
+              });
+        }
+
+        private void ConfigureLogger(IServiceCollection services)
+        {
+            // Override the current ILogger implementation to use Serilog
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddSerilog(dispose: true);
+            });
         }
 
         private void ConfigureMongoDb(IServiceCollection services)
