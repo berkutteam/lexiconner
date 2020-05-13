@@ -248,7 +248,7 @@ namespace Lexiconner.Api
 
         // This method gets caled by the runtime. Use this method to configure the HTTP request pipeline.
         // This is called after ConfigureContainer.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
             //var ssss = app.ApplicationServices.GetService<IGoogleTranslateApiClient>();
             //ssss.Translate("", "", "").GetAwaiter().GetResult();

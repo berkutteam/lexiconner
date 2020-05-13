@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 
 namespace Lexiconner.Api.Attributes
@@ -82,7 +83,18 @@ namespace Lexiconner.Api.Attributes
                         // add validation error details
                         foreach (var failure in specificException.ValidationFailures)
                         {
-                            errors.Add(failure.PropertyName, new string[] { failure.ErrorMessage });
+                            if (string.IsNullOrEmpty(failure.PropertyName))
+                            {
+                                if (!errors.ContainsKey(string.Empty))
+                                {
+                                    errors.Add(string.Empty, new string[] { });
+                                }
+                                errors[string.Empty] = errors[string.Empty].ToList().Concat(new string[] { failure.ErrorMessage }).ToArray();
+                            }
+                            else
+                            {
+                                errors.Add(failure.PropertyName, new string[] { failure.ErrorMessage });
+                            }
                         }
                         break;
 
