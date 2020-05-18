@@ -154,7 +154,7 @@ do
     # docker rmi --force $(docker images --quiet --filter "dangling=true")
 
     ## Options 2: remove dangling images (1 command)
-    # NB: --all removes all unused images that aren't used in active containers (including images that we built earlier)
+    # NB: --all removes all unused images that aren't used in active containers (including images that you've built earlier)
     docker image prune --force
 
     echo "Pushing image for service '$service'..."
@@ -166,14 +166,14 @@ printf "\n"
 
 echo "#################### Releasing... ####################"
 
-# create _netrc whick used for Heroku CLI login
+# create _netrc which used for Heroku CLI login
 netrc_file_path=""
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    echo "Running on Linux."
     netrc_file_path="~/.netrc"
 elif [[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
     netrc_file_path="$HOME/_netrc"
 fi
-echo "Running on Linux."
 echo "Create Heroku .netrc file."
 content="
 machine api.heroku.com

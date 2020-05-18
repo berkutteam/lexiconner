@@ -1,6 +1,8 @@
 ﻿using Lexiconner.Domain.Dtos.StudyItems;
 using Lexiconner.Domain.Entitites.Base;
 using Lexiconner.Domain.Enums;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -100,6 +102,7 @@ namespace Lexiconner.Domain.Entitites
         public class StudyItemTrainingProgressItemEntity : BaseEntity
         {
             [JsonConverter(typeof(StringEnumConverter))]
+            [BsonRepresentation(BsonType.String)]
             public TrainingType TrainingType { get; set; }
             public DateTime LastTrainingdAt { get; set; }
             public DateTime NextTrainingdAt { get; set; }
