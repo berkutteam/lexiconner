@@ -1,15 +1,17 @@
 <template>
     <div class="mb-3">
         <form v-on:submit.prevent="() => {}" class="form-inline">
-            <label class="sr-only" for="studyItemsRequestParams__search">Search</label>
-            <input 
-                v-bind:value="sharedState.studyItemsRequestParams.search"
-                v-on:input="onSearchChange"
-                type="text" 
-                class="form-control mr-2" 
-                id="studyItemsRequestParams__search" 
-                placeholder="Search"
-            >
+            <div class="form-group mr-2">
+                <label class="sr-only" for="studyItemsRequestParams__search">Search</label>
+                <input 
+                    v-bind:value="sharedState.studyItemsRequestParams.search"
+                    v-on:input="onSearchChange"
+                    type="text" 
+                    class="form-control" 
+                    id="studyItemsRequestParams__search" 
+                    placeholder="Search"
+                >
+            </div>
 
             <!-- <toggle-button 
                 v-on:value="sharedState.studyItemsRequestParams.isFavourite || false"
@@ -21,15 +23,17 @@
                 v-bind:class="' mr-2'"
             /> -->
 
-            <div class="mr-2 cursor-pointer text-warning">
+            <div class="form-group mr-2 cursor-pointer text-warning">
                 <i v-on:click="setIsFavorite(null)" v-bind:class="{'text-primary': sharedState.studyItemsRequestParams.isFavourite === null}" class="fas fa-star-half-alt mr-1"></i>
                 <i v-on:click="setIsFavorite(true)" v-bind:class="{'text-primary': sharedState.studyItemsRequestParams.isFavourite === true}" class="fas fa-star mr-1"></i>
                 <i v-on:click="setIsFavorite(false)" v-bind:class="{'text-primary': sharedState.studyItemsRequestParams.isFavourite === false}" class="far fa-star"></i>
             </div>
 
-            <button v-on:click="resetRequestParams" type="button" class="btn btn-outline-secondary">
-                <i class="fas fa-times"></i>
-            </button>
+            <div class="form-group">
+                <button v-on:click="resetRequestParams" type="button" class="btn btn-outline-secondary">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
         </form>
     </div>
 </template>
