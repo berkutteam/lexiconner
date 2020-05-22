@@ -1,0 +1,126 @@
+<template>
+    <div class="mb-3">
+        <form v-on:submit.prevent="() => {}" class="form-inline">
+            <label class="sr-only" for="studyItemsRequestParams__search">Search</label>
+            <input 
+                v-bind:value="sharedState.studyItemsRequestParams.search"
+                v-on:input="onSearchChange"
+                type="text" 
+                class="form-control mr-2" 
+                id="studyItemsRequestParams__search" 
+                placeholder="Search"
+            >
+
+            <!-- <toggle-button 
+                v-on:value="sharedState.studyItemsRequestParams.isFavourite || false"
+                v-bind:sync="true"
+                v-on:change="onIsFavoriteChange"
+                v-bind:labels="{checked: '★', unchecked: '⁂'}"
+                v-bind:font-size="16"
+                v-bind:color="{checked: '#ffc107', unchecked: '#6c757d'}"
+                v-bind:class="' mr-2'"
+            /> -->
+
+            <div class="mr-2 cursor-pointer text-warning">
+                <i v-on:click="setIsFavorite(null)" v-bind:class="{'text-primary': sharedState.studyItemsRequestParams.isFavourite === null}" class="fas fa-star-half-alt mr-1"></i>
+                <i v-on:click="setIsFavorite(true)" v-bind:class="{'text-primary': sharedState.studyItemsRequestParams.isFavourite === true}" class="fas fa-star mr-1"></i>
+                <i v-on:click="setIsFavorite(false)" v-bind:class="{'text-primary': sharedState.studyItemsRequestParams.isFavourite === false}" class="far fa-star"></i>
+            </div>
+
+            <button v-on:click="resetRequestParams" type="button" class="btn btn-outline-secondary">
+                <i class="fas fa-times"></i>
+            </button>
+        </form>
+    </div>
+</template>
+
+<script>
+// @ is an alias to /src
+import { mapState, mapGetters } from 'vuex';
+import _ from 'lodash';
+import { ToggleButton } from 'vue-js-toggle-button';
+import { storeTypes } from '@/constants/index';
+import authService from '@/services/authService';
+import notificationUtil from '@/utils/notification';
+import RowLoader from '@/components/loaders/RowLoader';
+import LoadingButton from '@/components/LoadingButton';
+
+export default {
+    name: 'study-items-filters',
+    props: {
+        onChange: {
+            type: Function,
+            required: false,
+            default: null,
+        },
+    },
+    components: {
+        // RowLoader,
+        // LoadingButton,
+        // ToggleButton,
+    },
+    data: function() {
+        return {
+            privateState: {
+                storeTypes: storeTypes,
+            },
+        };
+    },
+    computed: {
+        // local computed go here
+
+        // store state computed go here
+        ...mapState({
+            sharedState: state => state,
+        }),
+    },
+    created: async function() {
+        
+    },
+    mounted: function() {
+    },
+    updated: function() {
+    },
+    destroyed: function() {
+    },
+
+    methods: {
+        callOnChange: function() {
+            if(this.onChange) {
+                this.onChange();
+            }
+        },
+        callOnChangeDebounce: _.debounce(function() {
+             if(this.onChange) {
+                this.onChange();
+            }
+        }, 500),
+        onSearchChange: function(e) {
+            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
+                search: e.target.value,
+            });
+            this.callOnChangeDebounce();
+        },
+        // onIsFavoriteChange: function({value, tag, srcEvent}) {
+            // this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
+            //     isFavourite: value,
+            // });
+        // },
+        setIsFavorite: function(value) {
+            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
+                isFavourite: value,
+            });
+            this.callOnChange();
+        },
+        resetRequestParams: function() {
+            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_RESET, {});
+            this.callOnChange();
+        },
+    },
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+
+</style>

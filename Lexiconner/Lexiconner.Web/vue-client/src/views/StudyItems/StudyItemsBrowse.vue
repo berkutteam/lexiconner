@@ -2,8 +2,6 @@
     <div class="my-permissions-wrapper">
         <div class="row">
             <div class="col-12">
-                <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.STUDY_ITEMS_LOAD]"></row-loader>
-
                 <div>
                     <custom-collections
                         v-bind:onSelectedCollectionChange="onSelectedCollectionChange"
@@ -13,7 +11,8 @@
 
                 <div v-if="studyItems" class="study-items-wrapper">
                     <h5 class="mb-3">Study items:</h5>
-                    
+
+                    <!-- Toolbar -->
                     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group mr-2" role="group" aria-label="View toggle">
                             <button 
@@ -43,7 +42,15 @@
                             </button>
                         </div>
                     </div>
+
+                    <!-- Filters -->
+                    <study-items-filters
+                        v-bind:onChange="loadStudyItems"
+                    >
+                    </study-items-filters>
                     
+                    <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.STUDY_ITEMS_LOAD]"></row-loader>
+
                     <div>
                         <pagination-wrapper
                             v-bind:paginationResult="sharedState.studyItemsPaginationResult"
@@ -242,6 +249,8 @@
 </template>
 
 <script>
+'use strict';
+
 // @ is an alias to /src
 import { mapState, mapGetters } from 'vuex';
 import _ from 'lodash';
@@ -255,6 +264,7 @@ import PaginationWrapper from '@/components/PaginationWrapper';
 import LanguageCodeSelect from '@/components/LanguageCodeSelect';
 import TagsMultiselect from '@/components/TagsMultiselect';
 import CustomCollections from '@/components/CustomCollections';
+import StudyItemsFilters from '@/components/StudyItemsFilters';
 
 const studyItemModelDefault = {
     title: null,
@@ -274,6 +284,7 @@ export default {
         LanguageCodeSelect,
         TagsMultiselect,
         CustomCollections,
+        StudyItemsFilters,
     },
     data: function() {
         return {
@@ -295,16 +306,12 @@ export default {
         }),
     },
     created: function() {
-        this.loadStudyItems({
-            collectionId: this.$store.getters.currentCustomCollectionId,
-        });
+        this.loadStudyItems({});
 
         this.unwatch = this.$store.watch(
             (state, getters) => getters.currentCustomCollectionId,
             (newValue, oldValue) => {
-                this.loadStudyItems({
-                    collectionId: newValue,
-                });
+                this.loadStudyItems({});
             }
         );
     },
@@ -319,13 +326,10 @@ export default {
     },
 
     methods: {
-        loadStudyItems: function({offset = 0, limit = 50, collectionId = null} = {}) {
+        loadStudyItems: function({offset = 0, limit = 50} = {}) {
             return this.$store.dispatch(storeTypes.STUDY_ITEMS_LOAD, {
                 offset: offset, 
                 limit: limit, 
-                search: null,
-                isFavourite: null,
-                collectionId: collectionId,
             }).then().catch(err => {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);

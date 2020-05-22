@@ -126,6 +126,8 @@ Currently used: https://www.npmjs.com/package/vue-tel-input
 https://www.npmjs.com/package/vue-multiselect
 https://vue-multiselect.js.org/#sub-getting-started
 
+### Other form inputs
+https://www.npmjs.com/package/vue-js-toggle-button
 
 ### Modals
 https://www.npmjs.com/package/vue-js-modal

@@ -83,9 +83,18 @@ export default new Vuex.Store({
         },
         myCompanyInvitations: null,
 
+        studyItemsRequestParamsDefault: {
+            search: null,
+            isFavourite: null,
+        },
+        studyItemsRequestParams: {
+            search: null,
+            isFavourite: null,
+        },
+
         // paginationResult (store only current page)
         // {items: [], pagination: {}}
-        studyItemsPaginationResult: null,
+        studyItemsPaginationResult: null, // object
 
         trainingStats: null, // object
         trainingFlashcards: null, // object
@@ -224,6 +233,18 @@ export default new Vuex.Store({
 
         //#region Study items
 
+        [storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET](state, payload) {
+            let params= payload;
+            state.studyItemsRequestParams = {
+                ...state.studyItemsRequestParams,
+                ...params,
+            };
+        },
+        [storeTypes.STUDY_ITEMS_REQUEST_PARAMS_RESET](state, payload) {
+            state.studyItemsRequestParams = {
+                ...state.studyItemsRequestParamsDefault,
+            };
+        },
         [storeTypes.STUDY_ITEMS_SET](state, payload) {
             let { data } = payload;
             state.studyItemsPaginationResult = data;
@@ -532,12 +553,16 @@ export default new Vuex.Store({
         //#region Study items
 
         [storeTypes.STUDY_ITEMS_LOAD](context, params) {
-            let { commit, dispatch, getters } = context;
+            let { commit, dispatch, state, getters } = context;
             commit(storeTypes.LOADING_SET, {
                 target: storeTypes.STUDY_ITEMS_LOAD,
                 loading: true,
             });
-            return api.webApi().getStudyItems(params).then(({ data, ok }) => {
+            return api.webApi().getStudyItems({
+                collectionId: getters.currentCustomCollectionId,
+                ...params,
+                ...state.studyItemsRequestParams, // apply params from state
+            }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEMS_LOAD,
                     loading: false,
