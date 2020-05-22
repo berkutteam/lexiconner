@@ -151,6 +151,10 @@ namespace Lexiconner.Seed
 
             services.AddTransient<IIdentityServerConfig, IdentityServerConfig>();
 
+            services.AddTransient<SeedServiceDevelopmentLocalhost>();
+            services.AddTransient<SeedServiceDevelopmentHeroku>();
+            services.AddTransient<SeedServiceProductionHeroku>();
+
             if (HostingEnvironmentHelper.IsDevelopmentLocalhost())
             {
                 services.AddTransient<ISeedService, SeedServiceDevelopmentLocalhost>();
