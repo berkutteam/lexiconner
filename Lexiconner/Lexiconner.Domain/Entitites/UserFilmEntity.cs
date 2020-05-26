@@ -32,7 +32,7 @@ namespace Lexiconner.Domain.Entitites
         /// </summary>
         public string LanguageCode { get; set; }
 
-        public UserFilmImageEntity Image { get; set; }
+        public UserFilmDetailsEntity Details { get; set; }
 
 
         #region Helper methods
@@ -51,15 +51,55 @@ namespace Lexiconner.Domain.Entitites
         #endregion
     }
 
-    public class UserFilmImageEntity : BaseEntity
+    /// <summary>
+    /// Public general info (e.g. from TMDB).
+    /// Language corresponds to that user selected for UserFilmEntity
+    /// </summary>
+    public class UserFilmDetailsEntity : BaseEntity
     {
-        public string Url { get; set; }
-        public string Height { get; set; }
-        public string Width { get; set; }
-        public string Thumbnail { get; set; }
-        public string ThumbnailHeight { get; set; }
-        public string ThumbnailWidth { get; set; }
-        public string Base64Encoding { get; set; }
+        public UserFilmDetailsEntity()
+        {
+            Genres = new List<FilmGenreEntity>();
+            ProductionCountries = new List<FilmProductionCountryEntity>();
+        }
+
+        public int TMDbId { get; set; }
+        public string IMDbId { get; set; }
+        public bool IsAdult { get; set; }
+        public long Budget { get; set; }
+        public List<FilmGenreEntity> Genres { get; set; }
+        public string OriginalLanguage { get; set; }
+        public string OriginalTitle { get; set; }
+        public List<FilmProductionCountryEntity> ProductionCountries { get; set; }
+        public DateTime? ReleaseDate { get; set; }
+        public long Revenue { get; set; }
+        public string Status { get; set; }
+        public string Title { get; set; }
+        public double VoteAverage { get; set; }
+        public int VoteCount { get; set; }
+        public UserFilmImageEntity Image { get; set; }
+    }
+
+    public class FilmGenreEntity
+    {
+        public int TMDbGenreId { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class FilmProductionCountryEntity
+    {
+        public string Iso_3166_1 { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class UserFilmImageEntity
+    {
+        public string PosterUrl { get; set; }
+        public int PosterWidth { get; set; }
+        public string BackdropUrl { get; set; }
+        public int BackdropWidth { get; set; }
+        public string ThumbnailUrl { get; set; }
+        public int ThumbnailWidth { get; set; }
     }
 
 }

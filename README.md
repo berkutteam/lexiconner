@@ -13,12 +13,13 @@ https://contextualwebsearch.com/
 
 ## The Movie Database (TMDB) API
 
-Used for films search. Allows to specify language during search.
+Used for films search. Allows to specify language during search. Has C# wrappers.
 
 TMDb offers a powerful API service that is free to use as long as you properly attribute us as the source of the data and/or images you use.
 Has no rate limits!
 
 https://developers.themoviedb.org/3/getting-started/introduction
+https://www.themoviedb.org/documentation/api/wrappers-libraries
 
 ## The Open Movie Database (OMDb) API
 

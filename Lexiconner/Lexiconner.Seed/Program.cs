@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using TMDbLib.Client;
 
 namespace Lexiconner.Seed
 {
@@ -151,6 +152,10 @@ namespace Lexiconner.Seed
                     config.RapidApi,
                     sp.GetService<ILogger<IContextualWebSearchApiClient>>()
                 );
+            });
+            services.AddSingleton<TMDbClient>(sp =>
+            {
+                return new TMDbClient(config.TheMovieDatabase.ApiKeyV3Auth);
             });
 
             services.AddTransient<IIdentityServerConfig, IdentityServerConfig>();

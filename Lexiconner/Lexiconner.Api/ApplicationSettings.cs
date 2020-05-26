@@ -1,4 +1,5 @@
-﻿using Lexiconner.Application.Config;
+﻿using Lexiconner.Application.ApplicationSettings;
+using Lexiconner.Application.Config;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace Lexiconner.Api
         public UrlsSettings Urls { get; set; }
         public GoogleSettings Google { get; set; }
         public RapidApiSettings RapidApi { get; set; }
+        public TheMovieDatabaseSettings TheMovieDatabase { get; set; }
     }
 
     public class CorsSettings

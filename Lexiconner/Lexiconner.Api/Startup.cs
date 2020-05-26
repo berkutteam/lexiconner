@@ -39,6 +39,7 @@ using System.IO;
 using System.Reflection;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using TMDbLib.Client;
 
 namespace Lexiconner.Api
 {
@@ -79,6 +80,10 @@ namespace Lexiconner.Api
                     config.RapidApi,
                     sp.GetService<ILogger<IContextualWebSearchApiClient>>()
                 );
+            });
+            services.AddSingleton<TMDbClient>(sp => 
+            {
+                return new TMDbClient(config.TheMovieDatabase.ApiKeyV3Auth);    
             });
 
             services.AddTransient<IDataCache, DataCacheDataRepository>(sp => {
