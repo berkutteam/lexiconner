@@ -1,6 +1,33 @@
 # lexiconner
 The project is aimed to help save and study words.
 
+# External APIs
+## Google Translate
+
+## Contextual Web Search
+
+Used for image search.
+
+https://rapidapi.com/contextualwebsearch/api/Web%20Search
+https://contextualwebsearch.com/
+
+## The Movie Database (TMDB) API
+
+Used for films search. Allows to specify language during search.
+
+TMDb offers a powerful API service that is free to use as long as you properly attribute us as the source of the data and/or images you use.
+Has no rate limits!
+
+https://developers.themoviedb.org/3/getting-started/introduction
+
+## The Open Movie Database (OMDb) API
+
+Another alternative. Allows only up to 1000 free requests per \ day. Supports only English.
+
+http://www.omdbapi.com/
+
+
+
 ## DevelopmentLocalhost
 
 - Api -      http://localhost:5005
