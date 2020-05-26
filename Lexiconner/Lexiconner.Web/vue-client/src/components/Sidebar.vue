@@ -27,6 +27,9 @@
       <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
         <router-link v-bind:to="{ name: 'study-items-dashboard'}" class="sidebar-link">Study items</router-link>
       </div>
+      <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
+        <router-link v-bind:to="{ name: 'user-films-browse'}" class="sidebar-link">My films</router-link>
+      </div>
 
       <!-- <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
         <router-link v-bind:to="{ name: 'dashboard-home'}" class="sidebar-link">Dashboard</router-link>

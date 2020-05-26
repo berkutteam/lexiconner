@@ -302,7 +302,10 @@ namespace Lexiconner.Seed.Seed
                         Title = x.Title,
                         MyRating = x.MyRating,
                         Comment = x.Comment,
+                        
+                        // TODO: store in UTC
                         WatchedAt = x.WatchedAt,
+                        
                         ReleaseYear = x.ReleaseYear,
                         Genres = x.Genres,
                         LanguageCode = filmsLnaguageCode,

@@ -34,6 +34,7 @@ namespace Lexiconner.Domain.Entitites
 
         public UserFilmImageEntity Image { get; set; }
 
+
         #region Helper methods
 
         public void UpdateSelf(UserFilmUpdateDto updateDto)

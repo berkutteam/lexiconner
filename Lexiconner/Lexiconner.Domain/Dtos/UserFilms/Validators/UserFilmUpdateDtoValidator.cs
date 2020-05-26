@@ -10,6 +10,7 @@ namespace Lexiconner.Domain.Dtos.UserFilms.Validators
         public UserFilmUpdateDtoValidator()
         {
             RuleFor(x => x.Title).NotEmpty().MaximumLength(200);
+            RuleFor(x => x.MyRating).GreaterThanOrEqualTo(0);
             RuleFor(x => x.LanguageCode).NotEmpty();
         }
     }

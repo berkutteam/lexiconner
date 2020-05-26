@@ -24,7 +24,7 @@ namespace Lexiconner.Domain.Config
         private const string UserInfo = "userInfo";
         private const string StudyItems = "studyItems";
         private const string CustomCollections = "customCollections";
-        private const string Films = "films";
+        private const string UserFilms = "userFilms";
 
         private const string CacheGoogleTranslateApi = "cacheGoogleTranslateApi";
         private const string CacheGoogleTranslateDetectLanguageApi = "cacheGoogleTranslateDetectLanguageApi";
@@ -159,7 +159,7 @@ namespace Lexiconner.Domain.Config
             new MongoCollectionConfig
             {
                 CollectionType = typeof(UserFilmEntity),
-                CollectionName = Films,
+                CollectionName = UserFilms,
                 Indexes = new List<string>{
                 }
             },

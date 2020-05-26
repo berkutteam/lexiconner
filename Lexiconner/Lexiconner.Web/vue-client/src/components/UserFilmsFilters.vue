@@ -2,31 +2,15 @@
     <div class="mb-3">
         <form v-on:submit.prevent="() => {}" class="form-inline">
             <div class="form-group mr-2">
-                <label class="sr-only" for="studyItemsRequestParams__search">Search</label>
+                <label class="sr-only" for="userFilmsRequestParams__search">Search</label>
                 <input 
-                    v-bind:value="sharedState.studyItemsRequestParams.search"
+                    v-bind:value="sharedState.userFilmsRequestParams.search"
                     v-on:input="onSearchChange"
                     type="text" 
                     class="form-control" 
-                    id="studyItemsRequestParams__search" 
+                    id="userFilmsRequestParams__search" 
                     placeholder="Search"
                 >
-            </div>
-
-            <!-- <toggle-button 
-                v-on:value="sharedState.studyItemsRequestParams.isFavourite || false"
-                v-bind:sync="true"
-                v-on:change="onIsFavoriteChange"
-                v-bind:labels="{checked: '★', unchecked: '⁂'}"
-                v-bind:font-size="16"
-                v-bind:color="{checked: '#ffc107', unchecked: '#6c757d'}"
-                v-bind:class="' mr-2'"
-            /> -->
-
-            <div class="form-group mr-2 cursor-pointer text-warning">
-                <i v-on:click="setIsFavorite(null)" v-bind:class="{'text-primary': sharedState.studyItemsRequestParams.isFavourite === null}" class="fas fa-star-half-alt mr-1"></i>
-                <i v-on:click="setIsFavorite(true)" v-bind:class="{'text-primary': sharedState.studyItemsRequestParams.isFavourite === true}" class="fas fa-star mr-1"></i>
-                <i v-on:click="setIsFavorite(false)" v-bind:class="{'text-primary': sharedState.studyItemsRequestParams.isFavourite === false}" class="far fa-star"></i>
             </div>
 
             <!-- Reload -->
@@ -111,27 +95,16 @@ export default {
             }
         }, 500),
         onSearchChange: function(e) {
-            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
+            this.$store.commit(storeTypes.USER_FILMS_REQUEST_PARAMS_SET, {
                 search: e.target.value,
             });
             this.callOnChangeDebounce();
-        },
-        // onIsFavoriteChange: function({value, tag, srcEvent}) {
-            // this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
-            //     isFavourite: value,
-            // });
-        // },
-        setIsFavorite: function(value) {
-            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
-                isFavourite: value,
-            });
-            this.callOnChange();
         },
         reload: function() {
             this.callOnChange();
         },
         resetRequestParams: function() {
-            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_RESET, {});
+            this.$store.commit(storeTypes.USER_FILMS_REQUEST_PARAMS_RESET, {});
             this.callOnChange();
         },
     },

@@ -102,6 +102,17 @@ export default new Vuex.Store({
         customCollectionsResult: null, // object
         currentCustomCollection: null, // object
 
+        userFilmsRequestParamsDefault: {
+            search: null,
+        },
+        userFilmsRequestParams: {
+            search: null,
+        },
+
+        // paginationResult (store only current page)
+        // {items: [], pagination: {}}
+        userFilmsPaginationResult: null, // object
+
         nav: {
             isVisible: true,
         },
@@ -249,7 +260,7 @@ export default new Vuex.Store({
             let { data } = payload;
             state.studyItemsPaginationResult = data;
         },
-        [storeTypes.STUDY_ITEMS_CREATE_SET](state, payload) {
+        [storeTypes.STUDY_ITEM_CREATE_SET](state, payload) {
             let { data } = payload;
             if(state.studyItemsPaginationResult !== null) {
                 state.studyItemsPaginationResult.items.unshift({...data});
@@ -316,12 +327,59 @@ export default new Vuex.Store({
         //#endregion
 
 
+        //#region User films
+
+        [storeTypes.USER_FILMS_REQUEST_PARAMS_SET](state, payload) {
+            let params= payload;
+            state.userFilmsRequestParams = {
+                ...state.userFilmsRequestParams,
+                ...params,
+            };
+        },
+        [storeTypes.USER_FILMS_REQUEST_PARAMS_RESET](state, payload) {
+            state.userFilmsRequestParams = {
+                ...state.userFilmsRequestParamsDefault,
+            };
+        },
+        [storeTypes.USER_FILMS_SET](state, payload) {
+            let { data } = payload;
+            state.userFilmsPaginationResult = data;
+        },
+        [storeTypes.USER_FILM_CREATE_SET](state, payload) {
+            let { data } = payload;
+            if(state.userFilmsPaginationResult !== null) {
+                state.userFilmsPaginationResult.items.unshift({...data});
+            }
+        },
+        [storeTypes.USER_FILM_UPDATE_SET](state, payload) {
+            let { data } = payload;
+            if(state.userFilmsPaginationResult !== null) {
+                state.userFilmsPaginationResult.items = state.userFilmsPaginationResult.items.map(x => {
+                    if(x.id === data.id) {
+                        return {...data};
+                    }
+                    return x;
+                });
+            }
+        },
+        [storeTypes.USER_FILM_DELETE_SET](state, payload) {
+            let { userFilmId } = payload;
+            if(state.userFilmsPaginationResult !== null) {
+                state.userFilmsPaginationResult.items = state.userFilmsPaginationResult.items.filter(x => x.id !== userFilmId);
+            }
+        },
+
+        //#endregion
+
+
        //#region Nav
 
         [storeTypes.NAV_VISIBILITY_SET](state, payload) {
             let { isVisible } = payload;
             state.nav.isVisible = isVisible;
         },
+        
+        //#endregion
 
 
         //#region Error page
@@ -422,6 +480,7 @@ export default new Vuex.Store({
         //#region Auth
 
         //#endregion
+
 
         //#region UserInfo
 
@@ -590,7 +649,7 @@ export default new Vuex.Store({
                     target: storeTypes.STUDY_ITEM_CREATE,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEMS_CREATE_SET, {
+                commit(storeTypes.STUDY_ITEM_CREATE_SET, {
                     data: data
                 });
                 return data;
@@ -776,6 +835,7 @@ export default new Vuex.Store({
 
         //#endregion
         
+
         //#region Custom collections
 
         [storeTypes.CUSTOM_COLLECTIONS_LOAD](context, params) {
@@ -888,6 +948,107 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.CUSTOM_COLLECTION_DUPLICATE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        //#endregion
+        
+
+        //#region User films
+
+        [storeTypes.USER_FILMS_LOAD](context, params) {
+            let { commit, dispatch, state, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.USER_FILMS_LOAD,
+                loading: true,
+            });
+            return api.webApi().getUserFilms({
+                ...params,
+                ...state.userFilmsRequestParams, // apply params from state
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_FILMS_LOAD,
+                    loading: false,
+                });
+                commit(storeTypes.USER_FILMS_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_FILMS_LOAD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.USER_FILM_CREATE](context, {data}) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.USER_FILM_CREATE,
+                loading: true,
+            });
+            return api.webApi().createUserFilm({data}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_FILM_CREATE,
+                    loading: false,
+                });
+                commit(storeTypes.USER_FILM_CREATE_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_FILM_CREATE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.USER_FILM_UPDATE](context, {userFilmId, data}) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.USER_FILM_UPDATE,
+                loading: true,
+            });
+            return api.webApi().updateUserFilm({userFilmId, data}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_FILM_UPDATE,
+                    loading: false,
+                });
+                commit(storeTypes.USER_FILM_UPDATE_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_FILM_UPDATE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.USER_FILM_DELETE](context, {userFilmId}) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.USER_FILM_DELETE,
+                loading: true,
+            });
+            return api.webApi().deleteUserFilm({userFilmId}).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_FILM_DELETE,
+                    loading: false,
+                });
+                commit(storeTypes.USER_FILM_DELETE_SET, {
+                    userFilmId: userFilmId
+                });
+                // returns nothing
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_FILM_DELETE,
                     loading: false,
                 });
                 throw err;

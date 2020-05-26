@@ -2,9 +2,9 @@
     <multiselect 
         v-model="privateState.selectedTags" 
         tag-placeholder="Add this as new tag" 
-        placeholder="Search or add a tag" 
-        label="name"
-        track-by="id" 
+        v-bind:placeholder="placeholder" 
+        v-bind:label="'name'"
+        v-bind:track-by="'id'" 
         v-bind:options="privateState.options" 
         v-bind:multiple="true" 
         v-bind:searchable="true" 
@@ -38,6 +38,11 @@ export default {
             // type: Array,
             required: true,
             default: [],
+        },
+        placeholder: {
+            type: String,
+            required: false,
+            default: 'Search or add a tag',
         },
     },
     components: {
