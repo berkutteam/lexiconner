@@ -21,6 +21,6 @@ namespace Lexiconner.Domain.Dtos.UserFilms
         public int? ReleaseYear { get; set; }
         public List<string> Genres { get; set; }
         public string LanguageCode { get; set; }
-        public UserFilmImageEntity Image { get; set; }
+        public UserFilmDetailsEntity Details { get; set; }
     }
 }

@@ -114,7 +114,7 @@
                                     class="card bg-light item-card" 
                                 >
                                     <!-- <div class="card-header"></div> -->
-                                    <img v-if="item.image" class="card-img-top item-card-image" v-bind:src="item.image.url" v-bind:alt="item.title">
+                                    <img v-if="item.details && item.details.image" class="card-img-top item-card-image" v-bind:src="item.details.image.posterUrl">
                                     <img v-else class="card-img-top item-card-image" src="/img/empty-image.png">
                                     <div class="card-body">
                                         <div class="d-flex w-100 justify-content-between align-items-center mb-1">

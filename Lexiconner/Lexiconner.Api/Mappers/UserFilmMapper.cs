@@ -22,7 +22,7 @@ namespace Lexiconner.Api.Mappers
                 ReleaseYear = entity.ReleaseYear,
                 Genres = entity.Genres,
                 LanguageCode = entity.LanguageCode,
-                Image = entity.Image,
+                Details = entity.Details,
             };
         }
 

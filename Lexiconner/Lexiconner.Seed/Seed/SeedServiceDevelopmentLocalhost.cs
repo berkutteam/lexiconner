@@ -342,7 +342,7 @@ namespace Lexiconner.Seed.Seed
                         Genres = x.Genres,
                         LanguageCode = filmsLanguageCode,
                     };
-                }).ToList();
+                }).OrderByDescending(x => x.WatchedAt != null ? x.WatchedAt : DateTime.MinValue ).ToList();
 
                 // fix same ids for different users
                 filmEntities.ToList().ForEach(x =>
