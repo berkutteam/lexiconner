@@ -36,7 +36,7 @@ namespace Lexiconner.IdentityServer4.Extensions
         {
             using (var scope = app.ApplicationServices.CreateScope())
             {
-                var hostingEnvironment = app.ApplicationServices.GetService<IHostingEnvironment>();
+                var hostingEnvironment = app.ApplicationServices.GetService<IWebHostEnvironment>();
                 var identityServerConfig = app.ApplicationServices.GetService<IIdentityServerConfig>();
                 var dataRepository = app.ApplicationServices.GetService<IDataRepository>();
                 var userManager = scope.ServiceProvider.GetService<UserManager<ApplicationUserEntity>>();

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
@@ -36,25 +37,25 @@ namespace Lexiconner.Api
             }
         }
 
-        static Info CreateInfoForApiVersion(ApiVersionDescription description)
+        static OpenApiInfo CreateInfoForApiVersion(ApiVersionDescription description)
         {
-            var info = new Info()
+            var info = new OpenApiInfo()
             {
 
                 Title = "Lexiconner - HTTP API",
                 Version = "v1",
                 Description = "",
-                TermsOfService = "Terms Of Service",
-                Contact = new Contact
+                TermsOfService = new Uri("https://example.com/license"),
+                Contact = new OpenApiContact
                 {
                     Name = "Vadym Berkut",
                     Email = string.Empty,
-                    Url = ""
+                    Url = new Uri("https://example.com/license")
                 },
-                License = new License
+                License = new OpenApiLicense
                 {
                     Name = "Use under LICX",
-                    Url = "https://example.com/license"
+                    Url = new Uri("https://example.com/license")
                 }
             };
 

@@ -4,10 +4,14 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Lexiconner.Api.DTOs;
-using Lexiconner.Api.DTOs.StudyItems;
+using Lexiconner.Api.Mappers;
 using Lexiconner.Api.Models;
 using Lexiconner.Api.Services;
+using Lexiconner.Api.Services.Interfaces;
+using Lexiconner.Application.Exceptions;
 using Lexiconner.Application.Services;
+using Lexiconner.Domain.Dtos;
+using Lexiconner.Domain.Dtos.StudyItems;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
 using Lexiconner.Persistence.Repositories.MongoDb;
@@ -39,7 +43,7 @@ namespace Lexiconner.Api.Controllers.V2
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(BaseApiResponseDto<PaginationResponseDto<StudyItemEntity>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<PaginationResponseDto<StudyItemDto>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
@@ -47,88 +51,45 @@ namespace Lexiconner.Api.Controllers.V2
         public async Task<IActionResult> GetAll([FromQuery] StudyItemsRequestDto dto)
         {
             var searchFilter = new StudyItemsSearchFilter(dto.Search, dto.IsFavourite);
-
-            var result = await _studyItemsService.GetAllStudyItemsAsync(GetUserId(), dto.Offset, dto.Limit, searchFilter);
+            var result = await _studyItemsService.GetAllStudyItemsAsync(GetUserId(), dto.Offset, dto.Limit, searchFilter, dto.CollectionId);
             return BaseResponse(result);
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Get([FromRoute]string id)
         {
-            var result = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
-            return BaseResponse(result);
+            var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
+            var dto = CustomMapper.MapToDto(entity);
+            return BaseResponse(dto);
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> Post([FromBody] StudyItemEntity data)
+        public async Task<IActionResult> Create([FromBody] StudyItemCreateDto data)
         {
-            data.UserId = GetUserId();
-
-            // set image
-            var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: null, data.Title);
-
-            if (imagesResult.Any())
-            {
-                // try to find suitable image
-                var image = _imageService.GetSuitableImages(imagesResult);
-                data.Image = new StudyItemImageEntity
-                {
-                    Url = image.Url,
-                    Height = image.Height,
-                    Width = image.Width,
-                    Thumbnail = image.Thumbnail,
-                    ThumbnailHeight = image.ThumbnailHeight,
-                    ThumbnailWidth = image.ThumbnailWidth,
-                    Base64Encoding = image.Base64Encoding,
-                };
-            }
-
-            await _dataRepository.AddAsync(data);
-            return BaseResponse(data);
+            var result = await _studyItemsService.CreateStudyItemAsync(GetUserId(), data);
+            return BaseResponse(result);
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> Put([FromRoute]string id, [FromBody] StudyItemEntity data)
+        public async Task<IActionResult> Put([FromRoute]string id, [FromBody] StudyItemUpdateDto data)
         {
-            data.Id = id;
-            data.UserId = GetUserId();
-
-            // set image
-            var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: null, data.Title);
-
-            if (imagesResult.Any())
-            {
-                // try to find suitable image
-                var image = _imageService.GetSuitableImages(imagesResult);
-                data.Image = new StudyItemImageEntity
-                {
-                    Url = image.Url,
-                    Height = image.Height,
-                    Width = image.Width,
-                    Thumbnail = image.Thumbnail,
-                    ThumbnailHeight = image.ThumbnailHeight,
-                    ThumbnailWidth = image.ThumbnailWidth,
-                    Base64Encoding = image.Base64Encoding,
-                };
-            }
-
-            await _dataRepository.UpdateAsync(data);
-            return BaseResponse(data);
+            var result = await _studyItemsService.UpdateStudyItemAsync(GetUserId(), id, data);
+            return BaseResponse(result);
         }
 
         [HttpDelete("{id}")]
@@ -139,8 +100,7 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Delete([FromRoute]string id)
         {
-            var existing = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
-            await _dataRepository.DeleteAsync<StudyItemEntity>(x => x.Id == existing.Id);
+            await _studyItemsService.DeleteStudyItem(GetUserId(), id);
             return StatusCodeBaseResponse();
         }
     }

@@ -333,6 +333,10 @@ ASALocalRun/
 .env_*
 .env__*
 
+# local env files
+.env.local
+.env.*.local
+
 # Serilog local logs
 serilog-logs/
 
@@ -344,3 +348,13 @@ developer-cert.pfx
 
 # secrets
 Secrets/
+
+#
+# from vue cli .gitignore
+#
+.DS_Store
+node_modules
+**/vue-client/dist
+
+**/vue-client/tests/e2e/reports/
+selenium-debug.log

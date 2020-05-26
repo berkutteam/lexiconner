@@ -55,7 +55,7 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
             int limit = count;
             var studyItemsEntities = await _dataUtil.CreateStudyItemsAsync(userEntity.Id, count);
 
-            var trainingDto = await _apiUtil.FlashcardsStartTraining(accessToken, limit);
+            var trainingDto = await _apiUtil.FlashcardsTrainingStart(accessToken, limit);
 
             trainingDto.TrainingType.Should().Be(TrainingType.FlashCards);
             trainingDto.Items.Should().NotBeEmpty();
@@ -82,7 +82,7 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
             int limit = count;
             var studyItemsEntities = _dataUtil.CreateStudyItemsAsync(userEntity.Id, count).GetAwaiter().GetResult();
 
-            var trainingDto = _apiUtil.FlashcardsStartTraining(accessToken, limit).GetAwaiter().GetResult();
+            var trainingDto = _apiUtil.FlashcardsTrainingStart(accessToken, limit).GetAwaiter().GetResult();
 
 
             var requestDto = new FlashCardsTrainingResultDto()
@@ -98,7 +98,7 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
             var correctItemIds = requestDto.ItemsResults.Where(x => x.IsCorrect).Select(x => x.ItemId).ToList();
             var inCorrectItemIds = requestDto.ItemsResults.Where(x => !x.IsCorrect).Select(x => x.ItemId).ToList();
 
-            _apiUtil.FlashcardsSaveTrainingResults(accessToken, requestDto).GetAwaiter().GetResult();
+            _apiUtil.FlashcardsTrainingSave(accessToken, requestDto).GetAwaiter().GetResult();
 
             studyItemsEntities = _dataUtil.GetStudyItemsAsync(userEntity.Id).GetAwaiter().GetResult();
 

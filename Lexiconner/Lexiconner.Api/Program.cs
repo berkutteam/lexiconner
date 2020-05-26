@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Autofac.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,8 +10,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Events;
 using Autofac;
-using Autofac.Extensions.DependencyInjection;
+using Serilog.Sinks.SystemConsole.Themes;
+using Microsoft.Extensions.Hosting;
 
 namespace Lexiconner.Api
 {
@@ -40,7 +43,7 @@ namespace Lexiconner.Api
 
             //here before the ILogger configured and ovverided we use the Log static helper of Serilog
             Log.Information("Configuring web host ({ApplicationContext})...", _appName);
-            var host = CreateWebHostBuilder(args).Build();
+            var host = CreateHostBuilder(args).Build();
 
             Log.Information("Starting web host ({ApplicationContext})...", _appName);
             host.Run();
@@ -48,26 +51,32 @@ namespace Lexiconner.Api
             return 0;
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            var builder = WebHost.CreateDefaultBuilder(args)
-                .UseConfiguration(GetConfiguration())
-                .ConfigureServices(services => services.AddAutofac())
-                .UseSerilog();
+            return Host.CreateDefaultBuilder(args)
+                .UseSerilog()
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                 .ConfigureWebHostDefaults(webBuilder =>
+                 {
+                     webBuilder
+                        // UseConfiguration must be first to work properly
+                        .UseConfiguration(GetConfiguration())
 
-            if (HostingEnvironmentHelper.IsDevelopmentLocalhost())
-            {
-                builder.UseUrls($"http://localhost:5005");
-            }
+                        // set URLs directly, because it doesn't pick up ASPNETCORE_URLS when UseConfiguration is applied earlier
+                        // UseUrls must follow UseConfiguration to work properly
+                        .UseUrls(Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://+:80")
+                        .UseStartup<Startup>();
 
-            if (Environment.GetEnvironmentVariable("RUNTIME_ENV") == "heroku")
-            {
-                builder.UseUrls($"http://+:{Environment.GetEnvironmentVariable("PORT")}");
-            }
+                     if (HostingEnvironmentHelper.IsDevelopmentLocalhost())
+                     {
+                         webBuilder.UseUrls($"http://localhost:5005");
+                     }
 
-            builder.UseStartup<Startup>();
-
-            return builder;
+                     if (Environment.GetEnvironmentVariable("RUNTIME_ENV") == "heroku")
+                     {
+                         webBuilder.UseUrls($"http://+:{Environment.GetEnvironmentVariable("PORT")}");
+                     }
+                 });
         }
 
         private static IConfiguration GetConfiguration()
@@ -92,10 +101,11 @@ namespace Lexiconner.Api
         private static Serilog.ILogger GetSerilogLogger(IConfiguration configuration, ApplicationSettings config)
         {
             var logger = new LoggerConfiguration()
-               .Enrich.WithProperty("ApplicationContext", _appName) //define the context in logged data
-               .Enrich.WithProperty("ApplicationEnvironment", HostingEnvironmentHelper.Environment) //define the environment
-               .Enrich.FromLogContext() //allows to use specific context if nessesary
-               .ReadFrom.Configuration(configuration);
+                .Enrich.WithCorrelationId() // adds CorrelationId to log event. Ensure AddHttpContextAccessor is called.
+                .Enrich.WithProperty("ApplicationContext", _appName) //define the context in logged data
+                .Enrich.WithProperty("ApplicationEnvironment", HostingEnvironmentHelper.Environment) //define the environment
+                .Enrich.FromLogContext() //allows to use specific context if nessesary
+                .ReadFrom.Configuration(configuration);
 
             if (HostingEnvironmentHelper.IsDevelopmentLocalhost())
             {
@@ -103,12 +113,15 @@ namespace Lexiconner.Api
                 logger.WriteTo.File(
                     path: Path.Combine("./serilog-logs/local-logs.txt"),
                     fileSizeLimitBytes: 100 * 1024 * 1024, // 100mb
-                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning
+                                                           //restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning,
+                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose,
+                    formatter: new Serilog.Sinks.Http.TextFormatters.NormalTextFormatter()
                 );
             }
 
             return logger.CreateLogger();
         }
+
         private static void ShowEnvironmentInfo()
         {
             Log.Information(Environment.NewLine);

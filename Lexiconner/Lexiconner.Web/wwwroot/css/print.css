@@ -1,0 +1,16 @@
+/* 
+* Styles for print only
+* 
+*/
+
+/*
+* PringJs note
+* - Looks like scanStyles applies inline styles to element, so use !important to priritize styles in this file
+*/
+
+.no-print { 
+    display: none !important; 
+}
+.to-print { 
+    display: normal !important; 
+}

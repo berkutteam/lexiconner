@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
 using Lexiconner.Api.DTOs;
-using Lexiconner.Api.DTOs.StudyItems;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
+using Lexiconner.Domain.Dtos;
+using Lexiconner.Domain.Dtos.StudyItems;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Infrastructure.Tests.Utils;
 using Newtonsoft.Json;
@@ -191,7 +192,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             return responseModel.Data;
         }
 
-        public async Task<FlashCardsTrainingDto> FlashcardsStartTraining(string accessToken, int limit)
+        public async Task<FlashCardsTrainingDto> FlashcardsTrainingStart(string accessToken, int limit)
         {
             var httpResponse = await _httpUtil.GetAsync($"/api/v2/studyitems/trainings/flashcards?limit={limit}", accessToken);
             _httpUtil.EnsureSuccessStatusCode(httpResponse);
@@ -206,7 +207,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             return responseModel.Data;
         }
 
-        public async Task FlashcardsSaveTrainingResults(string accessToken, FlashCardsTrainingResultDto dto)
+        public async Task FlashcardsTrainingSave(string accessToken, FlashCardsTrainingResultDto dto)
         {
             var httpResponse = await _httpUtil.PostJsonAsync($"/api/v2/studyitems/trainings/flashcards/save", dto, accessToken);
             _httpUtil.EnsureSuccessStatusCode(httpResponse);

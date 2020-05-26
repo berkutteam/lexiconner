@@ -1,8 +1,15 @@
 ﻿using Lexiconner.Api.DTOs;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
+using Lexiconner.Api.Mappers;
 using Lexiconner.Api.Models;
+using Lexiconner.Api.Services.Interfaces;
+using Lexiconner.Application.Exceptions;
+using Lexiconner.Application.Helpers;
 using Lexiconner.Application.Services;
+using Lexiconner.Application.Validation;
 using Lexiconner.Domain.Attributes;
+using Lexiconner.Domain.Dtos;
+using Lexiconner.Domain.Dtos.StudyItems;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Enums;
 using Lexiconner.Persistence.Repositories;
@@ -18,18 +25,6 @@ using System.Threading.Tasks;
 
 namespace Lexiconner.Api.Services
 {
-    public interface IStudyItemsService
-    {
-        Task<PaginationResponseDto<StudyItemEntity>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null);
-
-        Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId);
-        Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, int limit);
-        Task SaveTrainingResultsForFlashCardsAsync(string userId, FlashCardsTrainingResultDto results);
-
-        Task AddToFavouritesAsync(string userId, IEnumerable<string> itemIds);
-        Task DeleteFromFavouritesAsync(string userId, IEnumerable<string> itemIds);
-    }
-
     public class StudyItemsService : IStudyItemsService
     {
         private readonly IDataRepository _dataRepository;
@@ -46,7 +41,13 @@ namespace Lexiconner.Api.Services
 
         #region Study items
 
-        public async Task<PaginationResponseDto<StudyItemEntity>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null)
+        public async Task<PaginationResponseDto<StudyItemDto>> GetAllStudyItemsAsync(
+            string userId, 
+            int offset, 
+            int limit, 
+            StudyItemsSearchFilter searchFilter = null, 
+            string collectionId = null
+        )
         {
             var predicate = PredicateBuilder.New<StudyItemEntity>(x => x.UserId == userId);
 
@@ -55,12 +56,17 @@ namespace Lexiconner.Api.Services
                 if (!String.IsNullOrEmpty(searchFilter.Search))
                 {
                     string search = searchFilter.Search.Trim().ToLower();
-                    predicate.And(x => x.Title.ToLower().Contains(search) || x.Description.ToLower().Contains(search) || x.ExampleText.ToLower().Contains(search));
+                    predicate.And(x => x.Title.ToLower().Contains(search) || x.Description.ToLower().Contains(search));
                 }
                 if (searchFilter.IsFavourite.GetValueOrDefault(false))
                 {
                     predicate.And(x => x.IsFavourite);
                 }
+            }
+
+            if(collectionId != null)
+            {
+                predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
             }
 
             var itemsTask = _dataRepository.GetManyAsync<StudyItemEntity>(predicate, offset, limit);
@@ -69,16 +75,108 @@ namespace Lexiconner.Api.Services
             var total = await totalTask;
             var items = await itemsTask;
 
-            var result = new PaginationResponseDto<StudyItemEntity>
+            var result = new PaginationResponseDto<StudyItemDto>
             {
-                TotalCount = total,
-                ReturnedCount = items.Count(),
-                Offset = offset,
-                Limit = limit,
-                Items = items,
+              
+                Items = CustomMapper.MapToDto(items),
+                Pagination = new PaginationInfoDto()
+                {
+                    TotalCount = total,
+                    ReturnedCount = items.Count(),
+                    Offset = offset,
+                    Limit = limit,
+                }
             };
 
             return result;
+        }
+
+        public async Task<StudyItemDto> CreateStudyItemAsync(string userId, StudyItemCreateDto createDto)
+        {
+            var entity = CustomMapper.MapToEntity(userId, createDto);
+            CustomValidationHelper.Validate(entity);
+
+            // set image
+            if (entity.Title.Length > 3)
+            {
+                var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: entity.LanguageCode, entity.Title);
+
+                if (imagesResult.Any())
+                {
+                    // try to find suitable image
+                    var image = _imageService.GetSuitableImages(imagesResult);
+                    if (image != null)
+                    {
+                        entity.Image = new StudyItemImageEntity
+                        {
+                            Url = image.Url,
+                            Height = image.Height,
+                            Width = image.Width,
+                            Thumbnail = image.Thumbnail,
+                            ThumbnailHeight = image.ThumbnailHeight,
+                            ThumbnailWidth = image.ThumbnailWidth,
+                            Base64Encoding = image.Base64Encoding,
+                        };
+                    }
+                }
+            }
+
+
+            await _dataRepository.AddAsync(entity);
+            return CustomMapper.MapToDto(entity);
+        }
+
+        public async Task<StudyItemDto> UpdateStudyItemAsync(string userId, string studyItemId, StudyItemUpdateDto updateDto)
+        {
+            var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == studyItemId);
+            if (entity.UserId != userId)
+            {
+                throw new AccessDeniedException("Can't edit the item that you don't own!");
+            }
+
+            // update
+            entity.UpdateSelf(updateDto);
+
+            // set image
+            if (entity.Image == null)
+            {
+                if (entity.Title.Length > 3)
+                {
+                    var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: entity.LanguageCode, entity.Title);
+
+                    if (imagesResult.Any())
+                    {
+                        // try to find suitable image
+                        var image = _imageService.GetSuitableImages(imagesResult);
+                        if (image != null)
+                        {
+                            entity.Image = new StudyItemImageEntity
+                            {
+                                Url = image.Url,
+                                Height = image.Height,
+                                Width = image.Width,
+                                Thumbnail = image.Thumbnail,
+                                ThumbnailHeight = image.ThumbnailHeight,
+                                ThumbnailWidth = image.ThumbnailWidth,
+                                Base64Encoding = image.Base64Encoding,
+                            };
+                        }
+                    }
+                }
+            }
+
+            await _dataRepository.UpdateAsync(entity);
+            return CustomMapper.MapToDto(entity);
+        }
+
+        public async Task DeleteStudyItem(string userId, string sutyItemId)
+        {
+            var existing = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == sutyItemId && x.UserId == userId);
+            if (existing == null)
+            {
+                throw new NotFoundException();
+            }
+            await _dataRepository.DeleteAsync<StudyItemEntity>(x => x.Id == existing.Id);
         }
 
         #endregion
@@ -97,6 +195,7 @@ namespace Lexiconner.Api.Services
                 return new TrainingsStatisticsDto.TrainingStatisticsItemDto
                 {
                     TrainingType = trainingType,
+                    TrainingTypeFormatted = EnumHelper<TrainingType>.GetDisplayValue(trainingType),
                     OnTrainingItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(
                             x => x.UserId == _userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == trainingType && y.Progress != 1)
                         ),
@@ -123,14 +222,22 @@ namespace Lexiconner.Api.Services
             return result;
         }
 
-        public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, int limit)
+        public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, string collectionId, int limit)
         {
-            var entities = await _dataRepository.GetManyAsync<StudyItemEntity>(
-                x => x.UserId == userId && 
-                (x.TrainingInfo == null || (x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow))),
-                0,
-                limit
+            var predicate = PredicateBuilder.New<StudyItemEntity>(x =>
+                x.UserId == userId &&
+                (
+                    x.TrainingInfo == null ||
+                    (x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow))
+                )
             );
+
+            if (collectionId != null)
+            {
+                predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+
+            var entities = await _dataRepository.GetManyAsync<StudyItemEntity>(predicate, 0, limit);
 
             return new FlashCardsTrainingDto
             {

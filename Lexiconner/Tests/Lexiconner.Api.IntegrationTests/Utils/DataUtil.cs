@@ -97,7 +97,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             {
                 Title = _faker.Lorem.Word(),
                 Description = _faker.Lorem.Text(),
-                ExampleText = _faker.Lorem.Text(),
+                ExampleTexts = new List<string>() { _faker.Lorem.Text() },
                 Tags = new List<string>
                     {
                         _faker.Lorem.Word(),
@@ -142,7 +142,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
                     UserId = userId,
                     Title = _faker.Lorem.Word(),
                     Description = _faker.Lorem.Text(),
-                    ExampleText = _faker.Lorem.Text(),
+                    ExampleTexts = new List<string>() { _faker.Lorem.Text() },
                     Tags = new List<string>
                     {
                         _faker.Lorem.Word(),
@@ -166,7 +166,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
                 UserId = userId,
                 Title = _faker.Lorem.Word(),
                 Description = _faker.Lorem.Text(),
-                ExampleText = _faker.Lorem.Text(),
+                ExampleTexts = new List<string>() { _faker.Lorem.Text() },
                 Tags = new List<string>
                     {
                         _faker.Lorem.Word(),

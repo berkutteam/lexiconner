@@ -1,5 +1,8 @@
-﻿using Lexiconner.Domain.Entitites.Base;
+﻿using Lexiconner.Domain.Dtos.StudyItems;
+using Lexiconner.Domain.Entitites.Base;
 using Lexiconner.Domain.Enums;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -13,20 +16,61 @@ namespace Lexiconner.Domain.Entitites
     {
         public StudyItemEntity()
         {
+            CustomCollectionIds = new List<string>();
+            ExampleTexts = new List<string>();
             Tags = new List<string>();
+            TrainingInfo = new StudyItemTrainingInfoEntity();
         }
 
         public string UserId { get; set; }
+        public List<string> CustomCollectionIds { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string ExampleText { get; set; }
+        public List<string> ExampleTexts { get; set; }
         public bool IsFavourite { get; set; }
+
+        /// <summary>
+        /// ISO 639-1 two-letter code.
+        /// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+        /// https://developers.google.com/admin-sdk/directory/v1/languages
+        /// </summary>
+        public string LanguageCode { get; set; }
 
         public List<string> Tags { get; set; }
 
         public StudyItemImageEntity Image { get; set; }
         public StudyItemTrainingInfoEntity TrainingInfo { get; set; }
 
+
+        #region Helper methods
+
+        public void UpdateSelf(StudyItemUpdateDto dto)
+        {
+            if (this.Title != dto.Title)
+            {
+                this.Image = null;
+            }
+            this.Title = dto.Title;
+            this.Description = dto.Description;
+            this.ExampleTexts = dto.ExampleTexts;
+            this.IsFavourite = dto.IsFavourite;
+            this.LanguageCode = dto.LanguageCode;
+            this.Tags = dto.Tags;
+        }
+
+        public bool RemoveCollection(string collectionId)
+        {
+            bool isUpdated = false;
+            var existing = this.CustomCollectionIds.FirstOrDefault(x => x == collectionId);
+            if(existing != null)
+            {
+                this.CustomCollectionIds.Remove(existing);
+                isUpdated = true;
+            }
+            return isUpdated;
+        }
+
+        #endregion
     }
 
     public class StudyItemImageEntity : BaseEntity
@@ -55,11 +99,10 @@ namespace Lexiconner.Domain.Entitites
             return progress;
         }
 
-
-
         public class StudyItemTrainingProgressItemEntity : BaseEntity
         {
             [JsonConverter(typeof(StringEnumConverter))]
+            [BsonRepresentation(BsonType.String)]
             public TrainingType TrainingType { get; set; }
             public DateTime LastTrainingdAt { get; set; }
             public DateTime NextTrainingdAt { get; set; }

@@ -2,15 +2,19 @@
 using Lexiconner.Application.ApiClients.Dtos;
 using Lexiconner.Application.Exceptions;
 using Lexiconner.Application.ImportAndExport;
+using Lexiconner.Domain.Config;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.Persistence.Cache;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using static Lexiconner.Application.ApiClients.Dtos.GoogleTranslateResponseDto;
 using static Lexiconner.Application.ApiClients.Dtos.ImageSearchResponseDto;
 
@@ -52,7 +56,7 @@ namespace Lexiconner.Application.Services
 
             try
             {
-                if(String.IsNullOrEmpty(sourceLanguageCode))
+                if (String.IsNullOrEmpty(sourceLanguageCode))
                 {
                     // detect language
                     string detectLanguageContent = imageQuery;
@@ -94,17 +98,18 @@ namespace Lexiconner.Application.Services
                         };
                     }
 
-                    if (detectLanguageResult.Languages.Any())
+                    //when lang is undefined - don't use it
+                    if (!detectLanguageResult.IsUndefinedLanguage && detectLanguageResult.Languages.Any())
                     {
                         var lang = detectLanguageResult.Languages.Where(x => x.Confidence >= 0.5).FirstOrDefault();
-                        if(lang != null)
+                        if (lang != null)
                         {
                             sourceLanguageCode = lang.LanguageCode;
                         }
                     }
                 }
 
-                if(String.IsNullOrEmpty(sourceLanguageCode))
+                if (String.IsNullOrEmpty(sourceLanguageCode))
                 {
                     // if can't detect - break
                     return result;
@@ -164,8 +169,11 @@ namespace Lexiconner.Application.Services
                         imageQueryEn = translateResult.Translations.First().TranslatedText;
                     }
                 }
-               
-
+                else
+                {
+                    // en already
+                    imageQueryEn = imageQuery;
+                }
 
                 // make contextual search
                 if (!String.IsNullOrEmpty(imageQueryEn))
@@ -174,7 +182,7 @@ namespace Lexiconner.Application.Services
                     int pageNumber = 1;
                     int pageSize = 10;
                     bool isAutoCorrect = false;
-                    bool isSafeSearch = false;
+                    bool isSafeSearch = true;
 
                     var imageSearchCache = new ContextualWebSearchImageSearchDataCacheEntity(query, pageNumber, pageSize, isAutoCorrect, isSafeSearch); // use just for compare
                     var imageSearchResultCache = await _dataCache.Get<ContextualWebSearchImageSearchDataCacheEntity>(x => x.CacheKey == imageSearchCache.GetCacheKey());
@@ -185,7 +193,7 @@ namespace Lexiconner.Application.Services
                         // call api
                         _logger.LogInformation($"Calling Contextual Web Search API for '{imageQuery}' -> '{query}'...");
                         imageSearchResult = await _contextualWebSearchApiClient.ImageSearchAsync(query, pageNumber, pageSize, isAutoCorrect, isSafeSearch);
-
+                        
                         // cache response
                         _logger.LogInformation($"Caching Contextual Web Search API response for '{imageQuery}'-> '{query}'...");
                         await _dataCache.Add(new ContextualWebSearchImageSearchDataCacheEntity(query, pageNumber, pageSize, isAutoCorrect, isSafeSearch)
@@ -256,7 +264,7 @@ namespace Lexiconner.Application.Services
         public ImageSearchResponseItemDto GetSuitableImages(List<ImageSearchResponseItemDto> imageResult)
         {
             const int preferredImageWidth = 600;
-            const int maxImageWidth = 800;
+            const int maxImageWidth = 1000;
 
             // try to find suitable image
             ImageSearchResponseDto.ImageSearchResponseItemDto image = null;

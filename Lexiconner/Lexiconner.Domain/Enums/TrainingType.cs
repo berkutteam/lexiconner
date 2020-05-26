@@ -1,6 +1,7 @@
 ﻿using Lexiconner.Domain.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -11,12 +12,15 @@ namespace Lexiconner.Domain.Enums
     {
         None = 0,
 
+        [Display(Name = "Flash cards")]
         [TrainingTypeInfo(trainIntervalMs: 24 * 60 * 60 * 1000 /* 24 hours */, trainIntervalForRepeatMs: 5 * 24 * 60 * 60 * 1000 /* 5 days */, correctAnswerProgressRate: 0.4, wrongAnswerProgressRate: -0.5)]
         FlashCards = 1,
 
+        [Display(Name = "Word meaning")]
         [TrainingTypeInfo(trainIntervalMs: 24 * 60 * 60 * 1000 /* 24 hours */, trainIntervalForRepeatMs: 5 * 24 * 60 * 60 * 1000 /* 5 days */, correctAnswerProgressRate: 0.25, wrongAnswerProgressRate: -0.75)]
         WordMeaning = 2,
 
+        [Display(Name = "Meaning of a word")]
         [TrainingTypeInfo(trainIntervalMs: 24 * 60 * 60 * 1000 /* 24 hours */, trainIntervalForRepeatMs: 5 * 24 * 60 * 60 * 1000 /* 5 days */, correctAnswerProgressRate: 0.35, wrongAnswerProgressRate: -0.75)]
         MeaningWord = 3,
     }

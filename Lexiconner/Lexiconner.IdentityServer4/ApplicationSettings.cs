@@ -26,9 +26,10 @@ namespace Lexiconner.IdentityServer4
 
     public class UrlSettings
     {
-        public string WebApi { get; set; }
-        public string WebSpa { get; set; }
-        public string WebTestSpa { get; set; }
+        public string WebApiExternalUrl { get; set; }
+        public string WebSpaExternalUrl { get; set; }
+        public string WebSpaLocalUrl { get; set; }
+        public string WebTestSpaExternalUrl { get; set; }
     }
 
     public class IdenitytServer4Settings

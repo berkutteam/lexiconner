@@ -51,7 +51,7 @@ namespace Lexiconner.Application.ImportAndExport
                     {
                         genres = new List<string>();
 
-                        var genresMatchStr = GenresRegEx.Match(line).Groups.Skip(1).First().Value;
+                        var genresMatchStr = GenresRegEx.Match(line).Groups.Values.Skip(1).First().Value;
 
                         line = line.Replace(genresMatchStr, "");
 
@@ -64,28 +64,28 @@ namespace Lexiconner.Application.ImportAndExport
 
                     if (WatchedAtRegEx.IsMatch(line))
                     {
-                        watchedAt = WatchedAtRegEx.Match(line).Groups.Skip(1).First().Value;
+                        watchedAt = WatchedAtRegEx.Match(line).Groups.Values.Skip(1).First().Value;
 
                         line = line.Replace(watchedAt, "");
                     }
 
                     if (RatingRegEx.IsMatch(line))
                     {
-                         rating = RatingRegEx.Match(line).Groups.Skip(1).First().Value;
+                         rating = RatingRegEx.Match(line).Groups.Values.Skip(1).First().Value;
 
                          line = line.Replace(rating, "");
                     }
 
                     if (CommentRegEx.IsMatch(line))
                     {
-                        comment = CommentRegEx.Match(line).Groups.Skip(1).First().Value;
+                        comment = CommentRegEx.Match(line).Groups.Values.Skip(1).First().Value;
 
                         line = line.Replace(comment, "");
                     }
 
                     if (ReleasedAtRegEx.IsMatch(line))
                     {
-                        var releasedAtMatchStr = ReleasedAtRegEx.Match(line).Groups.Skip(1).First().Value;
+                        var releasedAtMatchStr = ReleasedAtRegEx.Match(line).Groups.Values.Skip(1).First().Value;
 
                         line = line.Replace(releasedAtMatchStr, "");
 

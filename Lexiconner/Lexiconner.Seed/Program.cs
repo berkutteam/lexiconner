@@ -30,7 +30,10 @@ namespace Lexiconner.Seed
 {
     class Program
     {
-        static void Main(string[] args)
+        // not changing unique app name.
+        private static readonly string _appName = "FinancialPortfolio.Seed";
+
+        static async Task Main(string[] args)
         {
             Console.WriteLine("Data seed application: Started");
 
@@ -39,9 +42,7 @@ namespace Lexiconner.Seed
             Stopwatch watch = new Stopwatch();
             watch.Restart();
 
-            MainAsync(replaceDatabase)
-                .GetAwaiter()
-                .GetResult();
+            await MainAsync(replaceDatabase);
 
             watch.Stop();
 
@@ -53,6 +54,10 @@ namespace Lexiconner.Seed
         {
             Console.WriteLine(HostingEnvironmentHelper.Environment);
             var configuration = BuildConfiguration();
+            var config = configuration.Get<ApplicationSettings>();
+
+            Log.Logger = GetSerilogLogger(configuration, config);
+
             var serviceProvider = RegisterServices(configuration);
             var logger = serviceProvider.GetService<ILogger<Program>>();
 
@@ -150,6 +155,10 @@ namespace Lexiconner.Seed
 
             services.AddTransient<IIdentityServerConfig, IdentityServerConfig>();
 
+            services.AddTransient<SeedServiceDevelopmentLocalhost>();
+            services.AddTransient<SeedServiceDevelopmentHeroku>();
+            services.AddTransient<SeedServiceProductionHeroku>();
+
             if (HostingEnvironmentHelper.IsDevelopmentLocalhost())
             {
                 services.AddTransient<ISeedService, SeedServiceDevelopmentLocalhost>();
@@ -163,15 +172,29 @@ namespace Lexiconner.Seed
                 services.AddTransient<ISeedService, SeedServiceProductionHeroku>();
             }
 
-            Log.Logger = GetSerilogLogger();
-
             return services.BuildServiceProvider();
         }
 
-        private static Serilog.ILogger GetSerilogLogger()
+        private static Serilog.ILogger GetSerilogLogger(IConfiguration configuration, ApplicationSettings config)
         {
-            LoggerConfiguration logger = new LoggerConfiguration()
-               .WriteTo.Console();
+            var logger = new LoggerConfiguration()
+                .Enrich.WithCorrelationId() // adds CorrelationId to log event. Ensure AddHttpContextAccessor is called.
+                .Enrich.WithProperty("ApplicationContext", _appName) //define the context in logged data
+                .Enrich.WithProperty("ApplicationEnvironment", HostingEnvironmentHelper.Environment) //define the environment
+                .Enrich.FromLogContext() //allows to use specific context if nessesary
+                .ReadFrom.Configuration(configuration);
+
+            //if (HostingEnvironmentHelper.IsDevelopmentLocalhost())
+            //{
+            //    // write to file for development purposes
+            //    logger.WriteTo.File(
+            //        path: Path.Combine("./serilog-logs/local-logs.txt"),
+            //        fileSizeLimitBytes: 100 * 1024 * 1024, // 100mb
+            //                                               //restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning,
+            //        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose,
+            //        formatter: new Serilog.Sinks.Http.TextFormatters.NormalTextFormatter()
+            //    );
+            //}
 
             return logger.CreateLogger();
         }

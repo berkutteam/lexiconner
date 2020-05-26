@@ -1,5 +1,5 @@
 #!!!this dockerfile is changed manually
-FROM microsoft/dotnet:2.2-aspnetcore-runtime AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 #heroku:
 #fails on 80
@@ -8,7 +8,7 @@ WORKDIR /app
 #ENV ASPNETCORE_URLS=http://*:8080
 #ENV ASPNETCORE_URLS=http://*:$PORT
 
-FROM microsoft/dotnet:2.2-sdk AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["Lexiconner/Lexiconner.Web/Lexiconner.Web.csproj", "Lexiconner.Web/"]
 COPY ["Lexiconner/Lexiconner.Application/Lexiconner.Application.csproj", "Lexiconner.Application/"]

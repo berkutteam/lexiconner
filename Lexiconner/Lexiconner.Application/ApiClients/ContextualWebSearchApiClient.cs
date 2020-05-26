@@ -4,12 +4,15 @@ using Lexiconner.Application.Exceptions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
+using static Lexiconner.Application.ApiClients.Dtos.ImageSearchResponseDto;
 using static Lexiconner.Application.Config.RapidApiSettings;
 
 namespace Lexiconner.Application.ApiClients
@@ -44,6 +47,7 @@ namespace Lexiconner.Application.ApiClients
         private readonly ILogger<IContextualWebSearchApiClient> _logger;
 
         private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClientForTests;
 
         private RapidApiResponseInfoDto _rapidApiResponseInfoDto = null;
 
@@ -56,6 +60,8 @@ namespace Lexiconner.Application.ApiClients
             _logger = logger;
 
             _httpClient = new HttpClient(); // TODO use factory
+            _httpClientForTests = new HttpClient(); // TODO use factory
+            _httpClientForTests.Timeout = TimeSpan.FromSeconds(5);
         }
 
         public Task AutoCompleteAsync()
@@ -103,6 +109,25 @@ namespace Lexiconner.Application.ApiClients
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var responseDto = JsonConvert.DeserializeObject<ImageSearchResponseDto>(responseContent);
+
+            // test images available
+            var validImages = new ConcurrentBag<ImageSearchResponseItemDto>();
+            var workerBlock = new ActionBlock<ImageSearchResponseItemDto>(
+                async (image) =>
+                {
+                    if (await this.TestImageAvailable(image))
+                    {
+                        validImages.Add(image);
+                    }
+                },
+                new ExecutionDataflowBlockOptions()
+                {
+                    MaxDegreeOfParallelism = 10,
+                }
+            );
+            await Task.WhenAll(responseDto.Value.Select(x => workerBlock.SendAsync(x)));
+            workerBlock.Complete();
+            await workerBlock.Completion;
 
             return responseDto;
         }
@@ -154,6 +179,20 @@ namespace Lexiconner.Application.ApiClients
                 string message = $"Contextual Web Search API returned error response: {responseContent}";
                 _logger.LogError(message);
                 throw new ApiErrorException(message);
+            }
+        }
+
+        private async Task<bool> TestImageAvailable(ImageSearchResponseItemDto image)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(new HttpMethod("GET"), image.Url);
+                var response = await _httpClientForTests.SendAsync(request);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
     }

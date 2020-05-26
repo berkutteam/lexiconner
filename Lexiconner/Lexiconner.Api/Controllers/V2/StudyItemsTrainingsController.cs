@@ -7,7 +7,9 @@ using Lexiconner.Api.DTOs;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
 using Lexiconner.Api.Models;
 using Lexiconner.Api.Services;
+using Lexiconner.Api.Services.Interfaces;
 using Lexiconner.Application.Services;
+using Lexiconner.Domain.Dtos;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -52,9 +54,9 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> FlashcardsStartTraining([FromQuery]int limit)
+        public async Task<IActionResult> FlashcardsTrainingStart([FromQuery]string collectionId, [FromQuery]int limit)
         {
-            var result = await _studyItemsService.GetTrainingItemsForFlashCardsAsync(GetUserId(), limit);
+            var result = await _studyItemsService.GetTrainingItemsForFlashCardsAsync(GetUserId(), collectionId, limit);
             return BaseResponse(result);
         }
 
@@ -64,7 +66,7 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> FlashcardsSaveTrainingResults([FromBody]FlashCardsTrainingResultDto dto)
+        public async Task<IActionResult> FlashcardsTrainingSave([FromBody]FlashCardsTrainingResultDto dto)
         {
             await _studyItemsService.SaveTrainingResultsForFlashCardsAsync(GetUserId(), dto);
             return StatusCodeBaseResponse();

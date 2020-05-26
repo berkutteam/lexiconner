@@ -25,6 +25,7 @@ namespace Lexiconner.Api.DTOs.StudyItemsTrainings
         {
             [JsonConverter(typeof(StringEnumConverter))]
             public TrainingType TrainingType { get; set; }
+            public string TrainingTypeFormatted { get; set; }
             public long TrainedItemCount { get; set; }
             public long OnTrainingItemCount { get; set; }
         }
