@@ -158,7 +158,7 @@ namespace Lexiconner.Domain.Config
             },
             new MongoCollectionConfig
             {
-                CollectionType = typeof(FilmEntity),
+                CollectionType = typeof(UserFilmEntity),
                 CollectionName = Films,
                 Indexes = new List<string>{
                 }

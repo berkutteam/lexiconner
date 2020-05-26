@@ -290,13 +290,13 @@ namespace Lexiconner.Seed.Seed
             var filmsImportResult = await _filmImporter.ImportTxtFormatFilmsAsync(_config.Import.FilmsFilePath);
             foreach (var user in usersWithImport)
             {
-                if(await _dataRepository.ExistsAsync<FilmEntity>(x => x.UserId == user.Id))
+                if(await _dataRepository.ExistsAsync<UserFilmEntity>(x => x.UserId == user.Id))
                 {
                     continue;
                 }
                 var filmEntities = filmsImportResult.Select(x =>
                 {
-                    return new FilmEntity
+                    return new UserFilmEntity
                     {
                         UserId = user.Id,
                         Title = x.Title,

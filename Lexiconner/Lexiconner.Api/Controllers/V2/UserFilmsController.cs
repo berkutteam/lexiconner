@@ -12,6 +12,7 @@ using Lexiconner.Application.Exceptions;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Dtos;
 using Lexiconner.Domain.Dtos.StudyItems;
+using Lexiconner.Domain.Dtos.UserFilms;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
 using Lexiconner.Persistence.Repositories.MongoDb;
@@ -25,69 +26,66 @@ namespace Lexiconner.Api.Controllers.V2
     [Authorize]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    public class StudyItemsController : ApiControllerBase
+    public class UserFilmsController : ApiControllerBase
     {
         private readonly IDataRepository _dataRepository;
-        private readonly IStudyItemsService _studyItemsService;
-        private readonly IImageService _imageService;
+        private readonly IFilmsService _filmsService;
 
-        public StudyItemsController(
+        public UserFilmsController(
             IDataRepository dataRepository,
-            IStudyItemsService studyItemsService,
-            IImageService imageService
+            IFilmsService filmsService
         )
         {
             _dataRepository = dataRepository;
-            _studyItemsService = studyItemsService;
-            _imageService = imageService;
+            _filmsService = filmsService;
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(BaseApiResponseDto<PaginationResponseDto<StudyItemDto>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<PaginationResponseDto<UserFilmDto>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetAll([FromQuery] StudyItemsRequestDto dto)
+        public async Task<IActionResult> GetAll([FromQuery] UserFilmsRequestDto dto)
         {
-            var searchFilter = new StudyItemsSearchFilterModel(dto.Search, dto.IsFavourite);
-            var result = await _studyItemsService.GetAllStudyItemsAsync(GetUserId(), dto.Offset, dto.Limit, searchFilter, dto.CollectionId);
+            var searchFilter = new UserFilmsSearchFilterModel(dto.Search);
+            var result = await _filmsService.GetAllUserFilmsAsync(GetUserId(), dto.Offset, dto.Limit, searchFilter);
             return BaseResponse(result);
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<UserFilmDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> Get([FromRoute]string id)
+        public async Task<IActionResult> Get([FromRoute] string id)
         {
-            var result = await _studyItemsService.GetStudyItemAsync(GetUserId(), id);
+            var result = await _filmsService.GetUserFilmAsync(GetUserId(), id);
             return BaseResponse(result);
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<UserFilmDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] StudyItemCreateDto data)
+        public async Task<IActionResult> Create([FromBody] UserFilmCreateDto data)
         {
-            var result = await _studyItemsService.CreateStudyItemAsync(GetUserId(), data);
+            var result = await _filmsService.CreateUserFilmAsync(GetUserId(), data);
             return BaseResponse(result);
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(BaseApiResponseDto<StudyItemDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<UserFilmDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> Put([FromRoute]string id, [FromBody] StudyItemUpdateDto data)
+        public async Task<IActionResult> Put([FromRoute] string id, [FromBody] UserFilmUpdateDto data)
         {
-            var result = await _studyItemsService.UpdateStudyItemAsync(GetUserId(), id, data);
+            var result = await _filmsService.UpdateUserFilmAsync(GetUserId(), id, data);
             return BaseResponse(result);
         }
 
@@ -97,9 +95,9 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> Delete([FromRoute]string id)
+        public async Task<IActionResult> Delete([FromRoute] string id)
         {
-            await _studyItemsService.DeleteStudyItem(GetUserId(), id);
+            await _filmsService.DeleteUserFilm(GetUserId(), id);
             return StatusCodeBaseResponse();
         }
     }

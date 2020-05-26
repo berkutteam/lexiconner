@@ -89,6 +89,7 @@ namespace Lexiconner.Api
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IStudyItemsService, StudyItemsService>();
             services.AddTransient<ICustomCollectionsService, CustomCollectionsService>();
+            services.AddTransient<IFilmsService, FilmsService>();
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 

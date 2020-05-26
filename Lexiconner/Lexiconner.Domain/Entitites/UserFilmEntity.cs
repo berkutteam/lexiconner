@@ -1,4 +1,5 @@
-﻿using Lexiconner.Domain.Entitites.Base;
+﻿using Lexiconner.Domain.Dtos.UserFilms;
+using Lexiconner.Domain.Entitites.Base;
 using Lexiconner.Domain.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -9,9 +10,9 @@ using System.Text;
 
 namespace Lexiconner.Domain.Entitites
 {
-    public class FilmEntity : BaseEntity
+    public class UserFilmEntity : BaseEntity
     {
-        public FilmEntity()
+        public UserFilmEntity()
         {
             Genres = new List<string>();
         }
@@ -31,10 +32,25 @@ namespace Lexiconner.Domain.Entitites
         /// </summary>
         public string LanguageCode { get; set; }
 
-        public FilmImageEntity Image { get; set; }
+        public UserFilmImageEntity Image { get; set; }
+
+        #region Helper methods
+
+        public void UpdateSelf(UserFilmUpdateDto updateDto)
+        {
+            this.Title = updateDto.Title;
+            this.MyRating = updateDto.MyRating;
+            this.Comment = updateDto.Comment;
+            this.WatchedAt = updateDto.WatchedAt;
+            this.ReleaseYear = updateDto.ReleaseYear;
+            this.Genres = updateDto.Genres;
+            this.LanguageCode = updateDto.LanguageCode;
+        }
+
+        #endregion
     }
 
-    public class FilmImageEntity : BaseEntity
+    public class UserFilmImageEntity : BaseEntity
     {
         public string Url { get; set; }
         public string Height { get; set; }
