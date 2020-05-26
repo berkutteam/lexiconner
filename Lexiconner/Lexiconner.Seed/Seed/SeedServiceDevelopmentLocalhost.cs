@@ -36,6 +36,7 @@ namespace Lexiconner.Seed.Seed
         private readonly Lexiconner.IdentityServer4.ApplicationSettings _identityConfig;
         private readonly ILogger<ISeedService> _logger;
         private readonly IWordTxtImporter _wordTxtImporter;
+        private readonly IFilmImporter _filmImporter;
         private readonly IDataRepository _dataRepository;
         private readonly IIdentityDataRepository _identityRepository;
         private readonly IIdentityServerConfig _identityServerConfig;
@@ -49,6 +50,7 @@ namespace Lexiconner.Seed.Seed
             IOptions<Lexiconner.IdentityServer4.ApplicationSettings> identityConfig,
             ILogger<ISeedService> logger,
             IWordTxtImporter wordTxtImporter,
+            IFilmImporter filmImporter,
             IDataRepository dataRepository,
             IIdentityDataRepository identityRepository,
             IIdentityServerConfig identityServerConfig,
@@ -61,6 +63,7 @@ namespace Lexiconner.Seed.Seed
             _identityConfig = identityConfig.Value;
             _logger = logger;
             _wordTxtImporter = wordTxtImporter;
+            _filmImporter = filmImporter;
             _dataRepository = dataRepository;
             _identityRepository = identityRepository;
             _identityServerConfig = identityServerConfig;
@@ -181,9 +184,9 @@ namespace Lexiconner.Seed.Seed
             _logger.LogInformation("Start seeding main DB...");
 
             // seed imported data for marked users
-            _logger.LogInformation("StudyItems...");
             var usersWithImport = _identityServerConfig.GetInitialdentityUsers().Where(x => x.IsImportInitialData);
 
+            _logger.LogInformation("StudyItems...");
             foreach (var user in usersWithImport)
             {
                 // create default custom collections
@@ -280,6 +283,55 @@ namespace Lexiconner.Seed.Seed
                 
             }
             _logger.LogInformation("StudyItems Done.");
+
+
+            _logger.LogInformation("Films...");
+            const string filmsLnaguageCode = "ru";
+            var filmsImportResult = await _filmImporter.ImportTxtFormatFilmsAsync(_config.Import.FilmsFilePath);
+            foreach (var user in usersWithImport)
+            {
+                if(await _dataRepository.ExistsAsync<FilmEntity>(x => x.UserId == user.Id))
+                {
+                    continue;
+                }
+                var filmEntities = filmsImportResult.Select(x =>
+                {
+                    return new FilmEntity
+                    {
+                        UserId = user.Id,
+                        Title = x.Title,
+                        MyRating = x.MyRating,
+                        Comment = x.Comment,
+                        WatchedAt = x.WatchedAt,
+                        ReleaseYear = x.ReleaseYear,
+                        Genres = x.Genres,
+                        LanguageCode = filmsLnaguageCode,
+                        Image = null,
+                    };
+                }).ToList();
+
+                // fix same ids for different users
+                filmEntities.ToList().ForEach(x =>
+                {
+                    x.RegenerateId();
+                    x.Image?.RegenerateId();
+                });
+
+                // TOOD
+                // set images
+                // await SetStudyItemsImages(studyItemEntities);
+
+                const int chunkSize = 50;
+                int chunkCount = (int)(Math.Ceiling((double)filmEntities.Count() / (double)chunkSize));
+                for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
+                {
+                    var items = filmEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
+                    _dataRepository.AddManyAsync(items).GetAwaiter().GetResult();
+                    _logger.LogInformation($"Films processed chunk {chunkNumber + 1} / {chunkCount}.");
+                }
+                _logger.LogInformation($"Films were added for user #{user.Email}.");
+            }
+            _logger.LogInformation("Films Done.");
 
 
             _logger.LogInformation("Done.");
@@ -453,9 +505,9 @@ namespace Lexiconner.Seed.Seed
             {
                 var items = studyItemEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
                 _dataRepository.AddManyAsync(items).GetAwaiter().GetResult();
-                _logger.LogInformation($"StudyItems processed chunk {chunkNumber + 1}/{chunkCount}.");
+                _logger.LogInformation($"StudyItems processed chunk {chunkNumber + 1} / {chunkCount}.");
             }
-            _logger.LogInformation($"StudyItems was added for user #{user.Email}.");
+            _logger.LogInformation($"StudyItems were added for user #{user.Email}.");
         }
 
         private async Task SetStudyItemsImages(IEnumerable<StudyItemEntity> studyItemEntities)

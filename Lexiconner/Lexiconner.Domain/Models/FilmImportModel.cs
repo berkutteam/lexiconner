@@ -12,11 +12,10 @@ namespace Lexiconner.Domain.Models
         }
 
         public string Title { get; set; }
+        public decimal? MyRating { get; set; }
         public string Comment { get; set; }
-        public string Rating { get; set; }
-        public string WatchedAt { get; set; }
-        public string ReleasedAt { get; set; }
-
+        public DateTime? WatchedAt { get; set; }
+        public int? ReleaseYear { get; set; }
         public List<string> Genres { get; set; }
     }
 }

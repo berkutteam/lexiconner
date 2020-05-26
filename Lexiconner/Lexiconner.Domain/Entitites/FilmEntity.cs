@@ -9,26 +9,32 @@ using System.Text;
 
 namespace Lexiconner.Domain.Entitites
 {
-    class FilmEntity : BaseEntity
+    public class FilmEntity : BaseEntity
     {
         public FilmEntity()
         {
-            Genre = new List<string>();
+            Genres = new List<string>();
         }
-
 
         public string UserId { get; set; }
         public string Title { get; set; }
+        public decimal? MyRating { get; set; }
         public string Comment { get; set; }
-        public double Rating { get; set; }
-        public DateTime WatchedAt { get; set; }
-        public DateTime ReleasedAt { get; set; }
-        public FilmItemImageEntity Image { get; set; }
+        public DateTime? WatchedAt { get; set; }
+        public int? ReleaseYear { get; set; }
+        public List<string> Genres { get; set; }
 
-        public List<string> Genre { get; set; }
+        /// <summary>
+        /// ISO 639-1 two-letter code.
+        /// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+        /// https://developers.google.com/admin-sdk/directory/v1/languages
+        /// </summary>
+        public string LanguageCode { get; set; }
+
+        public FilmImageEntity Image { get; set; }
     }
 
-    public class FilmItemImageEntity : BaseEntity
+    public class FilmImageEntity : BaseEntity
     {
         public string Url { get; set; }
         public string Height { get; set; }

@@ -134,8 +134,8 @@ namespace Lexiconner.Seed
                 return new WordTxtImporter(config.Import);
             });
 
-            services.AddTransient<IFilmTxtImporter, FilmTxtImporter>(xp => {
-                return new FilmTxtImporter(config.Import);
+            services.AddTransient<IFilmImporter, FilmImporter>(xp => {
+                return new FilmImporter(config.Import);
             });
 
             services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {

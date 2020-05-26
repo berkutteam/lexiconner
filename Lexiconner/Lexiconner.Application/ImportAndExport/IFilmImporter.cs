@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Lexiconner.Application.ImportAndExport
 {
-    public interface IFilmTxtImporter
+    public interface IFilmImporter
     {
-        string SourceLanguageCode { get; }
-        Task<IEnumerable<FilmImportModel>> Import();
+        Task<IEnumerable<FilmImportModel>> ImportTxtFormatFilmsAsync(string filePath);
     }
 }
