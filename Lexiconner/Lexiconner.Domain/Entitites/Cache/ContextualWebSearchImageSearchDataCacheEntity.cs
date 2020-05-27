@@ -49,7 +49,7 @@ namespace Lexiconner.Domain.Entitites.Cache
             }
 
             // images, news, all (websearch),
-            public string _Type { get; set; }
+            public string Type { get; set; }
             public long TotalCount { get; set; }
             public List<ImageSearchResponseItemEntity> Value { get; set; }
 

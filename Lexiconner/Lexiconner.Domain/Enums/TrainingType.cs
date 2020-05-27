@@ -56,7 +56,6 @@ namespace Lexiconner.Domain.Enums
         public static void ValidateAllEnumMembersHasAttribute()
         {
             Type enumType = typeof(TrainingType);
-            TrainingTypeInfoAttribute infoAttribute = null;
             foreach (var name in Enum.GetNames(enumType))
             {
                 MemberInfo memberInfo = enumType.GetMember(name).First();

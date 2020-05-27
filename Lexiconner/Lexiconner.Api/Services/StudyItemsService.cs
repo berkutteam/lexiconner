@@ -45,7 +45,7 @@ namespace Lexiconner.Api.Services
             string userId, 
             int offset, 
             int limit, 
-            StudyItemsSearchFilter searchFilter = null, 
+            StudyItemsSearchFilterModel searchFilter = null, 
             string collectionId = null
         )
         {
@@ -89,6 +89,12 @@ namespace Lexiconner.Api.Services
             };
 
             return result;
+        }
+
+        public async Task<StudyItemDto> GetStudyItemAsync(string userId, string studyItemId)
+        {
+            var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == studyItemId && x.UserId == userId);
+            return CustomMapper.MapToDto(entity);
         }
 
         public async Task<StudyItemDto> CreateStudyItemAsync(string userId, StudyItemCreateDto createDto)

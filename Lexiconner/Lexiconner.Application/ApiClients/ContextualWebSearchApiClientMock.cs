@@ -23,26 +23,28 @@ namespace Lexiconner.Application.ApiClients
             throw new NotImplementedException();
         }
 
-        public async Task<ImageSearchResponseDto> ImageSearchAsync(string query, int pageNumber = 1, int pageSize = 10, bool isAutoCorrect = false, bool isSafeSearch = false)
+        public Task<ImageSearchResponseDto> ImageSearchAsync(string query, int pageNumber = 1, int pageSize = 10, bool isAutoCorrect = false, bool isSafeSearch = false)
         {
-            return new ImageSearchResponseDto
-            {
-                TotalCount = 1,
-                _Type = "images",
-                Value = new List<ImageSearchResponseDto.ImageSearchResponseItemDto>
+            return Task.FromResult(
+                new ImageSearchResponseDto
                 {
-                    new ImageSearchResponseDto.ImageSearchResponseItemDto
+                    TotalCount = 1,
+                    Type = "images",
+                    Value = new List<ImageSearchResponseDto.ImageSearchResponseItemDto>
                     {
-                        Url = "FAKE",
-                        Height = "100",
-                        Width = "200",
-                        Thumbnail = "FAKE",
-                        ThumbnailHeight = "FAKE",
-                        ThumbnailWidth ="FAKE",
-                        Base64Encoding = null,
+                        new ImageSearchResponseDto.ImageSearchResponseItemDto
+                        {
+                            Url = "FAKE",
+                            Height = "100",
+                            Width = "200",
+                            Thumbnail = "FAKE",
+                            ThumbnailHeight = "FAKE",
+                            ThumbnailWidth ="FAKE",
+                            Base64Encoding = null,
+                        }
                     }
                 }
-            };
+            );
         }
     }
 }

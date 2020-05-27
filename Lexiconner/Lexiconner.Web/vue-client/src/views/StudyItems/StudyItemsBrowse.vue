@@ -104,15 +104,15 @@
                             </div>
 
                             <!-- Card view -->
-                            <div v-if="privateState.currentView === 'cards'" class="study-items-card-list">
+                            <div v-if="privateState.currentView === 'cards'" class="items-card-list">
                                 <div
                                     v-for="(item) in studyItems"
                                     v-bind:key="`card-${item.id}`"
-                                    class="card bg-light study-item-card" 
+                                    class="card bg-light item-card" 
                                 >
                                     <!-- <div class="card-header"></div> -->
-                                    <img v-if="item.image" class="card-img-top study-item-image" v-bind:src="item.image.url" v-bind:alt="item.title">
-                                    <img v-else class="card-img-top study-item-image" src="/img/empty-image.png">
+                                    <img v-if="item.image" class="card-img-top item-card-image" v-bind:src="item.image.url" v-bind:alt="item.title">
+                                    <img v-else class="card-img-top item-card-image" src="/img/empty-image.png">
                                     <div class="card-body">
                                         <div class="d-flex w-100 justify-content-between align-items-center mb-1">
                                             <h6 class="card-title mb-0">
@@ -342,6 +342,10 @@ export default {
         },
         onCreateStudyItem: function() {
             this.privateState.modalMode = 'create';
+
+            // reset
+            this.privateState.studyItemModel = _.cloneDeep(studyItemModelDefault);
+
             this.$modal.show('study-item-create-edit');
         },
         onUpdateStudyItem: function(studyItemId) {

@@ -2,6 +2,7 @@
 using Lexiconner.Application.ApiClients;
 using Lexiconner.Application.ApiClients.Dtos;
 using Lexiconner.Application.Exceptions;
+using Lexiconner.Application.Helpers;
 using Lexiconner.Application.ImportAndExport;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Config;
@@ -19,12 +20,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
+using NodaTime;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
+using TMDbLib.Client;
 using static Lexiconner.Application.ApiClients.Dtos.GoogleTranslateResponseDto;
 using static Lexiconner.Application.ApiClients.Dtos.ImageSearchResponseDto;
 
@@ -36,10 +41,12 @@ namespace Lexiconner.Seed.Seed
         private readonly Lexiconner.IdentityServer4.ApplicationSettings _identityConfig;
         private readonly ILogger<ISeedService> _logger;
         private readonly IWordTxtImporter _wordTxtImporter;
+        private readonly IFilmImporter _filmImporter;
         private readonly IDataRepository _dataRepository;
         private readonly IIdentityDataRepository _identityRepository;
         private readonly IIdentityServerConfig _identityServerConfig;
         private readonly IImageService _imageService;
+        private readonly TMDbClient _theMovieDbClient;
 
         private readonly UserManager<ApplicationUserEntity> _userManager;
         private readonly RoleManager<ApplicationRoleEntity> _roleManager;
@@ -49,10 +56,12 @@ namespace Lexiconner.Seed.Seed
             IOptions<Lexiconner.IdentityServer4.ApplicationSettings> identityConfig,
             ILogger<ISeedService> logger,
             IWordTxtImporter wordTxtImporter,
+            IFilmImporter filmImporter,
             IDataRepository dataRepository,
             IIdentityDataRepository identityRepository,
             IIdentityServerConfig identityServerConfig,
             IImageService imageService,
+            TMDbClient theMovieDbClient,
             UserManager<ApplicationUserEntity> userManager,
             RoleManager<ApplicationRoleEntity> roleManager
         )
@@ -61,10 +70,12 @@ namespace Lexiconner.Seed.Seed
             _identityConfig = identityConfig.Value;
             _logger = logger;
             _wordTxtImporter = wordTxtImporter;
+            _filmImporter = filmImporter;
             _dataRepository = dataRepository;
             _identityRepository = identityRepository;
             _identityServerConfig = identityServerConfig;
             _imageService = imageService;
+            _theMovieDbClient = theMovieDbClient;
             _userManager = userManager;
             _roleManager = roleManager;
         }
@@ -96,9 +107,9 @@ namespace Lexiconner.Seed.Seed
             _logger.LogInformation("Clients...");
             foreach (var client in _identityServerConfig.GetClients(_identityConfig))
             {
-                if (!_identityRepository.ExistsAsync<ClientEntity>(x => x.Client.ClientId == client.ClientId).GetAwaiter().GetResult())
+                if (!await _identityRepository.ExistsAsync<ClientEntity>(x => x.Client.ClientId == client.ClientId))
                 {
-                    _identityRepository.AddAsync<ClientEntity>(new ClientEntity(client)).GetAwaiter().GetResult();
+                    await _identityRepository.AddAsync<ClientEntity>(new ClientEntity(client));
                 }
             }
             _logger.LogInformation("Clients Done.");
@@ -107,9 +118,9 @@ namespace Lexiconner.Seed.Seed
             _logger.LogInformation("IdentityResources...");
             foreach (var res in _identityServerConfig.GetIdentityResources())
             {
-                if (!_identityRepository.ExistsAsync<IdentityResourceEntity>(x => x.IdentityResource.Name == res.Name).GetAwaiter().GetResult())
+                if (!await _identityRepository.ExistsAsync<IdentityResourceEntity>(x => x.IdentityResource.Name == res.Name))
                 {
-                    _identityRepository.AddAsync(new IdentityResourceEntity(res)).GetAwaiter().GetResult();
+                    await _identityRepository.AddAsync(new IdentityResourceEntity(res));
                 }
             }
             _logger.LogInformation("IdentityResources Done.");
@@ -118,9 +129,9 @@ namespace Lexiconner.Seed.Seed
             _logger.LogInformation("ApiResources...");
             foreach (var api in _identityServerConfig.GetApiResources())
             {
-                if (!_identityRepository.ExistsAsync<ApiResourceEntity>(x => x.ApiResource.Name == api.Name).GetAwaiter().GetResult())
+                if (!await _identityRepository.ExistsAsync<ApiResourceEntity>(x => x.ApiResource.Name == api.Name))
                 {
-                    _identityRepository.AddAsync(new ApiResourceEntity(api)).GetAwaiter().GetResult();
+                    await _identityRepository.AddAsync(new ApiResourceEntity(api));
                 }
             }
             _logger.LogInformation("ApiResources Done.");
@@ -131,7 +142,7 @@ namespace Lexiconner.Seed.Seed
 
             foreach (var role in roles)
             {
-                var existing = _roleManager.FindByNameAsync(role.Name).GetAwaiter().GetResult();
+                var existing = await _roleManager.FindByNameAsync(role.Name);
                 if (existing == null)
                 {
                     _logger.LogInformation($"Role '{role.Name}': creating.");
@@ -154,7 +165,7 @@ namespace Lexiconner.Seed.Seed
             var users = _identityServerConfig.GetInitialdentityUsers();
             foreach (var user in users)
             {
-                var existing = _userManager.FindByEmailAsync(user.Email).GetAwaiter().GetResult();
+                var existing = await _userManager.FindByEmailAsync(user.Email);
                 if (existing == null)
                 {
                     _logger.LogInformation($"User '{user.Email}': creating.");
@@ -181,9 +192,9 @@ namespace Lexiconner.Seed.Seed
             _logger.LogInformation("Start seeding main DB...");
 
             // seed imported data for marked users
-            _logger.LogInformation("StudyItems...");
             var usersWithImport = _identityServerConfig.GetInitialdentityUsers().Where(x => x.IsImportInitialData);
 
+            _logger.LogInformation("StudyItems...");
             foreach (var user in usersWithImport)
             {
                 // create default custom collections
@@ -280,6 +291,165 @@ namespace Lexiconner.Seed.Seed
                 
             }
             _logger.LogInformation("StudyItems Done.");
+
+
+            _logger.LogInformation("Films...");
+            const string filmsLanguageCode = "ru";
+            const string filmsTz = "Europe/Zaporozhye";
+
+            // check TMDb configuration
+            var tMDbConfigration = await _theMovieDbClient.GetConfigAsync();
+            int posterWidth = 500;
+            int backdropWidth = 780;
+            int thumbnailWidth = 92; // use poster with small size
+            if (!tMDbConfigration.Images.PosterSizes.Any(x => x == $"w{posterWidth}"))
+            {
+                throw new Exception($"IMDb doesn't support 'w{posterWidth}' poster size!");
+            }
+            if (!tMDbConfigration.Images.BackdropSizes.Any(x => x == $"w{backdropWidth}"))
+            {
+                throw new Exception($"IMDb doesn't support 'w{backdropWidth}' backdrop size!");
+            }
+            if (!tMDbConfigration.Images.PosterSizes.Any(x => x == $"w{thumbnailWidth}"))
+            {
+                throw new Exception($"IMDb doesn't support 'w{thumbnailWidth}' poster size (try to use for thumbnail)!");
+            }
+
+            // TMDb response cache
+            var tmdbSearchMovieCache = new ConcurrentDictionary<string, TMDbLib.Objects.General.SearchContainer<TMDbLib.Objects.Search.SearchMovie>>();
+            var tmdbMovieDetailsCache = new ConcurrentDictionary<int, TMDbLib.Objects.Movies.Movie>();
+
+            var filmsImportResult = await _filmImporter.ImportTxtFormatFilmsAsync(_config.Import.FilmsFilePath);
+            foreach (var user in usersWithImport)
+            {
+                if(await _dataRepository.ExistsAsync<UserFilmEntity>(x => x.UserId == user.Id))
+                {
+                    continue;
+                }
+                var filmEntities = filmsImportResult.Select(x =>
+                {
+                    return new UserFilmEntity
+                    {
+                        UserId = user.Id,
+                        Title = x.Title,
+                        MyRating = x.MyRating,
+                        Comment = x.Comment,
+                        
+                        // store in UTC
+                        WatchedAt = x.WatchedAt == null ? default(DateTime?) : DateTimeHelper.LocalToUtc(x.WatchedAt.GetValueOrDefault(), filmsTz),
+                        
+                        ReleaseYear = x.ReleaseYear,
+                        Genres = x.Genres,
+                        LanguageCode = filmsLanguageCode,
+                    };
+                }).OrderByDescending(x => x.WatchedAt != null ? x.WatchedAt : DateTime.MinValue ).ToList();
+
+                // fix same ids for different users
+                filmEntities.ToList().ForEach(x =>
+                {
+                    x.RegenerateId();
+                    // x.Image?.RegenerateId();
+                });
+
+                // search for movie reference in TMDB
+                // tMDbConfigration.Images.BaseUrl - has preceeding /
+                // movieDetails.PosterPath - has leading /
+                _logger.LogInformation($"Searching films in TMDb...");
+                var workerBlock = new ActionBlock<UserFilmEntity>(
+                    async (userFilmEntity) =>
+                    {
+                        try
+                        {
+                            _logger.LogInformation($"Searching '{userFilmEntity.Title}'...");
+                            
+                            // search movie
+                            var searchMovieResult = tmdbSearchMovieCache.GetValueOrDefault(userFilmEntity.Title);
+                            if(searchMovieResult == null)
+                            {
+                                searchMovieResult = await _theMovieDbClient.SearchMovieAsync(
+                                   query: userFilmEntity.Title,
+                                   language: userFilmEntity.LanguageCode,
+                                   page: 0,
+                                   includeAdult: false
+                                );
+                                tmdbSearchMovieCache.TryAdd(userFilmEntity.Title, searchMovieResult);
+                            }
+                            
+                            if (searchMovieResult.Results.Any())
+                            {
+                                var first = searchMovieResult.Results[0];
+
+                                // get movie details
+                                var movieDetails = tmdbMovieDetailsCache.GetValueOrDefault(first.Id);
+                                if (movieDetails == null)
+                                {
+                                    movieDetails = await _theMovieDbClient.GetMovieAsync(first.Id);
+                                    tmdbMovieDetailsCache.TryAdd(first.Id, movieDetails);
+                                }
+
+                                userFilmEntity.Details = new UserFilmDetailsEntity()
+                                {
+                                    TMDbId = movieDetails.Id,
+                                    IMDbId = movieDetails.ImdbId,
+                                    IsAdult = movieDetails.Adult,
+                                    Budget = movieDetails.Budget,
+                                    Genres = movieDetails.Genres.Select(x => new FilmGenreEntity()
+                                    {
+                                        TMDbGenreId = x.Id,
+                                        Name = x.Name,
+                                    }).ToList(),
+                                    OriginalLanguage = movieDetails.OriginalLanguage,
+                                    OriginalTitle = movieDetails.OriginalTitle,
+                                    ProductionCountries = movieDetails.ProductionCountries.Select(x => new FilmProductionCountryEntity()
+                                    {
+                                        Iso_3166_1 = x.Iso_3166_1,
+                                        Name = x.Name,
+                                    }).ToList(),
+                                    ReleaseDate = movieDetails.ReleaseDate,
+                                    Revenue = movieDetails.Revenue,
+                                    Status = movieDetails.Status,
+                                    Title = movieDetails.Title,
+                                    VoteAverage = movieDetails.VoteAverage,
+                                    VoteCount = movieDetails.VoteCount,
+                                    Image = new UserFilmImageEntity()
+                                    {
+                                        PosterUrl = $"{tMDbConfigration.Images.BaseUrl}w{posterWidth}{movieDetails.PosterPath}",
+                                        PosterWidth = posterWidth,
+                                        BackdropUrl = $"{tMDbConfigration.Images.BaseUrl}w{backdropWidth}{movieDetails.BackdropPath}",
+                                        BackdropWidth = backdropWidth,
+                                        ThumbnailUrl = $"{tMDbConfigration.Images.BaseUrl}w{thumbnailWidth}{movieDetails.PosterPath}",
+                                        ThumbnailWidth = thumbnailWidth,
+                                    },
+                                };
+                            }
+                        }
+                        catch(TMDbLib.Objects.Exceptions.GeneralHttpException ex)
+                        {
+                            _logger.LogError(ex, $"TMDb error for '{userFilmEntity.Title}'. Error: {ex.Message}");
+                            // skip
+                        }
+                        
+                    },
+                    new ExecutionDataflowBlockOptions()
+                    {
+                        MaxDegreeOfParallelism = 10,
+                    }
+                );
+                await Task.WhenAll(filmEntities.Select(x => workerBlock.SendAsync(x)));
+                workerBlock.Complete();
+                await workerBlock.Completion;
+
+                const int chunkSize = 50;
+                int chunkCount = (int)(Math.Ceiling((double)filmEntities.Count() / (double)chunkSize));
+                for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
+                {
+                    var items = filmEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
+                    await _dataRepository.AddManyAsync(items);
+                    _logger.LogInformation($"Films processed chunk {chunkNumber + 1} / {chunkCount}.");
+                }
+                _logger.LogInformation($"Films were added for user #{user.Email}.");
+            }
+            _logger.LogInformation("Films Done.");
 
 
             _logger.LogInformation("Done.");
@@ -452,10 +622,10 @@ namespace Lexiconner.Seed.Seed
             for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
             {
                 var items = studyItemEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
-                _dataRepository.AddManyAsync(items).GetAwaiter().GetResult();
-                _logger.LogInformation($"StudyItems processed chunk {chunkNumber + 1}/{chunkCount}.");
+                await _dataRepository.AddManyAsync(items);
+                _logger.LogInformation($"StudyItems processed chunk {chunkNumber + 1} / {chunkCount}.");
             }
-            _logger.LogInformation($"StudyItems was added for user #{user.Email}.");
+            _logger.LogInformation($"StudyItems were added for user #{user.Email}.");
         }
 
         private async Task SetStudyItemsImages(IEnumerable<StudyItemEntity> studyItemEntities)

@@ -155,7 +155,7 @@ namespace Lexiconner.Application.ApiClients
             return accessToken;
         }
 
-        private async Task<string> GetServiceAccountJson()
+        private Task<string> GetServiceAccountJson()
         {
             // read from json file
             //string path = Path.Combine(_hostingEnvironment.ContentRootPath, "Secrets/lexiconner-2b83846e6407.json");
@@ -167,7 +167,7 @@ namespace Lexiconner.Application.ApiClients
 
             // read from config
             string json = JsonConvert.SerializeObject(_googleCredentialSettings);
-            return json;
+            return Task.FromResult(json);
         }
 
         private void HandleApiLimits(HttpResponseMessage httpResponseMessage)

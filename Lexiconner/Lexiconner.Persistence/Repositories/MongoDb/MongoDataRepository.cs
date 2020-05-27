@@ -2,6 +2,7 @@
 using Lexiconner.Domain.Config;
 using Lexiconner.Domain.Entitites.Base;
 using Lexiconner.Domain.Enums;
+using Lexiconner.Persistence.Config;
 using Lexiconner.Persistence.Exceptions;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -63,12 +64,23 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
 
             MongoCollectionConfig mongoCollectionConfig = MongoConfig.GetCollectionConfig<T>(_applicationDb);
 
-            // create
-            var collections = await (await _database.ListCollectionNamesAsync()).ToListAsync();
-            if(!collections.Contains(mongoCollectionConfig.CollectionName))
+            // try create (as user might not have permission to list collections)
+            try
             {
                 await _database.CreateCollectionAsync(mongoCollectionConfig.CollectionName);
             }
+            catch (MongoCommandException ex)
+            {
+                if (ex.Code == (int)MongoErrorCode.NAMESPACE_EXISTS)
+                {
+                    // it's ok - collection exists
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
+
             var collection = _database.GetCollection<T>(mongoCollectionConfig.CollectionName);
             foreach (var index in mongoCollectionConfig.Indexes)
             {

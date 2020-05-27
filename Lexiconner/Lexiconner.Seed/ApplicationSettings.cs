@@ -1,4 +1,5 @@
-﻿using Lexiconner.Application.Config;
+﻿using Lexiconner.Application.ApplicationSettings;
+using Lexiconner.Application.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Lexiconner.Seed
         public Lexiconner.Seed.MongoDbSettings MongoDb { get; set; }
         public GoogleSettings Google { get; set; }
         public RapidApiSettings RapidApi { get; set; }
+        public TheMovieDatabaseSettings TheMovieDatabase { get; set; }
     }
 
     public class MongoDbSettings

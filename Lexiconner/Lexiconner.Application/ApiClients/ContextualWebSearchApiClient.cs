@@ -132,7 +132,7 @@ namespace Lexiconner.Application.ApiClients
             return responseDto;
         }
 
-        private RapidApiResponseInfoDto GetRapidApiResponseInfo(HttpResponseMessage httpResponseMessage)
+        private static RapidApiResponseInfoDto GetRapidApiResponseInfo(HttpResponseMessage httpResponseMessage)
         {
             string XRateLimitRequestsLimit = httpResponseMessage.Headers.GetValues("X-RateLimit-requests-Limit").FirstOrDefault();
             string XRateLimitRequestsRemaining = httpResponseMessage.Headers.GetValues("X-RateLimit-requests-Remaining").FirstOrDefault();
@@ -190,7 +190,7 @@ namespace Lexiconner.Application.ApiClients
                 var response = await _httpClientForTests.SendAsync(request);
                 return response.IsSuccessStatusCode;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

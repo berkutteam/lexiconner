@@ -29,6 +29,14 @@
                 <i v-on:click="setIsFavorite(false)" v-bind:class="{'text-primary': sharedState.studyItemsRequestParams.isFavourite === false}" class="far fa-star"></i>
             </div>
 
+            <!-- Reload -->
+            <div class="form-group mr-2">
+                <button v-on:click="reload" type="button" class="btn btn-outline-secondary">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+
+            <!-- Reset -->
             <div class="form-group">
                 <button v-on:click="resetRequestParams" type="button" class="btn btn-outline-secondary">
                     <i class="fas fa-times"></i>
@@ -85,7 +93,10 @@ export default {
     },
     updated: function() {
     },
+    beforeDestroy: function() {
+    },
     destroyed: function() {
+        this.resetRequestParams();
     },
 
     methods: {
@@ -114,6 +125,9 @@ export default {
             this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
                 isFavourite: value,
             });
+            this.callOnChange();
+        },
+        reload: function() {
             this.callOnChange();
         },
         resetRequestParams: function() {

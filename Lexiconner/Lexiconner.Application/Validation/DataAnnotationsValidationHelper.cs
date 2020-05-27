@@ -15,13 +15,9 @@ namespace Lexiconner.Application.Validation
         /// <summary>
         /// Validates and returns both custom results and original
         /// </summary>
-        /// <param name="object"></param>
-        /// <param name="validationResults"></param>
-        /// <param name="originalValidationResults"></param>
-        /// <returns></returns>
-        public static bool TryValidate(object @object, out ICollection<CustomValidationResult> validationResults, out ICollection<ValidationResult> originalValidationResults)
+        public static bool TryValidate(object objectToValidate, out ICollection<CustomValidationResult> validationResults, out ICollection<ValidationResult> originalValidationResults)
         {
-            var isValid = TryValidate(@object, out ICollection<ValidationResult> internalResults);
+            var isValid = TryValidate(objectToValidate, out ICollection<ValidationResult> internalResults);
             validationResults = ConvertToCustomResult(internalResults);
             originalValidationResults = internalResults;
             return isValid;
@@ -30,12 +26,9 @@ namespace Lexiconner.Application.Validation
         /// <summary>
         /// Validates and returns only custom results
         /// </summary>
-        /// <param name="object"></param>
-        /// <param name="validationResults"></param>
-        /// <returns></returns>
-        public static bool TryValidate(object @object, out ICollection<CustomValidationResult> validationResults)
+        public static bool TryValidate(object objectToValidate, out ICollection<CustomValidationResult> validationResults)
         {
-            var isValid = TryValidate(@object, out ICollection<ValidationResult> internalResults);
+            var isValid = TryValidate(objectToValidate, out ICollection<ValidationResult> internalResults);
             validationResults = ConvertToCustomResult(internalResults);
             return isValid;
         }
@@ -43,11 +36,9 @@ namespace Lexiconner.Application.Validation
         /// <summary>
         /// Validates object and throws <see cref="ValidationErrorException" /> if validation failed
         /// </summary>
-        /// <param name="object"></param>
-        /// <returns></returns>
-        public static void Validate(object @object)
+        public static void Validate(object objectToValidate)
         {
-            if (!TryValidate(@object, out ICollection<ValidationResult> validationResults))
+            if (!TryValidate(objectToValidate, out ICollection<ValidationResult> validationResults))
             {
                 throw new ValidationErrorException(ConvertToCustomResult(validationResults));
             }

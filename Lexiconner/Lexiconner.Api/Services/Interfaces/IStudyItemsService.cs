@@ -25,7 +25,8 @@ namespace Lexiconner.Api.Services.Interfaces
 {
     public interface IStudyItemsService
     {
-        Task<PaginationResponseDto<StudyItemDto>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilter searchFilter = null, string collectionId = null);
+        Task<PaginationResponseDto<StudyItemDto>> GetAllStudyItemsAsync(string userId, int offset, int limit, StudyItemsSearchFilterModel searchFilter = null, string collectionId = null);
+        Task<StudyItemDto> GetStudyItemAsync(string userId, string studyItemId);
         Task<StudyItemDto> CreateStudyItemAsync(string userId, StudyItemCreateDto createDto);
         Task<StudyItemDto> UpdateStudyItemAsync(string userId, string studyItemId, StudyItemUpdateDto updateDto);
         Task DeleteStudyItem(string userId, string sutyItemId);

@@ -17,7 +17,7 @@ namespace Lexiconner.Domain.Config
         {
             jsonSerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             //jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter(new DefaultNamingStrategy())); // serialize enums as string, not int
-            jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter(false)); // serialize enums as string, not int
+            jsonSerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter(new DefaultNamingStrategy())); // serialize enums as string, not int
 
             // convert input and output DateTime values in models to UTC 
             //The default converter of DateTime for models is ISO converter

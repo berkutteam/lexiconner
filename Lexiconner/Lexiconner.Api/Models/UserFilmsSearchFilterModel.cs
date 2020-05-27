@@ -5,18 +5,15 @@ using System.Threading.Tasks;
 
 namespace Lexiconner.Api.Models
 {
-    public class StudyItemsSearchFilter
+    public class UserFilmsSearchFilterModel
     {
         public string Search { get; set; }
-        public bool? IsFavourite { get; set; }
 
-        public StudyItemsSearchFilter(
-            string search = null,
-            bool? isFavourite = null
+        public UserFilmsSearchFilterModel(
+            string search = null
         )
         {
             Search = search;
-            IsFavourite = isFavourite;
         }
     }
 }

@@ -317,6 +317,23 @@ class API {
             duplicateCustomCollection({ customCollectionId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `customcollections/${customCollectionId}/duplicate`, {}), method: "post", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
+
+            // user films
+            getUserFilms({ offset, limit, search }) {
+                return axiosAuthRequest({ url: buildUrl(url, `userfilms`, {offset, limit, search}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            getUserFilm({ userFilmId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `userfilms/${userFilmId}`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            createUserFilm({ data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `userfilms`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            updateUserFilm({ userFilmId, data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `userfilms/${userFilmId}`, {}), method: "put", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            deleteUserFilm({ userFilmId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `userfilms/${userFilmId}`, {}), method: "delete", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
         };
     }
 }

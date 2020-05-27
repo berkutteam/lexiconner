@@ -50,7 +50,7 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetAll([FromQuery] StudyItemsRequestDto dto)
         {
-            var searchFilter = new StudyItemsSearchFilter(dto.Search, dto.IsFavourite);
+            var searchFilter = new StudyItemsSearchFilterModel(dto.Search, dto.IsFavourite);
             var result = await _studyItemsService.GetAllStudyItemsAsync(GetUserId(), dto.Offset, dto.Limit, searchFilter, dto.CollectionId);
             return BaseResponse(result);
         }
@@ -63,9 +63,8 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Get([FromRoute]string id)
         {
-            var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id && x.UserId == GetUserId());
-            var dto = CustomMapper.MapToDto(entity);
-            return BaseResponse(dto);
+            var result = await _studyItemsService.GetStudyItemAsync(GetUserId(), id);
+            return BaseResponse(result);
         }
 
         [HttpPost]

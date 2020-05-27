@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using TMDbLib.Client;
 
 namespace Lexiconner.Seed
 {
@@ -134,6 +135,10 @@ namespace Lexiconner.Seed
                 return new WordTxtImporter(config.Import);
             });
 
+            services.AddTransient<IFilmImporter, FilmImporter>(xp => {
+                return new FilmImporter(config.Import);
+            });
+
             services.AddTransient<IGoogleTranslateApiClient, GoogleTranslateApiClient>(sp => {
                 return new GoogleTranslateApiClient(
                     config.Google.ProjectId,
@@ -148,8 +153,16 @@ namespace Lexiconner.Seed
                     sp.GetService<ILogger<IContextualWebSearchApiClient>>()
                 );
             });
+            services.AddSingleton<TMDbClient>(sp =>
+            {
+                return new TMDbClient(config.TheMovieDatabase.ApiKeyV3Auth);
+            });
 
             services.AddTransient<IIdentityServerConfig, IdentityServerConfig>();
+
+            services.AddTransient<SeedServiceDevelopmentLocalhost>();
+            services.AddTransient<SeedServiceDevelopmentHeroku>();
+            services.AddTransient<SeedServiceProductionHeroku>();
 
             if (HostingEnvironmentHelper.IsDevelopmentLocalhost())
             {

@@ -39,7 +39,7 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> AddToFavourites([FromRoute]string id)
         {
-            await _studyItemsService.AddToFavouritesAsync(GetUserId(), new List<string> { id });
+            await _studyItemsService.AddToFavouritesAsync(GetUserId(), new List<string> { id }).ConfigureAwait(false);
             return StatusCodeBaseResponse();
         }
 
@@ -51,7 +51,7 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> DeleteFromFavourites([FromRoute]string id)
         {
-            await _studyItemsService.DeleteFromFavouritesAsync(GetUserId(), new List<string> { id });
+            await _studyItemsService.DeleteFromFavouritesAsync(GetUserId(), new List<string> { id }).ConfigureAwait(false);
             return StatusCodeBaseResponse();
         }
     }

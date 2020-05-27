@@ -20,34 +20,38 @@ namespace Lexiconner.Application.ApiClients
 {
     public class GoogleTranslateApiClientMock : IGoogleTranslateApiClient
     {
-        public async Task<GoogleTranslateDetectLanguageResponseDto> DetectLanguage(string content)
+        public Task<GoogleTranslateDetectLanguageResponseDto> DetectLanguage(string content)
         {
-            return new GoogleTranslateDetectLanguageResponseDto
-            {
-                Languages = new List<GoogleTranslateDetectLanguageResponseDto.GoogleTranslateDetectLanguageResponseItemDto>
+            return Task.FromResult(
+                new GoogleTranslateDetectLanguageResponseDto
                 {
-                    new GoogleTranslateDetectLanguageResponseDto.GoogleTranslateDetectLanguageResponseItemDto
+                    Languages = new List<GoogleTranslateDetectLanguageResponseDto.GoogleTranslateDetectLanguageResponseItemDto>
                     {
-                        Confidence = 0.9,
-                        LanguageCode = "ru"
+                        new GoogleTranslateDetectLanguageResponseDto.GoogleTranslateDetectLanguageResponseItemDto
+                        {
+                            Confidence = 0.9,
+                            LanguageCode = "ru"
+                        }
                     }
-                }
-            };
+                    }
+            );
         }
 
-        public async Task<GoogleTranslateResponseDto> Translate(List<string> contents, string sourceLanguageCode, string targetLanguageCode)
+        public Task<GoogleTranslateResponseDto> Translate(List<string> contents, string sourceLanguageCode, string targetLanguageCode)
         {
-            return new GoogleTranslateResponseDto()
-            {
-                Translations = new List<GoogleTranslateResponseDto.GoogleTranslateResponseItemDto>
+            return Task.FromResult(
+                new GoogleTranslateResponseDto()
                 {
-                    new GoogleTranslateResponseDto.GoogleTranslateResponseItemDto
+                    Translations = new List<GoogleTranslateResponseDto.GoogleTranslateResponseItemDto>
                     {
-                        TranslatedText = "some text"
-                    }
-                },
-                GlossaryTranslations = new List<GoogleTranslateResponseDto.GoogleTranslateResponseItemDto>()
-            };
-        }
+                        new GoogleTranslateResponseDto.GoogleTranslateResponseItemDto
+                        {
+                            TranslatedText = "some text"
+                        }
+                    },
+                    GlossaryTranslations = new List<GoogleTranslateResponseDto.GoogleTranslateResponseItemDto>()
+                }
+            );
+         }
     }
 }

@@ -23,7 +23,7 @@ namespace Lexiconner.Api.Controllers.V2
     public class IdentityController : ApiControllerBase
     {
         [HttpGet]
-        public async Task<BaseApiResponseDto<string>> Get()
+        public BaseApiResponseDto<string> Get()
         {
             ClaimsPrincipal currentUser = this.User;
             string currentUserId = null;

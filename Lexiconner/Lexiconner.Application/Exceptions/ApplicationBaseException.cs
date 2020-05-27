@@ -8,6 +8,10 @@ namespace Lexiconner.Application.Exceptions
     {
         public string Title { get; } = "Application error.";
 
+        protected ApplicationBaseException() : base()
+        {
+        }
+
         protected ApplicationBaseException(string title) : base()
         {
             Title = title;
@@ -22,6 +26,5 @@ namespace Lexiconner.Application.Exceptions
         {
             Title = title;
         }
-
     }
 }
