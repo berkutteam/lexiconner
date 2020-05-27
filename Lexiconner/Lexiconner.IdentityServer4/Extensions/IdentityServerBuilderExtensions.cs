@@ -124,7 +124,6 @@ namespace Lexiconner.IdentityServer4.Extensions
         /// Configure ClientId / Secrets
         /// </summary>
         /// <param name="builder"></param>
-        /// <param name="configurationOption"></param>
         /// <returns></returns>
         public static IIdentityServerBuilder AddClients(this IIdentityServerBuilder builder)
         {
@@ -135,11 +134,9 @@ namespace Lexiconner.IdentityServer4.Extensions
 
 
         /// <summary>
-        /// Configure API  &  Resources
+        /// Configure API and Resources
         /// Note: Api's have also to be configured for clients as part of allowed scope for a given clientID 
         /// </summary>
-        /// <param name="builder"></param>
-        /// <returns></returns>
         public static IIdentityServerBuilder AddIdentityApiResources(this IIdentityServerBuilder builder)
         {
             builder.Services.AddTransient<IResourceStore, CustomResourceStore>();
@@ -149,8 +146,6 @@ namespace Lexiconner.IdentityServer4.Extensions
         /// <summary>
         /// Configure Grants
         /// </summary>
-        /// <param name="builder">The builder.</param>
-        /// <returns></returns>
         public static IIdentityServerBuilder AddPersistedGrants(this IIdentityServerBuilder builder)
         {
             builder.Services.AddSingleton<IPersistedGrantStore, CustomPersistedGrantStore>();
@@ -160,8 +155,6 @@ namespace Lexiconner.IdentityServer4.Extensions
         /// <summary>
         /// Configures signing credentials
         /// </summary>
-        /// <param name="builder"></param>
-        /// <returns></returns>
         public static IIdentityServerBuilder AddSigningCredentialCustom(this IIdentityServerBuilder builder, IWebHostEnvironment hostingEnvironment, ApplicationSettings config)
         {
             X509Certificate2 cert = null;

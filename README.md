@@ -1,7 +1,8 @@
 # lexiconner
-The project is aimed to help save and study words.
+The project is aimed to help save and study words. Plus it is a playground for personal development.
 
 # External APIs
+
 ## Google Translate
 
 ## Contextual Web Search

@@ -200,7 +200,7 @@ namespace Lexiconner.Application.Services
                         {
                             Data = new ContextualWebSearchImageSearchDataCacheEntity.DataCacheEntity
                             {
-                                _Type = imageSearchResult._Type,
+                                Type = imageSearchResult.Type,
                                 TotalCount = imageSearchResult.TotalCount,
                                 Value = imageSearchResult.Value.Select(x => new ContextualWebSearchImageSearchDataCacheEntity.DataCacheEntity.ImageSearchResponseItemEntity
                                 {
@@ -221,7 +221,7 @@ namespace Lexiconner.Application.Services
                         _logger.LogInformation($"Using Contextual Web Search API cached response for '{imageQuery}' -> '{query}'...");
                         imageSearchResult = new ImageSearchResponseDto
                         {
-                            _Type = imageSearchResultCache.Data._Type,
+                            Type = imageSearchResultCache.Data.Type,
                             TotalCount = imageSearchResultCache.Data.TotalCount,
                             Value = imageSearchResultCache.Data.Value.Select(x => new ImageSearchResponseItemDto
                             {
@@ -242,17 +242,17 @@ namespace Lexiconner.Application.Services
                     }
                 }
             }
-            catch (ApiRateLimitExceededException ex)
+            catch (ApiRateLimitExceededException)
             {
                 // rethrow
                 throw;
             }
-            catch (ApiErrorException ex)
+            catch (ApiErrorException)
             {
                 /// rethrow
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // rethrow
                 throw;

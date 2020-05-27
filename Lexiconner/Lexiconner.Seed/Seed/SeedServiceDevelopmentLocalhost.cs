@@ -107,9 +107,9 @@ namespace Lexiconner.Seed.Seed
             _logger.LogInformation("Clients...");
             foreach (var client in _identityServerConfig.GetClients(_identityConfig))
             {
-                if (!_identityRepository.ExistsAsync<ClientEntity>(x => x.Client.ClientId == client.ClientId).GetAwaiter().GetResult())
+                if (!await _identityRepository.ExistsAsync<ClientEntity>(x => x.Client.ClientId == client.ClientId))
                 {
-                    _identityRepository.AddAsync<ClientEntity>(new ClientEntity(client)).GetAwaiter().GetResult();
+                    await _identityRepository.AddAsync<ClientEntity>(new ClientEntity(client));
                 }
             }
             _logger.LogInformation("Clients Done.");
@@ -118,9 +118,9 @@ namespace Lexiconner.Seed.Seed
             _logger.LogInformation("IdentityResources...");
             foreach (var res in _identityServerConfig.GetIdentityResources())
             {
-                if (!_identityRepository.ExistsAsync<IdentityResourceEntity>(x => x.IdentityResource.Name == res.Name).GetAwaiter().GetResult())
+                if (!await _identityRepository.ExistsAsync<IdentityResourceEntity>(x => x.IdentityResource.Name == res.Name))
                 {
-                    _identityRepository.AddAsync(new IdentityResourceEntity(res)).GetAwaiter().GetResult();
+                    await _identityRepository.AddAsync(new IdentityResourceEntity(res));
                 }
             }
             _logger.LogInformation("IdentityResources Done.");
@@ -129,9 +129,9 @@ namespace Lexiconner.Seed.Seed
             _logger.LogInformation("ApiResources...");
             foreach (var api in _identityServerConfig.GetApiResources())
             {
-                if (!_identityRepository.ExistsAsync<ApiResourceEntity>(x => x.ApiResource.Name == api.Name).GetAwaiter().GetResult())
+                if (!await _identityRepository.ExistsAsync<ApiResourceEntity>(x => x.ApiResource.Name == api.Name))
                 {
-                    _identityRepository.AddAsync(new ApiResourceEntity(api)).GetAwaiter().GetResult();
+                    await _identityRepository.AddAsync(new ApiResourceEntity(api));
                 }
             }
             _logger.LogInformation("ApiResources Done.");
@@ -142,7 +142,7 @@ namespace Lexiconner.Seed.Seed
 
             foreach (var role in roles)
             {
-                var existing = _roleManager.FindByNameAsync(role.Name).GetAwaiter().GetResult();
+                var existing = await _roleManager.FindByNameAsync(role.Name);
                 if (existing == null)
                 {
                     _logger.LogInformation($"Role '{role.Name}': creating.");
@@ -165,7 +165,7 @@ namespace Lexiconner.Seed.Seed
             var users = _identityServerConfig.GetInitialdentityUsers();
             foreach (var user in users)
             {
-                var existing = _userManager.FindByEmailAsync(user.Email).GetAwaiter().GetResult();
+                var existing = await _userManager.FindByEmailAsync(user.Email);
                 if (existing == null)
                 {
                     _logger.LogInformation($"User '{user.Email}': creating.");
@@ -444,7 +444,7 @@ namespace Lexiconner.Seed.Seed
                 for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
                 {
                     var items = filmEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
-                    _dataRepository.AddManyAsync(items).GetAwaiter().GetResult();
+                    await _dataRepository.AddManyAsync(items);
                     _logger.LogInformation($"Films processed chunk {chunkNumber + 1} / {chunkCount}.");
                 }
                 _logger.LogInformation($"Films were added for user #{user.Email}.");
@@ -622,7 +622,7 @@ namespace Lexiconner.Seed.Seed
             for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
             {
                 var items = studyItemEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
-                _dataRepository.AddManyAsync(items).GetAwaiter().GetResult();
+                await _dataRepository.AddManyAsync(items);
                 _logger.LogInformation($"StudyItems processed chunk {chunkNumber + 1} / {chunkCount}.");
             }
             _logger.LogInformation($"StudyItems were added for user #{user.Email}.");

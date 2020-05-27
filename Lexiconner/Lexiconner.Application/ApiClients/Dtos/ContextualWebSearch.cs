@@ -14,7 +14,7 @@ namespace Lexiconner.Application.ApiClients.Dtos
 
         // images, news, all (websearch),
         [JsonProperty("_type")]
-        public string _Type { get; set; }
+        public string Type { get; set; }
 
         [JsonProperty("totalCount")]
         public long TotalCount { get; set; }

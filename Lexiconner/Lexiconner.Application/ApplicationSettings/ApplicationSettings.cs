@@ -27,34 +27,34 @@ namespace Lexiconner.Application.Config
         public class GoogleCredentialSettings
         {
             [JsonProperty("type")]
-            public string type { get; set; }
+            public string Type { get; set; }
 
             [JsonProperty("project_id")]
-            public string project_id { get; set; }
+            public string ProjectId { get; set; }
 
             [JsonProperty("private_key_id")]
-            public string private_key_id { get; set; }
+            public string PrivateKeyId { get; set; }
 
             [JsonProperty("private_key")]
-            public string private_key { get; set; }
+            public string PrivateKey { get; set; }
 
             [JsonProperty("client_email")]
-            public string client_email { get; set; }
+            public string ClientEmail { get; set; }
 
             [JsonProperty("client_id")]
-            public string client_id { get; set; }
+            public string ClientId { get; set; }
 
             [JsonProperty("auth_uri")]
-            public string auth_uri { get; set; }
+            public string AuthUri { get; set; }
 
             [JsonProperty("token_uri")]
-            public string token_uri { get; set; }
+            public string TokenUri { get; set; }
 
             [JsonProperty("auth_provider_x509_cert_url")]
-            public string auth_provider_x509_cert_url { get; set; }
+            public string AuthProviderX509CertUrl { get; set; }
 
             [JsonProperty("client_x509_cert_url")]
-            public string client_x509_cert_url { get; set; }
+            public string ClientX509CertUrl { get; set; }
         }
     }
 

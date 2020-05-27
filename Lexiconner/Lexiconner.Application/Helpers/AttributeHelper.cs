@@ -34,9 +34,7 @@ namespace Lexiconner.Application.Helpers
             var memberInfo = GetPropertyInformation(propertyExpression.Body);
             if (memberInfo == null)
             {
-                throw new ArgumentException(
-                    "No property reference expression was found.",
-                    "propertyExpression");
+                throw new ArgumentException("No property reference expression was found.", nameof(propertyExpression));
             }
 
             var attr = memberInfo.GetAttribute<DisplayNameAttribute>(false);
@@ -50,7 +48,7 @@ namespace Lexiconner.Application.Helpers
 
         public static MemberInfo GetPropertyInformation(Expression propertyExpression)
         {
-            Debug.Assert(propertyExpression != null, "propertyExpression != null");
+            Debug.Assert(propertyExpression != null, $"{nameof(propertyExpression)} != null");
             MemberExpression memberExpr = propertyExpression as MemberExpression;
             if (memberExpr == null)
             {
