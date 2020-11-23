@@ -11,6 +11,7 @@ namespace Lexiconner.IdentityServer4.Config
     {
         IEnumerable<IdentityResource> GetIdentityResources();
         IEnumerable<ApiResource> GetApiResources();
+        IEnumerable<ApiScope> GetApiScopes();
         IEnumerable<Client> GetClients(ApplicationSettings config);
 
         string DefaultUserPassword { get; }

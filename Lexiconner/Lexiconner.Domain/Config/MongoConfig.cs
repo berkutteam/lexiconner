@@ -17,6 +17,7 @@ namespace Lexiconner.Domain.Config
         public const string IdentityRoles = "identityRoles";
 
         private const string IdentityApiResources = "identityApiResources";
+        private const string IdentityApiScopes = "identityApiScopes";
         private const string IdentityClients = "identityClients";
         private const string IdentityIdentityResources = "identityIdentityResources";
         private const string IdentityPersistedGrant = "identityPersistedGrant";
@@ -81,6 +82,13 @@ namespace Lexiconner.Domain.Config
             },
             new MongoCollectionConfig
             {
+                CollectionType = typeof(ApiScope),
+                CollectionName = IdentityApiScopes,
+                Indexes = new List<string> {
+                }
+            },
+            new MongoCollectionConfig
+            {
                 CollectionType = typeof(Client),
                 CollectionName = IdentityClients,
                 Indexes = new List<string> {
@@ -106,6 +114,13 @@ namespace Lexiconner.Domain.Config
             {
                 CollectionType = typeof(ApiResourceEntity),
                 CollectionName = IdentityApiResources,
+                Indexes = new List<string> {
+                }
+            },
+            new MongoCollectionConfig
+            {
+                CollectionType = typeof(ApiScopeEntity),
+                CollectionName = IdentityApiScopes,
                 Indexes = new List<string> {
                 }
             },

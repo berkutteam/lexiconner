@@ -7,6 +7,7 @@ using Lexiconner.Application.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
@@ -29,7 +30,7 @@ namespace IdentityServer4.Quickstart.UI
 
         public IActionResult Index()
         {
-            if (_environment.IsDevelopmentAny())
+            if (_environment.IsDevelopment())
             {
                 // only show in development
                 return View();
@@ -52,7 +53,7 @@ namespace IdentityServer4.Quickstart.UI
             {
                 vm.Error = message;
 
-                if (!_environment.IsDevelopmentAny())
+                if (!_environment.IsDevelopment())
                 {
                     // only show in development
                     message.ErrorDescription = null;

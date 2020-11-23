@@ -136,7 +136,18 @@ namespace Lexiconner.Seed.Seed
             }
             _logger.LogInformation("ApiResources Done.");
 
+            // ApiScope
+            _logger.LogInformation("ApiScopes...");
+            foreach (var scope in _identityServerConfig.GetApiScopes())
+            {
+                if (!await _identityRepository.ExistsAsync<ApiScopeEntity>(x => x.ApiScope.Name == scope.Name))
+                {
+                    await _identityRepository.AddAsync(new ApiScopeEntity(scope));
+                }
+            }
+            _logger.LogInformation("ApiScopes Done.");
 
+            // Roles
             _logger.LogInformation("Roles...");
             var roles = _identityServerConfig.GetInitialIdentityRoles();
 
@@ -160,7 +171,7 @@ namespace Lexiconner.Seed.Seed
             }
             _logger.LogInformation("Roles Done.");
 
-
+            // Users
             _logger.LogInformation("Users...");
             var users = _identityServerConfig.GetInitialdentityUsers();
             foreach (var user in users)
@@ -188,12 +199,15 @@ namespace Lexiconner.Seed.Seed
 
         private async Task SeedMainDb()
         {
+            return;
+
             _logger.LogInformation("\n\n");
             _logger.LogInformation("Start seeding main DB...");
 
             // seed imported data for marked users
             var usersWithImport = _identityServerConfig.GetInitialdentityUsers().Where(x => x.IsImportInitialData);
 
+            // StudyItems
             _logger.LogInformation("StudyItems...");
             foreach (var user in usersWithImport)
             {
@@ -292,7 +306,7 @@ namespace Lexiconner.Seed.Seed
             }
             _logger.LogInformation("StudyItems Done.");
 
-
+            // Films
             _logger.LogInformation("Films...");
             const string filmsLanguageCode = "ru";
             const string filmsTz = "Europe/Zaporozhye";
@@ -506,6 +520,23 @@ namespace Lexiconner.Seed.Seed
             if (!BsonClassMap.IsClassMapRegistered(typeof(ApiResourceEntity)))
             {
                 BsonClassMap.RegisterClassMap<ApiResourceEntity>(cm =>
+                {
+                    cm.AutoMap();
+                    cm.SetIgnoreExtraElements(true);
+                });
+            }
+
+            if (!BsonClassMap.IsClassMapRegistered(typeof(ApiScope)))
+            {
+                BsonClassMap.RegisterClassMap<ApiScope>(cm =>
+                {
+                    cm.AutoMap();
+                    cm.SetIgnoreExtraElements(true);
+                });
+            }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(ApiScopeEntity)))
+            {
+                BsonClassMap.RegisterClassMap<ApiScopeEntity>(cm =>
                 {
                     cm.AutoMap();
                     cm.SetIgnoreExtraElements(true);

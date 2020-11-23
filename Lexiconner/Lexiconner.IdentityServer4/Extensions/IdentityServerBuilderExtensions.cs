@@ -159,39 +159,39 @@ namespace Lexiconner.IdentityServer4.Extensions
         {
             X509Certificate2 cert = null;
 
-            using (X509Store certStore = new X509Store(StoreName.My, StoreLocation.CurrentUser))
-            {
-                certStore.Open(OpenFlags.ReadOnly);
+            //using (X509Store certStore = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+            //{
+            //    certStore.Open(OpenFlags.ReadOnly);
 
-                // we use the My/Personal store of the CurrentUser registry. 
-                // this is where Azure will load the certificate when we upload it later.
-                var certCollection = certStore.Certificates.Find(X509FindType.FindByIssuerName, config.IdenitytServer4.SigningCredential.KeyStoreIssuer, false);
+            //    // we use the My/Personal store of the CurrentUser registry. 
+            //    // this is where Azure will load the certificate when we upload it later.
+            //    var certCollection = certStore.Certificates.Find(X509FindType.FindByIssuerName, config.IdenitytServer4.SigningCredential.KeyStoreIssuer, false);
 
-                if (certCollection.Count > 0)
-                {
-                    cert = certCollection[0];
-                    builder.AddSigningCredential(cert);
-                    Log.Logger.Information($"Successfully loaded cert from registry: {cert.IssuerName.Name} / {cert.Thumbprint}");
-                }
-            }
+            //    if (certCollection.Count > 0)
+            //    {
+            //        cert = certCollection[0];
+            //        builder.AddSigningCredential(cert);
+            //        Log.Logger.Information($"Successfully loaded cert from registry: {cert.IssuerName.Name} / {cert.Thumbprint}");
+            //    }
+            //}
 
-            // fallback to local file
-            if (cert == null)
-            {
-                var path = Path.Combine(hostingEnvironment.ContentRootPath, config.IdenitytServer4.SigningCredential.KeyFilePath);
-                if(File.Exists(path))
-                {
-                    cert = new X509Certificate2(path, config.IdenitytServer4.SigningCredential.KeyFilePassword);
+            //// fallback to local file
+            //if (cert == null)
+            //{
+            //    var path = Path.Combine(hostingEnvironment.ContentRootPath, config.IdenitytServer4.SigningCredential.KeyFilePath);
+            //    if(File.Exists(path))
+            //    {
+            //        cert = new X509Certificate2(path, config.IdenitytServer4.SigningCredential.KeyFilePassword);
 
-                    // check certificate works
-                    // should output: System.Security.Cryptography.RSACng
-                    // otherwise exception will be thrown
-                    Log.Logger.Information($"Certificate loaded: {cert.PrivateKey.ToString()}");
+            //        // check certificate works
+            //        // should output: System.Security.Cryptography.RSACng
+            //        // otherwise exception will be thrown
+            //        Log.Logger.Information($"Certificate loaded: {cert.PrivateKey.ToString()}");
 
-                    builder.AddSigningCredential(cert);
-                    Log.Logger.Information($"Falling back to cert from file. Successfully loaded: {cert.IssuerName.Name} / {cert.Thumbprint}");
-                }
-            }
+            //        builder.AddSigningCredential(cert);
+            //        Log.Logger.Information($"Falling back to cert from file. Successfully loaded: {cert.IssuerName.Name} / {cert.Thumbprint}");
+            //    }
+            //}
 
             // fallback to generated developer local file for development
             if(cert == null && hostingEnvironment.IsDevelopmentAny())

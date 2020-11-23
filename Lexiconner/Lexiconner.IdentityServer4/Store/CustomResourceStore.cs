@@ -24,41 +24,71 @@ namespace Lexiconner.IdentityServer4.Store
             return result.Select(x => x.ApiResource);
         }
 
+        private async Task<IEnumerable<ApiScope>> GetAllApiScopes()
+        {
+            var result = await _dataRepository.GetAllAsync<ApiScopeEntity>();
+            return result.Select(x => x.ApiScope);
+        }
+
         private async Task<IEnumerable<IdentityResource>> GetAllIdentityResources()
         {
             var result = await _dataRepository.GetAllAsync<IdentityResourceEntity>();
             return result.Select(x => x.IdentityResource);
         }
 
-        public async Task<ApiResource> FindApiResourceAsync(string name)
-        {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name));
+        //public async Task<ApiResource> FindApiResourceAsync(string name)
+        //{
+        //    if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name));
 
-            var result = await _dataRepository.GetOneAsync<ApiResourceEntity>(a => a.ApiResource.Name == name);
-            return result.ApiResource;
-        }
+        //    var result = await _dataRepository.GetOneAsync<ApiResourceEntity>(a => a.ApiResource.Name == name);
+        //    return result.ApiResource;
+        //}
 
-        public async Task<IEnumerable<ApiResource>> FindApiResourcesByScopeAsync(IEnumerable<string> scopeNames)
+        //public async Task<IEnumerable<ApiResource>> FindApiResourcesByScopeAsync(IEnumerable<string> scopeNames)
+        //{
+        //    var result = await _dataRepository.GetManyAsync<ApiResourceEntity>(a => a.ApiResource.Scopes.Any(s => scopeNames.Contains(s.Name)));
+        //    return result.Select(x => x.ApiResource);
+        //}
+
+        //public async Task<IEnumerable<IdentityResource>> FindIdentityResourcesByScopeAsync(IEnumerable<string> scopeNames)
+        //{
+        //    var result = await _dataRepository.GetManyAsync<IdentityResourceEntity>(e => scopeNames.Contains(e.IdentityResource.Name));
+        //    return result.Select(x => x.IdentityResource);
+        //}
+
+
+        public async Task<IEnumerable<ApiResource>> FindApiResourcesByNameAsync(IEnumerable<string> apiResourceNames)
         {
-            var result = await _dataRepository.GetManyAsync<ApiResourceEntity>(a => a.ApiResource.Scopes.Any(s => scopeNames.Contains(s.Name)));
+            var result = await _dataRepository.GetManyAsync<ApiResourceEntity>(x => apiResourceNames.Contains(x.ApiResource.Name));
             return result.Select(x => x.ApiResource);
         }
 
-        public async Task<IEnumerable<IdentityResource>> FindIdentityResourcesByScopeAsync(IEnumerable<string> scopeNames)
+        public async Task<IEnumerable<ApiResource>> FindApiResourcesByScopeNameAsync(IEnumerable<string> scopeNames)
         {
-            var result = await _dataRepository.GetManyAsync<IdentityResourceEntity>(e => scopeNames.Contains(e.IdentityResource.Name));
-            return result.Select(x => x.IdentityResource);
+            var result = await _dataRepository.GetManyAsync<ApiResourceEntity>(a => a.ApiResource.Scopes.Any(scope => scopeNames.Contains(scope)));
+            return result.Select(x => x.ApiResource);
         }
 
-        public async Task<Resources> GetAllResources()
+        public async Task<IEnumerable<ApiScope>> FindApiScopesByNameAsync(IEnumerable<string> scopeNames)
         {
-            var result = new Resources(await GetAllIdentityResources(), await GetAllApiResources());
-            return result;
+            var result = await _dataRepository.GetManyAsync<ApiScopeEntity>(x => scopeNames.Contains(x.ApiScope.Name));
+            return result.Select(x => x.ApiScope);
+        }
+
+        public async Task<IEnumerable<IdentityResource>> FindIdentityResourcesByScopeNameAsync(IEnumerable<string> scopeNames)
+        {
+            var result = await _dataRepository.GetManyAsync<IdentityResourceEntity>(x => scopeNames.Contains(x.IdentityResource.Name));
+            return result.Select(x => x.IdentityResource);
         }
 
         public async Task<Resources> GetAllResourcesAsync()
         {
-            return await GetAllResources();
+            var result = new Resources(
+                await GetAllIdentityResources(),
+                await GetAllApiResources(),
+                await GetAllApiScopes()
+            );
+            return result;
         }
     }
 }

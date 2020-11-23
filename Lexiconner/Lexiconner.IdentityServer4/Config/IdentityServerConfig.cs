@@ -43,7 +43,14 @@ namespace Lexiconner.IdentityServer4.Config
         {
             return new ApiResource[]
             {
-                new ApiResource("webapi", "Lexiconner Web Api", new List<string> {
+            };
+        }
+
+        public IEnumerable<ApiScope> GetApiScopes()
+        {
+            return new ApiScope[]
+            {
+                new ApiScope("webapi", "Lexiconner Web Api", new List<string> {
                     //JwtClaimTypes.Name,
                     //JwtClaimTypes.GivenName,
                     //JwtClaimTypes.FamilyName,
@@ -92,7 +99,6 @@ namespace Lexiconner.IdentityServer4.Config
             {
                 ClientId = "webspa",
                 ClientName = "Lexiconner Web SPA Client",
-                ClientUri = config.Urls.WebSpaExternalUrl,
 
                 AllowedGrantTypes = GrantTypes.Code,
                 RequirePkce = true, // Proof Key for Code Exchange (PKCE)
@@ -108,8 +114,12 @@ namespace Lexiconner.IdentityServer4.Config
                         $"{config.Urls.WebSpaExternalUrl}/popup.html",
                     },
 
-                PostLogoutRedirectUris = { $"{config.Urls.WebSpaExternalUrl}/index.html" },
-                AllowedCorsOrigins = { $"{config.Urls.WebSpaExternalUrl}" },
+                PostLogoutRedirectUris = { 
+                   $"{config.Urls.WebSpaExternalUrl}/index.html" 
+                },
+                AllowedCorsOrigins = { 
+                   $"{config.Urls.WebSpaExternalUrl}" 
+                },
 
                 AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
@@ -335,6 +345,11 @@ namespace Lexiconner.IdentityServer4.Config
                             Value = "johndoe1@gmail.com",
                             Issuer = null,
                         },
+                        new MongoClaim() {
+                            Type = JwtClaimTypes.EmailVerified,
+                            Value = "true",
+                            Issuer = null,
+                        },
                     },
                     IsImportInitialData = true
                 },
@@ -365,6 +380,11 @@ namespace Lexiconner.IdentityServer4.Config
                             Value = "vadimberkut8@gmail.com",
                             Issuer = null,
                         },
+                        new MongoClaim() {
+                            Type = JwtClaimTypes.EmailVerified,
+                            Value = "true",
+                            Issuer = null,
+                        },
                     },
                     IsImportInitialData = true
                 },
@@ -393,6 +413,11 @@ namespace Lexiconner.IdentityServer4.Config
                         new MongoClaim() {
                             Type = JwtClaimTypes.Email,
                             Value = "bogdanberkut9@gmail.com",
+                            Issuer = null,
+                        },
+                        new MongoClaim() {
+                            Type = JwtClaimTypes.EmailVerified,
+                            Value = "true",
                             Issuer = null,
                         },
                     },

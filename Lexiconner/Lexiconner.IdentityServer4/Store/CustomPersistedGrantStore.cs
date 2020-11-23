@@ -27,6 +27,17 @@ namespace Lexiconner.IdentityServer4.Store
             return result.Select(x => x.PersistedGrant);
         }
 
+        public async Task<IEnumerable<PersistedGrant>> GetAllAsync(PersistedGrantFilter filter)
+        {
+            var result = await _dataRepository.GetManyAsync<PersistedGrantEntity>(
+                i => i.PersistedGrant.SubjectId == filter.SubjectId &&
+                     i.PersistedGrant.ClientId == filter.ClientId &&
+                     i.PersistedGrant.Type == filter.Type &&
+                     i.PersistedGrant.SessionId == filter.SessionId
+            );
+            return result.Select(x => x.PersistedGrant);
+        }
+
         public async Task<PersistedGrant> GetAsync(string key)
         {
             var result = await _dataRepository.GetOneAsync<PersistedGrantEntity>(i => i.PersistedGrant.Key == key);
@@ -41,6 +52,16 @@ namespace Lexiconner.IdentityServer4.Store
         public async Task RemoveAllAsync(string subjectId, string clientId, string type)
         {
             await _dataRepository.DeleteAsync<PersistedGrantEntity>(i => i.PersistedGrant.SubjectId == subjectId && i.PersistedGrant.ClientId == clientId && i.PersistedGrant.Type == type);
+        }
+
+        public async Task RemoveAllAsync(PersistedGrantFilter filter)
+        {
+            await _dataRepository.DeleteAsync<PersistedGrantEntity>(
+                i => i.PersistedGrant.SubjectId == filter.SubjectId && 
+                     i.PersistedGrant.ClientId == filter.ClientId && 
+                     i.PersistedGrant.Type == filter.Type &&
+                     i.PersistedGrant.SessionId == filter.SessionId
+            );
         }
 
         public async Task RemoveAsync(string key)
