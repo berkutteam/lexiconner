@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -49,6 +51,8 @@ namespace Lexiconner.Domain.Entitites.Cache
             }
 
             // images, news, all (websearch),
+            [JsonProperty("Type")]
+            [BsonElement("_Type")]
             public string Type { get; set; }
             public long TotalCount { get; set; }
             public List<ImageSearchResponseItemEntity> Value { get; set; }
