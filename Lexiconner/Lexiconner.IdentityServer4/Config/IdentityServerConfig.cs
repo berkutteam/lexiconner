@@ -189,8 +189,12 @@ namespace Lexiconner.IdentityServer4.Config
                         $"{config.Urls.WebTestSpaExternalUrl}/popup.html",
                     },
 
-                    PostLogoutRedirectUris = { $"{config.Urls.WebTestSpaExternalUrl}/index.html" },
-                    AllowedCorsOrigins = { $"{config.Urls.WebTestSpaExternalUrl}" },
+                    PostLogoutRedirectUris = { 
+                        $"{config.Urls.WebTestSpaExternalUrl}/index.html" 
+                    },
+                    AllowedCorsOrigins = { 
+                        $"{config.Urls.WebTestSpaExternalUrl}" 
+                    },
 
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,

@@ -26,12 +26,6 @@ namespace Lexiconner.IdentityServer4.Extensions
         /// <summary>
         /// Adds the support for MongoDb Persistance for all identityserver stored
         /// </summary>
-        /// <remarks><![CDATA[
-        /// It implements and used mongodb collections for:
-        /// - Clients
-        /// - IdentityResources
-        /// - ApiResource
-        /// ]]></remarks>
         public static void UseMongoDbForIdentityServer(this IApplicationBuilder app)
         {
             using (var scope = app.ApplicationServices.CreateScope())

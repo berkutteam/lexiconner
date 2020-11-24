@@ -84,7 +84,7 @@ namespace Lexiconner.IdentityServer4
             });
             identityServerBuilder.AddSigningCredentialCustom(Environment, config);
             identityServerBuilder.AddConfig()
-            .AddMongoDataRepository()
+            .CheckMongoDataRepository()
             .AddMongoDbForAspIdentity<ApplicationUserEntity, ApplicationRoleEntity>(config)
             .AddClients()
             .AddIdentityApiResources()

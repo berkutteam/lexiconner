@@ -41,19 +41,13 @@ namespace Lexiconner.IdentityServer4.Extensions
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IIdentityServerBuilder AddMongoDataRepository(this IIdentityServerBuilder builder)
+        public static IIdentityServerBuilder CheckMongoDataRepository(this IIdentityServerBuilder builder)
         {
-            //// register repository if wasn't registred yet
-            //if (!builder.Services.Any(x => x.ServiceType == typeof(IMongoDataRepository) && x.ImplementationType == typeof(MongoDataRepository)))
-            //{
-            //    builder.Services.AddTransient<IMongoDataRepository, MongoDataRepository>(sp =>
-            //    {
-            //        var config = sp.GetService<IOptions<ApplicationSettings>>().Value;
-            //        var mongoClient = sp.GetService<MongoClient>();
-            //        return new MongoDataRepository(mongoClient, config.MongoDb.Database, ApplicationDb.Identity);
-            //    });
-            //    //throw new InvalidOperationException($"");
-            //}
+            // check Mongo repository is registered
+            if (!builder.Services.Any(x => x.ServiceType == typeof(IMongoDataRepository) && x.ImplementationType == typeof(MongoDataRepository)))
+            {
+                throw new Exception($"{nameof(IMongoDataRepository)} is not registered in Services. It's required for IdentityServer on Mongo.");
+            }
 
             return builder;
         }
@@ -61,11 +55,6 @@ namespace Lexiconner.IdentityServer4.Extensions
         /// <summary>
         /// Adds mongodb implementation for the "Asp Net Core Identity" part (saving user and roles)
         /// </summary>
-        /// <remarks><![CDATA[
-        /// Contains implemenations for
-        /// - IUserStore<T>
-        /// - IRoleStore<T>
-        /// ]]></remarks>
         public static IIdentityServerBuilder AddMongoDbForAspIdentity<TIdentity, TRole>(this IIdentityServerBuilder builder, ApplicationSettings config) 
             //where TIdentity : Microsoft.AspNetCore.Identity.MongoDB.IdentityUser 
             //where TRole     : Microsoft.AspNetCore.Identity.MongoDB.IdentityRole
@@ -159,42 +148,42 @@ namespace Lexiconner.IdentityServer4.Extensions
         {
             X509Certificate2 cert = null;
 
-            //using (X509Store certStore = new X509Store(StoreName.My, StoreLocation.CurrentUser))
-            //{
-            //    certStore.Open(OpenFlags.ReadOnly);
+            using (X509Store certStore = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+            {
+                certStore.Open(OpenFlags.ReadOnly);
 
-            //    // we use the My/Personal store of the CurrentUser registry. 
-            //    // this is where Azure will load the certificate when we upload it later.
-            //    var certCollection = certStore.Certificates.Find(X509FindType.FindByIssuerName, config.IdenitytServer4.SigningCredential.KeyStoreIssuer, false);
+                // we use the My/Personal store of the CurrentUser registry. 
+                // this is where Azure will load the certificate when we upload it later.
+                var certCollection = certStore.Certificates.Find(X509FindType.FindByIssuerName, config.IdenitytServer4.SigningCredential.KeyStoreIssuer, false);
 
-            //    if (certCollection.Count > 0)
-            //    {
-            //        cert = certCollection[0];
-            //        builder.AddSigningCredential(cert);
-            //        Log.Logger.Information($"Successfully loaded cert from registry: {cert.IssuerName.Name} / {cert.Thumbprint}");
-            //    }
-            //}
+                if (certCollection.Count > 0)
+                {
+                    cert = certCollection[0];
+                    builder.AddSigningCredential(cert);
+                    Log.Logger.Information($"Successfully loaded cert from registry: {cert.IssuerName.Name} / {cert.Thumbprint}");
+                }
+            }
 
-            //// fallback to local file
-            //if (cert == null)
-            //{
-            //    var path = Path.Combine(hostingEnvironment.ContentRootPath, config.IdenitytServer4.SigningCredential.KeyFilePath);
-            //    if(File.Exists(path))
-            //    {
-            //        cert = new X509Certificate2(path, config.IdenitytServer4.SigningCredential.KeyFilePassword);
+            // fallback to local file
+            if (cert == null)
+            {
+                var path = Path.Combine(hostingEnvironment.ContentRootPath, config.IdenitytServer4.SigningCredential.KeyFilePath);
+                if (File.Exists(path))
+                {
+                    cert = new X509Certificate2(path, config.IdenitytServer4.SigningCredential.KeyFilePassword);
 
-            //        // check certificate works
-            //        // should output: System.Security.Cryptography.RSACng
-            //        // otherwise exception will be thrown
-            //        Log.Logger.Information($"Certificate loaded: {cert.PrivateKey.ToString()}");
+                    // check certificate works
+                    // should output: System.Security.Cryptography.RSACng
+                    // otherwise exception will be thrown
+                    Log.Logger.Information($"Certificate loaded: {cert.PrivateKey.ToString()}");
 
-            //        builder.AddSigningCredential(cert);
-            //        Log.Logger.Information($"Falling back to cert from file. Successfully loaded: {cert.IssuerName.Name} / {cert.Thumbprint}");
-            //    }
-            //}
+                    builder.AddSigningCredential(cert);
+                    Log.Logger.Information($"Falling back to cert from file. Successfully loaded: {cert.IssuerName.Name} / {cert.Thumbprint}");
+                }
+            }
 
             // fallback to generated developer local file for development
-            if(cert == null && hostingEnvironment.IsDevelopmentAny())
+            if (cert == null && hostingEnvironment.IsDevelopmentAny())
             {
                 builder.AddDeveloperSigningCredential(
                     persistKey: true,
