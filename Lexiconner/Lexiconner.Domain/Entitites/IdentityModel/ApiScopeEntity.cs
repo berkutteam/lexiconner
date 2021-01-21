@@ -1,5 +1,6 @@
 ﻿using IdentityServer4.Models;
 using Lexiconner.Domain.Entitites.Base;
+using MongoDB.Bson;
 using NUlid;
 using NUlid.Rng;
 using System;
@@ -15,12 +16,13 @@ namespace Lexiconner.Domain.Entitites.IdentityModel
     {
         public ApiScopeEntity()
         {
-            Id = Ulid.NewUlid(new CSUlidRng()).ToString();
+            Id = ObjectId.GenerateNewId().ToString();
             ApiScope = new ApiScope();
         }
+
         public ApiScopeEntity(ApiScope resource)
         {
-            Id = Ulid.NewUlid(new CSUlidRng()).ToString();
+            Id = ObjectId.GenerateNewId().ToString();
             ApiScope = resource;
         }
 

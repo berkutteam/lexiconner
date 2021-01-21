@@ -188,7 +188,6 @@ namespace Lexiconner.IdentityServer4.Config
                         $"{config.Urls.WebTestSpaExternalUrl}/silent.html",
                         $"{config.Urls.WebTestSpaExternalUrl}/popup.html",
                     },
-
                     PostLogoutRedirectUris = { 
                         $"{config.Urls.WebTestSpaExternalUrl}/index.html" 
                     },
@@ -215,6 +214,37 @@ namespace Lexiconner.IdentityServer4.Config
                     //{
                     //    new Claim("test-set-in-client-config", "test")
                     //},
+                });
+
+                // IdentityServer v4 JavaScript Client
+                clients.Add(new Client
+                {
+                    ClientId = "webtestspav4",
+                    ClientName = "JavaScript Client v4",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequireClientSecret = false,
+
+                    RedirectUris =
+                    {
+                        $"{config.Urls.WebTestSpaExternalUrl}",
+                        $"{config.Urls.WebTestSpaExternalUrl}/index.html",
+                        $"{config.Urls.WebTestSpaExternalUrl}/callback.html",
+                        $"{config.Urls.WebTestSpaExternalUrl}/silent.html",
+                        $"{config.Urls.WebTestSpaExternalUrl}/popup.html",
+                    },
+                    PostLogoutRedirectUris = {
+                        $"{config.Urls.WebTestSpaExternalUrl}/index.html"
+                    },
+                    AllowedCorsOrigins = {
+                        $"{config.Urls.WebTestSpaExternalUrl}"
+                    },
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "webapi"
+                    }
                 });
             }
 

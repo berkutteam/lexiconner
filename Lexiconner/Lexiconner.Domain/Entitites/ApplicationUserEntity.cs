@@ -29,7 +29,7 @@ namespace Lexiconner.Domain.Entitites
             // AspNetCore.Identity.MongoDbCore by Alexandre Spieser (allows to set custom Ids)
             // uses IdGenerator to generate Id of type TKEY. Supported types: Guid, Int16, Int32, Int64, String (Guid), ObjectId
             // we can rewrite Id in constructor as it is intialised in base constructor
-            Id = Ulid.NewUlid(new NUlid.Rng.CSUlidRng()).ToString();
+            Id = ObjectId.GenerateNewId().ToString();
         }
 
         /// <summary>

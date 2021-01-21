@@ -108,6 +108,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
 
         private void ConfigureMongoDb(IServiceCollection services)
         {
+            // add Mongo2Go
             services.AddSingleton<MongoDbRunner>(sp => {
                 return MongoDbRunner.Start();
             });

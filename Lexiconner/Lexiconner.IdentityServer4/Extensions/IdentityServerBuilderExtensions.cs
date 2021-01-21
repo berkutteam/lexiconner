@@ -61,34 +61,7 @@ namespace Lexiconner.IdentityServer4.Extensions
             where TIdentity : ApplicationUserEntity, new ()
             where TRole : ApplicationRoleEntity, new()
         {
-            //// Configure Asp Net Core Identity / Role to use MongoDB
-
-
-            // Contrib.Microsoft.AspNetCore.Identity.MongoDB by thrixton (uses Mongo ObjectId)
-            // https://github.com/thrixton/aspnetcore-identity-mongodb-netcore2plus
-
-            //var client = new MongoClient(config.MongoDb.ConnectionString);
-            //var database = client.GetDatabase(config.MongoDb.Database);
-
-            //builder.Services.AddSingleton<IUserStore<TIdentity>>(x =>
-            //{
-            //    var usersCollection = database.GetCollection<TIdentity>(MongoConfig.GetCollectionName<TIdentity>());
-            //    IndexChecks.EnsureUniqueIndexOnNormalizedEmail(usersCollection);
-            //    IndexChecks.EnsureUniqueIndexOnNormalizedUserName(usersCollection);
-            //    return new UserStore<TIdentity>(usersCollection);
-            //});
-
-            //builder.Services.AddSingleton<IRoleStore<TRole>>(x =>
-            //{
-            //    var rolesCollection = database.GetCollection<TRole>(MongoConfig.GetCollectionName<TRole>());
-            //    IndexChecks.EnsureUniqueIndexOnNormalizedRoleName(rolesCollection);
-            //    return new RoleStore<TRole>(rolesCollection);
-            //});
-
-            //builder.Services.AddIdentity<TIdentity, TRole>()
-            //    .AddDefaultTokenProviders();
-
-
+            // Configure Asp Net Core Identity / Role to use MongoDB
             // AspNetCore.Identity.MongoDbCore by Alexandre Spieser (allows to set custom Ids)
             // https://github.com/alexandre-spieser/AspNetCore.Identity.MongoDbCore
             IMongoDbContext mongoDbContext = new MongoDbContext(config.MongoDb.ConnectionString, config.MongoDb.Database);

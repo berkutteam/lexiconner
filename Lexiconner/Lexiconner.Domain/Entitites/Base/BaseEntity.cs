@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using NUlid;
 using NUlid.Rng;
 
@@ -16,6 +18,8 @@ namespace Lexiconner.Domain.Entitites.Base
         }
 
         // [BsonId(IdGenerator = typeof(CombGuidGenerator))]
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
         public DateTime CreatedAt { get; set; }
@@ -24,7 +28,8 @@ namespace Lexiconner.Domain.Entitites.Base
 
         public void RegenerateId()
         {
-            Id = Ulid.NewUlid(new NUlid.Rng.CSUlidRng()).ToString();
+            //Id = Ulid.NewUlid(new NUlid.Rng.CSUlidRng()).ToString();
+            Id = ObjectId.GenerateNewId().ToString();
         }
     }
 }

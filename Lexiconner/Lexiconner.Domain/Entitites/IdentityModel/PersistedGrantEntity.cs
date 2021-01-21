@@ -1,5 +1,6 @@
 ﻿using IdentityServer4.Models;
 using Lexiconner.Domain.Entitites.Base;
+using MongoDB.Bson;
 using NUlid;
 using NUlid.Rng;
 using System;
@@ -13,13 +14,13 @@ namespace Lexiconner.Domain.Entitites.IdentityModel
 
         public PersistedGrantEntity()
         {
-            Id = Ulid.NewUlid(new CSUlidRng()).ToString();
+            Id = ObjectId.GenerateNewId().ToString();
             PersistedGrant = new PersistedGrant();
         }
 
         public PersistedGrantEntity(PersistedGrant persistedGrant)
         {
-            Id = Ulid.NewUlid(new CSUlidRng()).ToString();
+            Id = ObjectId.GenerateNewId().ToString();
             PersistedGrant = persistedGrant;
         }
 

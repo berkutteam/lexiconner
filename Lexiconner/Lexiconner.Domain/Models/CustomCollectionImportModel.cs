@@ -1,4 +1,5 @@
 ﻿using Lexiconner.Domain.Interfaces;
+using MongoDB.Bson;
 using NUlid;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Lexiconner.Domain.Models
     {
         public CustomCollectionImportModel()
         {
-            TempId = Ulid.NewUlid(new NUlid.Rng.CSUlidRng()).ToString();
+            TempId = ObjectId.GenerateNewId().ToString();
             Children = new List<CustomCollectionImportModel>();
         }
 

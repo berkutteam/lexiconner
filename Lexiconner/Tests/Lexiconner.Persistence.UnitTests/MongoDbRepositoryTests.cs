@@ -23,6 +23,7 @@ using Lexiconner.Infrastructure.Tests.Assertions;
 using Lexiconner.Domain.Entitites.Testing;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Lexiconner.Persistence.Repositories;
+using MongoDB.Bson;
 
 namespace Lexiconner.Persistence.UnitTests
 {
@@ -36,7 +37,7 @@ namespace Lexiconner.Persistence.UnitTests
         public async Task CollectionInConfig()
         {
             string collectionId = "collectionThatIsNotInApplicationSettings";
-            string id = Ulid.NewUlid(new CSUlidRng()).ToString();
+            string id = ObjectId.GenerateNewId().ToString();
 
             await CustomAssert.AllThrowsAsync<MongoDbCollectionException>(new List<Task>()
             {
@@ -137,7 +138,7 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 var doc = new SimpleTestEntity
                 {
-                    Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                    Title = ObjectId.GenerateNewId().ToString(),
                 };
                 _mongoDataRepository.AddAsync<SimpleTestEntity>(doc).GetAwaiter().GetResult();
                 return doc;
@@ -158,7 +159,7 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 var doc = new SimpleTestEntity
                 {
-                    Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                    Title = ObjectId.GenerateNewId().ToString(),
                 };
                 _mongoDataRepository.AddAsync<SimpleTestEntity>(doc).GetAwaiter().GetResult();
                 return doc;
@@ -175,7 +176,7 @@ namespace Lexiconner.Persistence.UnitTests
         {
             var doc = new SimpleTestEntity
             {
-                Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                Title = ObjectId.GenerateNewId().ToString(),
             };
             await _mongoDataRepository.AddAsync<SimpleTestEntity>(doc);
             var dbDoc = await _mongoDataRepository.GetOneAsync<SimpleTestEntity>(x => x.Id == doc.Id);
@@ -192,7 +193,7 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 var doc = new SimpleTestEntity
                 {
-                    Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                    Title = ObjectId.GenerateNewId().ToString(),
                 };
                 _mongoDataRepository.AddAsync<SimpleTestEntity>(doc).GetAwaiter().GetResult();
                 return doc;
@@ -213,7 +214,7 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 var doc = new SimpleTestEntity
                 {
-                    Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                    Title = ObjectId.GenerateNewId().ToString(),
                 };
                 _mongoDataRepository.AddAsync<SimpleTestEntity>(doc).GetAwaiter().GetResult();
                 return doc;
@@ -235,7 +236,7 @@ namespace Lexiconner.Persistence.UnitTests
         {
             var doc = new SimpleTestEntity
             {
-                Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                Title = ObjectId.GenerateNewId().ToString(),
             };
             await _mongoDataRepository.AddAsync<SimpleTestEntity>(doc);
             var dbDoc = await _mongoDataRepository.GetOneAsync<SimpleTestEntity>(x => x.Id == doc.Id);
@@ -253,7 +254,7 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 var doc = new SimpleTestEntity
                 {
-                    Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                    Title = ObjectId.GenerateNewId().ToString(),
                 };
                 return doc;
             }).ToList();
@@ -270,12 +271,12 @@ namespace Lexiconner.Persistence.UnitTests
         {
             var doc = new SimpleTestEntity
             {
-                Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                Title = ObjectId.GenerateNewId().ToString(),
             };
             await _mongoDataRepository.AddAsync<SimpleTestEntity>(doc);
             var docCreated = doc;
             var docUpdated = JsonConvert.DeserializeObject<SimpleTestEntity>(JsonConvert.SerializeObject(docCreated));
-            docUpdated.Title = Ulid.NewUlid(new CSUlidRng()).ToString();
+            docUpdated.Title = ObjectId.GenerateNewId().ToString();
 
             await _mongoDataRepository.UpdateAsync<SimpleTestEntity>(docUpdated);
 
@@ -296,7 +297,7 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 var doc = new SimpleTestEntity
                 {
-                    Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                    Title = ObjectId.GenerateNewId().ToString(),
                 };
                 return doc;
             }).ToList();
@@ -307,7 +308,7 @@ namespace Lexiconner.Persistence.UnitTests
             var docsUpdated = JsonConvert.DeserializeObject<IEnumerable<SimpleTestEntity>>(JsonConvert.SerializeObject(docs));
             docsUpdated = docsUpdated.Select(x =>
             {
-                x.Title = Ulid.NewUlid(new CSUlidRng()).ToString();
+                x.Title = ObjectId.GenerateNewId().ToString();
                 return x;
             }).ToList();
 
@@ -337,7 +338,7 @@ namespace Lexiconner.Persistence.UnitTests
         {
             var doc = new SimpleTestEntity
             {
-                Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                Title = ObjectId.GenerateNewId().ToString(),
             };
             await _mongoDataRepository.AddAsync<SimpleTestEntity>(doc);
 
@@ -355,7 +356,7 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 var doc = new SimpleTestEntity
                 {
-                    Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                    Title = ObjectId.GenerateNewId().ToString(),
                 };
                 return doc;
             }).ToList();
@@ -379,7 +380,7 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 var doc = new SimpleTestEntity
                 {
-                    Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                    Title = ObjectId.GenerateNewId().ToString(),
                     Order = x,
                 };
                 return doc;
@@ -411,7 +412,7 @@ namespace Lexiconner.Persistence.UnitTests
         {
             var doc = new SimpleTestEntity
             {
-                Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                Title = ObjectId.GenerateNewId().ToString(),
             };
             await _mongoDataRepository.AddAsync<SimpleTestEntity>(doc);
 
@@ -432,7 +433,7 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 var doc = new SimpleTestEntity
                 {
-                    Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                    Title = ObjectId.GenerateNewId().ToString(),
                 };
                 return doc;
             }).ToList();
@@ -453,7 +454,7 @@ namespace Lexiconner.Persistence.UnitTests
             {
                 var doc = new SimpleTestEntity
                 {
-                    Title = Ulid.NewUlid(new CSUlidRng()).ToString(),
+                    Title = ObjectId.GenerateNewId().ToString(),
                     Order = x
                 };
                 return doc;

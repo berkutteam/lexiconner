@@ -1,5 +1,6 @@
 ﻿using Lexiconner.Domain.Entitites;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
 using NUlid.Rng;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace Lexiconner.Api.IntegrationTests.Auth
         {
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
-            var secret = NUlid.Ulid.NewUlid(new CSUlidRng()).ToString();
+            var secret = ObjectId.GenerateNewId().ToString();
             var key = Encoding.ASCII.GetBytes(secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {

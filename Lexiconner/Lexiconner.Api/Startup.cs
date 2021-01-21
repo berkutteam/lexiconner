@@ -40,6 +40,7 @@ using System.Reflection;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using TMDbLib.Client;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Lexiconner.Api
 {
@@ -146,6 +147,12 @@ namespace Lexiconner.Api
                     options.Authority = config.JwtBearerAuth.Authority;
                     options.RequireHttpsMetadata = false;
                     options.Audience = config.JwtBearerAuth.Audience;
+
+                    //options.TokenValidationParameters = new TokenValidationParameters
+                    //{
+                    //    ValidateAudience = false
+                    //};
+
                     options.Events = new JwtBearerEvents
                     {
                         // https://stackoverflow.com/questions/48649717/addjwtbearer-onauthenticationfailed-return-custom-error
