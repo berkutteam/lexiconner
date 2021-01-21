@@ -65,7 +65,8 @@ namespace Lexiconner.IdentityServer4.Store
 
         public async Task<IEnumerable<ApiResource>> FindApiResourcesByScopeNameAsync(IEnumerable<string> scopeNames)
         {
-            var result = await _dataRepository.GetManyAsync<ApiResourceEntity>(a => a.ApiResource.Scopes.Any(scope => scopeNames.Contains(scope)));
+            var all = await _dataRepository.GetAllAsync<ApiResourceEntity>();
+            var result = all.Where(x => x.ApiResource.Scopes.Any(scope => scopeNames.Contains(scope))).ToList();
             return result.Select(x => x.ApiResource);
         }
 

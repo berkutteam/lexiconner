@@ -43,6 +43,17 @@ namespace Lexiconner.IdentityServer4.Config
         {
             return new ApiResource[]
             {
+                //new ApiResource("webapi", "Lexiconner Web Api", new List<string> {
+                //    //JwtClaimTypes.Name,
+                //    //JwtClaimTypes.GivenName,
+                //    //JwtClaimTypes.FamilyName,
+                //    //JwtClaimTypes.Email,
+                //    //JwtClaimTypes.WebSite,
+                //}) {
+                //    Scopes = new string[]
+                //    {
+                //    }
+                //},
             };
         }
 
@@ -56,7 +67,7 @@ namespace Lexiconner.IdentityServer4.Config
                     //JwtClaimTypes.FamilyName,
                     //JwtClaimTypes.Email,
                     //JwtClaimTypes.WebSite,
-                })
+                }),
             };
         }
 
@@ -94,127 +105,127 @@ namespace Lexiconner.IdentityServer4.Config
                 //},
             };
 
-            // SPA client using code flow
-            var spaClient = new Client
-            {
-                ClientId = "webspa",
-                ClientName = "Lexiconner Web SPA Client",
+            //// SPA client using code flow
+            //var spaClient = new Client
+            //{
+            //    ClientId = "webspa",
+            //    ClientName = "Lexiconner Web SPA Client",
 
-                AllowedGrantTypes = GrantTypes.Code,
-                RequirePkce = true, // Proof Key for Code Exchange (PKCE)
-                RequireClientSecret = false,
-                RequireConsent = false,
+            //    AllowedGrantTypes = GrantTypes.Code,
+            //    RequirePkce = true, // Proof Key for Code Exchange (PKCE)
+            //    RequireClientSecret = false,
+            //    RequireConsent = false,
 
-                RedirectUris =
-                    {
-                        $"{config.Urls.WebSpaExternalUrl}",
-                        $"{config.Urls.WebSpaExternalUrl}/index.html",
-                        $"{config.Urls.WebSpaExternalUrl}/callback.html",
-                        $"{config.Urls.WebSpaExternalUrl}/silent.html",
-                        $"{config.Urls.WebSpaExternalUrl}/popup.html",
-                    },
+            //    RedirectUris =
+            //        {
+            //            $"{config.Urls.WebSpaExternalUrl}",
+            //            $"{config.Urls.WebSpaExternalUrl}/index.html",
+            //            $"{config.Urls.WebSpaExternalUrl}/callback.html",
+            //            $"{config.Urls.WebSpaExternalUrl}/silent.html",
+            //            $"{config.Urls.WebSpaExternalUrl}/popup.html",
+            //        },
 
-                PostLogoutRedirectUris = { 
-                   $"{config.Urls.WebSpaExternalUrl}/index.html" 
-                },
-                AllowedCorsOrigins = { 
-                   $"{config.Urls.WebSpaExternalUrl}" 
-                },
+            //    PostLogoutRedirectUris = { 
+            //       $"{config.Urls.WebSpaExternalUrl}/index.html" 
+            //    },
+            //    AllowedCorsOrigins = { 
+            //       $"{config.Urls.WebSpaExternalUrl}" 
+            //    },
 
-                AllowedScopes = {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.OfflineAccess, // refresh token
-                        "webapi"
-                    },
+            //    AllowedScopes = {
+            //            IdentityServerConstants.StandardScopes.OpenId,
+            //            IdentityServerConstants.StandardScopes.Profile,
+            //            IdentityServerConstants.StandardScopes.OfflineAccess, // refresh token
+            //            "webapi"
+            //        },
 
-                // access_token settings
-                AccessTokenType = AccessTokenType.Jwt,
-                AccessTokenLifetime = Convert.ToInt32((new TimeSpan(7, 0, 0, 0)).TotalSeconds),
-                UpdateAccessTokenClaimsOnRefresh = true,
+            //    // access_token settings
+            //    AccessTokenType = AccessTokenType.Jwt,
+            //    AccessTokenLifetime = Convert.ToInt32((new TimeSpan(7, 0, 0, 0)).TotalSeconds),
+            //    UpdateAccessTokenClaimsOnRefresh = true,
 
-                // refresh token settings
-                // refresh tokens are supported for the following flows: authorization code, hybrid and resource owner password credential flow.
-                AllowOfflineAccess = true,
-                RefreshTokenUsage = TokenUsage.ReUse,
-                RefreshTokenExpiration = TokenExpiration.Absolute,
-                AbsoluteRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(30, 0, 0, 0)).TotalSeconds),
-                SlidingRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(15, 0, 0, 0)).TotalSeconds),
-            };
+            //    // refresh token settings
+            //    // refresh tokens are supported for the following flows: authorization code, hybrid and resource owner password credential flow.
+            //    AllowOfflineAccess = true,
+            //    RefreshTokenUsage = TokenUsage.ReUse,
+            //    RefreshTokenExpiration = TokenExpiration.Absolute,
+            //    AbsoluteRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(30, 0, 0, 0)).TotalSeconds),
+            //    SlidingRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(15, 0, 0, 0)).TotalSeconds),
+            //};
 
-            // add local url for dev, because we use 1 db for dev and localhost for now,
-            // but urls are different
+            //// add local url for dev, because we use 1 db for dev and localhost for now,
+            //// but urls are different
+            //if (HostingEnvironmentHelper.IsDevelopmentAny())
+            //{
+            //    spaClient.RedirectUris = spaClient.RedirectUris.Concat(new List<string>() {
+            //        $"{config.Urls.WebSpaLocalUrl}",
+            //        $"{config.Urls.WebSpaLocalUrl}/index.html",
+            //        $"{config.Urls.WebSpaLocalUrl}/callback.html",
+            //        $"{config.Urls.WebSpaLocalUrl}/silent.html",
+            //        $"{config.Urls.WebSpaLocalUrl}/popup.html",
+            //    }).ToList();
+
+            //    spaClient.PostLogoutRedirectUris = spaClient.PostLogoutRedirectUris.Concat(new List<string>() {
+            //        $"{config.Urls.WebSpaLocalUrl}",
+            //        $"{config.Urls.WebSpaLocalUrl}/index.html",
+            //    }).ToList();
+
+            //    spaClient.AllowedCorsOrigins = spaClient.AllowedCorsOrigins.Concat(new List<string>() {
+            //        $"{config.Urls.WebSpaLocalUrl}"
+            //    }).ToList();
+            //}
+
+            //clients.Add(spaClient);
+
             if (HostingEnvironmentHelper.IsDevelopmentAny())
             {
-                spaClient.RedirectUris = spaClient.RedirectUris.Concat(new List<string>() {
-                    $"{config.Urls.WebSpaLocalUrl}",
-                    $"{config.Urls.WebSpaLocalUrl}/index.html",
-                    $"{config.Urls.WebSpaLocalUrl}/callback.html",
-                    $"{config.Urls.WebSpaLocalUrl}/silent.html",
-                    $"{config.Urls.WebSpaLocalUrl}/popup.html",
-                }).ToList();
+                //// SPA client using code flow
+                //clients.Add(new Client
+                //{
+                //    ClientId = "webtestspa",
+                //    ClientName = "Lexiconner Web Test SPA Client",
+                //    ClientUri = config.Urls.WebTestSpaExternalUrl,
 
-                spaClient.PostLogoutRedirectUris = spaClient.PostLogoutRedirectUris.Concat(new List<string>() {
-                    $"{config.Urls.WebSpaLocalUrl}",
-                    $"{config.Urls.WebSpaLocalUrl}/index.html",
-                }).ToList();
+                //    AllowedGrantTypes = GrantTypes.Code,
+                //    RequirePkce = true, // Proof Key for Code Exchange (PKCE)
+                //    RequireClientSecret = false,
+                //    RequireConsent = false,
 
-                spaClient.AllowedCorsOrigins = spaClient.AllowedCorsOrigins.Concat(new List<string>() {
-                    $"{config.Urls.WebSpaLocalUrl}"
-                }).ToList();
-            }
+                //    RedirectUris =
+                //    {
+                //        $"{config.Urls.WebTestSpaExternalUrl}",
+                //        $"{config.Urls.WebTestSpaExternalUrl}/index.html",
+                //        $"{config.Urls.WebTestSpaExternalUrl}/callback.html",
+                //        $"{config.Urls.WebTestSpaExternalUrl}/silent.html",
+                //        $"{config.Urls.WebTestSpaExternalUrl}/popup.html",
+                //    },
+                //    PostLogoutRedirectUris = { 
+                //        $"{config.Urls.WebTestSpaExternalUrl}/index.html" 
+                //    },
+                //    AllowedCorsOrigins = { 
+                //        $"{config.Urls.WebTestSpaExternalUrl}" 
+                //    },
 
-            clients.Add(spaClient);
+                //    AllowedScopes = {
+                //        IdentityServerConstants.StandardScopes.OpenId,
+                //        IdentityServerConstants.StandardScopes.Profile,
+                //        IdentityServerConstants.StandardScopes.OfflineAccess, // refresh token
+                //        "webapi"
+                //    },
 
-            if (HostingEnvironmentHelper.IsDevelopmentAny())
-            {
-                // SPA client using code flow
-                clients.Add(new Client
-                {
-                    ClientId = "webtestspa",
-                    ClientName = "Lexiconner Web Test SPA Client",
-                    ClientUri = config.Urls.WebTestSpaExternalUrl,
+                //    // refresh token settings
+                //    // refresh tokens are supported for the following flows: authorization code, hybrid and resource owner password credential flow.
+                //    AllowOfflineAccess = true,
+                //    RefreshTokenUsage = TokenUsage.ReUse,
+                //    RefreshTokenExpiration = TokenExpiration.Absolute,
+                //    AbsoluteRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(30, 0, 0, 0)).TotalSeconds),
+                //    SlidingRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(15, 0, 0, 0)).TotalSeconds),
 
-                    AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = true, // Proof Key for Code Exchange (PKCE)
-                    RequireClientSecret = false,
-                    RequireConsent = false,
-
-                    RedirectUris =
-                    {
-                        $"{config.Urls.WebTestSpaExternalUrl}",
-                        $"{config.Urls.WebTestSpaExternalUrl}/index.html",
-                        $"{config.Urls.WebTestSpaExternalUrl}/callback.html",
-                        $"{config.Urls.WebTestSpaExternalUrl}/silent.html",
-                        $"{config.Urls.WebTestSpaExternalUrl}/popup.html",
-                    },
-                    PostLogoutRedirectUris = { 
-                        $"{config.Urls.WebTestSpaExternalUrl}/index.html" 
-                    },
-                    AllowedCorsOrigins = { 
-                        $"{config.Urls.WebTestSpaExternalUrl}" 
-                    },
-
-                    AllowedScopes = {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.OfflineAccess, // refresh token
-                        "webapi"
-                    },
-
-                    // refresh token settings
-                    // refresh tokens are supported for the following flows: authorization code, hybrid and resource owner password credential flow.
-                    AllowOfflineAccess = true,
-                    RefreshTokenUsage = TokenUsage.ReUse,
-                    RefreshTokenExpiration = TokenExpiration.Absolute,
-                    AbsoluteRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(30, 0, 0, 0)).TotalSeconds),
-                    SlidingRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(15, 0, 0, 0)).TotalSeconds),
-
-                    //Claims = new List<Claim>
-                    //{
-                    //    new Claim("test-set-in-client-config", "test")
-                    //},
-                });
+                //    //Claims = new List<Claim>
+                //    //{
+                //    //    new Claim("test-set-in-client-config", "test")
+                //    //},
+                //});
 
                 // IdentityServer v4 JavaScript Client
                 clients.Add(new Client

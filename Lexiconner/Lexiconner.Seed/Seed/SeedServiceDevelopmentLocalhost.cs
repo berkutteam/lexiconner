@@ -19,7 +19,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.IdGenerators;
+using MongoDB.Bson.Serialization.Serializers;
 using NodaTime;
 using System;
 using System.Collections.Concurrent;
@@ -565,6 +568,18 @@ namespace Lexiconner.Seed.Seed
                     cm.SetIgnoreExtraElements(true);
                 });
             }
+
+            //if (!BsonClassMap.IsClassMapRegistered(typeof(ApplicationRoleEntity)))
+            //{
+            //    BsonClassMap.RegisterClassMap<ApplicationRoleEntity>(cm =>
+            //    {
+            //        cm.AutoMap();
+            //        cm.SetIgnoreExtraElements(true);
+            //        cm.MapIdProperty(x => x.Id)
+            //            .SetIdGenerator(StringObjectIdGenerator.Instance)
+            //            .SetSerializer(new StringSerializer(BsonType.ObjectId));
+            //    });
+            //}
         }
 
         private async Task SeedStudyItemsForCollection(

@@ -32,6 +32,10 @@ namespace Lexiconner.Domain.Entitites
             Id = ObjectId.GenerateNewId().ToString();
         }
 
+        //[BsonId]
+        //[BsonRepresentation(BsonType.ObjectId)]
+        //public override string Id { get; set; }
+
         /// <summary>
         /// User is used for demo
         /// NB: This prop doesn't go to DB

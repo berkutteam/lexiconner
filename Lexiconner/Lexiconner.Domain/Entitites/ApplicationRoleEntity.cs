@@ -4,6 +4,7 @@ using Lexiconner.Domain.Entitites.Base;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDbGenericRepository.Attributes;
+using MongoDbGenericRepository.Utils;
 using NUlid;
 using NUlid.Rng;
 using System;
@@ -28,5 +29,9 @@ namespace Lexiconner.Domain.Entitites
             // we can rewrite Id in constructor as it is intialised in base constructor
             Id = ObjectId.GenerateNewId().ToString();
         }
+
+        //[BsonId]
+        //[BsonRepresentation(BsonType.ObjectId)]
+        //public override string Id { get; set; }
     }
 }
