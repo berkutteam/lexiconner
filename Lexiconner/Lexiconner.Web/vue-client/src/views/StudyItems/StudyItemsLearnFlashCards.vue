@@ -41,7 +41,8 @@
                                 <i class="fas fa-question"></i>
                             </span>
                             <span v-on:click="onNextClick()" class="card-bottom-control-item text-success">
-                                <i class="fas fa-chevron-right"></i>
+                                <!-- <i class="fas fa-chevron-right"></i> -->
+                                <i class="fas fa-check"></i>
                             </span>
                         </div>
                     </div>

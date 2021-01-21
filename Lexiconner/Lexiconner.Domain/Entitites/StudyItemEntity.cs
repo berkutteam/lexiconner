@@ -70,6 +70,56 @@ namespace Lexiconner.Domain.Entitites
             return isUpdated;
         }
 
+        public bool MarkAsLearned()
+        {
+            bool isUpdated = false;
+            if (!this.TrainingInfo.IsLearned)
+            {
+                this.TrainingInfo.IsLearned = true;
+                this.TrainingInfo.LearnedAt = DateTimeOffset.UtcNow;
+                isUpdated = true;
+            }
+            return isUpdated;
+        }
+
+        public bool MarkAsNotLearned()
+        {
+            bool isUpdated = false;
+            if (this.TrainingInfo.IsLearned)
+            {
+                this.TrainingInfo.IsLearned = false;
+                this.TrainingInfo.NotLearnedAt = DateTimeOffset.UtcNow;
+                isUpdated = true;
+            }
+            return isUpdated;
+        }
+
+        public bool RecalculateTotalTrainingProgress()
+        {
+            bool isUpdated = false;
+
+            double currentProgress;
+            if(this.TrainingInfo.IsLearned)
+            {
+                currentProgress = 1.0;
+            } 
+            else
+            {
+                currentProgress = Math.Round(
+                   this.TrainingInfo.Trainings.Select(x => x.Progress).Sum() / this.TrainingInfo.Trainings.Count
+               );
+            }
+
+            if(currentProgress != this.TrainingInfo.TotalProgress)
+            {
+                this.TrainingInfo.TotalProgress = currentProgress;
+                isUpdated = true;
+            }
+           
+            return isUpdated;
+        }
+
+
         #endregion
     }
 
@@ -92,6 +142,31 @@ namespace Lexiconner.Domain.Entitites
         }
 
         public List<StudyItemTrainingProgressItemEntity> Trainings { get; set; }
+
+        /// <summary>
+        /// Total training progress. Percents [0, 1]
+        /// </summary>
+        public double TotalProgress { get; set; }
+
+        /// <summary>
+        /// Indicates that item is completely learned.
+        /// </summary>
+        public bool IsLearned { get; set; }
+
+        /// <summary>
+        /// When was learned or marked as learned
+        /// </summary>
+        public DateTimeOffset? LearnedAt { get; set; }
+
+        /// <summary>
+        /// When was marked as not learned
+        /// </summary>
+        public DateTimeOffset? NotLearnedAt { get; set; }
+
+        /// <summary>
+        /// When to check again for repetition
+        /// </summary>
+        // public DateTimeOffset? LikelyToForgetAt { get; set; }
 
         public double GetOverallProgress()
         {

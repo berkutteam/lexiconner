@@ -24,6 +24,24 @@ namespace Lexiconner.Domain.Dtos.StudyItems
         public string LanguageCode { get; set; }
         public List<string> Tags { get; set; }
 
-        public StudyItemImageEntity Image { get; set; }
+        public StudyItemImageDto Image { get; set; }
+        public StudyItemTrainingInfoDto TrainingInfo { get; set; }
+    }
+
+    public class StudyItemImageDto
+    {
+        public string Url { get; set; }
+        public string Height { get; set; }
+        public string Width { get; set; }
+        public string Thumbnail { get; set; }
+        public string ThumbnailHeight { get; set; }
+        public string ThumbnailWidth { get; set; }
+        public string Base64Encoding { get; set; }
+    }
+
+    public class StudyItemTrainingInfoDto
+    {
+        public double TotalProgress { get; set; }
+        public bool IsLearned { get; set; }
     }
 }

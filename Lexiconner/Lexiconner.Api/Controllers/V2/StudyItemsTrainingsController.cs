@@ -45,6 +45,30 @@ namespace Lexiconner.Api.Controllers.V2
             return BaseResponse(result);
         }
 
+        [HttpPut("learned/{studyItemId}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> MarkStudyItemAsLearned([FromRoute] string studyItemId)
+        {
+            await _studyItemsService.MarkStudyItemAsLearnedAsync(GetUserId(), studyItemId);
+            return StatusCodeBaseResponse();
+        }
+
+        [HttpPut("not_learned/{studyItemId}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> MarkStudyItemAsNotLearned([FromRoute] string studyItemId)
+        {
+            await _studyItemsService.MarkStudyItemAsNotLearnedAsync(GetUserId(), studyItemId);
+            return StatusCodeBaseResponse();
+        }
+
 
         #region Flashcards
 

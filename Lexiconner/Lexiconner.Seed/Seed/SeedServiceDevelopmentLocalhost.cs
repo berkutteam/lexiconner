@@ -336,10 +336,6 @@ namespace Lexiconner.Seed.Seed
 
             var filmsImportResult = await _filmImporter.ImportTxtFormatFilmsAsync(_config.Import.FilmsFilePath);
 
-
-            // TODO: drop after tests
-            filmsImportResult = filmsImportResult.Take(1);
-
             foreach (var user in usersWithImport)
             {
                 if(await _dataRepository.ExistsAsync<UserFilmEntity>(x => x.UserId == user.Id))
@@ -586,9 +582,6 @@ namespace Lexiconner.Seed.Seed
             {
                 importResult = await _wordTxtImporter.ImportMdFormatWords(importFilePath);
             }
-
-            // TODO: drop after tests
-            importResult.Words = importResult.Words.Take(3).ToList();
 
             // create imported custom collections
             var collectionMap = new Dictionary<string, CustomCollectionEntity>();

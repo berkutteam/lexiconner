@@ -67,24 +67,46 @@
                                 >
                                     <div class="d-flex w-100 justify-content-between">
                                         <h6 class="mb-1">{{item.title}}</h6>
-                                        <div>
-                                            <span class="badge badge-info mr-1">{{ item.languageCode }}</span>
-                                            <span
-                                                v-for="(tag) in item.tags"
-                                                v-bind:key="tag"
-                                                class="badge badge-secondary mr-1"
-                                            >{{tag}}</span>
-                                            <span v-on:click="onStudyItemFavoriteClick(item)" class="cursor-pointer">
-                                                <i v-if="item.isFavourite" class="fas fa-star text-warning"></i>
-                                                <i v-else class="far fa-star text-warning"></i>
-                                            </span>
-                                            <span class="ml-2 mr-2">|</span>
+
+                                        <!-- Controls -->
+                                        <div class="d-flex justify-content-end flex-grow-1">
+                                            <div class="d-flex align-items-center">
+                                                <!-- Progress -->
+                                                <div class="mr-2" style="width: 60px">
+                                                    <progress-bar size="small" bar-color="#67c23a" v-bind:val="item.trainingInfo.totalProgress" text=""></progress-bar>
+                                                </div>
+                                                <span class="badge badge-info mr-1">{{ item.languageCode }}</span>
+
+                                                <!-- Tags -->
+                                                <span
+                                                    v-for="(tag) in item.tags"
+                                                    v-bind:key="tag"
+                                                    class="badge badge-secondary mr-1"
+                                                >
+                                                    {{tag}}
+                                                </span>
+
+                                                <!-- Favorite -->
+                                                <span v-on:click="onStudyItemFavoriteClick(item)" class="cursor-pointer">
+                                                    <i v-if="item.isFavourite" class="fas fa-star text-warning"></i>
+                                                    <i v-else class="far fa-star text-warning"></i>
+                                                </span>
+                                                <span class="ml-2 mr-2">|</span>
+                                            </div>
+
+                                            <!-- Buttons -->
                                             <span>
+                                                <span v-on:click="onMarkStudyItemAsLearned(item.id)" class="badge badge-secondary mr-1 cursor-pointer">
+                                                    <i class="fas fa-check"></i>
+                                                </span>
+                                                <span v-on:click="onMarkStudyItemAsNotLearned(item.id)" class="badge badge-secondary mr-1 cursor-pointer">
+                                                    <i class="fas fa-redo"></i>
+                                                </span>
                                                 <span v-on:click="onUpdateStudyItem(item.id)" class="badge badge-secondary mr-1 cursor-pointer">
                                                     <i class="fas fa-pencil-alt"></i>
                                                 </span>
                                                 <span v-on:click="onDeleteStudyItem(item.id)" class="badge badge-secondary cursor-pointer">
-                                                    <i class="fas fa-times"></i>
+                                                    <i class="fas fa-trash"></i>
                                                 </span>
                                             </span>
                                         </div>
@@ -139,11 +161,24 @@
                                                 class="badge badge-secondary mr-1"
                                             >{{tag}}</span>
                                         </div>
+
+                                        <!-- Progress -->
+                                        <div class="mt-3" style="width: 100%">
+                                            <progress-bar size="small" bar-color="#67c23a" v-bind:val="item.trainingInfo.totalProgress" text=""></progress-bar>
+                                        </div>
                                     </div>
+
+                                    <!-- Controls -->
                                     <div class="card-bottom-controls">
                                         <span v-on:click="onStudyItemFavoriteClick(item)" class="card-bottom-control-item">
                                             <i v-if="item.isFavourite" class="fas fa-star text-warning"></i>
                                             <i v-else class="far fa-star text-warning"></i>
+                                        </span>
+                                        <span v-on:click="onMarkStudyItemAsLearned(item.id)" class="card-bottom-control-item">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                        <span v-on:click="onMarkStudyItemAsLearned(item.id)" class="card-bottom-control-item">
+                                            <i class="fas fa-redo"></i>
                                         </span>
                                         <span v-on:click="onUpdateStudyItem(item.id)" class="card-bottom-control-item">
                                             <i class="fas fa-pencil-alt"></i>
@@ -266,6 +301,8 @@ import TagsMultiselect from '@/components/TagsMultiselect';
 import CustomCollections from '@/components/CustomCollections';
 import StudyItemsFilters from '@/components/StudyItemsFilters';
 
+import ProgressBar from 'vue-simple-progress'
+
 const studyItemModelDefault = {
     title: null,
     description: null,
@@ -285,6 +322,7 @@ export default {
         TagsMultiselect,
         CustomCollections,
         StudyItemsFilters,
+        ProgressBar,
     },
     data: function() {
         return {
@@ -371,6 +409,12 @@ export default {
             } else {
                 this.addStudyItemToFavourites(studyItem.id);
             }
+        },
+        onMarkStudyItemAsLearned: function(studyItemId) {
+            this.markStudyItemAsLearned(studyItemId);
+        },
+        onMarkStudyItemAsNotLearned: function(studyItemId) {
+            this.markStudyItemAsNotLearned(studyItemId);
         },
         createEditStudyItem: function(mode) {
             if(mode === 'create') {
@@ -461,6 +505,44 @@ export default {
             this.$store.dispatch(storeTypes.STUDY_ITEM_DELETE_FROM_FAVOURITES, {
                 studyItemId: studyItemId,
             }).then(() => {
+            }).catch(err => {
+                console.error(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            });
+        },
+        markStudyItemAsLearned: function(studyItemId) {
+            this.$store.dispatch(storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED, {
+                studyItemId: studyItemId,
+            }).then(() => {
+                 this.$notify({
+                    group: 'app',
+                    type: 'success',
+                    title: `Item marked as learned.`,
+                    text: '',
+                    duration: 5000,
+                });
+
+                // reload
+                this.loadStudyItems();
+            }).catch(err => {
+                console.error(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            });
+        },
+        markStudyItemAsNotLearned: function(studyItemId) {
+            this.$store.dispatch(storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED, {
+                studyItemId: studyItemId,
+            }).then(() => {
+                 this.$notify({
+                    group: 'app',
+                    type: 'success',
+                    title: `Item marked as not learned.`,
+                    text: '',
+                    duration: 5000,
+                });
+
+                // reload
+                this.loadStudyItems();
             }).catch(err => {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);

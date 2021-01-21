@@ -692,6 +692,8 @@ a {
 
         .item-card-image {
             max-height: 20rem;
+            min-height: 10rem;
+            background-color: gainsboro;
         }
 
         .card-bottom-controls {
@@ -760,6 +762,8 @@ a {
 
         .training-image {
             max-height: 20rem;
+            min-height: 10rem;
+            background-color: gainsboro;
         }
 
         .card-bottom-controls {

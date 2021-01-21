@@ -294,6 +294,12 @@ class API {
             getTrainingStatistics() {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/stats`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
+            markStudyItemAsLearned({ studyItemId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/learned/${studyItemId}`, {}), method: "put" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            markStudyItemAsNotLearned({ studyItemId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/not_learned/${studyItemId}`, {}), method: "put" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
             flashcardsTrainingStart({collectionId, limit}) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/flashcards`, {collectionId, limit}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },

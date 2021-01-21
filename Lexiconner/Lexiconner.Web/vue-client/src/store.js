@@ -305,6 +305,12 @@ export default new Vuex.Store({
             let { data } = payload;
             state.trainingStats = data;
         },
+        [storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED_SET](state, payload) {
+            let { studyItemId } = payload;
+        },
+        [storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED_SET](state, payload) {
+            let { studyItemId } = payload;
+        },
         [storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START_SET](state, payload) {
             let { data } = payload;
             state.trainingFlashcards = data;
@@ -780,6 +786,52 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEM_TRAINING_STATS_LOAD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED](context, { studyItemId }) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED,
+                loading: true,
+            });
+            return api.webApi().markStudyItemAsLearned({ studyItemId }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED_SET, {
+                    studyItemId
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED](context, { studyItemId }) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED,
+                loading: true,
+            });
+            return api.webApi().markStudyItemAsLearned({ studyItemId }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED_SET, {
+                    studyItemId
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED,
                     loading: false,
                 });
                 throw err;

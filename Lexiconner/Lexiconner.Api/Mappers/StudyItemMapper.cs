@@ -21,13 +21,47 @@ namespace Lexiconner.Api.Mappers
                 IsFavourite = entity.IsFavourite,
                 LanguageCode = entity.LanguageCode,
                 Tags = entity.Tags,
-                Image = entity.Image,
+                Image = MapToDto(entity.Image),
+                TrainingInfo = MapToDto(entity.TrainingInfo),
             };
         }
 
         public static IEnumerable<StudyItemDto> MapToDto(IEnumerable<StudyItemEntity> entities)
         {
             return entities.Select(x => MapToDto(x)).ToList();
+        }
+
+        public static StudyItemImageDto MapToDto(StudyItemImageEntity entity)
+        {
+            if(entity == null)
+            {
+                return null;
+            }
+
+            return new StudyItemImageDto
+            {
+                Url = entity.Url,
+                Height = entity.Height,
+                Width = entity.Width,
+                Thumbnail = entity.Thumbnail,
+                ThumbnailHeight = entity.ThumbnailHeight,
+                ThumbnailWidth = entity.ThumbnailWidth,
+                Base64Encoding = entity.Base64Encoding,
+            };
+        }
+
+        public static StudyItemTrainingInfoDto MapToDto(StudyItemTrainingInfoEntity entity)
+        {
+            if (entity == null)
+            {
+                return null;
+            }
+
+            return new StudyItemTrainingInfoDto
+            {
+                TotalProgress = entity.TotalProgress,
+                IsLearned = entity.IsLearned,
+            };
         }
 
         public static StudyItemEntity MapToEntity(string userId, StudyItemCreateDto dto)

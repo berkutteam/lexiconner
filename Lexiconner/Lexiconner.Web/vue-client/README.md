@@ -153,6 +153,9 @@ https://www.npmjs.com/package/vue-scrollto
 ### Print
 https://printjs.crabbly.com/
 
+### Progress bar
+https://github.com/dzwillia/vue-simple-progress
+
 
 # Used components
 

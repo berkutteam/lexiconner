@@ -228,13 +228,40 @@ namespace Lexiconner.Api.Services
             return result;
         }
 
+        public async Task MarkStudyItemAsLearnedAsync(string userId, string studyItemId)
+        {
+            var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.UserId == userId && x.Id == studyItemId);
+            if (entity.MarkAsLearned())
+            {
+                entity.RecalculateTotalTrainingProgress();
+
+                await _dataRepository.UpdateAsync(entity);
+            }
+        }
+
+        public async Task MarkStudyItemAsNotLearnedAsync(string userId, string studyItemId)
+        {
+            var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.UserId == userId && x.Id == studyItemId);
+            if (entity.MarkAsNotLearned())
+            {
+                entity.RecalculateTotalTrainingProgress();
+
+                await _dataRepository.UpdateAsync(entity);
+            }
+        }
+
         public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, string collectionId, int limit)
         {
             var predicate = PredicateBuilder.New<StudyItemEntity>(x =>
                 x.UserId == userId &&
                 (
                     x.TrainingInfo == null ||
-                    (x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow))
+                    !x.TrainingInfo.Trainings.Any() ||
+                    (
+                        x.TrainingInfo != null && 
+                        x.TrainingInfo.IsLearned != true &&
+                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
+                    )
                 )
             );
 
@@ -293,10 +320,13 @@ namespace Lexiconner.Api.Services
                 if(training.Progress < 1)
                 {
                     training.NextTrainingdAt = DateTime.UtcNow.Add(infoAttribute.TrainIntervalTimespan);
-                } else
+                } 
+                else
                 {
                     training.NextTrainingdAt = DateTime.UtcNow.Add(infoAttribute.TrainIntervalForRepeatTimespan);
                 }
+
+                x.RecalculateTotalTrainingProgress();
 
                 return x;
             }).ToList();
