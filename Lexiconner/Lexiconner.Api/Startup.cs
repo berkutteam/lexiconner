@@ -148,10 +148,11 @@ namespace Lexiconner.Api
                     options.RequireHttpsMetadata = false;
                     options.Audience = config.JwtBearerAuth.Audience;
 
-                    //options.TokenValidationParameters = new TokenValidationParameters
-                    //{
-                    //    ValidateAudience = false
-                    //};
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        // from IdentityServer v4 don't validate Audience, but validae scopes
+                        ValidateAudience = false
+                    };
 
                     options.Events = new JwtBearerEvents
                     {
@@ -182,6 +183,16 @@ namespace Lexiconner.Api
             {
                 IdentityModelEventSource.ShowPII = true; // show detail of error and see the problem
             }
+
+            // validate api scrope is present
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("DefaultWebApiScope", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim("scope", config.JwtBearerAuth.WebApiScope);
+                });
+            });
 
             services.AddSwaggerGen(options =>
             {
@@ -298,7 +309,7 @@ namespace Lexiconner.Api
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers().RequireAuthorization("DefaultWebApiScope");
             });
 
             // Swagger
