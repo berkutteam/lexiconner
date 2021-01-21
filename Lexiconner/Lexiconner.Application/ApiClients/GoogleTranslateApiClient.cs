@@ -11,10 +11,10 @@ using Google.Cloud.Translation.V2;
 using Lexiconner.Application.ApiClients.Dtos;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
-using static Lexiconner.Application.Config.GoogleSettings;
 using Lexiconner.Application.Exceptions;
 using System.Net;
 using Microsoft.Extensions.Logging;
+using static Lexiconner.Application.ApplicationSettings.GoogleSettings;
 
 namespace Lexiconner.Application.ApiClients
 {

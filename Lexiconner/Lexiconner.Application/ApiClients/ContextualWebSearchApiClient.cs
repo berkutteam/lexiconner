@@ -1,5 +1,5 @@
 ﻿using Lexiconner.Application.ApiClients.Dtos;
-using Lexiconner.Application.Config;
+using Lexiconner.Application.ApplicationSettings;
 using Lexiconner.Application.Exceptions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -13,7 +13,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using static Lexiconner.Application.ApiClients.Dtos.ImageSearchResponseDto;
-using static Lexiconner.Application.Config.RapidApiSettings;
 
 namespace Lexiconner.Application.ApiClients
 {

@@ -3,21 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lexiconner.Application.Config
+namespace Lexiconner.Application.ApplicationSettings
 {
-    public class MongoDbSettings
-    {
-        public string ConnectionString { get; set; }
-        public string Database { get; set; }
-    }
-
-    public class ImportSettings
-    {
-        public string RuWordsFilePath { get; set; }
-        public string EnWordsFilePath { get; set; }
-        public string FilmsFilePath { get; set; }
-    }
-
     public class GoogleSettings
     {
         public string ProjectId { get; set; }
@@ -55,16 +42,6 @@ namespace Lexiconner.Application.Config
 
             [JsonProperty("client_x509_cert_url")]
             public string ClientX509CertUrl { get; set; }
-        }
-    }
-
-    public class RapidApiSettings
-    {
-        public SpecificRapidApiSettings ContextualWebSearch { get; set; }
-
-        public class SpecificRapidApiSettings
-        {
-            public string ApplicationKey { get; set; }
         }
     }
 }

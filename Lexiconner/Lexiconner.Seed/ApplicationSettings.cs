@@ -1,5 +1,4 @@
 ﻿using Lexiconner.Application.ApplicationSettings;
-using Lexiconner.Application.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;

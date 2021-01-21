@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Options;
-using Lexiconner.Application.Config;
 using Lexiconner.Domain.Models;
 using System.Globalization;
+using Lexiconner.Application.ApplicationSettings;
 
 namespace Lexiconner.Application.ImportAndExport
 {

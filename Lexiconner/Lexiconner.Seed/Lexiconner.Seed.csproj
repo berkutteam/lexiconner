@@ -6,6 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove=".env__DevelopmentHeroku" />
+    <None Remove=".env__DevelopmentLocalhost" />
+    <None Remove=".env__ProductionHeroku" />
     <None Remove="appsettings.DevelopmentHeroku.json" />
     <None Remove="appsettings.DevelopmentLocalhost.json" />
     <None Remove="appsettings.json" />
@@ -21,6 +24,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include=".env__DevelopmentHeroku">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=".env__DevelopmentLocalhost">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include=".env__ProductionHeroku">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -42,15 +54,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update=".env__DevelopmentHeroku">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update=".env__DevelopmentLocalhost">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update=".env__ProductionHeroku">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="ImportData\en-words.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

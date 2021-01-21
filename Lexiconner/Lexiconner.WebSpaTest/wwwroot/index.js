@@ -41,7 +41,7 @@ document.getElementById("logout").addEventListener("click", logout, false);
 
 var config = {
     authority: "http://localhost:5004",
-    client_id: "webtestspav4",
+    client_id: "webtestspa",
     redirect_uri: "http://localhost:5021/callback.html",
     response_type: "code",
     scope: "openid profile webapi",
