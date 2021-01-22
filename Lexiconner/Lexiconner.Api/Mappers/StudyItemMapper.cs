@@ -60,7 +60,7 @@ namespace Lexiconner.Api.Mappers
             return new StudyItemTrainingInfoDto
             {
                 TotalProgress = entity.TotalProgress,
-                IsLearned = entity.IsLearned,
+                IsTrained = entity.IsTrained,
             };
         }
 

@@ -32,8 +32,8 @@ namespace Lexiconner.Api.Services.Interfaces
         Task DeleteStudyItem(string userId, string sutyItemId);
 
         Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId);
-        Task MarkStudyItemAsLearnedAsync(string userId, string studyItemId);
-        Task MarkStudyItemAsNotLearnedAsync(string userId, string studyItemId);
+        Task MarkStudyItemAsTrainedAsync(string userId, string studyItemId);
+        Task MarkStudyItemAsNotTrainedAsync(string userId, string studyItemId);
         Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, string collectionId, int limit);
         Task SaveTrainingResultsForFlashCardsAsync(string userId, FlashCardsTrainingResultDto results);
 

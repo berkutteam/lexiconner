@@ -45,27 +45,27 @@ namespace Lexiconner.Api.Controllers.V2
             return BaseResponse(result);
         }
 
-        [HttpPut("learned/{studyItemId}")]
+        [HttpPut("trained/{studyItemId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> MarkStudyItemAsLearned([FromRoute] string studyItemId)
+        public async Task<IActionResult> MarkStudyItemAsTrained([FromRoute] string studyItemId)
         {
-            await _studyItemsService.MarkStudyItemAsLearnedAsync(GetUserId(), studyItemId);
+            await _studyItemsService.MarkStudyItemAsTrainedAsync(GetUserId(), studyItemId);
             return StatusCodeBaseResponse();
         }
 
-        [HttpPut("not_learned/{studyItemId}")]
+        [HttpPut("not_trained{studyItemId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> MarkStudyItemAsNotLearned([FromRoute] string studyItemId)
+        public async Task<IActionResult> MarkStudyItemAsNotTrained([FromRoute] string studyItemId)
         {
-            await _studyItemsService.MarkStudyItemAsNotLearnedAsync(GetUserId(), studyItemId);
+            await _studyItemsService.MarkStudyItemAsNotTrainedAsync(GetUserId(), studyItemId);
             return StatusCodeBaseResponse();
         }
 

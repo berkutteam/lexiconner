@@ -42,6 +42,6 @@ namespace Lexiconner.Domain.Dtos.StudyItems
     public class StudyItemTrainingInfoDto
     {
         public double TotalProgress { get; set; }
-        public bool IsLearned { get; set; }
+        public bool IsTrained { get; set; }
     }
 }

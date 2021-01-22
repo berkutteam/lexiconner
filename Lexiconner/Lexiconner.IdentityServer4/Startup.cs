@@ -35,6 +35,7 @@ using FluentValidation.AspNetCore;
 using System.Collections.Generic;
 using Serilog;
 using Autofac;
+using Lexiconner.Persistence;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -342,6 +343,8 @@ namespace Lexiconner.IdentityServer4
 
         private void ConfigureMongoDb(IServiceCollection services)
         {
+            MongoDbEntityMapper.ConfigureMapping();
+
             /*
             * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
             * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.

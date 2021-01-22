@@ -41,6 +41,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using TMDbLib.Client;
 using Microsoft.IdentityModel.Tokens;
+using Lexiconner.Persistence;
 
 namespace Lexiconner.Api
 {
@@ -350,6 +351,8 @@ namespace Lexiconner.Api
 
         private void ConfigureMongoDb(IServiceCollection services)
         {
+            MongoDbEntityMapper.ConfigureMapping();
+
             /*
             * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
             * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.

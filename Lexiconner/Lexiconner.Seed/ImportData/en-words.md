@@ -731,3 +731,243 @@ The ball is in your court
 You are responsible for the next move
 I've done all I can. The ball is in your court now.
 ---
+
+***
+Snap down
+Защелкнуться
+When the trainee stood on the lower jaw of the shark, the upper jaw snapped down on his foot, trapping it completely.
+---
+
+***
+Get away form it all
+Ухеать куда-то чтобы расслабиться и одохнуть
+We need a vacation to get away from it all.
+---
+
+***
+Once-in-a-lifetime
+Уникальный и неповторимый
+We won a once-in-a-lifetime trip to New Zeland!
+---
+
+
+***
+Culture shock
+Культурный шок от посещения места с другой культурой
+I've never been anywhere like it. It was a culture shock.
+---
+
+
+***
+Run-down
+В плохом состоянии из-за неухода или ремонта (например, здания)
+The hotels in this area all look a little bit run-down.
+---
+
+
+***
+Itchy feet
+Желание путешествовать или переезжать
+I'll never settle down. I get itchy feets every few years.
+---
+
+
+***
+Go sightseeing
+Посещать достопремечательности как турист
+When we go to Paris, will we have time to go sightseeing?
+---
+
+
+***
+Feel homesick
+Скучать за домом и семьей
+I always feel homesick when I travel abroad.
+---
+
+
+***
+Off the beaten track
+Далеко от людей, дорог и зданий
+They lived in a house off the beaten track in the country.
+---
+
+
+***
+Unspoiled
+Не загразненный
+There are so many birds in this unspoiled countryside.
+---
+
+
+***
+Thirst for adventures
+Жажда приключений
+My son's thirst for adventure worries me sometimes.
+---
+
+
+***
+Look around
+Осмотреться, исследовать место или область
+We're going to look around the flower district this morning.
+---
+
+
+***
+Stop off
+Приостанавливать путешествие, чтобы посетить какое-то место
+We stopped off at a couple of museums along the way.
+---
+
+
+***
+Check out
+Выселяться с отеля
+We have to check out of the hotel before 1pm.
+---
+
+
+***
+Leg of the journey
+Этап путушествия от одного места к другому
+The firts leg of the journey is long flight to Singapore.
+---
+
+
+***
+Looking forward
+Быть взволнованым насчет чего-то что скоро случиться
+I'm really looking forward to seeing the pyramids.
+---
+
+
+***
+Hopelessly lost
+Полностью потерянный, полностью неспособный найти путь
+Every time I drive into the city I get hopelessly lost.
+---
+
+
+***
+Check in
+Регистрироваться в аэропорту или отеле
+You will get your boarding passes when you check in.
+---
+
+
+***
+Check out
+Посмотреть что что-то или кто-то интересный
+We're going to check out the zoo tomorrow.
+---
+
+
+***
+Getaway
+Короткий отпуск
+It's only a weekend getaway, so we won't need much luggage.
+---
+
+
+***
+See me off
+Приходить на станцию или в аэропорт, чтобы проводить кого-то
+My parents came to the airport to see me off.
+---
+
+
+***
+The shape of things to come
+Форма грядущих событий, дела в будущем
+Let us hope that that is the shape of things to come.
+This approach may well be the shape of things to come.
+Wouldn't that change the shape of things to come?
+---
+
+***
+Look up to somebody
+Have respect and admiration for someone
+I look up to my older brother
+---
+
+
+***
+Bring up somebody
+Care for a child and teach them how to behave
+They brought up their children to be polite and respectful
+---
+
+
+***
+Get along with somebody / get on with somebody
+Have a positive relationship with somebody
+She got along with her colleagues
+---
+
+***
+Drift apart
+Slowly become less friendly or close to somebody
+They drifted apart after they stopped working for the same company
+---
+
+***
+Take after somebody
+Have characteristics of a parant or relative
+You're lucky that you take after your intelligent mother
+---
+
+***
+Fall out with somebody
+Stop being friends with somebody, often after an argument
+My siblings fell out with each other for a few years
+---
+
+***
+Make friends with somebody
+Become friendly with a person
+I made friends with her a ling time ago
+---
+
+***
+Give birth to somebody
+Have a child
+My sister gave birth to a baby girl a few months ago
+---
+
+***
+See eye to eye with somebody
+Agree with or have similar opinions to somebody
+We used to fight a lot, but we see eye to eye nowadays
+---
+
+***
+Stick up for somebody
+Speak out in support of somebody
+Our parents taught us to stick up for each other at school
+---
+
+***
+Run in the family
+Be a common feature of a family
+Curly hair runs in the family
+---
+
+***
+Click with somebody
+Like somebody quickly and easily
+As soon as I met Tom, we just clicked
+---
+
+***
+Put your foot down
+Be strict about something
+My dad is putting his foot down about doing chores
+---
+
+***
+Think the world of somebody
+Have a very high opinion of somebody
+I think the world of my first grandchild
+---
+

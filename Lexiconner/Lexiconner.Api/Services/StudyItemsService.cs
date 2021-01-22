@@ -193,8 +193,16 @@ namespace Lexiconner.Api.Services
         public async Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId)
         {
             long totalItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId);
-            long onTrainingItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.Progress != 1));
-            long trainedItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => x.UserId == userId && x.TrainingInfo != null && !x.TrainingInfo.Trainings.Any(y => y.Progress != 1));
+            long onTrainingItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => 
+                x.UserId == userId && 
+                x.TrainingInfo != null && 
+                !x.TrainingInfo.IsTrained
+            );
+            long trainedItemCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => 
+                x.UserId == userId && 
+                x.TrainingInfo != null &&
+                x.TrainingInfo.IsTrained
+            );
 
             Func<string, TrainingType, Task<TrainingsStatisticsDto.TrainingStatisticsItemDto>> getTrainingStatisticsItem = async (_userId, trainingType) =>
             {
@@ -228,26 +236,20 @@ namespace Lexiconner.Api.Services
             return result;
         }
 
-        public async Task MarkStudyItemAsLearnedAsync(string userId, string studyItemId)
+        public async Task MarkStudyItemAsTrainedAsync(string userId, string studyItemId)
         {
             var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.UserId == userId && x.Id == studyItemId);
-            if (entity.MarkAsLearned())
-            {
-                entity.RecalculateTotalTrainingProgress();
-
-                await _dataRepository.UpdateAsync(entity);
-            }
+            entity.MarkAsTrained();
+            entity.RecalculateTotalTrainingProgress();
+            await _dataRepository.UpdateAsync(entity);
         }
 
-        public async Task MarkStudyItemAsNotLearnedAsync(string userId, string studyItemId)
+        public async Task MarkStudyItemAsNotTrainedAsync(string userId, string studyItemId)
         {
             var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.UserId == userId && x.Id == studyItemId);
-            if (entity.MarkAsNotLearned())
-            {
-                entity.RecalculateTotalTrainingProgress();
-
-                await _dataRepository.UpdateAsync(entity);
-            }
+            entity.MarkAsNotTrained();
+            entity.ResetTotalTrainingProgress();
+            await _dataRepository.UpdateAsync(entity);
         }
 
         public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, string collectionId, int limit)
@@ -259,7 +261,7 @@ namespace Lexiconner.Api.Services
                     !x.TrainingInfo.Trainings.Any() ||
                     (
                         x.TrainingInfo != null && 
-                        x.TrainingInfo.IsLearned != true &&
+                        !x.TrainingInfo.IsTrained &&
                         x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
                     )
                 )

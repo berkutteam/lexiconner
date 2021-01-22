@@ -25,6 +25,7 @@ using Lexiconner.Application.ApiClients;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Lexiconner.Persistence.Repositories;
+using Lexiconner.Persistence;
 
 namespace Lexiconner.Api.IntegrationTests.Utils
 {
@@ -108,6 +109,8 @@ namespace Lexiconner.Api.IntegrationTests.Utils
 
         private void ConfigureMongoDb(IServiceCollection services)
         {
+            MongoDbEntityMapper.ConfigureMapping();
+
             // add Mongo2Go
             services.AddSingleton<MongoDbRunner>(sp => {
                 return MongoDbRunner.Start();

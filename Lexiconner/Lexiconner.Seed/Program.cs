@@ -7,6 +7,7 @@ using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.Domain.Enums;
 using Lexiconner.IdentityServer4.Config;
+using Lexiconner.Persistence;
 using Lexiconner.Persistence.Cache;
 using Lexiconner.Persistence.Repositories;
 using Lexiconner.Persistence.Repositories.MongoDb;
@@ -206,6 +207,8 @@ namespace Lexiconner.Seed
 
         private static void ConfigureMongoDb(IServiceCollection services)
         {
+            MongoDbEntityMapper.ConfigureMapping();
+
             /*
             * Typically you only create one MongoClient instance for a given cluster and use it across your application. 
             * Creating multiple MongoClients will, however, still share the same pool of connections if and only if the connection strings are identical.

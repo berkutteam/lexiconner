@@ -70,25 +70,25 @@ namespace Lexiconner.Domain.Entitites
             return isUpdated;
         }
 
-        public bool MarkAsLearned()
+        public bool MarkAsTrained()
         {
             bool isUpdated = false;
-            if (!this.TrainingInfo.IsLearned)
+            if (!this.TrainingInfo.IsTrained)
             {
-                this.TrainingInfo.IsLearned = true;
-                this.TrainingInfo.LearnedAt = DateTimeOffset.UtcNow;
+                this.TrainingInfo.IsTrained = true;
+                this.TrainingInfo.TrainedAt = DateTimeOffset.UtcNow;
                 isUpdated = true;
             }
             return isUpdated;
         }
 
-        public bool MarkAsNotLearned()
+        public bool MarkAsNotTrained()
         {
             bool isUpdated = false;
-            if (this.TrainingInfo.IsLearned)
+            if (this.TrainingInfo.IsTrained)
             {
-                this.TrainingInfo.IsLearned = false;
-                this.TrainingInfo.NotLearnedAt = DateTimeOffset.UtcNow;
+                this.TrainingInfo.IsTrained = false;
+                this.TrainingInfo.NotTrainedAt = DateTimeOffset.UtcNow;
                 isUpdated = true;
             }
             return isUpdated;
@@ -99,7 +99,7 @@ namespace Lexiconner.Domain.Entitites
             bool isUpdated = false;
 
             double currentProgress;
-            if(this.TrainingInfo.IsLearned)
+            if(this.TrainingInfo.IsTrained)
             {
                 currentProgress = 1.0;
             } 
@@ -110,13 +110,16 @@ namespace Lexiconner.Domain.Entitites
                );
             }
 
-            if(currentProgress != this.TrainingInfo.TotalProgress)
-            {
-                this.TrainingInfo.TotalProgress = currentProgress;
-                isUpdated = true;
-            }
-           
+            this.TrainingInfo.TotalProgress = currentProgress;
+            isUpdated = true;
+
             return isUpdated;
+        }
+
+        public bool ResetTotalTrainingProgress()
+        {
+            this.TrainingInfo.TotalProgress = 0;
+            return true;
         }
 
 
@@ -149,24 +152,19 @@ namespace Lexiconner.Domain.Entitites
         public double TotalProgress { get; set; }
 
         /// <summary>
-        /// Indicates that item is completely learned.
+        /// Indicates that item is completely trained.
         /// </summary>
-        public bool IsLearned { get; set; }
+        public bool IsTrained { get; set; }
 
         /// <summary>
-        /// When was learned or marked as learned
+        /// When was learned or marked as trained
         /// </summary>
-        public DateTimeOffset? LearnedAt { get; set; }
+        public DateTimeOffset? TrainedAt { get; set; }
 
         /// <summary>
-        /// When was marked as not learned
+        /// When was marked as not trained
         /// </summary>
-        public DateTimeOffset? NotLearnedAt { get; set; }
-
-        /// <summary>
-        /// When to check again for repetition
-        /// </summary>
-        // public DateTimeOffset? LikelyToForgetAt { get; set; }
+        public DateTimeOffset? NotTrainedAt { get; set; }
 
         public double GetOverallProgress()
         {

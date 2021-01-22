@@ -62,7 +62,7 @@
                                 <a 
                                     v-for="(item) in studyItems"
                                     v-bind:key="`list-${item.id}`"
-                                    href="#" 
+                                    href="javascript:void(0)" 
                                     class="list-group-item list-group-item-action flex-column align-items-start study-item"
                                 >
                                     <div class="d-flex w-100 justify-content-between">
@@ -73,7 +73,13 @@
                                             <div class="d-flex align-items-center">
                                                 <!-- Progress -->
                                                 <div class="mr-2" style="width: 60px">
-                                                    <progress-bar size="small" bar-color="#67c23a" v-bind:val="item.trainingInfo.totalProgress" text=""></progress-bar>
+                                                    <progress-bar 
+                                                        size="small" 
+                                                        bar-color="#67c23a" 
+                                                        v-bind:max="100"
+                                                        v-bind:val="item.trainingInfo.totalProgress * 100" 
+                                                        text=""
+                                                    ></progress-bar>
                                                 </div>
                                                 <span class="badge badge-info mr-1">{{ item.languageCode }}</span>
 
@@ -96,10 +102,10 @@
 
                                             <!-- Buttons -->
                                             <span>
-                                                <span v-on:click="onMarkStudyItemAsLearned(item.id)" class="badge badge-secondary mr-1 cursor-pointer">
+                                                <span v-on:click="onMarkStudyItemAsTrained(item.id)" class="badge badge-secondary mr-1 cursor-pointer">
                                                     <i class="fas fa-check"></i>
                                                 </span>
-                                                <span v-on:click="onMarkStudyItemAsNotLearned(item.id)" class="badge badge-secondary mr-1 cursor-pointer">
+                                                <span v-on:click="onMarkStudyItemAsNotTrained(item.id)" class="badge badge-secondary mr-1 cursor-pointer">
                                                     <i class="fas fa-redo"></i>
                                                 </span>
                                                 <span v-on:click="onUpdateStudyItem(item.id)" class="badge badge-secondary mr-1 cursor-pointer">
@@ -164,7 +170,13 @@
 
                                         <!-- Progress -->
                                         <div class="mt-3" style="width: 100%">
-                                            <progress-bar size="small" bar-color="#67c23a" v-bind:val="item.trainingInfo.totalProgress" text=""></progress-bar>
+                                            <progress-bar 
+                                                size="small" 
+                                                bar-color="#67c23a" 
+                                                v-bind:max="100"
+                                                v-bind:val="item.trainingInfo.totalProgress * 100" 
+                                                text=""
+                                            ></progress-bar>
                                         </div>
                                     </div>
 
@@ -174,17 +186,17 @@
                                             <i v-if="item.isFavourite" class="fas fa-star text-warning"></i>
                                             <i v-else class="far fa-star text-warning"></i>
                                         </span>
-                                        <span v-on:click="onMarkStudyItemAsLearned(item.id)" class="card-bottom-control-item">
+                                        <span v-on:click="onMarkStudyItemAsTrained(item.id)" class="card-bottom-control-item">
                                             <i class="fas fa-check"></i>
                                         </span>
-                                        <span v-on:click="onMarkStudyItemAsLearned(item.id)" class="card-bottom-control-item">
+                                        <span v-on:click="onMarkStudyItemAsNotTrained(item.id)" class="card-bottom-control-item">
                                             <i class="fas fa-redo"></i>
                                         </span>
                                         <span v-on:click="onUpdateStudyItem(item.id)" class="card-bottom-control-item">
                                             <i class="fas fa-pencil-alt"></i>
                                         </span>
                                         <span v-on:click="onDeleteStudyItem(item.id)" class="card-bottom-control-item">
-                                            <i class="fas fa-times"></i>
+                                            <i class="fas fa-trash"></i>
                                         </span>
                                     </div>
                                 </div>
@@ -328,7 +340,7 @@ export default {
         return {
             privateState: {
                 storeTypes: storeTypes,
-                currentView: 'list', // ['list', 'cards']
+                currentView: localStorage.getItem(`studyItemsBrowse_currentView`) || 'list', // ['list', 'cards']
                 studyItemModel: _.cloneDeep(studyItemModelDefault),
                 modalMode: 'create', // ['create', 'edit']
             },
@@ -377,6 +389,7 @@ export default {
         },
         toggleView: function() {
             this.privateState.currentView = this.privateState.currentView === 'list' ? 'cards' : 'list';
+            localStorage.setItem(`studyItemsBrowse_currentView`, this.privateState.currentView);
         },
         onCreateStudyItem: function() {
             this.privateState.modalMode = 'create';
@@ -410,11 +423,11 @@ export default {
                 this.addStudyItemToFavourites(studyItem.id);
             }
         },
-        onMarkStudyItemAsLearned: function(studyItemId) {
-            this.markStudyItemAsLearned(studyItemId);
+        onMarkStudyItemAsTrained: function(studyItemId) {
+            this.markStudyItemAsTrained(studyItemId);
         },
-        onMarkStudyItemAsNotLearned: function(studyItemId) {
-            this.markStudyItemAsNotLearned(studyItemId);
+        onMarkStudyItemAsNotTrained: function(studyItemId) {
+            this.markStudyItemAsNotTrained(studyItemId);
         },
         createEditStudyItem: function(mode) {
             if(mode === 'create') {
@@ -510,14 +523,14 @@ export default {
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
         },
-        markStudyItemAsLearned: function(studyItemId) {
-            this.$store.dispatch(storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED, {
+        markStudyItemAsTrained: function(studyItemId) {
+            this.$store.dispatch(storeTypes.STUDY_ITEM_TRAINING_MARK_AS_TRAINED, {
                 studyItemId: studyItemId,
             }).then(() => {
                  this.$notify({
                     group: 'app',
                     type: 'success',
-                    title: `Item marked as learned.`,
+                    title: `Item marked as trained.`,
                     text: '',
                     duration: 5000,
                 });
@@ -529,14 +542,14 @@ export default {
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
         },
-        markStudyItemAsNotLearned: function(studyItemId) {
+        markStudyItemAsNotTrained: function(studyItemId) {
             this.$store.dispatch(storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED, {
                 studyItemId: studyItemId,
             }).then(() => {
                  this.$notify({
                     group: 'app',
                     type: 'success',
-                    title: `Item marked as not learned.`,
+                    title: `Item marked as not trained.`,
                     text: '',
                     duration: 5000,
                 });

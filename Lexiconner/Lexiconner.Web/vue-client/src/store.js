@@ -305,7 +305,7 @@ export default new Vuex.Store({
             let { data } = payload;
             state.trainingStats = data;
         },
-        [storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED_SET](state, payload) {
+        [storeTypes.STUDY_ITEM_TRAINING_MARK_AS_TRAINED_SET](state, payload) {
             let { studyItemId } = payload;
         },
         [storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED_SET](state, payload) {
@@ -791,24 +791,24 @@ export default new Vuex.Store({
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED](context, { studyItemId }) {
+        [storeTypes.STUDY_ITEM_TRAINING_MARK_AS_TRAINED](context, { studyItemId }) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED,
+                target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_TRAINED,
                 loading: true,
             });
-            return api.webApi().markStudyItemAsLearned({ studyItemId }).then(({ data, ok }) => {
+            return api.webApi().markStudyItemAsTrained({ studyItemId }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED,
+                    target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_TRAINED,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED_SET, {
+                commit(storeTypes.STUDY_ITEM_TRAINING_MARK_AS_TRAINED_SET, {
                     studyItemId
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_LEARNED,
+                    target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_TRAINED,
                     loading: false,
                 });
                 throw err;
@@ -820,7 +820,7 @@ export default new Vuex.Store({
                 target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED,
                 loading: true,
             });
-            return api.webApi().markStudyItemAsLearned({ studyItemId }).then(({ data, ok }) => {
+            return api.webApi().markStudyItemAsNotTrained({ studyItemId }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED,
                     loading: false,
