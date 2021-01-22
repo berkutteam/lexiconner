@@ -207,89 +207,10 @@
 
 
                 <!-- Study item create/edit -->
-                <modal 
-                    name="study-item-create-edit" 
-                    height="auto"
-                    width="450px"
-                    v-bind:classes="['v--modal', 'v--modal-box', 'v--modal-box--overflow-visible', 'v--modal-box--sm-fullwidth']"
-                    v-bind:clickToClose="false"
+                <study-item-create-update-modal
+                    ref="studyItemCreateUpdateModal"
                 >
-                    <div class="app-modal">
-                        <div class="app-modal-header">
-                            <div class="app-modal-title">
-                                <span v-if="privateState.modalMode === 'create'">Create item</span>
-                                <span v-if="privateState.modalMode === 'edit'">Edit item</span>
-                            </div>
-                            <div v-on:click="$modal.hide('study-item-create-edit')" class="app-modal-close">
-                                <i class="fas fa-times"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="app-modal-content">
-                            <form v-on:submit.prevent="createEditStudyItem(privateState.modalMode)">
-                                <div class="form-group">
-                                    <label for="studyItemModel__title">Title</label>
-                                    <input v-model="privateState.studyItemModel.title" type="text" class="form-control" id="studyItemModel__title" placeholder="Title" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="studyItemModel__description">Description</label>
-                                    <textarea v-model="privateState.studyItemModel.description" type="text" class="form-control" id="studyItemModel__description" placeholder="Description" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="studyItemModel__exampleText">Example text</label>
-                                    <textarea 
-                                        v-for="(exampleText, exampleTextIndex) in privateState.studyItemModel.exampleTexts"
-                                        v-bind:key="`study-item-exampleText-${exampleTextIndex}`"
-                                        v-model="privateState.studyItemModel.exampleTexts[exampleTextIndex]" 
-                                        v-bind:placeholder="`Example text ${exampleTextIndex + 1}`"
-                                        type="text" 
-                                        class="form-control mb-1" 
-                                        id="studyItemModel__exampleText" 
-                                    />
-                                    <div class="btn-group" role="group">
-                                        <button 
-                                            v-on:click="onAddStudyItemExampleText" 
-                                            type="button" 
-                                            class="btn btn-secondary mr-0"
-                                        >
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        <button 
-                                            v-on:click="onRemoveStudyItemExampleText" 
-                                            type="button" 
-                                            class="btn btn-secondary"
-                                        >
-                                            <i class="fas fa-minus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="form-group form-check">
-                                    <input v-model="privateState.studyItemModel.isFavourite" class="form-check-input" type="checkbox" id="studyItemModel__isFavourite">
-                                    <label class="form-check-label" for="studyItemModel__isFavourite">
-                                        Favourite
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label for="">Language</label>
-                                    <language-code-select
-                                        v-model="privateState.studyItemModel.languageCode"
-                                    />
-                                </div>
-                                <div class="form-group">
-                                    <label for="">Tags</label>
-                                    <tags-multiselect 
-                                        v-model="privateState.studyItemModel.tags" 
-                                    ></tags-multiselect>
-                                </div>
-                                <loading-button 
-                                    type="submit"
-                                    v-bind:loading="sharedState.loading[privateState.storeTypes.STUDY_ITEM_CREATE] || sharedState.loading[privateState.storeTypes.STUDY_ITEM_UPDATE]"
-                                    class="btn btn-outline-success btn-block"
-                                >Save</loading-button>
-                            </form>
-                        </div>
-                    </div>
-                </modal>
+                </study-item-create-update-modal>
             </div>
         </div>
     </div>
@@ -308,32 +229,20 @@ import datetimeUtil from '@/utils/datetime';
 import RowLoader from '@/components/loaders/RowLoader';
 import LoadingButton from '@/components/LoadingButton';
 import PaginationWrapper from '@/components/PaginationWrapper';
-import LanguageCodeSelect from '@/components/LanguageCodeSelect';
-import TagsMultiselect from '@/components/TagsMultiselect';
 import CustomCollections from '@/components/CustomCollections';
 import StudyItemsFilters from '@/components/StudyItemsFilters';
+import StudyItemCreateUpdateModal from './StudyItemCreateUpdateModal';
 
 import ProgressBar from 'vue-simple-progress'
-
-const studyItemModelDefault = {
-    title: null,
-    description: null,
-    exampleTexts: [""],
-    isFavourite: false,
-    languageCode: "en",
-    tags: [],
-};
 
 export default {
     name: 'study-items-browse',
     components: {
         RowLoader,
-        LoadingButton,
         PaginationWrapper,
-        LanguageCodeSelect,
-        TagsMultiselect,
         CustomCollections,
         StudyItemsFilters,
+        StudyItemCreateUpdateModal,
         ProgressBar,
     },
     data: function() {
@@ -341,8 +250,6 @@ export default {
             privateState: {
                 storeTypes: storeTypes,
                 currentView: localStorage.getItem(`studyItemsBrowse_currentView`) || 'list', // ['list', 'cards']
-                studyItemModel: _.cloneDeep(studyItemModelDefault),
-                modalMode: 'create', // ['create', 'edit']
             },
         };
     },
@@ -392,18 +299,10 @@ export default {
             localStorage.setItem(`studyItemsBrowse_currentView`, this.privateState.currentView);
         },
         onCreateStudyItem: function() {
-            this.privateState.modalMode = 'create';
-
-            // reset
-            this.privateState.studyItemModel = _.cloneDeep(studyItemModelDefault);
-
-            this.$modal.show('study-item-create-edit');
+            this.$refs.studyItemCreateUpdateModal.show({studyItemId: null});
         },
         onUpdateStudyItem: function(studyItemId) {
-            this.privateState.modalMode = 'edit';
-            let studyItem = this.studyItems.find(x => x.id === studyItemId);
-            this.privateState.studyItemModel = {id: studyItem.id, ...studyItem};
-            this.$modal.show('study-item-create-edit');
+            this.$refs.studyItemCreateUpdateModal.show({studyItemId});
         },
         onAddStudyItemExampleText: function() {
             this.privateState.studyItemModel.exampleTexts.push("");
@@ -428,60 +327,6 @@ export default {
         },
         onMarkStudyItemAsNotTrained: function(studyItemId) {
             this.markStudyItemAsNotTrained(studyItemId);
-        },
-        createEditStudyItem: function(mode) {
-            if(mode === 'create') {
-                this.createStudyItem();
-            } else if(mode === 'edit') {
-                this.updateStudyItem();
-            }
-        },
-        createStudyItem: function() {
-            this.$store.dispatch(storeTypes.STUDY_ITEM_CREATE, {
-                data: {
-                    ...this.privateState.studyItemModel,
-                },
-            }).then(() => {
-                 this.$notify({
-                    group: 'app',
-                    type: 'success',
-                    title: `Item '${this.privateState.studyItemModel.title}' has been created!`,
-                    text: '',
-                    duration: 5000,
-                });
-
-                this.$modal.hide('study-item-create-edit');
-
-                // reset
-                this.privateState.studyItemModel = _.cloneDeep(studyItemModelDefault);
-            }).catch(err => {
-                console.error(err);
-                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
-            });
-        },
-        updateStudyItem: function() {
-            this.$store.dispatch(storeTypes.STUDY_ITEM_UPDATE, {
-                studyItemId: this.privateState.studyItemModel.id,
-                data: {
-                    ...this.privateState.studyItemModel,
-                },
-            }).then(() => {
-                 this.$notify({
-                    group: 'app',
-                    type: 'success',
-                    title: `Item '${this.privateState.studyItemModel.title}' has been updated!`,
-                    text: '',
-                    duration: 5000,
-                });
-
-                this.$modal.hide('study-item-create-edit');
-
-                // reset
-                this.privateState.studyItemModel = _.cloneDeep(studyItemModelDefault);
-            }).catch(err => {
-                console.error(err);
-                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
-            });
         },
         deleteStudyItem: function(studyItemId) {
             this.$store.dispatch(storeTypes.STUDY_ITEM_DELETE, {

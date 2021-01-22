@@ -57,7 +57,7 @@ namespace Lexiconner.Api.Controllers.V2
             return StatusCodeBaseResponse();
         }
 
-        [HttpPut("not_trained{studyItemId}")]
+        [HttpPut("not_trained/{studyItemId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]

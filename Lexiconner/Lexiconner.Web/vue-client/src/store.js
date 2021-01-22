@@ -96,6 +96,8 @@ export default new Vuex.Store({
         // {items: [], pagination: {}}
         studyItemsPaginationResult: null, // object
 
+        studyItem: null, // object
+
         trainingStats: null, // object
         trainingFlashcards: null, // object
 
@@ -256,9 +258,13 @@ export default new Vuex.Store({
                 ...state.studyItemsRequestParamsDefault,
             };
         },
-        [storeTypes.STUDY_ITEMS_SET](state, payload) {
+        [storeTypes.STUDY_ITEMS_LOAD_SET](state, payload) {
             let { data } = payload;
             state.studyItemsPaginationResult = data;
+        },
+        [storeTypes.STUDY_ITEM_LOAD_SET](state, payload) {
+            let { studyItem } = payload;
+            state.studyItem = studyItem;
         },
         [storeTypes.STUDY_ITEM_CREATE_SET](state, payload) {
             let { data } = payload;
@@ -632,13 +638,38 @@ export default new Vuex.Store({
                     target: storeTypes.STUDY_ITEMS_LOAD,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEMS_SET, {
+                commit(storeTypes.STUDY_ITEMS_LOAD_SET, {
                     data: data
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEMS_LOAD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.STUDY_ITEM_LOAD](context, { studyItemId }) {
+            let { commit, dispatch, state, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_LOAD,
+                loading: true,
+            });
+            return api.webApi().getStudyItem({
+                studyItemId
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_LOAD,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEM_LOAD_SET, {
+                    studyItem: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_LOAD,
                     loading: false,
                 });
                 throw err;
