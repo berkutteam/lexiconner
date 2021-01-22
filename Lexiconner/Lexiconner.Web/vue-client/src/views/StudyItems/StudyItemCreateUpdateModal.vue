@@ -84,6 +84,12 @@
                                 v-model="privateState.studyItemModel.tags" 
                             ></tags-multiselect>
                         </div>
+                        <div class="form-group">
+                            <label for="">Collections (aka folders)</label>
+                            <custom-collections-multiselect
+                                v-model="privateState.studyItemModel.customCollectionIds" 
+                            ></custom-collections-multiselect>
+                        </div>
                         <loading-button 
                             type="submit"
                             v-bind:loading="sharedState.loading[privateState.storeTypes.STUDY_ITEM_CREATE] || sharedState.loading[privateState.storeTypes.STUDY_ITEM_UPDATE]"
@@ -111,6 +117,7 @@ import LoadingButton from '@/components/LoadingButton';
 import PaginationWrapper from '@/components/PaginationWrapper';
 import LanguageCodeSelect from '@/components/LanguageCodeSelect';
 import TagsMultiselect from '@/components/TagsMultiselect';
+import CustomCollectionsMultiselect from '@/components/CustomCollectionsMultiselect';
 import CustomCollections from '@/components/CustomCollections';
 import StudyItemsFilters from '@/components/StudyItemsFilters';
 
@@ -123,6 +130,7 @@ const studyItemModelDefault = {
     isFavourite: false,
     languageCode: "en",
     tags: [],
+    customCollectionIds: [],
 };
 
 export default {
@@ -134,6 +142,7 @@ export default {
         LoadingButton,
         LanguageCodeSelect,
         TagsMultiselect,
+        CustomCollectionsMultiselect,
     },
     data: function() {
         return {

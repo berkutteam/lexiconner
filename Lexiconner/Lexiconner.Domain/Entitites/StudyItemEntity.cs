@@ -46,6 +46,7 @@ namespace Lexiconner.Domain.Entitites
 
         public void UpdateSelf(StudyItemUpdateDto dto)
         {
+            this.CustomCollectionIds = dto.CustomCollectionIds;
             if (this.Title != dto.Title)
             {
                 this.Image = null;
