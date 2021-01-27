@@ -131,6 +131,7 @@ namespace Lexiconner.IdentityServer4
             Log.Information("Environment info:");
             Log.Information("ASPNETCORE_ENVIRONMENT: {EnvironmentVariable}", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
             Log.Information("ASPNETCORE_URLS: {EnvironmentVariable}", Environment.GetEnvironmentVariable("ASPNETCORE_URLS"));
+            Log.Information("PORT: {PORT}", Environment.GetEnvironmentVariable("PORT"));
             Log.Information(Environment.NewLine);
         }
     }
