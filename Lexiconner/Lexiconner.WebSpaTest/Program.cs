@@ -40,7 +40,7 @@ namespace Lexiconner.WebSpaTest
                 builder.UseUrls($"http://localhost:5021");
             }
 
-            if (Environment.GetEnvironmentVariable("RUNTIME_ENV") == "heroku")
+            if (HostingEnvironmentHelper.IsHerokuAny())
             {
                 builder.UseUrls($"http://+:{Environment.GetEnvironmentVariable("PORT")}");
             }

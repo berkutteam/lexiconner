@@ -72,7 +72,7 @@ namespace Lexiconner.Api
                          webBuilder.UseUrls($"http://localhost:5005");
                      }
 
-                     if (Environment.GetEnvironmentVariable("RUNTIME_ENV") == "heroku")
+                     if (HostingEnvironmentHelper.IsHerokuAny())
                      {
                          webBuilder.UseUrls($"http://+:{Environment.GetEnvironmentVariable("PORT")}");
                      }

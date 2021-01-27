@@ -75,7 +75,7 @@ namespace Lexiconner.IdentityServer4
                          webBuilder.UseUrls($"http://localhost:5004");
                      }
 
-                     if (Environment.GetEnvironmentVariable("RUNTIME_ENV") == "heroku")
+                     if (HostingEnvironmentHelper.IsHerokuAny())
                      {
                          webBuilder.UseUrls($"http://+:{Environment.GetEnvironmentVariable("PORT")}");
                      }

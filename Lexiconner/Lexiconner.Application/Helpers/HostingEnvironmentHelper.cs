@@ -93,6 +93,12 @@ namespace Lexiconner.Application.Helpers
             return Environment == HostingEnvironmentDefaults.DevelopmentHeroku;
         }
 
+        public static bool IsHerokuAny()
+        {
+            var regex = new Regex(@"^[a-zA-Z0-9_-]{0,}Heroku$");
+            return regex.IsMatch(Environment);
+        }
+
         /// <summary>
         /// Returns true if current environment is Development or any custom type like DevelopmentLocalhost, DevelopmentDocker, Development[anything]
         /// </summary>
