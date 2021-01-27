@@ -77,7 +77,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
                 }
                 else
                 {
-                    throw ex;
+                    throw;
                 }
             }
 
@@ -179,6 +179,11 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
 
         public async Task AddManyAsync<T>(IEnumerable<T> entities) where T : class
         {
+            if(!entities.Any())
+            {
+                return;
+            }
+
             CheckCollectionConfig<T>();
 
             await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).InsertManyAsync(entities);

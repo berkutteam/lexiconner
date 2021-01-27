@@ -146,7 +146,7 @@ namespace Lexiconner.Domain.Entitites
         }
 
         /// <summary>
-        /// Returns id of given colelction and all parent collections counting the current collection as root.
+        /// Returns id of given collection and all parent collections counting the current collection as root.
         /// </summary>
         /// <param name="collectionId"></param>
         /// <returns></returns>

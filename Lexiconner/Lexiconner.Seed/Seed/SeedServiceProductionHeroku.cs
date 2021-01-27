@@ -7,14 +7,23 @@ namespace Lexiconner.Seed.Seed
 {
     public class SeedServiceProductionHeroku : ISeedService
     {
+        private readonly SeedServiceDevelopmentLocalhost _seedServiceDevelopmentLocalhost;
+
+        public SeedServiceProductionHeroku(
+            SeedServiceDevelopmentLocalhost seedServiceDevelopmentLocalhost
+        )
+        {
+            _seedServiceDevelopmentLocalhost = seedServiceDevelopmentLocalhost;
+        }
+
         public Task RemoveDatabaseAsync()
         {
-            throw new NotImplementedException();
+            return _seedServiceDevelopmentLocalhost.RemoveDatabaseAsync();
         }
 
         public Task SeedAsync()
         {
-            throw new NotImplementedException();
+            return _seedServiceDevelopmentLocalhost.SeedAsync();
         }
     }
 }

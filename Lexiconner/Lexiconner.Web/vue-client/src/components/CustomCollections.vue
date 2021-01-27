@@ -83,6 +83,12 @@
                 </div>
             </div>
         </modal>
+
+        <!-- Study item create/edit -->
+        <study-item-create-update-modal
+            ref="customCollections_studyItemCreateUpdateModal"
+        >
+        </study-item-create-update-modal>
     </div>
 </template>
 
@@ -96,6 +102,7 @@ import notificationUtil from '@/utils/notification';
 import RowLoader from '@/components/loaders/RowLoader';
 import LoadingButton from '@/components/LoadingButton';
 import FolderTreeView from '@/components/FolderTreeView';
+import StudyItemCreateUpdateModal from '@/views/StudyItems/StudyItemCreateUpdateModal';
 
 const customCollectionModelDefault = {
     name: null,
@@ -119,6 +126,7 @@ export default {
         // RowLoader,
         LoadingButton,
         FolderTreeView,
+        StudyItemCreateUpdateModal,
     },
     data: function() {
         return {
@@ -178,7 +186,10 @@ export default {
             this.$modal.show('custom-collection-edit');
         },
         onCreateFolderItem: function(parentFolder) {
-
+            this.$refs.customCollections_studyItemCreateUpdateModal.show({
+                studyItemId: null,
+                customCollectionIds: [parentFolder.id],
+            });
         },
         onDuplicateFolder: function(sourceFolder) {
             this.$store.dispatch(storeTypes.CUSTOM_COLLECTION_DUPLICATE, {

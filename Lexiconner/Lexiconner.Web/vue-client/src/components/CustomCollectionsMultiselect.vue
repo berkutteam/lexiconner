@@ -108,6 +108,11 @@ export default {
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
         }
+
+        console.log(2, this.value)
+        if(this.value && this.value.length !== 0) {
+            this.setSelectedOptions(this.value);
+        }
     },
     mounted: function() {
     },
@@ -119,7 +124,6 @@ export default {
     methods: {
         onInput: function(value, id) {
             // tell parent that value was changed and it can update its v-model property
-            // value is user
             let options = value;
             this.$emit('input', options.map(x => x.id));
         },
@@ -134,8 +138,11 @@ export default {
                         levelPad: option.levelPad,
                     }
                 });
-                // this.privateState.options = [...options];
                 this.privateState.selectedCustomCollections = [...selectedOptions];
+
+                // tell parent that value was changed and it can update its v-model property
+                this.$emit('input', selectedOptions.map(x => x.id));
+                console.log(7, selectedOptions, this.options)
             }
         }
     },

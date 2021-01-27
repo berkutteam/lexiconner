@@ -184,14 +184,22 @@ export default {
     },
 
     methods: {
-        show: function({ studyItemId }) {
+        show: function({ studyItemId, customCollectionIds = [] }) {
+            // reset
+            this.privateState.studyItemModel = _.cloneDeep(studyItemModelDefault);
+
             if(studyItemId !== null) {
                 this.privateState.modalMode = 'edit';
 
                 this.loadStudyItem({ studyItemId });
             } else {
                 this.privateState.modalMode = 'create';
-                this.privateState.studyItemModel = _.cloneDeep(studyItemModelDefault);
+                this.privateState.studyItemModel = {
+                    ..._.cloneDeep(studyItemModelDefault),
+                    customCollectionIds: [
+                        ...customCollectionIds,
+                    ]
+                };
             }
 
             this.$modal.show('study-item-create-edit');

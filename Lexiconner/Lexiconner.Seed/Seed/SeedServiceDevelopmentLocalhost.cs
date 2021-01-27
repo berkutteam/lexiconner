@@ -573,6 +573,8 @@ namespace Lexiconner.Seed.Seed
         )
         {
             _logger.LogInformation($"Importing StudyItems {sourceLanguageCode}, {importFilePath}, {importFormat}...");
+
+            // import from file
             WordImportResultModel importResult = null;
             if(importFormat == ".txt")
             {
@@ -618,7 +620,7 @@ namespace Lexiconner.Seed.Seed
 
             var studyItemEntities = importResult.Words.Select(x => 
             {
-                List<string> customCollectionIds = new List<string>();
+                List<string> customCollectionIds;
                 if(x.CollectionTempId != null && collectionMap.ContainsKey(x.CollectionTempId))
                 {
                     customCollectionIds = rootCollection.GetCollectionChainIds(collectionMap[x.CollectionTempId].Id);
@@ -627,6 +629,7 @@ namespace Lexiconner.Seed.Seed
                 {
                     customCollectionIds = new List<string>() { parentCollectionId };
                 }
+
                 return new StudyItemEntity
                 {
                     UserId = user.Id,
@@ -651,11 +654,23 @@ namespace Lexiconner.Seed.Seed
             await SetStudyItemsImages(studyItemEntities);
 
             const int chunkSize = 50;
-            int chunkCount = (int)(Math.Ceiling((double)studyItemEntities.Count() / (double)chunkSize));
+            int chunkCount = (int)(Math.Ceiling((double)studyItemEntities.Count / (double)chunkSize));
             for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
             {
                 var items = studyItemEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
-                await _dataRepository.AddManyAsync(items);
+
+                // only unexisting
+                var itemsToCreate = new List<StudyItemEntity>();
+                foreach (var item in items)
+                {
+                    if(!(await _dataRepository.ExistsAsync<StudyItemEntity>(x => x.Title == item.Title)))
+                    {
+                        itemsToCreate.Add(item);
+                    }
+                }
+
+                await _dataRepository.AddManyAsync(itemsToCreate);
+
                 _logger.LogInformation($"StudyItems processed chunk {chunkNumber + 1} / {chunkCount}.");
             }
             _logger.LogInformation($"StudyItems were added for user #{user.Email}.");
@@ -692,13 +707,11 @@ namespace Lexiconner.Seed.Seed
                 catch (ApiRateLimitExceededException ex)
                 {
                     _logger.LogWarning($"Api rate limited. {ex.Message}.");
-                    continue;
                 }
                 catch (ApiErrorException ex)
                 {
                     // break
                     _logger.LogWarning($"Api error. {ex.Message}.");
-                    continue;
                 }
                 catch (Exception ex)
                 {
