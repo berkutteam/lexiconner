@@ -141,7 +141,8 @@ namespace Lexiconner.IdentityServer4.Extensions
             if (cert == null)
             {
                 var path = Path.Combine(hostingEnvironment.ContentRootPath, config.IdenitytServer4.SigningCredential.KeyFilePath);
-                if (File.Exists(path))
+                bool exists = File.Exists(path);
+                if (exists)
                 {
                     cert = new X509Certificate2(path, config.IdenitytServer4.SigningCredential.KeyFilePassword);
 

@@ -352,13 +352,14 @@ namespace Lexiconner.Seed.Seed
                         Comment = x.Comment,
                         
                         // store in UTC
-                        WatchedAt = x.WatchedAt == null ? default(DateTime?) : DateTimeHelper.LocalToUtc(x.WatchedAt.GetValueOrDefault(), filmsTz),
+                        //WatchedAt = x.WatchedAt == null ? default(DateTimeOffset?) : DateTimeHelper.LocalToUtcOffset(x.WatchedAt.GetValueOrDefault(), filmsTz),
+                        WatchedAt = x.WatchedAt == null ? default(DateTimeOffset?) : x.WatchedAt.Value,
                         
                         ReleaseYear = x.ReleaseYear,
                         Genres = x.Genres,
                         LanguageCode = filmsLanguageCode,
                     };
-                }).OrderByDescending(x => x.WatchedAt != null ? x.WatchedAt : DateTime.MinValue ).ToList();
+                }).OrderByDescending(x => x.WatchedAt != null ? x.WatchedAt : DateTimeOffset.MinValue ).ToList();
 
                 // fix same ids for different users
                 filmEntities.ToList().ForEach(x =>

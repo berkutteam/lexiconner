@@ -317,15 +317,15 @@ namespace Lexiconner.Api.Services
                 }
                 training.Progress = Math.Round(training.Progress, 2);
 
-                training.LastTrainingdAt = DateTime.UtcNow;
+                training.LastTrainingdAt = DateTimeOffset.UtcNow;
 
                 if(training.Progress < 1)
                 {
-                    training.NextTrainingdAt = DateTime.UtcNow.Add(infoAttribute.TrainIntervalTimespan);
+                    training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalTimespan);
                 } 
                 else
                 {
-                    training.NextTrainingdAt = DateTime.UtcNow.Add(infoAttribute.TrainIntervalForRepeatTimespan);
+                    training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalForRepeatTimespan);
                 }
 
                 x.RecalculateTotalTrainingProgress();

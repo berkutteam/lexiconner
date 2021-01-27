@@ -78,6 +78,18 @@ namespace Lexiconner.Application.Helpers
             return zonedDbDateTime.ToDateTimeUtc();
         }
 
+        /// <summary>
+        /// Note: the DateTime here should have a "Kind" of Unspecified
+        /// </summary>
+        public static DateTimeOffset LocalToUtcOffset(DateTime dateTime, string timeZoneId)
+        {
+            LocalDateTime localDateTime = LocalDateTime.FromDateTime(dateTime);
+            IDateTimeZoneProvider timeZoneProvider = DateTimeZoneProviders.Tzdb;
+            var timezone = timeZoneProvider[timeZoneId];
+            var zonedDbDateTime = timezone.AtLeniently(localDateTime);
+            return zonedDbDateTime.ToDateTimeOffset();
+        }
+
         #endregion
     }
 }

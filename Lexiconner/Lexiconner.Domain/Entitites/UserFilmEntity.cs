@@ -21,7 +21,7 @@ namespace Lexiconner.Domain.Entitites
         public string Title { get; set; }
         public decimal? MyRating { get; set; }
         public string Comment { get; set; }
-        public DateTime? WatchedAt { get; set; }
+        public DateTimeOffset? WatchedAt { get; set; }
         public int? ReleaseYear { get; set; }
         public List<string> Genres { get; set; }
 
@@ -71,7 +71,7 @@ namespace Lexiconner.Domain.Entitites
         public string OriginalLanguage { get; set; }
         public string OriginalTitle { get; set; }
         public List<FilmProductionCountryEntity> ProductionCountries { get; set; }
-        public DateTime? ReleaseDate { get; set; }
+        public DateTimeOffset? ReleaseDate { get; set; }
         public long Revenue { get; set; }
         public string Status { get; set; }
         public string Title { get; set; }

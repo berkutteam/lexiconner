@@ -178,8 +178,8 @@ namespace Lexiconner.Domain.Entitites
             [JsonConverter(typeof(StringEnumConverter))]
             [BsonRepresentation(BsonType.String)]
             public TrainingType TrainingType { get; set; }
-            public DateTime LastTrainingdAt { get; set; }
-            public DateTime NextTrainingdAt { get; set; }
+            public DateTimeOffset LastTrainingdAt { get; set; }
+            public DateTimeOffset NextTrainingdAt { get; set; }
 
             /// <summary>
             /// Percents [0, 1]

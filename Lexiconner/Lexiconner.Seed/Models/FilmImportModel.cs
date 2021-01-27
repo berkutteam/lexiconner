@@ -14,7 +14,7 @@ namespace Lexiconner.Domain.Models
         public string Title { get; set; }
         public double Rating { get; set; }
 
-        public DateTime WatchedAt { get; set; }
+        public DateTimeOffset WatchedAt { get; set; }
         public List<string> Tags { get; set; }
     }
 }

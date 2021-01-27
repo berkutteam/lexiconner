@@ -42,7 +42,7 @@ namespace Lexiconner.Application.ImportAndExport
                     int? releaseYear = null;
                     decimal? myRating = null;
                     string comment = "";
-                    DateTime? watchedAt = null;
+                    DateTimeOffset? watchedAt = null;
 
                     string line = await reader.ReadLineAsync();
 
@@ -80,7 +80,7 @@ namespace Lexiconner.Application.ImportAndExport
                         string watchedAtRaw = watchedAtRegEx.Match(line).Groups.Values.FirstOrDefault(x => x.Name == "watchedAt")?.Value.Trim();
                         if (!String.IsNullOrEmpty(watchedAtRaw))
                         {
-                            watchedAt = DateTime.ParseExact(watchedAtRaw, "dd.MM.y", CultureInfo.InvariantCulture);
+                            watchedAt = DateTimeOffset.ParseExact(watchedAtRaw, "dd.MM.y", CultureInfo.InvariantCulture);
                         }
                     }
 

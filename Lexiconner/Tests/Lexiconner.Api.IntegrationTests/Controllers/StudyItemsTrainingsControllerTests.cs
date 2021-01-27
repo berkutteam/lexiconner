@@ -109,8 +109,8 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
                 .ForEach(x =>
                 {
                     Assert.Contains(x.TrainingInfo.Trainings, y => y.TrainingType == TrainingType.FlashCards);
-                    Assert.Contains(x.TrainingInfo.Trainings, y => y.LastTrainingdAt < DateTime.UtcNow);
-                    Assert.Contains(x.TrainingInfo.Trainings, y => y.NextTrainingdAt > DateTime.UtcNow);
+                    Assert.Contains(x.TrainingInfo.Trainings, y => y.LastTrainingdAt < DateTimeOffset.UtcNow);
+                    Assert.Contains(x.TrainingInfo.Trainings, y => y.NextTrainingdAt > DateTimeOffset.UtcNow);
 
                     if (correctItemIds.Contains(x.Id))
                     {

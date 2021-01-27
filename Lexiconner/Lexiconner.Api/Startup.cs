@@ -202,12 +202,19 @@ namespace Lexiconner.Api
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath);
 
-                //Here we set the response schema for DateTime
+                //Here we set the response schema for DateTime and DateTimeOffset
                 //We are using ISO 8601 format for DateTime strings in response.
                 options.MapType<DateTime>(() => new OpenApiSchema
                 {
                     Type = "string",
                     Format = "date-time",
+                    Description =
+                        @"Date-time string in <a href=""https://en.wikipedia.org/wiki/ISO_8601#UTC\"">ISO 8601 format</a>."
+                });
+                options.MapType<DateTimeOffset>(() => new OpenApiSchema
+                {
+                    Type = "string",
+                    Format = "date-time-offset",
                     Description =
                         @"Date-time string in <a href=""https://en.wikipedia.org/wiki/ISO_8601#UTC\"">ISO 8601 format</a>."
                 });
