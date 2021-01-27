@@ -3,8 +3,15 @@
 # Add steps that use Docker Compose, tag images, push to a registry, run an image, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
+# Predifined variables:
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml
+
+# Functions: 
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/expressions?view=azure-devops
+
 trigger:
 - master
+- staging
 
 pool:
   vmImage: 'Ubuntu-16.04'
@@ -13,12 +20,53 @@ variables:
   imageName1: 'lexiconner/api:$(build.buildId)'
   imageName2: 'lexiconner/identity:$(build.buildId)'
   imageName3: 'lexiconner/web:$(build.buildId)'
+
+  # True or False
+  isProduction: $[eq(variables['Build.SourceBranchName'], 'master')]
+  isStaging: $[eq(variables['Build.SourceBranchName'], 'staging')]
+  
+  # Heroku app name is resolved based on the trigger branch
+  herokuAppNameApi: ''
+  herokuAppNameIdentity: ''
+  herokuAppNameWeb: ''
   
 steps:
   # # use this only if specific version is required as it slows down deployment
   # - task: NodeTool@0 
   #   inputs:
   #     versionSpec: '8.x'
+
+# set variables
+# https://stackoverflow.com/questions/57532138/can-conditional-variable-assignment-be-done-in-azure-pipelines
+- script: |
+    echo '##vso[task.setvariable variable=herokuAppNameApi]$(HEROKU_PRODUCTION_APP_NAME_API)'
+    echo '##vso[task.setvariable variable=herokuAppNameIdentity]$(HEROKU_PRODUCTION_APP_NAME_IDENTITY)'
+    echo '##vso[task.setvariable variable=herokuAppNameWeb]$(HEROKU_PRODUCTION_APP_NAME_WEB)'
+  displayName: "Set production variables "
+  condition: eq(variables['isProduction'], True)
+  
+- script: |
+    echo '##vso[task.setvariable variable=herokuAppNameApi]$(HEROKU_STAGING_APP_NAME_API)'
+    echo '##vso[task.setvariable variable=herokuAppNameIdentity]$(HEROKU_STAGING_APP_NAME_IDENTITY)'
+    echo '##vso[task.setvariable variable=herokuAppNameWeb]$(HEROKU_STAGING_APP_NAME_WEB)'
+  displayName: "Set staging variables "
+  condition: eq(variables['isStaging'], True)
+
+
+# log variables
+- script: |
+    echo "#################### Log variables ####################"
+    echo "Variables:"
+    echo "imageName1: $(imageName1)"
+    echo "imageName2: $(imageName2)"
+    echo "imageName3: $(imageName3)"
+    echo "isProduction: $(isProduction)"
+    echo "isStaging: $(isStaging)"
+    echo "herokuAppNameApi: $(herokuAppNameApi)"
+    echo "herokuAppNameIdentity: $(herokuAppNameIdentity)"
+    echo "herokuAppNameWeb: $(herokuAppNameWeb)"
+    echo ""
+  displayName: 'Log variables'
 
 - script: |
     echo "#################### Building SPA projects... ####################"
@@ -31,21 +79,24 @@ steps:
     echo "wwwroot files:"
     ls ../wwwroot
   displayName: 'Build SPA'
+
 - script: |
     docker build -f Lexiconner/Lexiconner.Api/Dockerfile.ci -t $(imageName1) .
     docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
-    docker tag $(imageName1) registry.heroku.com/$(HEROKU_APP_NAME_API)/web
-    docker push registry.heroku.com/$HEROKU_APP_NAME_API/web           
+    docker tag $(imageName1) registry.heroku.com/$(herokuAppNameApi)/web
+    docker push registry.heroku.com/$(herokuAppNameApi)/web
   displayName: 'Build Api (Docker)'
+
 - script: |
     docker build -f Lexiconner/Lexiconner.IdentityServer4/Dockerfile.ci -t $(imageName2) .
     docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
-    docker tag $(imageName2) registry.heroku.com/$(HEROKU_APP_NAME_IDENTITY)/web
-    docker push registry.heroku.com/$HEROKU_APP_NAME_IDENTITY/web           
+    docker tag $(imageName2) registry.heroku.com/$(herokuAppNameIdentity)/web
+    docker push registry.heroku.com/$(herokuAppNameIdentity)/web
   displayName: 'Build Identity (Docker)'
+
 - script: |
     docker build -f Lexiconner/Lexiconner.Web/Dockerfile.ci -t $(imageName3) .
     docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
-    docker tag $(imageName3) registry.heroku.com/$(HEROKU_APP_NAME_WEB)/web
-    docker push registry.heroku.com/$HEROKU_APP_NAME_WEB/web
+    docker tag $(imageName3) registry.heroku.com/$(herokuAppNameWeb)/web
+    docker push registry.heroku.com/$(herokuAppNameWeb)/web
   displayName: 'Build Web (Docker)'
