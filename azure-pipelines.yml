@@ -32,10 +32,10 @@ variables:
   herokuAppNameWeb: ''
   
 steps:
-  # use this only if specific version is required as it slows down deployment
-  - task: NodeTool@0 
-    inputs:
-      versionSpec: '10.16.x'
+# use this only if specific version is required as it slows down deployment
+- task: NodeTool@0 
+  inputs:
+    versionSpec: '10.16.x'
 
 # set variables
 # https://stackoverflow.com/questions/57532138/can-conditional-variable-assignment-be-done-in-azure-pipelines
