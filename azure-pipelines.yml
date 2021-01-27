@@ -37,6 +37,7 @@ steps:
   #     versionSpec: '8.x'
 
 # set variables
+# https://stackoverflow.com/questions/57532138/can-conditional-variable-assignment-be-done-in-azure-pipelines
 - script: |
     echo '##vso[task.setvariable variable=herokuAppNameApi]$(HEROKU_STAGING_APP_NAME_API)'
     echo '##vso[task.setvariable variable=herokuAppNameIdentity]$(HEROKU_STAGING_APP_NAME_IDENTITY)'
