@@ -60,22 +60,25 @@ namespace Lexiconner.Api
                  {
                      webBuilder
                         // UseConfiguration must be first to work properly
-                        .UseConfiguration(GetConfiguration())
-
-                        // set URLs directly, because it doesn't pick up ASPNETCORE_URLS when UseConfiguration is applied earlier
-                        // UseUrls must follow UseConfiguration to work properly
-                        .UseUrls(Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://+:80")
-                        .UseStartup<Startup>();
+                        .UseConfiguration(GetConfiguration());
 
                      if (HostingEnvironmentHelper.IsDevelopmentLocalhost())
                      {
+                         // specific URL to listen for this host for local dev
                          webBuilder.UseUrls($"http://localhost:5005");
                      }
-
-                     if (HostingEnvironmentHelper.IsHerokuAny())
+                     else if (HostingEnvironmentHelper.IsHerokuAny())
                      {
-                         webBuilder.UseUrls($"http://+:{Environment.GetEnvironmentVariable("PORT")}");
+                         webBuilder.UseUrls($"http://*:{Environment.GetEnvironmentVariable("PORT")}");
                      }
+                     else
+                     {
+                         // set URLs directly, because it doesn't pick up ASPNETCORE_URLS when UseConfiguration is applied earlier
+                         // UseUrls must follow UseConfiguration to work properly
+                         webBuilder.UseUrls(Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://+:80");
+                     }
+
+                     webBuilder.UseStartup<Startup>();
                  });
         }
 

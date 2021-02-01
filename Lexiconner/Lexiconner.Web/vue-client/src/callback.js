@@ -11,10 +11,12 @@ let userManager = new Oidc.UserManager({ response_mode: "query" });
 userManager.signinRedirectCallback(null).then(function (user) {
     console.log('Callback: user ', user);
     window.location = `${process.env.BASE_URL ? process.env.BASE_URL : '/'}`;
-}).catch(function (e) {
-    console.error(e);
+}).catch(function (err) {
+    console.error(`Callback error:`, err);
     // TODO - handle error
     //alert(`Login error. Redirecting back to app...`);
     
-    window.location = `${process.env.BASE_URL ? process.env.BASE_URL : '/'}`;
+    const redirectUrl = `${process.env.BASE_URL ? process.env.BASE_URL : '/'}`
+    console.log(`Callback:`, `Redirecting to`, redirectUrl);
+    window.location = redirectUrl;
 });
