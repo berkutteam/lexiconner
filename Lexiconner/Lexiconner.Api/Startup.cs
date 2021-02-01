@@ -42,6 +42,8 @@ using Serilog;
 using TMDbLib.Client;
 using Microsoft.IdentityModel.Tokens;
 using Lexiconner.Persistence;
+using AutoMapper;
+using Lexiconner.Application.Mapping;
 
 namespace Lexiconner.Api
 {
@@ -99,6 +101,14 @@ namespace Lexiconner.Api
             services.AddTransient<IFilmsService, FilmsService>();
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+
+            // Auto Mapper Configurations
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton<IMapper>(mapper);
 
             // setup Basic Http Auth
             //services.AddAuthentication(BasicAuthenticationDefaults.AuthenticationScheme)
@@ -185,7 +195,7 @@ namespace Lexiconner.Api
                 IdentityModelEventSource.ShowPII = true; // show detail of error and see the problem
             }
 
-            // validate api scrope is present
+            // validate api scope claim is present (starting from IdentityServer v4)
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("DefaultWebApiScope", policy =>
