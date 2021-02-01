@@ -84,17 +84,16 @@ namespace Lexiconner.IdentityServer4
                 options.Events.RaiseSuccessEvents = true;
             });
 
-            //identityServerBuilder.Services.ConfigureExternalCookie(options =>
-            //{
-            //    options.Cookie.IsEssential = true;
-            //    options.Cookie.SameSite = SameSiteMode.Lax; //SameSiteMode.Unspecified in .NET Core 3.1
-            //});
-
-            //identityServerBuilder.Services.ConfigureApplicationCookie(options =>
-            //{
-            //    options.Cookie.IsEssential = true;
-            //    options.Cookie.SameSite = SameSiteMode.Lax; //SameSiteMode.Unspecified in .NET Core 3.1
-            //});
+            identityServerBuilder.Services.ConfigureExternalCookie(options =>
+            {
+                options.Cookie.IsEssential = true;
+                options.Cookie.SameSite = SameSiteMode.Lax; //SameSiteMode.Unspecified in .NET Core 3.1
+            });
+            identityServerBuilder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.IsEssential = true;
+                options.Cookie.SameSite = SameSiteMode.Lax; //SameSiteMode.Unspecified in .NET Core 3.1
+            });
 
             identityServerBuilder.AddSigningCredentialCustom(Environment, config);
             identityServerBuilder.AddConfig()
