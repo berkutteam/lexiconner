@@ -120,43 +120,6 @@ namespace Lexiconner.Api
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton<IMapper>(mapper);
 
-            // setup Basic Http Auth
-            //services.AddAuthentication(BasicAuthenticationDefaults.AuthenticationScheme)
-            //    .AddBasicAuthentication(options =>
-            //    {
-            //        options.Realm = "My Api";
-            //        options.Events = new BasicAuthenticationEvents()
-            //        {
-            //            OnValidatePrincipal = (context) =>
-            //            {
-            //                if ((context.UserName.ToLower() == config.BasicAuth.Username) && (context.Password == config.BasicAuth.Password))
-            //                {
-            //                    List<Claim> claims = new List<Claim>
-            //                      {
-            //                        new Claim(ClaimTypes.Name,
-            //                                  context.UserName,
-            //                                  context.Options.ClaimsIssuer)
-            //                      };
-
-            //                    var principal = new ClaimsPrincipal(new ClaimsIdentity(
-            //                        claims,
-            //                        BasicAuthenticationDefaults.AuthenticationScheme));
-            //                    var ticket = new AuthenticationTicket(
-            //                        principal,
-            //                        new AuthenticationProperties(),
-            //                        BasicAuthenticationDefaults.AuthenticationScheme
-            //                    );
-
-            //                    context.Principal = principal;
-
-            //                    return Task.FromResult(AuthenticateResult.Success(ticket));
-            //                }
-
-            //                return Task.FromResult(AuthenticateResult.Fail("Authentication failed."));
-            //            }
-            //        };
-            //    });
-
             services.AddAuthorization();
             services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

@@ -11,7 +11,6 @@ namespace Lexiconner.Api
     {
         public CorsSettings Cors { get; set; }
         public MongoDbSettings MongoDb { get; set; }
-        //public BasicAuthSettings BasicAuth { get; set; }
         public JwtBearerAuthSettings JwtBearerAuth { get; set; }
         public UrlsSettings Urls { get; set; }
         public GoogleSettings Google { get; set; }
