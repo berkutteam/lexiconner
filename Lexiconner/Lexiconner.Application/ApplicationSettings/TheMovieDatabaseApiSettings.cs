@@ -7,7 +7,7 @@ namespace Lexiconner.Application.ApplicationSettings
     /// <summary>
     /// https://www.themoviedb.org/settings/api
     /// </summary>
-    public class TheMovieDatabaseSettings
+    public class TheMovieDatabaseApiSettings
     {
         /// <summary>
         /// Normal key

@@ -64,14 +64,15 @@ namespace Lexiconner.Application.ApiClients
         public GoogleTranslateApiClient(
             string projectId,
             GoogleCredentialSettings googleCredentialSettings,
-            ILogger<IGoogleTranslateApiClient> logger
+            ILogger<IGoogleTranslateApiClient> logger,
+            IHttpClientFactory httpClientFactory
         )
         {
             _projectId = projectId;
             _googleCredentialSettings = googleCredentialSettings;
             _logger = logger;
 
-            _httpClient = new HttpClient(); // TODO use factory
+            _httpClient = httpClientFactory.CreateClient();
         }
 
 

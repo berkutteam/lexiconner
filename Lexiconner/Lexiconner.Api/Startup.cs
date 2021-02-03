@@ -75,14 +75,24 @@ namespace Lexiconner.Api
                 return new GoogleTranslateApiClient(
                     config.Google.ProjectId,
                     config.Google.WebApiServiceAccount,
-                    sp.GetService<ILogger<IGoogleTranslateApiClient>>()
+                    sp.GetService<ILogger<IGoogleTranslateApiClient>>(),
+                     sp.GetService<IHttpClientFactory>()
                 );
             });
             services.AddTransient<IContextualWebSearchApiClient, ContextualWebSearchApiClient>(sp =>
             {
                 return new ContextualWebSearchApiClient(
                     config.RapidApi,
-                    sp.GetService<ILogger<IContextualWebSearchApiClient>>()
+                    sp.GetService<ILogger<IContextualWebSearchApiClient>>(),
+                     sp.GetService<IHttpClientFactory>()
+                );
+            });
+            services.AddTransient<ITwinwordWordDictionaryApiClient, TwinwordWordDictionaryApiClient>(sp =>
+            {
+                return new TwinwordWordDictionaryApiClient(
+                    config.RapidApi.TwinwordWordDictionary,
+                    sp.GetService<ILogger<ITwinwordWordDictionaryApiClient>>(),
+                     sp.GetService<IHttpClientFactory>()
                 );
             });
             services.AddSingleton<TMDbClient>(sp => 

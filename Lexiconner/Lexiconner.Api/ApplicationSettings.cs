@@ -16,7 +16,7 @@ namespace Lexiconner.Api
         public UrlsSettings Urls { get; set; }
         public GoogleSettings Google { get; set; }
         public RapidApiSettings RapidApi { get; set; }
-        public TheMovieDatabaseSettings TheMovieDatabase { get; set; }
+        public TheMovieDatabaseApiSettings TheMovieDatabase { get; set; }
     }
 
     public class CorsSettings

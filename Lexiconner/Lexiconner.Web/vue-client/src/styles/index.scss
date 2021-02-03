@@ -14,6 +14,9 @@
 @import "../../node_modules/bootstrap/scss/variables";
 @import "../../node_modules/bootstrap/scss/mixins/_breakpoints";
 
+// v-tooltip
+@import '../../node_modules/v-tooltip/dist/v-tooltip.css';
+
 //#region Variables
 
 // Main colors according to 
@@ -139,7 +142,8 @@ a {
 
 //#endregion
 
-.block-disabled {
+
+.disabled, .block-disabled {
     opacity: 0.5;
     pointer-events: none;
 }
@@ -260,7 +264,7 @@ a {
     background: #fff;
     border: none;
     border-radius: 0;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -469,6 +473,46 @@ a {
     .loader-spinner {
         display: block;
         color: $color-blue;
+    }
+
+    // CSS source: https://codepen.io/petersonby/pen/BVwxGP
+    .loading-line {
+        $mainColor: #111;
+        $loaderColor: #007efd;
+        $backColor: #87c3ff;
+        $time: 2s;
+        $size: 3px;
+
+        background-color: $mainColor;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        // position: fixed;
+        // top: 0; left: 0;
+        display: flex;
+        align-items: center;
+        align-content: center; 
+        justify-content: flex-start;  
+        z-index: 100000;
+
+        .loading-line__element {
+            height: $size;
+            width: 100%;
+            background: $backColor;
+
+            &:before {
+                content: '';
+                display: block;
+                background-color: $loaderColor;
+                height: $size;
+                width: 0;
+                animation: getWidth $time ease-in infinite;
+            }
+            
+            @keyframes getWidth {
+                100% { width: 100%; }
+            }
+        }
     }
 }
 
@@ -750,7 +794,8 @@ a {
     }
 }
 
-.study-items-learn-flash-cards-wrapper {
+.study-items-learn-flash-cards-wrapper,
+.study-items-learn-wordmeaning-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -760,10 +805,27 @@ a {
         width: 80%;
         max-width: 400px;
 
+        .training-tooltip {
+            
+        }
+
         .training-image {
-            max-height: 20rem;
-            min-height: 10rem;
+            max-height: 250px;
+            min-height: 250px;
             background-color: gainsboro;
+        }
+
+        .training-title {
+
+        }
+
+        .training-description {
+            font-size: 0.95rem;
+        }
+
+        .training-example {
+            font-style: italic;
+            font-size: 0.80rem;
         }
 
         .card-bottom-controls {

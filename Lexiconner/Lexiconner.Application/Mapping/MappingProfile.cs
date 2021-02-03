@@ -13,6 +13,8 @@ namespace Lexiconner.Application.Mapping
         {
             // StudyItem
             CreateMap<StudyItemEntity, StudyItemDto>();
+            CreateMap<StudyItemImageEntity, StudyItemImageDto>();
+            CreateMap<StudyItemTrainingInfoEntity, StudyItemTrainingInfoDto>();
         }
     }
 }

@@ -254,6 +254,8 @@ class AuthService {
      * - <identity-url>/connect/userinfo to user claims
      */
     async refreshTokens({withFullscreenLoader = false} = {}) {
+        console.log('AuthService.refreshTokens.');
+
         let self = this;
         if(withFullscreenLoader) {
             Vue.appFullscreenLoader({

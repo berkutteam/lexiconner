@@ -52,14 +52,15 @@ namespace Lexiconner.Application.ApiClients
 
         public ContextualWebSearchApiClient(
             RapidApiSettings settings,
-            ILogger<IContextualWebSearchApiClient> logger
+            ILogger<IContextualWebSearchApiClient> logger,
+             IHttpClientFactory httpClientFactory
         )
         {
             _settings = settings;
             _logger = logger;
 
-            _httpClient = new HttpClient(); // TODO use factory
-            _httpClientForTests = new HttpClient(); // TODO use factory
+            _httpClient = httpClientFactory.CreateClient();
+            _httpClientForTests = httpClientFactory.CreateClient(); 
             _httpClientForTests.Timeout = TimeSpan.FromSeconds(5);
         }
 

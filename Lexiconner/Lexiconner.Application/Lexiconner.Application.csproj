@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Folder Include="ApiClients\Exceptions\" />
+    <Folder Include="ApiClients\Interfaces\" />
   </ItemGroup>
 
   <ItemGroup>

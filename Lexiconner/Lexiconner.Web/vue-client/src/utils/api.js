@@ -306,6 +306,12 @@ class API {
             flashcardsTrainingSave({data}) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/flashcards/save`, {}), method: "post", data: {...data} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
+            wordmeaningTrainingStart({ collectionId, limit }) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/wordmeaning`, { collectionId, limit }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            wordmeaningTrainingSave({ data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/wordmeaning/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
 
             // custom collections
             getCustomCollections() {

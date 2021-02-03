@@ -6,11 +6,7 @@ namespace Lexiconner.Application.ApplicationSettings
 {
     public class RapidApiSettings
     {
-        public SpecificRapidApiSettings ContextualWebSearch { get; set; }
-
-        public class SpecificRapidApiSettings
-        {
-            public string ApplicationKey { get; set; }
-        }
+        public ContextualWebSearchApiSettings ContextualWebSearch { get; set; }
+        public TwinwordWordDictionaryApiSettings TwinwordWordDictionary { get; set; }
     }
 }

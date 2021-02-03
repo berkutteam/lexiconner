@@ -1,9 +1,13 @@
-﻿using Lexiconner.Api.DTOs;
+﻿using AutoMapper;
+using Lexiconner.Api.Dtos.StudyItemsTrainings;
+using Lexiconner.Api.DTOs;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
 using Lexiconner.Api.Mappers;
 using Lexiconner.Api.Models;
 using Lexiconner.Api.Services.Interfaces;
+using Lexiconner.Application.ApiClients;
 using Lexiconner.Application.Exceptions;
+using Lexiconner.Application.Extensions;
 using Lexiconner.Application.Helpers;
 using Lexiconner.Application.Services;
 using Lexiconner.Application.Validation;
@@ -27,16 +31,22 @@ namespace Lexiconner.Api.Services
 {
     public class StudyItemsService : IStudyItemsService
     {
+        private readonly IMapper _mapper;
         private readonly IDataRepository _dataRepository;
         private readonly IImageService _imageService;
+        private readonly ITwinwordWordDictionaryApiClient _twinwordWordDictionaryApiClient;
 
         public StudyItemsService(
+            IMapper mapper,
             IDataRepository MongoDataRepository,
-            IImageService imageService
+            IImageService imageService,
+            ITwinwordWordDictionaryApiClient twinwordWordDictionaryApiClient
         )
         {
+            _mapper = mapper;
             _dataRepository = MongoDataRepository;
             _imageService = imageService;
+            _twinwordWordDictionaryApiClient = twinwordWordDictionaryApiClient;
         }
 
         #region Study items
@@ -323,6 +333,128 @@ namespace Lexiconner.Api.Services
                 {
                     training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalTimespan);
                 } 
+                else
+                {
+                    training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalForRepeatTimespan);
+                }
+
+                x.RecalculateTotalTrainingProgress();
+
+                return x;
+            }).ToList();
+
+            await _dataRepository.UpdateManyAsync(entities);
+        }
+
+        public async Task<WordMeaningTrainingDto> GetTrainingItemsForWordMeaningAsync(string userId, string collectionId, int limit)
+        {
+            const int meaningsPerWord = 5;
+
+            var predicate = PredicateBuilder.New<StudyItemEntity>(x =>
+                x.UserId == userId &&
+                (
+                    x.TrainingInfo == null ||
+                    !x.TrainingInfo.Trainings.Any() ||
+                    (
+                        x.TrainingInfo != null &&
+                        !x.TrainingInfo.IsTrained &&
+                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.WordMeaning && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
+                    )
+                )
+            );
+
+            if (collectionId != null)
+            {
+                predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+
+            var entities = await _dataRepository.GetManyAsync<StudyItemEntity>(predicate, 0, limit);
+
+            // find meanings list for each entity
+            var trainingItems = new List<WordMeaningTrainingItemDto>();
+            foreach (var entity in entities)
+            {
+                var possibleOptions= new List<WordMeaningTrainingOptionDto>()
+                {
+                    // correct meaning
+                    new WordMeaningTrainingOptionDto()
+                    {
+                        Title = entity.Description,
+                        IsCorrect = true,
+                    }
+                };
+
+                // other similar meanings
+                // v1: search from other study items with the same language
+                var otherStudyItems = await _dataRepository.GetManyAsync<StudyItemEntity>(x => x.LanguageCode == entity.LanguageCode && x.Id != entity.Id, 0, meaningsPerWord - 1);
+                possibleOptions.AddRange(otherStudyItems.Select(x => new WordMeaningTrainingOptionDto()
+                {
+                    Title = x.Title,
+                    IsCorrect = false,
+                }));
+
+                // find accross 
+                trainingItems.Add(new WordMeaningTrainingItemDto()
+                {
+                    StudyItem = _mapper.Map<StudyItemDto>(entity),
+                    PossibleOptions = possibleOptions,
+                });
+            }
+
+            // shuffle
+            trainingItems.Shuffle();
+
+            var result = new WordMeaningTrainingDto
+            {
+               Items = trainingItems,
+            };
+            return result;
+        }
+
+        public async Task SaveTrainingResultsForWordMeaningAsync(string userId, WordMeaningTrainingResultDto results)
+        {
+            var ids = results.ItemsResults.Select(x => x.ItemId);
+            var entities = (await _dataRepository.GetManyAsync<StudyItemEntity>(
+                x => x.UserId == userId && ids.Contains(x.Id)
+            )).ToList();
+
+            var infoAttribute = TrainingTypeHelper.GetAttribute(TrainingType.WordMeaning);
+
+            entities = entities.Select(x =>
+            {
+                bool isCorrect = results.ItemsResults.Any(y => y.ItemId == x.Id && y.IsCorrect);
+
+                x.TrainingInfo = x.TrainingInfo ?? new StudyItemTrainingInfoEntity();
+                x.TrainingInfo.Trainings = x.TrainingInfo.Trainings ?? new List<StudyItemTrainingInfoEntity.StudyItemTrainingProgressItemEntity>();
+
+                var training = x.TrainingInfo.Trainings.FirstOrDefault(y => y.TrainingType == TrainingType.WordMeaning);
+                if (training == null)
+                {
+                    training = new StudyItemTrainingInfoEntity.StudyItemTrainingProgressItemEntity()
+                    {
+                        TrainingType = TrainingType.WordMeaning,
+                    };
+                    x.TrainingInfo.Trainings.Add(training);
+                }
+
+                if (isCorrect)
+                {
+                    training.Progress = training.Progress + infoAttribute.CorrectAnswerProgressRate;
+                    training.Progress = Math.Min(training.Progress, 1);
+                }
+                else
+                {
+                    training.Progress = training.Progress + infoAttribute.WrongAnswerProgressRate;
+                    training.Progress = Math.Max(training.Progress, 0);
+                }
+                training.Progress = Math.Round(training.Progress, 2);
+
+                training.LastTrainingdAt = DateTimeOffset.UtcNow;
+
+                if (training.Progress < 1)
+                {
+                    training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalTimespan);
+                }
                 else
                 {
                     training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalForRepeatTimespan);

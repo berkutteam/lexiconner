@@ -12,6 +12,7 @@ import Logout from './views/Logout.vue';
 import StudyItemsDashboard from './views/StudyItems/StudyItemsDashboard.vue';
 import StudyItemsBrowse from './views/StudyItems/StudyItemsBrowse.vue';
 import StudyItemsLearnFlashCards from './views/StudyItems/StudyItemsLearnFlashCards.vue';
+import StudyItemsLearnWordMeaning from './views/StudyItems/StudyItemsLearnWordMeaning.vue';
 import UserFilmsBrowse from './views/UserFilms/UserFilmsBrowse.vue';
 
 import Dashboard from './views/Dashboard.vue';
@@ -167,6 +168,17 @@ export default new Router({
             path: '/study-items/learn/falshcards',
             name: 'study-items-learn-falshcards',
             component: StudyItemsLearnFlashCards,
+            props: true,
+            meta: { layout: 'default' },
+            beforeEnter: async (to, from, next) => {
+                await waitAppInitialization({ to, from, next });
+                checkAuthenticated({ to, from, next });
+            },
+        },
+        {
+            path: '/study-items/learn/wordmeaning',
+            name: 'study-items-learn-wordmeaning',
+            component: StudyItemsLearnWordMeaning,
             props: true,
             meta: { layout: 'default' },
             beforeEnter: async (to, from, next) => {

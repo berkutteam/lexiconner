@@ -156,6 +156,8 @@ https://printjs.crabbly.com/
 ### Progress bar
 https://github.com/dzwillia/vue-simple-progress
 
+### Tooltip - v-tooltip
+https://v-tooltip.netlify.app/
 
 # Used components
 

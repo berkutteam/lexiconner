@@ -1,6 +1,12 @@
 <template>
     <div v-if="visible" class="app-row-loader"> 
-        <i class="fas fa-circle-notch fa-spin fa-spin--1s fa-3x loader-spinner"></i> 
+         <div v-if="type === 'line'" class="loading-line">
+            <div class="loading-line__element"></div>
+        </div>
+
+        <div v-if="type === 'circle'">
+            <i class="fas fa-circle-notch fa-spin fa-spin--1s fa-3x loader-spinner"></i>
+        </div>
     </div>
 </template>
 
@@ -11,6 +17,11 @@ export default {
     name: 'row-loader',
     props: {
         visible: Boolean,
+        type: {
+            type: String,
+            required: false,
+            default: 'line', // line, circle
+        },
     },
     components: {
     },

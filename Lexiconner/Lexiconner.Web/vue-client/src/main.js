@@ -8,6 +8,15 @@ import VueTelInput from 'vue-tel-input';
 import { Datetime } from 'vue-datetime';
 import Paginate from 'vuejs-paginate';
 import VueScrollTo from 'vue-scrollto';
+import {
+    // Directives
+    VTooltip,
+    VClosePopper,
+    // Components
+    Dropdown,
+    Tooltip,
+    Menu
+} from 'v-tooltip'
 
 import FullscreenLoader from '@/plugins/fullscreen-loader';
 
@@ -53,6 +62,13 @@ Vue.use(VueScrollTo, {
     x: false,
     y: true
 });
+
+// tooltip
+Vue.directive('tooltip', VTooltip)
+Vue.directive('close-popper', VClosePopper)
+Vue.component('VDropdown', Dropdown)
+Vue.component('VTooltip', Tooltip)
+Vue.component('VMenu', Menu)
 
 // custom plugins
 Vue.use(FullscreenLoader);

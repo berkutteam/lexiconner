@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lexiconner.Api.DTOs.StudyItemsTrainings
+namespace Lexiconner.Api.Dtos.StudyItemsTrainings
 {
-    public class FlashCardsTrainingResultDto
+    public class WordMeaningTrainingResultDto
     {
         public TrainingType TrainingType { get; set; }
-        public List<FlashCardsTrainingResultForItemDto> ItemsResults { get; set; }
+        public List<WordMeaningTrainingResultForItemDto> ItemsResults { get; set; }
     }
 
-    public class FlashCardsTrainingResultForItemDto
+    public class WordMeaningTrainingResultForItemDto
     {
         public string ItemId { get; set; }
         public bool IsCorrect { get; set; }

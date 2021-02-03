@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Lexiconner.Api.Dtos.StudyItemsTrainings;
 using Lexiconner.Api.DTOs;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
 using Lexiconner.Api.Models;
@@ -93,6 +94,34 @@ namespace Lexiconner.Api.Controllers.V2
         public async Task<IActionResult> FlashcardsTrainingSave([FromBody]FlashCardsTrainingResultDto dto)
         {
             await _studyItemsService.SaveTrainingResultsForFlashCardsAsync(GetUserId(), dto);
+            return StatusCodeBaseResponse();
+        }
+
+        #endregion
+
+        #region Word-Meaning
+
+        [HttpGet("wordmeaning")]
+        [ProducesResponseType(typeof(BaseApiResponseDto<FlashCardsTrainingDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> WordMeaningTrainingStart([FromQuery] string collectionId, [FromQuery] int limit)
+        {
+            var result = await _studyItemsService.GetTrainingItemsForWordMeaningAsync(GetUserId(), collectionId, limit);
+            return BaseResponse(result);
+        }
+
+        [HttpPost("wordmeaning/save")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> WordMeaningTrainingSave([FromBody] WordMeaningTrainingResultDto dto)
+        {
+            await _studyItemsService.SaveTrainingResultsForWordMeaningAsync(GetUserId(), dto);
             return StatusCodeBaseResponse();
         }
 

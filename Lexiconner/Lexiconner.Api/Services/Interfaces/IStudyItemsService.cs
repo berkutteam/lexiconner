@@ -1,4 +1,5 @@
-﻿using Lexiconner.Api.DTOs;
+﻿using Lexiconner.Api.Dtos.StudyItemsTrainings;
+using Lexiconner.Api.DTOs;
 using Lexiconner.Api.DTOs.StudyItemsTrainings;
 using Lexiconner.Api.Mappers;
 using Lexiconner.Api.Models;
@@ -36,6 +37,8 @@ namespace Lexiconner.Api.Services.Interfaces
         Task MarkStudyItemAsNotTrainedAsync(string userId, string studyItemId);
         Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, string collectionId, int limit);
         Task SaveTrainingResultsForFlashCardsAsync(string userId, FlashCardsTrainingResultDto results);
+        Task<WordMeaningTrainingDto> GetTrainingItemsForWordMeaningAsync(string userId, string collectionId, int limit);
+        Task SaveTrainingResultsForWordMeaningAsync(string userId, WordMeaningTrainingResultDto results);
 
         Task AddToFavouritesAsync(string userId, IEnumerable<string> itemIds);
         Task DeleteFromFavouritesAsync(string userId, IEnumerable<string> itemIds);
