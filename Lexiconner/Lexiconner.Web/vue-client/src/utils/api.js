@@ -312,6 +312,12 @@ class API {
             wordmeaningTrainingSave({ data }) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/wordmeaning/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
+            meaningwordTrainingStart({ collectionId, limit }) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/meaningword`, { collectionId, limit }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            meaningwordTrainingSave({ data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/meaningword/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
 
             // custom collections
             getCustomCollections() {

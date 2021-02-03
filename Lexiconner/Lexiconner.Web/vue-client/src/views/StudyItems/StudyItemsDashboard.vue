@@ -67,11 +67,11 @@
                     <span>Word-Meaning</span>
                 </router-link>
             </div>
-            <!-- <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-dictionary-64.png)`}">
-                <router-link v-bind:to="{ name: 'study-items-learn-falshcards', params: {}}" class="app-card-nav-link">
+            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-dictionary-64.png)`}">
+                <router-link v-bind:to="{ name: 'study-items-learn-meaningword', params: {}}" class="app-card-nav-link">
                     <span>Meaning-Word</span>
                 </router-link>
-            </div> -->
+            </div>
         </div>
     </div>
 </template>

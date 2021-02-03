@@ -379,7 +379,7 @@ namespace Lexiconner.Api.Services
                     // correct meaning
                     new WordMeaningTrainingOptionDto()
                     {
-                        Title = entity.Description,
+                        Value = entity.Description,
                         IsCorrect = true,
                     }
                 };
@@ -389,7 +389,7 @@ namespace Lexiconner.Api.Services
                 var otherStudyItems = await _dataRepository.GetManyAsync<StudyItemEntity>(x => x.LanguageCode == entity.LanguageCode && x.Id != entity.Id, 0, meaningsPerWord - 1);
                 possibleOptions.AddRange(otherStudyItems.Select(x => new WordMeaningTrainingOptionDto()
                 {
-                    Title = x.Title,
+                    Value = x.Description,
                     IsCorrect = false,
                 }));
 
@@ -402,7 +402,10 @@ namespace Lexiconner.Api.Services
             }
 
             // shuffle
-            trainingItems.Shuffle();
+            foreach (var item in trainingItems)
+            {
+                item.PossibleOptions = item.PossibleOptions.Shuffle();
+            }
 
             var result = new WordMeaningTrainingDto
             {
@@ -433,6 +436,131 @@ namespace Lexiconner.Api.Services
                     training = new StudyItemTrainingInfoEntity.StudyItemTrainingProgressItemEntity()
                     {
                         TrainingType = TrainingType.WordMeaning,
+                    };
+                    x.TrainingInfo.Trainings.Add(training);
+                }
+
+                if (isCorrect)
+                {
+                    training.Progress = training.Progress + infoAttribute.CorrectAnswerProgressRate;
+                    training.Progress = Math.Min(training.Progress, 1);
+                }
+                else
+                {
+                    training.Progress = training.Progress + infoAttribute.WrongAnswerProgressRate;
+                    training.Progress = Math.Max(training.Progress, 0);
+                }
+                training.Progress = Math.Round(training.Progress, 2);
+
+                training.LastTrainingdAt = DateTimeOffset.UtcNow;
+
+                if (training.Progress < 1)
+                {
+                    training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalTimespan);
+                }
+                else
+                {
+                    training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalForRepeatTimespan);
+                }
+
+                x.RecalculateTotalTrainingProgress();
+
+                return x;
+            }).ToList();
+
+            await _dataRepository.UpdateManyAsync(entities);
+        }
+
+        public async Task<MeaningWordTrainingDto> GetTrainingItemsForMeaningWordAsync(string userId, string collectionId, int limit)
+        {
+            const int meaningsPerWord = 5;
+
+            var predicate = PredicateBuilder.New<StudyItemEntity>(x =>
+                x.UserId == userId &&
+                (
+                    x.TrainingInfo == null ||
+                    !x.TrainingInfo.Trainings.Any() ||
+                    (
+                        x.TrainingInfo != null &&
+                        !x.TrainingInfo.IsTrained &&
+                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.MeaningWord && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
+                    )
+                )
+            );
+
+            if (collectionId != null)
+            {
+                predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+
+            var entities = await _dataRepository.GetManyAsync<StudyItemEntity>(predicate, 0, limit);
+
+            // find words list for each entity
+            var trainingItems = new List<MeaningWordTrainingItemDto>();
+            foreach (var entity in entities)
+            {
+                var possibleOptions = new List<MeaningWordTrainingOptionDto>()
+                {
+                    // correct meaning
+                    new MeaningWordTrainingOptionDto()
+                    {
+                        Value = entity.Title,
+                        IsCorrect = true,
+                    }
+                };
+
+                // other similar words
+                // v1: search from other study items with the same language
+                var otherStudyItems = await _dataRepository.GetManyAsync<StudyItemEntity>(x => x.LanguageCode == entity.LanguageCode && x.Id != entity.Id, 0, meaningsPerWord - 1);
+                possibleOptions.AddRange(otherStudyItems.Select(x => new MeaningWordTrainingOptionDto()
+                {
+                    Value = x.Title,
+                    IsCorrect = false,
+                }));
+
+                // find accross 
+                trainingItems.Add(new MeaningWordTrainingItemDto()
+                {
+                    StudyItem = _mapper.Map<StudyItemDto>(entity),
+                    PossibleOptions = possibleOptions,
+                });
+            }
+
+            // shuffle
+            foreach (var item in trainingItems)
+            {
+                item.PossibleOptions = item.PossibleOptions.Shuffle();
+            }
+
+            var result = new MeaningWordTrainingDto
+            {
+                Items = trainingItems,
+            };
+            return result;
+        }
+
+        public async Task SaveTrainingResultsForMeaningWordAsync(string userId, MeaningWordTrainingResultDto results)
+        {
+            var ids = results.ItemsResults.Select(x => x.ItemId);
+            var entities = (await _dataRepository.GetManyAsync<StudyItemEntity>(
+                x => x.UserId == userId && ids.Contains(x.Id)
+            )).ToList();
+
+            var infoAttribute = TrainingTypeHelper.GetAttribute(TrainingType.MeaningWord);
+
+            entities = entities.Select(x =>
+            {
+                bool isCorrect = results.ItemsResults.Any(y => y.ItemId == x.Id && y.IsCorrect);
+
+                x.TrainingInfo = x.TrainingInfo ?? new StudyItemTrainingInfoEntity();
+                x.TrainingInfo.Trainings = x.TrainingInfo.Trainings ?? new List<StudyItemTrainingInfoEntity.StudyItemTrainingProgressItemEntity>();
+
+                var training = x.TrainingInfo.Trainings.FirstOrDefault(y => y.TrainingType == TrainingType.MeaningWord);
+                if (training == null)
+                {
+                    training = new StudyItemTrainingInfoEntity.StudyItemTrainingProgressItemEntity()
+                    {
+                        TrainingType = TrainingType.MeaningWord,
                     };
                     x.TrainingInfo.Trainings.Add(training);
                 }

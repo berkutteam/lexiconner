@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Lexiconner.Application.Extensions
 {
-    public static class IEnumerableExtensions
+    public static class IListExtensions
     {
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> enumerable)
+        public static void Shuffle<T>(this IList<T> list)
         {
             Random rng = new Random();
 
-            var list = enumerable.ToList();
             int n = list.Count;
             while (n > 1)
             {
@@ -21,8 +19,6 @@ namespace Lexiconner.Application.Extensions
                 list[k] = list[n];
                 list[n] = value;
             }
-
-            return list;
         }
     }
 }

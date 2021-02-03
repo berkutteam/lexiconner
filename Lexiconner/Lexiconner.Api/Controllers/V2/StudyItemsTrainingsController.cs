@@ -102,7 +102,7 @@ namespace Lexiconner.Api.Controllers.V2
         #region Word-Meaning
 
         [HttpGet("wordmeaning")]
-        [ProducesResponseType(typeof(BaseApiResponseDto<FlashCardsTrainingDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<WordMeaningTrainingDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
@@ -122,6 +122,34 @@ namespace Lexiconner.Api.Controllers.V2
         public async Task<IActionResult> WordMeaningTrainingSave([FromBody] WordMeaningTrainingResultDto dto)
         {
             await _studyItemsService.SaveTrainingResultsForWordMeaningAsync(GetUserId(), dto);
+            return StatusCodeBaseResponse();
+        }
+
+        #endregion
+
+        #region Meaning-Word
+
+        [HttpGet("meaningword")]
+        [ProducesResponseType(typeof(BaseApiResponseDto<MeaningWordTrainingDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> MeaningWordTrainingStart([FromQuery] string collectionId, [FromQuery] int limit)
+        {
+            var result = await _studyItemsService.GetTrainingItemsForMeaningWordAsync(GetUserId(), collectionId, limit);
+            return BaseResponse(result);
+        }
+
+        [HttpPost("meaningword/save")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> MeaningWordTrainingSave([FromBody] MeaningWordTrainingResultDto dto)
+        {
+            await _studyItemsService.SaveTrainingResultsForMeaningWordAsync(GetUserId(), dto);
             return StatusCodeBaseResponse();
         }
 

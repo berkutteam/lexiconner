@@ -101,6 +101,7 @@ export default new Vuex.Store({
         trainingStats: null, // object
         trainingFlashcards: null, // object
         trainingWordMeaning: null, // object
+        trainingMeaningWord: null, // object
 
         customCollectionsResult: null, // object
         currentCustomCollection: null, // object
@@ -325,6 +326,10 @@ export default new Vuex.Store({
         [storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_START_SET](state, payload) {
             let { data } = payload;
             state.trainingWordMeaning = data;
+        },
+        [storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START_SET](state, payload) {
+            let { data } = payload;
+            state.trainingMeaningWord = data;
         },
 
 
@@ -963,6 +968,53 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_SAVE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START](context, params) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START,
+                loading: true,
+            });
+            return api.webApi().meaningwordTrainingStart({ ...params }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_SAVE](context, { data }) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_SAVE,
+                loading: true,
+            });
+            return api.webApi().meaningwordTrainingSave({ data }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_SAVE,
+                    loading: false,
+                });
+                // reset
+                commit(storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START_SET, {
+                    data: null
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_SAVE,
                     loading: false,
                 });
                 throw err;

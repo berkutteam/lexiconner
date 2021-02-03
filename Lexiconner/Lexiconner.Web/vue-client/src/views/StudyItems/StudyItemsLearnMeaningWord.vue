@@ -2,16 +2,16 @@
     <div class="my-permissions-wrapper">
         <div class="row">
             <div class="col-12">
-                <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_START]" class="mb-2"></row-loader>
+                <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START]" class="mb-2"></row-loader>
 
                 <!-- Listen to keyboard events -->
                 <keyboard-event-listener
                     v-on:keyup="handleKeyboardEvent"
                 ></keyboard-event-listener>
 
-                <div class="study-items-learn-wordmeaning-wrapper">
+                <div class="study-items-learn-meaningword-wrapper">
                     <h5 class="mb-3 d-flex">
-                        Word-Meaning
+                        Meaning-Word
 
                         <!-- Tooltip -->
                         <VTooltip class="ml-2">
@@ -39,7 +39,7 @@
                         <div class="card-body">
                             <div class="d-flex w-100 justify-content-between align-items-center mb-2">
                                 <h6 class="card-title mb-0">
-                                    <span>{{currentItem.studyItem.title}}</span>
+                                    <span>{{currentItem.studyItem.description}}</span>
                                 </h6>
                             </div>
 
@@ -142,7 +142,7 @@ import PaginationWrapper from '@/components/PaginationWrapper';
 import KeyboardEventListener from '@/components/KeyboardEventListener';
 
 export default {
-    name: 'study-items-learn-wordmeaning',
+    name: 'study-items-learn-meaningword',
     components: {
         RowLoader,
         KeyboardEventListener,
@@ -166,19 +166,19 @@ export default {
     computed: {
         // local computed go here
         isAllTrained: function() { 
-            return this.trainingWordMeaning !== null && this.trainingWordMeaning.items.length === 0;
+            return this.trainingMeaningWord !== null && this.trainingMeaningWord.items.length === 0;
         },
         currentItem: function() { 
-            if(this.trainingWordMeaning === null || this.trainingWordMeaning.items.length === 0) {
+            if(this.trainingMeaningWord === null || this.trainingMeaningWord.items.length === 0) {
                 return null;
             }
-            return this.trainingWordMeaning.items[this.privateState.currentItemIndex];
+            return this.trainingMeaningWord.items[this.privateState.currentItemIndex];
         },
         totalItemsCount: function() { 
-            if(this.trainingWordMeaning === null) {
+            if(this.trainingMeaningWord === null) {
                 return this.privateState.itemsLimit;
             }
-            return this.trainingWordMeaning.items.length;
+            return this.trainingMeaningWord.items.length;
         },
         currentItemAnswerOptionIdOrNotSet: function() {
             if(this.privateState.itemResults.length === this.privateState.currentItemIndex + 1) {
@@ -190,7 +190,7 @@ export default {
         // store state computed go here
         ...mapState({
             sharedState: state => state,
-            trainingWordMeaning: state => state.trainingWordMeaning,
+            trainingMeaningWord: state => state.trainingMeaningWord,
         }),
     },
     created: async function() {
@@ -205,7 +205,7 @@ export default {
 
     methods: {
         loadTraining: function() {
-            return this.$store.dispatch(storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_START, {
+            return this.$store.dispatch(storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START, {
                 collectionId: this.$store.getters.currentCustomCollectionId,
                 limit: this.privateState.itemsLimit, 
             }).then().catch(err => {
@@ -223,10 +223,10 @@ export default {
             this.loadTraining();
         },
         goToCard: function(index = 0) {
-            if(this.trainingWordMeaning === null) {
+            if(this.trainingMeaningWord === null) {
                 return;
             }
-            let count = this.trainingWordMeaning.items.length;
+            let count = this.trainingMeaningWord.items.length;
             
             // last card was shown - save training
             if(index === count) {
@@ -306,9 +306,9 @@ export default {
         },
         saveTraining: function() {
             this.privateState.isTrainingFinished = true;
-            return this.$store.dispatch(storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_SAVE, {
+            return this.$store.dispatch(storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_SAVE, {
                 data: {
-                    trainingType: this.trainingWordMeaning.trainingType,
+                    trainingType: this.trainingMeaningWord.trainingType,
                     itemsResults: [
                         ...this.privateState.itemResults,
                     ],
