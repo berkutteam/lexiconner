@@ -9,10 +9,12 @@
                 v-bind:class="{'font-weight-bold': false}"
                 class="tree-item"
             >
+                <!-- Expand button -->
                 <span v-if="hasChildren" v-on:click="toggle" class="tree-item-toggle mr-1">
-                    <i v-if="!privateState.isOpen" class="fas fa-chevron-down"></i>
-                    <i v-if="privateState.isOpen" class="fas fa-chevron-up"></i>
+                    <i v-if="!isOpenComputed" class="fas fa-chevron-down"></i>
+                    <i v-if="isOpenComputed" class="fas fa-chevron-up"></i>
                 </span>
+
                 <span 
                     class="tree-item-name" 
                     v-on:click="folderClicked(treeItem)"
@@ -23,7 +25,6 @@
                         {{treeItem.name}}
                     </span>
                 </span>
-                <!-- <span v-if="hasChildren">[{{ privateState.isOpen ? '-' : '+' }}]</span> -->
                 
                 <!-- <span class="tree-item-controls ml-3">
                     <span 
@@ -100,13 +101,13 @@
             </div>
             <!--If `children` is undefined this will not render-->
             <div
-                v-show="privateState.isOpen"
+                v-show="isOpenComputed"
             >
                 <folder-tree-view
                     v-for="child in treeItem.children" 
                     v-bind:key="child.id"
                     v-bind:treeItem="child"
-                    v-bind:activeTreeItemId="$store.getters.currentCustomCollectionId"
+                    v-bind:activeTreeItemId="activeTreeItemId"
                     v-bind:onFolderClick="folderClicked"
                     v-bind:onCreateFolder="createFolder"
                     v-bind:onUpdateFolder="updateFolder"
@@ -212,6 +213,15 @@ export default {
     computed: {
         // local computed go here
         hasChildren: function() { return this.treeItem.children && this.treeItem.children.length > 0 },
+
+        // consider opened if clicked or any of the descendants is selected
+        isOpenComputed: function() { 
+            const hasAnySelectedChild =  
+                this.treeItem.descendantsAsList && 
+                this.treeItem.descendantsAsList.length > 0 &&
+                this.treeItem.descendantsAsList.some(x => x.isSelected === true);
+            return this.privateState.isOpen || hasAnySelectedChild;
+        },
 
         // store state computed go here
         ...mapState({

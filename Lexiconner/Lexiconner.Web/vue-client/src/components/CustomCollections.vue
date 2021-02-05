@@ -1,94 +1,98 @@
 <template>
-    <div v-if="sharedState.customCollectionsResult">
-        <folder-tree-view
-            v-bind:treeItem="customCollectionsTree"
-            v-bind:activeTreeItemId="$store.getters.currentCustomCollectionId"
-            v-bind:onFolderClick="onFolderClick"
-            v-bind:onCreateFolder="onCreateFolder"
-            v-bind:onUpdateFolder="onUpdateFolder"
-            v-bind:onCreateFolderItem="onCreateFolderItem"
-            v-bind:onDuplicateFolder="onDuplicateFolder"
-            v-bind:onDeleteFolder="onDeleteFolder"
-        >
-        </folder-tree-view>
+    <div>
+        <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.CUSTOM_COLLECTIONS_LOAD]"></row-loader>
 
-        <!-- Custom collection edit -->
-        <modal 
-            name="custom-collection-edit" 
-            height="auto"
-            width="450px"
-            v-bind:classes="['v--modal', 'v--modal-box', 'v--modal-box--overflow-visible', 'v--modal-box--sm-fullwidth']"
-            v-bind:clickToClose="false"
-        >
-            <div class="app-modal">
-                <div class="app-modal-header">
-                    <div class="app-modal-title">
-                        <span v-if="privateState.modalMode === 'create'">Create collection</span>
-                        <span v-if="privateState.modalMode === 'edit'">Edit collection</span>
-                    </div>
-                    <div v-on:click="$modal.hide('custom-collection-edit')" class="app-modal-close">
-                        <i class="fas fa-times"></i>
-                    </div>
-                </div>
-                
-                <div class="app-modal-content">
-                    <form v-on:submit.prevent="createEditCustomCollection(privateState.modalMode)">
-                        <div class="form-group">
-                            <label for="customCollectionModel__name">Name</label>
-                            <input v-model="privateState.customCollectionModel.name" type="text" class="form-control" id="customCollectionModel__name" placeholder="Name" />
+        <div v-if="sharedState.customCollectionsResult">
+            <folder-tree-view
+                v-bind:treeItem="customCollectionsTree"
+                v-bind:activeTreeItemId="$store.getters.currentCustomCollectionId"
+                v-bind:onFolderClick="onFolderClick"
+                v-bind:onCreateFolder="onCreateFolder"
+                v-bind:onUpdateFolder="onUpdateFolder"
+                v-bind:onCreateFolderItem="onCreateFolderItem"
+                v-bind:onDuplicateFolder="onDuplicateFolder"
+                v-bind:onDeleteFolder="onDeleteFolder"
+            >
+            </folder-tree-view>
+
+            <!-- Custom collection edit -->
+            <modal 
+                name="custom-collection-edit" 
+                height="auto"
+                width="450px"
+                v-bind:classes="['v--modal', 'v--modal-box', 'v--modal-box--overflow-visible', 'v--modal-box--sm-fullwidth']"
+                v-bind:clickToClose="false"
+            >
+                <div class="app-modal">
+                    <div class="app-modal-header">
+                        <div class="app-modal-title">
+                            <span v-if="privateState.modalMode === 'create'">Create collection</span>
+                            <span v-if="privateState.modalMode === 'edit'">Edit collection</span>
                         </div>
-                        <loading-button 
-                            type="submit"
-                            v-bind:loading="sharedState.loading[privateState.storeTypes.CUSTOM_COLLECTION_CREATE] || sharedState.loading[privateState.storeTypes.CUSTOM_COLLECTION_UPDATE]"
-                            class="btn btn-outline-success btn-block"
-                        >Save</loading-button>
-                    </form>
-                </div>
-            </div>
-        </modal>
-
-        <!-- Custom collection delete  -->
-        <modal 
-            name="custom-collection-delete" 
-            height="auto"
-            width="450px"
-            v-bind:classes="['v--modal', 'v--modal-box', 'v--modal-box--overflow-visible', 'v--modal-box--sm-fullwidth']"
-            v-bind:clickToClose="false"
-        >
-            <div class="app-modal">
-                <div class="app-modal-header">
-                    <div class="app-modal-title">
-                        <span>Delete collection</span>
-                    </div>
-                    <div v-on:click="$modal.hide('custom-collection-delete')" class="app-modal-close">
-                        <i class="fas fa-times"></i>
-                    </div>
-                </div>
-                
-                <div class="app-modal-content">
-                    <form v-on:submit.prevent="deleteCustomCollection(privateState.modalMode)">
-                        <div class="form-check">
-                            <input v-model="privateState.customCollectionDeleteModel.isDeleteItems" class="form-check-input" type="checkbox" name="customCollectionDeleteModel_isDeleteItems" id="customCollectionDeleteModel_isDeleteItems">
-                            <label class="form-check-label" for="customCollectionDeleteModel_isDeleteItems">
-                                Move items to parent collection
-                            </label>
-                            <small class="form-text text-muted">If not checked the items in collection will be deleted.</small>
+                        <div v-on:click="$modal.hide('custom-collection-edit')" class="app-modal-close">
+                            <i class="fas fa-times"></i>
                         </div>
-                        <loading-button 
-                            type="submit"
-                            v-bind:loading="sharedState.loading[privateState.storeTypes.CUSTOM_COLLECTION_DELETE]"
-                            class="btn btn-outline-danger btn-block mt-3"
-                        >Delete</loading-button>
-                    </form>
+                    </div>
+                    
+                    <div class="app-modal-content">
+                        <form v-on:submit.prevent="createEditCustomCollection(privateState.modalMode)">
+                            <div class="form-group">
+                                <label for="customCollectionModel__name">Name</label>
+                                <input v-model="privateState.customCollectionModel.name" type="text" class="form-control" id="customCollectionModel__name" placeholder="Name" />
+                            </div>
+                            <loading-button 
+                                type="submit"
+                                v-bind:loading="sharedState.loading[privateState.storeTypes.CUSTOM_COLLECTION_CREATE] || sharedState.loading[privateState.storeTypes.CUSTOM_COLLECTION_UPDATE]"
+                                class="btn btn-outline-success btn-block"
+                            >Save</loading-button>
+                        </form>
+                    </div>
                 </div>
-            </div>
-        </modal>
+            </modal>
 
-        <!-- Study item create/edit -->
-        <study-item-create-update-modal
-            ref="customCollections_studyItemCreateUpdateModal"
-        >
-        </study-item-create-update-modal>
+            <!-- Custom collection delete  -->
+            <modal 
+                name="custom-collection-delete" 
+                height="auto"
+                width="450px"
+                v-bind:classes="['v--modal', 'v--modal-box', 'v--modal-box--overflow-visible', 'v--modal-box--sm-fullwidth']"
+                v-bind:clickToClose="false"
+            >
+                <div class="app-modal">
+                    <div class="app-modal-header">
+                        <div class="app-modal-title">
+                            <span>Delete collection</span>
+                        </div>
+                        <div v-on:click="$modal.hide('custom-collection-delete')" class="app-modal-close">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="app-modal-content">
+                        <form v-on:submit.prevent="deleteCustomCollection(privateState.modalMode)">
+                            <div class="form-check">
+                                <input v-model="privateState.customCollectionDeleteModel.isDeleteItems" class="form-check-input" type="checkbox" name="customCollectionDeleteModel_isDeleteItems" id="customCollectionDeleteModel_isDeleteItems">
+                                <label class="form-check-label" for="customCollectionDeleteModel_isDeleteItems">
+                                    Move items to parent collection
+                                </label>
+                                <small class="form-text text-muted">If not checked the items in collection will be deleted.</small>
+                            </div>
+                            <loading-button 
+                                type="submit"
+                                v-bind:loading="sharedState.loading[privateState.storeTypes.CUSTOM_COLLECTION_DELETE]"
+                                class="btn btn-outline-danger btn-block mt-3"
+                            >Delete</loading-button>
+                        </form>
+                    </div>
+                </div>
+            </modal>
+
+            <!-- Study item create/edit -->
+            <study-item-create-update-modal
+                ref="customCollections_studyItemCreateUpdateModal"
+            >
+            </study-item-create-update-modal>
+        </div>
     </div>
 </template>
 
@@ -170,9 +174,14 @@ export default {
             if(this.onSelectedCollectionChange) {
                 this.onSelectedCollectionChange(sourceFolder.id);
             }
+
+            // update currect collection on store
             this.$store.commit(storeTypes.CUSTOM_COLLECTION_CURRENT_SET, {
                 customCollection: sourceFolder,
             });
+
+            // mark as selected
+            this.markCustomCollectionAsSelectedDebounce(sourceFolder.id);
         },
         onCreateFolder: function(parentFolder) {
             this.privateState.modalMode = 'create';
@@ -268,6 +277,18 @@ export default {
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
         },
+        markCustomCollectionAsSelected: function(customCollectionId) {
+            this.$store.dispatch(storeTypes.CUSTOM_COLLECTION_MARK_AS_SELECTED, {
+                customCollectionId: customCollectionId,
+            }).then(() => {
+            }).catch(err => {
+                console.error(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            });
+        },
+        markCustomCollectionAsSelectedDebounce: _.debounce(function(customCollectionId) {
+            this.markCustomCollectionAsSelected(customCollectionId);
+        }, 500),
         deleteCustomCollection: function() {
             this.$store.dispatch(storeTypes.CUSTOM_COLLECTION_DELETE, {
                 customCollectionId: this.privateState.customCollectionDeleteModel.customCollectionId,

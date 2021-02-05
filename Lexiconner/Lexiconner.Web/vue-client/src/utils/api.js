@@ -329,6 +329,9 @@ class API {
             updateCustomCollection({ customCollectionId, data }) {
                 return axiosAuthRequest({ url: buildUrl(url, `customcollections/${customCollectionId}`, {}), method: "put", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
+            markCustomCollectionAsSelected({ customCollectionId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `customcollections/${customCollectionId}/select`, {}), method: "put", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
             deleteCustomCollection({ customCollectionId, isDeleteItems }) {
                 return axiosAuthRequest({ url: buildUrl(url, `customcollections/${customCollectionId}`, {isDeleteItems}), method: "delete", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },

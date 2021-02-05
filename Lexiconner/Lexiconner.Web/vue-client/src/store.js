@@ -1040,6 +1040,15 @@ export default new Vuex.Store({
                 commit(storeTypes.CUSTOM_COLLECTIONS_SET, {
                     data: data
                 });
+
+                // set selected collection in store
+                const selectedCustomCollection = data.asList.find(x => x.isSelected) || null;
+                if (selectedCustomCollection !== null) {
+                    commit(storeTypes.CUSTOM_COLLECTION_CURRENT_SET, {
+                        customCollection: selectedCustomCollection
+                    });
+                }
+
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
@@ -1090,6 +1099,29 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.CUSTOM_COLLECTION_UPDATE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.CUSTOM_COLLECTION_MARK_AS_SELECTED](context, { customCollectionId }) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.CUSTOM_COLLECTION_MARK_AS_SELECTED,
+                loading: true,
+            });
+            return api.webApi().markCustomCollectionAsSelected({ customCollectionId }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.CUSTOM_COLLECTION_MARK_AS_SELECTED,
+                    loading: false,
+                });
+                commit(storeTypes.CUSTOM_COLLECTIONS_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.CUSTOM_COLLECTION_MARK_AS_SELECTED,
                     loading: false,
                 });
                 throw err;

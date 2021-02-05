@@ -18,6 +18,7 @@ namespace Lexiconner.Domain.Entitites
         public string UserId { get; set; }
         public string Name { get; set; }
         public bool IsRoot { get; set; }
+        public bool IsSelected { get; set; }
         public List<CustomCollectionEntity> Children { get; set; }
 
 
@@ -56,6 +57,35 @@ namespace Lexiconner.Domain.Entitites
                     x.UpdateChildCollection(collectionId, updateDto);
                 });
             }
+        }
+
+        public void MarkCollectionAsSelected(string collectionId)
+        {
+            // deselect all
+            this.MarkCollectionAndChildsAsNotSelected();
+
+
+            // mark as selected
+            if (this.Id == collectionId)
+            {
+                this.IsSelected = true;
+            }
+            else
+            {
+                this.Children.ForEach(x =>
+                {
+                    x.MarkCollectionAsSelected(collectionId);
+                });
+            }
+        }
+
+        public void MarkCollectionAndChildsAsNotSelected()
+        {
+            this.IsSelected = false;
+            this.Children.ForEach(x =>
+            {
+                x.MarkCollectionAndChildsAsNotSelected();
+            });
         }
 
         public void RemoveChildCollection(string collectionId)

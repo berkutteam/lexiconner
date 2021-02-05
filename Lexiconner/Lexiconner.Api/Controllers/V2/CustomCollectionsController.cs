@@ -50,6 +50,14 @@ namespace Lexiconner.Api.Controllers.V2
             return BaseResponse(result);
         }
 
+        [HttpPut]
+        [Route("{collectionId}/select")]
+        public async Task<IActionResult> Select([FromRoute] string collectionId)
+        {
+            var result = await _customCollectionsService.MarkCustomCollectionAsSelectedAsync(GetUserId(), collectionId).ConfigureAwait(false);
+            return BaseResponse(result);
+        }
+
         [HttpDelete]
         [Route("{collectionId}")]
         public async Task<IActionResult> Delete([FromRoute]string collectionId, [FromQuery]bool isDeleteItems)

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Lexiconner.Domain.Dtos.StudyItems;
+using Lexiconner.Domain.DTOs.CustomCollections;
 using Lexiconner.Domain.Entitites;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,9 @@ namespace Lexiconner.Application.Mapping
             CreateMap<StudyItemEntity, StudyItemDto>();
             CreateMap<StudyItemImageEntity, StudyItemImageDto>();
             CreateMap<StudyItemTrainingInfoEntity, StudyItemTrainingInfoDto>();
+
+            // CustomCollection
+            CreateMap<CustomCollectionEntity, CustomCollectionDto>();
         }
     }
 }

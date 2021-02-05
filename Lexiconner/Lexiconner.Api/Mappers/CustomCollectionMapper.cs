@@ -1,4 +1,5 @@
-﻿using Lexiconner.Domain.DTOs.CustomCollections;
+﻿using Lexiconner.Domain.Dto.CustomCollections;
+using Lexiconner.Domain.DTOs.CustomCollections;
 using Lexiconner.Domain.Entitites;
 using System;
 using System.Collections.Generic;
@@ -17,13 +18,27 @@ namespace Lexiconner.Api.Mappers
                 UserId = entity.UserId,
                 Name = entity.Name,
                 IsRoot = entity.IsRoot,
+                IsSelected = entity.IsSelected,
                 Children = entity.Children.Select(x => CustomMapper.MapToDto(x)).ToList(),
+                DescendantsAsList = new List<CustomCollectionDto>(),
             };
         }
 
         public static IEnumerable<CustomCollectionDto> MapToDto(IEnumerable<CustomCollectionEntity> entities)
         {
             return entities.Select(x => MapToDto(x)).ToList();
+        }
+
+        public static CustomCollectionsAllResponseDto MapToCustomCollectionsAllResponseDto(CustomCollectionEntity entity)
+        {
+            var dto = CustomMapper.MapToDto(entity);
+            dto.PopulateFlattenedDescendants();
+            
+            return new CustomCollectionsAllResponseDto()
+            {
+                AsTree = dto,
+                AsList = dto.FlattenToList(),
+            };
         }
 
         public static CustomCollectionEntity MapToEntity(string userId, CustomCollectionCreateDto dto)

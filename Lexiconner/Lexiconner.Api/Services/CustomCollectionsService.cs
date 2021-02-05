@@ -1,4 +1,5 @@
-﻿using Lexiconner.Api.Mappers;
+﻿using AutoMapper;
+using Lexiconner.Api.Mappers;
 using Lexiconner.Api.Services.Interfaces;
 using Lexiconner.Application.Exceptions;
 using Lexiconner.Domain.Config;
@@ -15,12 +16,15 @@ namespace Lexiconner.Api.Services
 {
     public class CustomCollectionsService : ICustomCollectionsService
     {
+        private readonly IMapper _mapper;
         private readonly IDataRepository _dataRepository;
 
         public CustomCollectionsService(
+            IMapper mapper,
             IDataRepository MongoDataRepository
         )
         {
+            _mapper = mapper;
             _dataRepository = MongoDataRepository;
         }
 
@@ -32,12 +36,9 @@ namespace Lexiconner.Api.Services
                 // add root
                 rootEntity = await this.CreateCustomCollectionRootAsync(userId);
             }
-            var dto = CustomMapper.MapToDto(rootEntity);
-            return new CustomCollectionsAllResponseDto()
-            {
-                AsTree = dto,
-                AsList = dto.FlattenToList(),
-            };
+
+            var dto = CustomMapper.MapToCustomCollectionsAllResponseDto(rootEntity);
+            return dto;
 
             // TODO: calc items count in each collection using System.Threading.Tasks.Dataflow
         }
@@ -55,12 +56,8 @@ namespace Lexiconner.Api.Services
             rootEntity.AddChildCollection(createDto.ParentCollectionId, entity);
             await _dataRepository.UpdateAsync(rootEntity);
 
-            var dto = CustomMapper.MapToDto(rootEntity);
-            return new CustomCollectionsAllResponseDto()
-            {
-                AsTree = dto,
-                AsList = dto.FlattenToList(),
-            };
+            var dto = CustomMapper.MapToCustomCollectionsAllResponseDto(rootEntity);
+            return dto;
         }
 
         public async Task<CustomCollectionsAllResponseDto> UpdateCustomCollectionAsync(string userId, string collectionId, CustomCollectionUpdateDto updateDto)
@@ -73,12 +70,22 @@ namespace Lexiconner.Api.Services
             rootEntity.UpdateChildCollection(collectionId, updateDto);
             await _dataRepository.UpdateAsync(rootEntity);
 
-            var dto = CustomMapper.MapToDto(rootEntity);
-            return new CustomCollectionsAllResponseDto()
+            var dto = CustomMapper.MapToCustomCollectionsAllResponseDto(rootEntity);
+            return dto;
+        }
+
+        public async Task<CustomCollectionsAllResponseDto> MarkCustomCollectionAsSelectedAsync(string userId, string collectionId)
+        {
+            var rootEntity = await _dataRepository.GetOneAsync<CustomCollectionEntity>(x => x.UserId == userId);
+            if (rootEntity == null)
             {
-                AsTree = dto,
-                AsList = dto.FlattenToList(),
-            };
+                throw new NotFoundException();
+            }
+            rootEntity.MarkCollectionAsSelected(collectionId);
+            await _dataRepository.UpdateAsync(rootEntity);
+
+            var dto = CustomMapper.MapToCustomCollectionsAllResponseDto(rootEntity);
+            return dto;
         }
 
         public async Task<CustomCollectionsAllResponseDto> DeleteCustomCollectionAsync(string userId, string customCollectionId, bool isDeleteItems)
@@ -105,12 +112,8 @@ namespace Lexiconner.Api.Services
                 await _dataRepository.UpdateManyAsync(itemEntities);
             }
 
-            var dto = CustomMapper.MapToDto(rootEntity);
-            return new CustomCollectionsAllResponseDto()
-            {
-                AsTree = dto,
-                AsList = dto.FlattenToList(),
-            };
+            var dto = CustomMapper.MapToCustomCollectionsAllResponseDto(rootEntity);
+            return dto;
         }
 
         public async Task<CustomCollectionsAllResponseDto> DuplicateCustomCollectionAsync(string userId, string collectionId)
@@ -123,12 +126,8 @@ namespace Lexiconner.Api.Services
             rootEntity.DuplicateCollection(collectionId);
             await _dataRepository.UpdateAsync(rootEntity);
 
-            var dto = CustomMapper.MapToDto(rootEntity);
-            return new CustomCollectionsAllResponseDto()
-            {
-                AsTree = dto,
-                AsList = dto.FlattenToList(),
-            };
+            var dto = CustomMapper.MapToCustomCollectionsAllResponseDto(rootEntity);
+            return dto;
         }
 
         #region Private
