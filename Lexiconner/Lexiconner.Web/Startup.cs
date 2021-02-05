@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Lexiconner.Application.Extensions;
 using Lexiconner.Application.Helpers;
+using Lexiconner.Application.Middlewares;
 using Lexiconner.Domain.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -88,6 +89,9 @@ namespace Lexiconner.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            // Request/Response logging middleware
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
             if (HostingEnvironmentHelper.IsDevelopmentAny())
             {
                 app.UseDeveloperExceptionPage();

@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using Serilog;
 using Autofac;
 using Lexiconner.Persistence;
+using Lexiconner.Application.Middlewares;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -206,6 +207,9 @@ namespace Lexiconner.IdentityServer4
 
         public void Configure(IApplicationBuilder app, IApiVersionDescriptionProvider provider)
         {
+            // Request/Response logging middleware
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
             // fix for new Cookie policy https://web.dev/samesite-cookies-explained/
             // IdentityServer can't login without this setting
             // https://stackoverflow.com/questions/60757016/identity-server-4-post-login-redirect-not-working-in-chrome-only

@@ -44,6 +44,7 @@ using Microsoft.IdentityModel.Tokens;
 using Lexiconner.Persistence;
 using AutoMapper;
 using Lexiconner.Application.Mapping;
+using Lexiconner.Application.Middlewares;
 
 namespace Lexiconner.Api
 {
@@ -271,6 +272,9 @@ namespace Lexiconner.Api
         {
             //var ssss = app.ApplicationServices.GetService<IGoogleTranslateApiClient>();
             //ssss.Translate("", "", "").GetAwaiter().GetResult();
+
+            // Request/Response logging middleware
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
 
             if (HostingEnvironmentHelper.IsDevelopmentAny())
             {
