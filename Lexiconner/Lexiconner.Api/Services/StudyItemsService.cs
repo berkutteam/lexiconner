@@ -349,6 +349,7 @@ namespace Lexiconner.Api.Services
         public async Task<WordMeaningTrainingDto> GetTrainingItemsForWordMeaningAsync(string userId, string collectionId, int limit)
         {
             const int meaningsPerWord = 5;
+            var random = new Random();
 
             var predicate = PredicateBuilder.New<StudyItemEntity>(x =>
                 x.UserId == userId &&
@@ -386,7 +387,15 @@ namespace Lexiconner.Api.Services
 
                 // other similar meanings
                 // v1: search from other study items with the same language
-                var otherStudyItems = await _dataRepository.GetManyAsync<StudyItemEntity>(x => x.LanguageCode == entity.LanguageCode && x.Id != entity.Id, 0, meaningsPerWord - 1);
+                long otherStudyItemsCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => x.LanguageCode == entity.LanguageCode && x.Id != entity.Id);
+                int otherStudyItemsCountInt = otherStudyItemsCount > int.MaxValue ? int.MaxValue : (int)otherStudyItemsCount;
+                int otherStudyItemsLimit = meaningsPerWord - 1;
+                int otherStudyItemsOffset = random.Next(0, otherStudyItemsCountInt - otherStudyItemsLimit);
+                var otherStudyItems = await _dataRepository.GetManyAsync<StudyItemEntity>(
+                    x => x.LanguageCode == entity.LanguageCode && x.Id != entity.Id,
+                    otherStudyItemsOffset,
+                    otherStudyItemsLimit
+                );
                 possibleOptions.AddRange(otherStudyItems.Select(x => new WordMeaningTrainingOptionDto()
                 {
                     Value = x.Description,
@@ -474,6 +483,7 @@ namespace Lexiconner.Api.Services
         public async Task<MeaningWordTrainingDto> GetTrainingItemsForMeaningWordAsync(string userId, string collectionId, int limit)
         {
             const int meaningsPerWord = 5;
+            var random = new Random();
 
             var predicate = PredicateBuilder.New<StudyItemEntity>(x =>
                 x.UserId == userId &&
@@ -511,7 +521,15 @@ namespace Lexiconner.Api.Services
 
                 // other similar words
                 // v1: search from other study items with the same language
-                var otherStudyItems = await _dataRepository.GetManyAsync<StudyItemEntity>(x => x.LanguageCode == entity.LanguageCode && x.Id != entity.Id, 0, meaningsPerWord - 1);
+                long otherStudyItemsCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => x.LanguageCode == entity.LanguageCode && x.Id != entity.Id);
+                int otherStudyItemsCountInt = otherStudyItemsCount > int.MaxValue ? int.MaxValue : (int)otherStudyItemsCount;
+                int otherStudyItemsLimit = meaningsPerWord - 1;
+                int otherStudyItemsOffset = random.Next(0, otherStudyItemsCountInt - otherStudyItemsLimit);
+                var otherStudyItems = await _dataRepository.GetManyAsync<StudyItemEntity>(
+                    x => x.LanguageCode == entity.LanguageCode && x.Id != entity.Id,
+                    otherStudyItemsOffset,
+                    otherStudyItemsLimit
+                );
                 possibleOptions.AddRange(otherStudyItems.Select(x => new MeaningWordTrainingOptionDto()
                 {
                     Value = x.Title,
