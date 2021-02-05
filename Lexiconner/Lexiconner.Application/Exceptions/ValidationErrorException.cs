@@ -29,6 +29,7 @@ namespace Lexiconner.Application.Exceptions
         {
             ValidationFailures = validationFailures;
         }
+
         //protected ValidationErrorException(ICollection<CustomValidationResult> validationFailures, Exception innerException) : base(_title, "Validation error", innerException)
         //{
 

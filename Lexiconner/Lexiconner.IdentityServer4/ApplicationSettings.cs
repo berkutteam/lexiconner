@@ -10,22 +10,13 @@ namespace Lexiconner.IdentityServer4
     {
         public CorsSettings Cors { get; set; }
         public MongoDbSettings MongoDb { get; set; }
-        public UrlSettings Urls { get; set; }
+        public UrlsSettings Urls { get; set; }
         public IdenitytServer4Settings IdenitytServer4 { get; set; }
     }
 
-    public class CorsSettings
+    public class UrlsSettings
     {
-        public CorsSettings()
-        {
-            AllowedOrigins = new List<string>();
-        }
-
-        public List<string> AllowedOrigins { get; set; }
-    }
-
-    public class UrlSettings
-    {
+        public string SelfExternalUrl { get; set; }
         public string WebApiExternalUrl { get; set; }
         public string WebSpaExternalUrl { get; set; }
         public string WebSpaLocalUrl { get; set; }

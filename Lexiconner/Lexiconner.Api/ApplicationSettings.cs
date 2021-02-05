@@ -18,28 +18,12 @@ namespace Lexiconner.Api
         public TheMovieDatabaseApiSettings TheMovieDatabase { get; set; }
     }
 
-    public class CorsSettings
-    {
-        public CorsSettings()
-        {
-            AllowedOrigins = new List<string>();
-        }
-
-        public List<string> AllowedOrigins { get; set; }
-    }
-
     public class MongoDbSettings
     {
         public string ConnectionString { get; set; }
         public string DatabaseIdentity { get; set; }
         public string DatabaseMain { get; set; }
         public string DatabaseSharedCache { get; set; }
-    }
-
-    public class BasicAuthSettings
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
     }
 
     public class JwtBearerAuthSettings

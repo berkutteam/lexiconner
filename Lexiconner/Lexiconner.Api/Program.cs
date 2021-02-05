@@ -14,6 +14,8 @@ using Serilog.Events;
 using Autofac;
 using Serilog.Sinks.SystemConsole.Themes;
 using Microsoft.Extensions.Hosting;
+using Lexiconner.Application.Validation;
+using Lexiconner.Application.Exceptions;
 
 namespace Lexiconner.Api
 {
@@ -97,8 +99,23 @@ namespace Lexiconner.Api
                 .AddJsonFile($"appsettings.{HostingEnvironmentHelper.Environment}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
-            var config = builder.Build();
-            return config;
+            var configuration = builder.Build();
+
+            // validate ApplicationSettings
+            var config = configuration.Get<ApplicationSettings>();
+            try
+            {
+                Log.Information("Validating configuration...");
+                CustomValidationHelper.Validate(config);
+                Log.Information("Configuration is valid.");
+            }
+            catch (ValidationErrorException ex)
+            {
+                string validationErrorMessage = CustomValidationHelper.GetValidationFormattedMessage(ex.ValidationFailures);
+                throw new Exception($"Configuration validation failed. Check appsettings.json, appsettings.{HostingEnvironmentHelper.Environment}.json, .env__{HostingEnvironmentHelper.Environment} files. \n\rMessage: {validationErrorMessage}", ex);
+            }
+
+            return configuration;
         }
 
         private static Serilog.ILogger GetSerilogLogger(IConfiguration configuration, ApplicationSettings config)

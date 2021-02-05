@@ -24,6 +24,7 @@ namespace Lexiconner.Web
 
     public class UrlsSettings
     {
+        public string SelfExternalUrl { get; set; }
         public string ApiExternalUrl { get; set; }
     }
 

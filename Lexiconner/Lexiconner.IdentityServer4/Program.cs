@@ -3,7 +3,9 @@
 
 
 using Autofac.Extensions.DependencyInjection;
+using Lexiconner.Application.Exceptions;
 using Lexiconner.Application.Helpers;
+using Lexiconner.Application.Validation;
 using Lexiconner.IdentityServer4.Exceptions;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -100,8 +102,23 @@ namespace Lexiconner.IdentityServer4
                 .AddJsonFile($"appsettings.{HostingEnvironmentHelper.Environment}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
-            var config = builder.Build();
-            return config;
+            var configuration = builder.Build();
+
+            // validate ApplicationSettings
+            var config = configuration.Get<ApplicationSettings>();
+            try
+            {
+                Log.Information("Validating configuration...");
+                CustomValidationHelper.Validate(config);
+                Log.Information("Configuration is valid.");
+            }
+            catch (ValidationErrorException ex)
+            {
+                string validationErrorMessage = CustomValidationHelper.GetValidationFormattedMessage(ex.ValidationFailures);
+                throw new Exception($"Configuration validation failed. Check appsettings.json, appsettings.{HostingEnvironmentHelper.Environment}.json, .env__{HostingEnvironmentHelper.Environment} files. \n\rMessage: {validationErrorMessage}", ex);
+            }
+
+            return configuration;
         }
 
         private static Serilog.ILogger GetSerilogLogger(IConfiguration configuration, ApplicationSettings config)
