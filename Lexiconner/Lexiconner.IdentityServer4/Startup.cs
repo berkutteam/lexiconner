@@ -85,16 +85,18 @@ namespace Lexiconner.IdentityServer4
                 options.Events.RaiseSuccessEvents = true;
             });
 
-            identityServerBuilder.Services.ConfigureExternalCookie(options =>
-            {
-                options.Cookie.IsEssential = true;
-                options.Cookie.SameSite = SameSiteMode.Lax; //SameSiteMode.Unspecified in .NET Core 3.1
-            });
-            identityServerBuilder.Services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.IsEssential = true;
-                options.Cookie.SameSite = SameSiteMode.Lax; //SameSiteMode.Unspecified in .NET Core 3.1
-            });
+            // Fix IdentityServe4 and new SameSite Cookie policy
+            //identityServerBuilder.Services.ConfigureExternalCookie(options =>
+            //{
+            //    options.Cookie.IsEssential = true;
+            //    options.Cookie.SameSite = SameSiteMode.Lax; //SameSiteMode.Unspecified in .NET Core 3.1
+            //});
+            //identityServerBuilder.Services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.Cookie.IsEssential = true;
+            //    options.Cookie.SameSite = SameSiteMode.Lax; //SameSiteMode.Unspecified in .NET Core 3.1
+            //});
+            services.ConfigureNonBreakingSameSiteCookies();
 
             identityServerBuilder.AddSigningCredentialCustom(Environment, config);
             identityServerBuilder.AddConfig()
@@ -213,10 +215,11 @@ namespace Lexiconner.IdentityServer4
             // fix for new Cookie policy https://web.dev/samesite-cookies-explained/
             // IdentityServer can't login without this setting
             // https://stackoverflow.com/questions/60757016/identity-server-4-post-login-redirect-not-working-in-chrome-only
-            app.UseCookiePolicy(new CookiePolicyOptions
-            {
-                MinimumSameSitePolicy = SameSiteMode.Lax
-            });
+            //app.UseCookiePolicy(new CookiePolicyOptions
+            //{
+            //    MinimumSameSitePolicy = SameSiteMode.Lax
+            //});
+            app.UseCookiePolicy();
 
             if (Environment.IsDevelopmentAny())
             {
