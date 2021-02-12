@@ -74,7 +74,10 @@ steps:
     echo "Current branch:"
     git branch --show-current
     echo ""
-  displayName: 'Log variables'
+    echo "Git log:"
+    git log
+    echo ""
+  displayName: 'Log variables and info'
 
 - script: |
     echo "#################### Building SPA projects... ####################"
