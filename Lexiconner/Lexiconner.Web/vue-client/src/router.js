@@ -14,6 +14,7 @@ import StudyItemsBrowse from './views/StudyItems/StudyItemsBrowse.vue';
 import StudyItemsLearnFlashCards from './views/StudyItems/StudyItemsLearnFlashCards.vue';
 import StudyItemsLearnWordMeaning from './views/StudyItems/StudyItemsLearnWordMeaning.vue';
 import StudyItemsLearnMeaningWord from './views/StudyItems/StudyItemsLearnMeaningWord.vue';
+import StudyItemsLearnMatchWords from './views/StudyItems/StudyItemsLearnMatchWords.vue';
 import UserFilmsBrowse from './views/UserFilms/UserFilmsBrowse.vue';
 
 import Dashboard from './views/Dashboard.vue';
@@ -191,6 +192,17 @@ export default new Router({
             path: '/study-items/learn/meaningword',
             name: 'study-items-learn-meaningword',
             component: StudyItemsLearnMeaningWord,
+            props: true,
+            meta: { layout: 'default' },
+            beforeEnter: async (to, from, next) => {
+                await waitAppInitialization({ to, from, next });
+                checkAuthenticated({ to, from, next });
+            },
+        },
+        {
+            path: '/study-items/learn/matchwords',
+            name: 'study-items-learn-matchwords',
+            component: StudyItemsLearnMatchWords,
             props: true,
             meta: { layout: 'default' },
             beforeEnter: async (to, from, next) => {

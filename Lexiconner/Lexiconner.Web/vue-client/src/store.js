@@ -102,7 +102,8 @@ export default new Vuex.Store({
         trainingFlashcards: null, // object
         trainingWordMeaning: null, // object
         trainingMeaningWord: null, // object
-
+        trainingMatchWords: null, // object
+        
         customCollectionsResult: null, // object
         currentCustomCollection: null, // object
 
@@ -330,6 +331,10 @@ export default new Vuex.Store({
         [storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START_SET](state, payload) {
             let { data } = payload;
             state.trainingMeaningWord = data;
+        },
+        [storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START_SET](state, payload) {
+            let { data } = payload;
+            state.trainingMatchWords = data;
         },
 
 
@@ -1015,6 +1020,29 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_SAVE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START](context, params) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START,
+                loading: true,
+            });
+            return api.webApi().matchwordsTrainingStart({ ...params }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START,
                     loading: false,
                 });
                 throw err;

@@ -10,7 +10,7 @@
         v-bind:taggable="false" 
         v-on:input="onInput"
     >
-    <!-- Custom option template -->
+        <!-- Custom option template -->
         <template slot="option" slot-scope="props">
             <div class="option__desc">
                 <span class="option__title">{{ props.option.levelPad }}{{ props.option.name }}</span>

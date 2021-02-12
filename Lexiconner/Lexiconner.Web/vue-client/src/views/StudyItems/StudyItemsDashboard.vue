@@ -72,6 +72,11 @@
                     <span>Meaning-Word</span>
                 </router-link>
             </div>
+            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-compare-64.png)`}">
+                <router-link v-bind:to="{ name: 'study-items-learn-matchwords', params: {}}" class="app-card-nav-link">
+                    <span>Match words</span>
+                </router-link>
+            </div>
         </div>
     </div>
 </template>

@@ -318,6 +318,9 @@ class API {
             meaningwordTrainingSave({ data }) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/meaningword/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
+            matchwordsTrainingStart({ collectionId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/matchwords`, { collectionId }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
 
             // custom collections
             getCustomCollections() {

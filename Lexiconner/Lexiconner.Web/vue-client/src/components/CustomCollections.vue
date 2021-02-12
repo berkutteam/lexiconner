@@ -127,7 +127,7 @@ export default {
         },
     },
     components: {
-        // RowLoader,
+        RowLoader,
         LoadingButton,
         FolderTreeView,
         StudyItemCreateUpdateModal,

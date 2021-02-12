@@ -38,6 +38,15 @@ namespace Lexiconner.Domain.Enums
             wrongAnswerProgressRate: -0.75
         )]
         MeaningWord = 3,
+
+        [Display(Name = "Match words")]
+        [TrainingTypeInfo(
+            trainIntervalMs: 24 * 60 * 60 * 1000 /* 24 hours */,
+            trainIntervalForRepeatMs: 5 * 24 * 60 * 60 * 1000 /* 5 days */,
+            correctAnswerProgressRate: 0.35,
+            wrongAnswerProgressRate: -0.75
+        )]
+        MatchWords = 4,
     }
 
     public static class TrainingTypeHelper

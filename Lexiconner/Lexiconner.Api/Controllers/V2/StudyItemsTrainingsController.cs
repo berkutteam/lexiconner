@@ -154,5 +154,21 @@ namespace Lexiconner.Api.Controllers.V2
         }
 
         #endregion
+
+        #region Meaning-Word
+
+        [HttpGet("matchwords")]
+        [ProducesResponseType(typeof(BaseApiResponseDto<MatchWordsTrainingDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> MatchWordsTrainingStart([FromQuery] string collectionId)
+        {
+            var result = await _studyItemsService.GetTrainingItemsForMatchWordsAsync(GetUserId(), collectionId);
+            return BaseResponse(result);
+        }
+
+        #endregion
     }
 }

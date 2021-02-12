@@ -614,6 +614,84 @@ namespace Lexiconner.Api.Services
             await _dataRepository.UpdateManyAsync(entities);
         }
 
+        public async Task<MatchWordsTrainingDto> GetTrainingItemsForMatchWordsAsync(string userId, string collectionId)
+        {
+            const int matchWordsCount = 5;
+            const int additionalOptionsCount = 3;
+            var random = new Random();
+
+            var predicate = PredicateBuilder.New<StudyItemEntity>(x =>
+                x.UserId == userId &&
+                (
+                    x.TrainingInfo == null ||
+                    !x.TrainingInfo.Trainings.Any() ||
+                    (
+                        x.TrainingInfo != null &&
+                        !x.TrainingInfo.IsTrained &&
+                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.MatchWords && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
+                    )
+                )
+            );
+
+            if (collectionId != null)
+            {
+                predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+
+            var entities = await _dataRepository.GetManyAsync<StudyItemEntity>(predicate, 0, matchWordsCount);
+
+            if(!entities.Any())
+            {
+                return new MatchWordsTrainingDto();
+            }
+
+            var entitiesIds = entities.Select(x => x.Id).ToList();
+            string languageCode = entities.First().LanguageCode;
+
+            // other similar words
+            // v1: search from other study items with the same language
+            long otherStudyItemsCount = await _dataRepository.CountAllAsync<StudyItemEntity>(x => x.LanguageCode == languageCode && !entitiesIds.Contains(x.Id));
+            int otherStudyItemsCountInt = otherStudyItemsCount > int.MaxValue ? int.MaxValue : (int)otherStudyItemsCount;
+            int otherStudyItemsLimit = additionalOptionsCount;
+            int otherStudyItemsOffset = random.Next(0, otherStudyItemsCountInt - otherStudyItemsLimit);
+            var otherStudyItems = await _dataRepository.GetManyAsync<StudyItemEntity>(
+                x => x.LanguageCode == languageCode && !entitiesIds.Contains(x.Id),
+                otherStudyItemsOffset,
+                otherStudyItemsLimit
+            );
+
+            // build options
+            var possibleOptions = entities.Select(x => new MatchWordsTrainingPossibleOptionDto()
+            {
+                Value = x.Description,
+                CorrectForStudyItemId = x.Id,
+            });
+
+            // add other words options to complicate training
+            possibleOptions = possibleOptions.Concat(
+                 otherStudyItems.Select(x => new MatchWordsTrainingPossibleOptionDto()
+                 {
+                     Value = x.Description,
+                     CorrectForStudyItemId = null,
+                 })
+            );
+
+            // shuffle
+            entities = entities.Shuffle();
+            possibleOptions = possibleOptions.Shuffle();
+
+            var result = new MatchWordsTrainingDto
+            {
+                Items = entities.Select(x => new MatchWordsTrainingItemDto()
+                {
+                    StudyItem = _mapper.Map<StudyItemDto>(x),
+                    CorrectOptionId = possibleOptions.First(y => y.CorrectForStudyItemId == x.Id).RandomId,
+                }),
+                PossibleOptions = possibleOptions,
+            };
+            return result;
+        }
+
         #endregion
 
 

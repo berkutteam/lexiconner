@@ -6,7 +6,7 @@ namespace Lexiconner.Application.Extensions
 {
     public static class IListExtensions
     {
-        public static void Shuffle<T>(this IList<T> list)
+        public static IList<T> Shuffle<T>(this IList<T> list)
         {
             Random rng = new Random();
 
@@ -19,6 +19,8 @@ namespace Lexiconner.Application.Extensions
                 list[k] = list[n];
                 list[n] = value;
             }
+
+            return list;
         }
     }
 }
