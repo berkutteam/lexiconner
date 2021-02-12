@@ -70,6 +70,10 @@ steps:
     echo "herokuAppNameIdentity: $(herokuAppNameIdentity)"
     echo "herokuAppNameWeb: $(herokuAppNameWeb)"
     echo ""
+    echo "#################### Git info ####################"
+    echo "Current branch:"
+    git branch --show-current
+    echo ""
   displayName: 'Log variables'
 
 - script: |
