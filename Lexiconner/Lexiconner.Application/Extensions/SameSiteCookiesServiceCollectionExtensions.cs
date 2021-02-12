@@ -135,11 +135,11 @@ namespace Lexiconner.Application.Extensions
 
             // additional fix from:
             // https://github.com/IdentityServer/IdentityServer4/issues/4165#issuecomment-599987118
-            var chromeVersion = GetChromeVersion(userAgent);
-            if (chromeVersion >= 80)
-            {
-                return true;
-            }
+            //var chromeVersion = GetChromeVersion(userAgent);
+            //if (chromeVersion >= 80)
+            //{
+            //    return true;
+            //}
 
             return false;
         }
