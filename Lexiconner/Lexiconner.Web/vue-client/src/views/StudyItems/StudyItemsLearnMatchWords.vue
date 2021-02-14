@@ -218,6 +218,8 @@ export default {
             this.privateState.studyItemSelectedOptions = [];
             this.privateState.isShowAnswers = false;
             this.privateState.isTrainingFinished = false;
+            this.privateState.summary.correctItemsCount = 0;
+            this.privateState.summary.incorrectItemsCount = 0;
 
             this.loadTraining();
         },

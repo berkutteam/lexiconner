@@ -219,6 +219,8 @@ export default {
             this.privateState.isShowCurrentItemDetails = false;
             this.privateState.itemResults = [];
             this.privateState.isTrainingFinished = false;
+            this.privateState.summary.correctItemsCount = 0;
+            this.privateState.summary.incorrectItemsCount = 0;
 
             this.loadTraining();
         },
