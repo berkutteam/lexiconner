@@ -79,10 +79,19 @@ namespace Lexiconner.Api.Services
                 predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
             }
 
-            var itemsTask = _dataRepository.GetManyAsync<StudyItemEntity>(predicate, offset, limit);
             var totalTask = _dataRepository.CountAllAsync<StudyItemEntity>(predicate);
-
             var total = await totalTask;
+
+            if (searchFilter.IsShuffle)
+            {
+                // get random N items
+                var random = new Random();
+
+                // TODO: avoid explicit long to int conversion
+                offset = random.Next(0, (int)total - limit);
+            }
+            
+            var itemsTask = _dataRepository.GetManyAsync<StudyItemEntity>(predicate, offset, limit);
             var items = await itemsTask;
 
             var result = new PaginationResponseDto<StudyItemDto>

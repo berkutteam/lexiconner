@@ -9,14 +9,17 @@ namespace Lexiconner.Api.Models
     {
         public string Search { get; set; }
         public bool? IsFavourite { get; set; }
+        public bool IsShuffle { get; set; }
 
         public StudyItemsSearchFilterModel(
             string search = null,
-            bool? isFavourite = null
+            bool? isFavourite = null,
+            bool isShuffle = false
         )
         {
             Search = search;
             IsFavourite = isFavourite;
+            IsShuffle = isShuffle;
         }
     }
 }

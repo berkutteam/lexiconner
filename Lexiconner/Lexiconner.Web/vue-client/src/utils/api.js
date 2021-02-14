@@ -267,8 +267,8 @@ class API {
             // },
 
             // study items
-            getStudyItems({ offset, limit, search, isFavourite, collectionId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems`, {offset, limit, search, isFavourite, collectionId}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            getStudyItems({ offset, limit, search, isFavourite, isShuffle, collectionId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems`, { offset, limit, search, isFavourite, isShuffle, collectionId}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             getStudyItem({ studyItemId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/${studyItemId}`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);

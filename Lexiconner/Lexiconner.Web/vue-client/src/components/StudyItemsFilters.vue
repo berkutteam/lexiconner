@@ -23,10 +23,20 @@
                 v-bind:class="' mr-2'"
             /> -->
 
-            <div class="form-group mr-2 cursor-pointer text-warning">
-                <i v-on:click="setIsFavorite(null)" v-bind:class="{'text-primary': sharedState.studyItemsRequestParams.isFavourite === null}" class="fas fa-star-half-alt mr-1"></i>
-                <i v-on:click="setIsFavorite(true)" v-bind:class="{'text-primary': sharedState.studyItemsRequestParams.isFavourite === true}" class="fas fa-star mr-1"></i>
-                <i v-on:click="setIsFavorite(false)" v-bind:class="{'text-primary': sharedState.studyItemsRequestParams.isFavourite === false}" class="far fa-star"></i>
+            <!-- Favorite -->
+            <div class="form-group mr-2 cursor-pointer">
+                <i v-on:click="setIsFavorite(null)" v-bind:class="{'text-warning': sharedState.studyItemsRequestParams.isFavourite === null}" class="fas fa-star-half-alt mr-1"></i>
+                <i v-on:click="setIsFavorite(true)" v-bind:class="{'text-warning': sharedState.studyItemsRequestParams.isFavourite === true}" class="fas fa-star mr-1"></i>
+                <i v-on:click="setIsFavorite(false)" v-bind:class="{'text-warning': sharedState.studyItemsRequestParams.isFavourite === false}" class="far fa-star"></i>
+            </div>
+
+            <!-- Shuffle -->
+            <div class="form-group mr-2 cursor-pointer">
+                <i 
+                    v-on:click="setIsShuffle(!sharedState.studyItemsRequestParams.isShuffle)" 
+                    v-bind:class="{'text-info': sharedState.studyItemsRequestParams.isShuffle === true}"
+                    class="fas fa-random"
+                ></i>
             </div>
 
             <!-- Reload -->
@@ -37,7 +47,7 @@
             </div>
 
             <!-- Reset -->
-            <div class="form-group">
+            <div class="form-group mr-2">
                 <button v-on:click="resetRequestParams" type="button" class="btn btn-outline-secondary">
                     <i class="fas fa-times"></i>
                 </button>
@@ -124,6 +134,12 @@ export default {
         setIsFavorite: function(value) {
             this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
                 isFavourite: value,
+            });
+            this.callOnChange();
+        },
+        setIsShuffle: function(value) {
+            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
+                isShuffle: value,
             });
             this.callOnChange();
         },

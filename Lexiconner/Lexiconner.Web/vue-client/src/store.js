@@ -90,6 +90,7 @@ export default new Vuex.Store({
         studyItemsRequestParams: {
             search: null,
             isFavourite: null,
+            isShuffle: false,
         },
 
         // paginationResult (store only current page)
