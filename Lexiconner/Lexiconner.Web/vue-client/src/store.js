@@ -90,6 +90,8 @@ export default new Vuex.Store({
         studyItemsRequestParams: {
             search: null,
             isFavourite: null,
+            isShuffle: false,
+            isTrained: null,
         },
 
         // paginationResult (store only current page)
@@ -1043,6 +1045,30 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_SAVE](context, { data }) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_SAVE,
+                loading: true,
+            });
+            return api.webApi().matchwordsTrainingSave({ data }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_SAVE,
+                    loading: false,
+                });
+                // reset
+                // commit(storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START_SET, {
+                //     data: null
+                // });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_SAVE,
                     loading: false,
                 });
                 throw err;

@@ -9,6 +9,8 @@ namespace Lexiconner.Domain.Dtos.StudyItems
     {
         public string Search { get; set; }
         public bool? IsFavourite { get; set; }
+        public bool IsShuffle { get; set; }
+        public bool? IsTrained { get; set; }
         public string CollectionId { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Lexiconner.Application.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -135,11 +136,15 @@ namespace Lexiconner.Application.Extensions
 
             // additional fix from:
             // https://github.com/IdentityServer/IdentityServer4/issues/4165#issuecomment-599987118
-            //var chromeVersion = GetChromeVersion(userAgent);
-            //if (chromeVersion >= 80)
-            //{
-            //    return true;
-            //}
+            // for some reason it doesn't work on localhost for SameSite=None, but works for SameSite=Unspecified
+            if (HostingEnvironmentHelper.IsDevelopmentLocalhost())
+            {
+                var chromeVersion = GetChromeVersion(userAgent);
+                if (chromeVersion >= 80)
+                {
+                    return true;
+                }
+            }
 
             return false;
         }
