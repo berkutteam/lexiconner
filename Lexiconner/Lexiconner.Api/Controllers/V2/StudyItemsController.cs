@@ -50,7 +50,7 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetAll([FromQuery] StudyItemsRequestDto dto)
         {
-            var searchFilter = new StudyItemsSearchFilterModel(dto.Search, dto.IsFavourite, dto.IsShuffle);
+            var searchFilter = new StudyItemsSearchFilterModel(dto.Search, dto.IsFavourite, dto.IsShuffle, dto.IsTrained);
             var result = await _studyItemsService.GetAllStudyItemsAsync(GetUserId(), dto.Offset, dto.Limit, searchFilter, dto.CollectionId);
             return BaseResponse(result);
         }
