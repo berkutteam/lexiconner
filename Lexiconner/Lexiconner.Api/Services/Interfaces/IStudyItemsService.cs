@@ -42,6 +42,7 @@ namespace Lexiconner.Api.Services.Interfaces
         Task<MeaningWordTrainingDto> GetTrainingItemsForMeaningWordAsync(string userId, string collectionId, int limit);
         Task SaveTrainingResultsForMeaningWordAsync(string userId, MeaningWordTrainingResultDto results);
         Task<MatchWordsTrainingDto> GetTrainingItemsForMatchWordsAsync(string userId, string collectionId);
+        Task SaveTrainingResultsForMatchWordsAsync(string userId, MatchWordsTrainingResultDto results);
 
         Task AddToFavouritesAsync(string userId, IEnumerable<string> itemIds);
         Task DeleteFromFavouritesAsync(string userId, IEnumerable<string> itemIds);

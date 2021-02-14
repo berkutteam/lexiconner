@@ -22,19 +22,31 @@
                             <template #popper>
                                 <div class="mb-1">Space - reveal aswer/go to the next</div>
                                 <!-- <div class="mb-1">Left Arrow - go to the previous</div> -->
-                                <div class="">Right Arrow - go to the next</div>
+                                <!-- <div class="">Right Arrow - go to the next</div> -->
                             </template>
                         </VTooltip>
                     </h5>
                     <div v-if="isAllTrained">
                         <div class="alert alert-secondary" role="alert">
-                            Everyting is already trained!
+                            Everything is already trained!
                         </div>
                     </div>
                     <div v-if="!isAllTrained && trainingMatchWords" class="card bg-light training-card">
                         <!-- Image -->
-                        <img v-if="currentItem.studyItem.image" class="card-img-top training-image" v-bind:src="currentItem.studyItem.image.url" v-bind:alt="currentItem.studyItem.title">
-                        <img v-else class="card-img-top" src="/img/empty-image.png">
+                        <div class="card-img-top">
+                            
+                            <div class="image-collage image-collage--5images">
+                                <div 
+                                    v-for="(item, index) in trainingMatchWords.items"
+                                    v-bind:key="item.studyItem.id"
+                                    v-bind:class="{[`image-container-${index}`]: true}"
+                                    class="image-container"
+                                >
+                                    <img v-if="item.studyItem.image" class="training-image" v-bind:src="item.studyItem.image.url" v-bind:alt="item.studyItem.title">
+                                    <img v-else class="card-img-top" src="/img/empty-image.png">
+                                </div>
+                            </div>
+                        </div>
                         
                         <div class="card-body">
                             <div 
@@ -45,7 +57,8 @@
                             >
                                 <div class="col-md-6 d-flex align-items-center">
                                     <div class="w-100">
-                                        {{ index + 1 }}. {{ item.studyItem.title }}
+                                        <span class="badge badge-secondary mr-1">{{ index + 1 }}.</span>
+                                        <span>{{ item.studyItem.title }}</span>
                                     </div>
                                 </div>
                                 <div class="col-md-6 d-flex align-items-center">
@@ -53,61 +66,40 @@
                                     <div class="w-100">
                                         <multiselect 
                                             v-model="privateState.studyItemSelectedOptions[index]" 
-                                            v-bind:placeholder="'Select meaning'" 
+                                            v-bind:class="{
+                                                'multiselect--fixSmallWidthOptions': true,
+                                                'multiselect--correctAnswer': privateState.isShowAnswers && checkItemAnswerCorrect(item.studyItem.id) === true,
+                                                'multiselect--wrongAnswer': privateState.isShowAnswers && checkItemAnswerCorrect(item.studyItem.id) === false,
+                                            }"
+                                            v-bind:placeholder="'Select meaning'"
+                                            v-bind:selectLabel="''" 
                                             v-bind:label="'value'"
                                             v-bind:track-by="'randomId'" 
                                             v-bind:options="leftOptions" 
                                             v-bind:multiple="false" 
                                             v-bind:searchable="false" 
                                             v-bind:taggable="false" 
+                                            v-bind:disabled="privateState.isShowAnswers"
                                             v-on:input="(possibleOption) => onOptionSelect(item.studyItem.id, possibleOption)"
                                         >
-                                            <!-- Custom option template -->
-                                            <!-- <template slot="option" slot-scope="props">
-                                                <div class="option__desc">
-                                                    <span class="option__title">{{ props.option.levelPad }}{{ props.option.name }}</span>
-                                                </div>
-                                            </template> -->
                                         </multiselect>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Details (when answered) -->
-                            <div v-if="privateState.isShowCurrentItemDetails">
-                                <hr />
-                                <div v-if="privateState.isShowCurrentItemDetails" class="card-text mb-1 training-description">
-                                    <div>{{ currentItem.studyItem.description }}</div>
-                                </div>
-                                <div v-if="privateState.isShowCurrentItemDetails" class="card-text text-secondary mb-1 training-example">
-                                    <div
-                                        v-for="(exampleText, index2) in currentItem.studyItem.exampleTexts"
-                                        v-bind:key="`card-${currentItem.studyItem.id}-exampleText-${index2}`"
-                                    >
-                                        {{ exampleText }}
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-                        <div class="card-bottom-controls">
-                            <!-- <span v-on:click="onPrevClick()" class="card-bottom-control-item" v-bind:class="{'disabled': privateState.currentItemIndex === 0}">
-                                <i class="fas fa-chevron-left"></i>
-                            </span> -->
-                            <span v-on:click="onShowClick()" class="card-bottom-control-item text-danger">
+                        <div v-if="!privateState.isTrainingFinished" class="card-bottom-controls">
+                            <span v-on:click="onShowAnswersClick()" class="card-bottom-control-item text-danger">
                                 <i class="fas fa-question"></i>
                             </span>
-                            <span v-on:click="onNextClick()" class="card-bottom-control-item" v-bind:class="{'disabled': !privateState.isCurrentItemAnswered}">
-                                <i class="fas fa-chevron-right"></i>
+                            <span v-on:click="submitClick()" class="card-bottom-control-item text-success" v-bind:class="{'disabled': !isCanBeSubmited}">
+                                <i class="fas fa-check"></i>
                             </span>
                         </div>
                     </div>
 
                     <!-- Summary -->
-                    <div class="mt-2">
+                    <div v-if="privateState.isTrainingFinished" class="mt-2">
                         <small>
-                            <div class="text-center">
-                                <span>{{privateState.currentItemIndex + 1}} / {{totalItemsCount}}</span>
-                            </div>
                             <div>
                                 <span>
                                     Correct: <span class="badge badge-success">{{privateState.summary.correctItemsCount}}</span>
@@ -158,9 +150,8 @@ export default {
         return {
             privateState: {
                 storeTypes: storeTypes,
-                itemsLimit: 10,
-                currentItemIndex: 0,
-                isShowCurrentItemDetails: false,
+                itemsLimit: 5,
+                isShowAnswers: false,
                 itemResults: [],
                 isTrainingFinished: false,
                 studyItemSelectedOptions: [],
@@ -176,11 +167,9 @@ export default {
         isAllTrained: function() { 
             return this.trainingMatchWords !== null && this.trainingMatchWords.items.length === 0;
         },
-        currentItem: function() { 
-            if(this.trainingMatchWords === null || this.trainingMatchWords.items.length === 0) {
-                return null;
-            }
-            return this.trainingMatchWords.items[this.privateState.currentItemIndex];
+        isCanBeSubmited: function() { 
+            // when all selects are choosen
+            return this.privateState.itemResults.length === this.trainingMatchWords.items.length;
         },
         totalItemsCount: function() { 
             if(this.trainingMatchWords === null) {
@@ -188,15 +177,12 @@ export default {
             }
             return this.trainingMatchWords.items.length;
         },
-        currentItemAnswerOptionIdOrNotSet: function() {
-            if(this.privateState.itemResults.length === this.privateState.currentItemIndex + 1) {
-                return this.privateState.itemResults[this.privateState.currentItemIndex].optionId;
-            }
-            return null;
-        },
         leftOptions: function() {
             if(this.trainingMatchWords) {
-                return this.trainingMatchWords.possibleOptions;
+                // filter out selected options
+                return this.trainingMatchWords.possibleOptions.filter(x => {
+                    return !this.privateState.studyItemSelectedOptions.some(y => y.randomId === x.randomId);
+                });
             }
             return [];
         },
@@ -228,31 +214,12 @@ export default {
             });
         },
         startTraining: function() {
-            this.privateState.currentItemIndex = 0;
-            this.privateState.isCurrentItemAnswered = false;
-            this.privateState.isShowCurrentItemDetails = false;
             this.privateState.itemResults = [];
+            this.privateState.studyItemSelectedOptions = [];
+            this.privateState.isShowAnswers = false;
             this.privateState.isTrainingFinished = false;
 
             this.loadTraining();
-        },
-        goToCard: function(index = 0) {
-            if(this.trainingMatchWords === null) {
-                return;
-            }
-            let count = this.trainingMatchWords.items.length;
-            
-            // last card was shown - save training
-            if(index === count) {
-                this.saveTraining();
-                return;
-            }
-
-            index = Math.min(index, count - 1);
-            index = Math.max(index, 0);
-            this.privateState.currentItemIndex = index;
-            this.privateState.isShowCurrentItemDetails = false;
-            this.privateState.isCurrentItemAnswered = false;
         },
         onOptionSelect: function(studyItemId, possibleOption) {
             this.handleItemResponse({
@@ -260,30 +227,25 @@ export default {
                 isCorrect: possibleOption.correctForStudyItemId === studyItemId,
                 optionId: possibleOption.randomId,
             });
-            this.privateState.isShowCurrentItemDetails = true;
-            this.privateState.isCurrentItemAnswered = true;
-
-            // TODO: handle last selected
         },
-        onPrevClick: function() {
-            if(this.privateState.currentItemIndex === 0) {
-                return;
-            }
-            this.goToCard(this.privateState.currentItemIndex - 1);
-        },
-        onShowClick: function() {
-            this.handleItemResponse({
-                itemId: this.currentItem.studyItem.id, 
-                isCorrect: false
+        onShowAnswersClick: function() {
+            // mark unanswered an incorrect
+            const unansweredItems = this.trainingMatchWords.items.filter(x => {
+                return !this.privateState.itemResults.some(y => y.itemId === x.studyItem.id);
             });
-            this.privateState.isShowCurrentItemDetails = true;
-            this.privateState.isCurrentItemAnswered = true;
-        },
-        onNextClick: function() {
-            if(!this.privateState.isCurrentItemAnswered) {
-                return;
+            for(const item of unansweredItems) {
+                this.handleItemResponse({
+                    itemId: item.studyItem.id, 
+                    isCorrect: false
+                });
             }
-            this.goToCard(this.privateState.currentItemIndex + 1);
+         
+            this.saveTraining();
+            this.privateState.isShowAnswers = true;
+        },
+        submitClick: function() {
+            this.saveTraining();
+            this.privateState.isShowAnswers = true;
         },
         handleItemResponse: function({itemId, isCorrect, optionId}) {
             let isHandled = this.privateState.itemResults.some(x => x.itemId === itemId);
@@ -300,29 +262,27 @@ export default {
                 incorrectItemsCount: !isCorrect ? this.privateState.summary.incorrectItemsCount + 1 : this.privateState.summary.incorrectItemsCount,
             }
         },
+        checkItemAnswerCorrect: function(itemId) {
+            const answer = this.privateState.itemResults.find(y => y.itemId === itemId) || null;
+            return answer && answer.isCorrect;
+        },
         handleKeyboardEvent: function(e) {
             switch(e.which) {
                 // Space
                 case 32:
-                    if(this.privateState.isCurrentItemAnswered) {
-                        this.onNextClick();
-                    } else {
-                        this.onShowClick();
-                    }
+                    this.onShowAnswersClick();
                     break;
                 // ArrowLeft
                 case 37:
-                    this.onPrevClick();
                     break;
                 // ArrowRight
                 case 39:
-                    this.onNextClick();
                     break;
             }
         },
         saveTraining: function() {
             this.privateState.isTrainingFinished = true;
-            return this.$store.dispatch(storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_SAVE, {
+            return this.$store.dispatch(storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_SAVE, {
                 data: {
                     trainingType: this.trainingMatchWords.trainingType,
                     itemsResults: [
@@ -330,7 +290,6 @@ export default {
                     ],
                 }, 
             }).then(() => {
-                
             }).catch(err => {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);

@@ -321,6 +321,9 @@ class API {
             matchwordsTrainingStart({ collectionId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/matchwords`, { collectionId }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
+            matchwordsTrainingSave({ data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/matchwords/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
 
             // custom collections
             getCustomCollections() {

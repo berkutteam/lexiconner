@@ -169,6 +169,18 @@ namespace Lexiconner.Api.Controllers.V2
             return BaseResponse(result);
         }
 
+        [HttpPost("matchwords/save")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> MatchWordsTrainingSave([FromBody] MatchWordsTrainingResultDto dto)
+        {
+            await _studyItemsService.SaveTrainingResultsForMatchWordsAsync(GetUserId(), dto);
+            return StatusCodeBaseResponse();
+        }
+
         #endregion
     }
 }

@@ -692,6 +692,63 @@ namespace Lexiconner.Api.Services
             return result;
         }
 
+        public async Task SaveTrainingResultsForMatchWordsAsync(string userId, MatchWordsTrainingResultDto results)
+        {
+            var ids = results.ItemsResults.Select(x => x.ItemId);
+            var entities = (await _dataRepository.GetManyAsync<StudyItemEntity>(
+                x => x.UserId == userId && ids.Contains(x.Id)
+            )).ToList();
+
+            var infoAttribute = TrainingTypeHelper.GetAttribute(TrainingType.MatchWords);
+
+            entities = entities.Select(x =>
+            {
+                bool isCorrect = results.ItemsResults.Any(y => y.ItemId == x.Id && y.IsCorrect);
+
+                x.TrainingInfo = x.TrainingInfo ?? new StudyItemTrainingInfoEntity();
+                x.TrainingInfo.Trainings = x.TrainingInfo.Trainings ?? new List<StudyItemTrainingInfoEntity.StudyItemTrainingProgressItemEntity>();
+
+                var training = x.TrainingInfo.Trainings.FirstOrDefault(y => y.TrainingType == TrainingType.MatchWords);
+                if (training == null)
+                {
+                    training = new StudyItemTrainingInfoEntity.StudyItemTrainingProgressItemEntity()
+                    {
+                        TrainingType = TrainingType.MatchWords,
+                    };
+                    x.TrainingInfo.Trainings.Add(training);
+                }
+
+                if (isCorrect)
+                {
+                    training.Progress = training.Progress + infoAttribute.CorrectAnswerProgressRate;
+                    training.Progress = Math.Min(training.Progress, 1);
+                }
+                else
+                {
+                    training.Progress = training.Progress + infoAttribute.WrongAnswerProgressRate;
+                    training.Progress = Math.Max(training.Progress, 0);
+                }
+                training.Progress = Math.Round(training.Progress, 2);
+
+                training.LastTrainingdAt = DateTimeOffset.UtcNow;
+
+                if (training.Progress < 1)
+                {
+                    training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalTimespan);
+                }
+                else
+                {
+                    training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalForRepeatTimespan);
+                }
+
+                x.RecalculateTotalTrainingProgress();
+
+                return x;
+            }).ToList();
+
+            await _dataRepository.UpdateManyAsync(entities);
+        }
+
         #endregion
 
 

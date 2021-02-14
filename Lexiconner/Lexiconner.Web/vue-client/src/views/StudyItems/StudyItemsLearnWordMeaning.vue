@@ -28,7 +28,7 @@
                     </h5>
                     <div v-if="isAllTrained">
                         <div class="alert alert-secondary" role="alert">
-                            Everyting is already trained!
+                            Everything is already trained!
                         </div>
                     </div>
                     <div v-if="!isAllTrained && currentItem" class="card bg-light training-card">

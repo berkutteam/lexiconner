@@ -1048,6 +1048,30 @@ export default new Vuex.Store({
                 throw err;
             });
         },
+        [storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_SAVE](context, { data }) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_SAVE,
+                loading: true,
+            });
+            return api.webApi().matchwordsTrainingSave({ data }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_SAVE,
+                    loading: false,
+                });
+                // reset
+                // commit(storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START_SET, {
+                //     data: null
+                // });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_SAVE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
 
         //#endregion
         

@@ -1,0 +1,56 @@
+.image-collage {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    &.image-collage--5images {
+        $margin: 0.5%;
+        $smallImageHeight: 15vh;
+        $bigImageHeight: 20vh;
+
+        .image-container-0,
+        .image-container-1,
+        .image-container-2 {
+            width: (100% - 2*$margin) / 3;
+            margin-bottom: $margin;
+
+            &:not(:nth-child(3)) {
+                margin-right: $margin;
+            }
+
+            img {
+                min-height: $smallImageHeight;
+                max-height: $smallImageHeight;
+                height: $smallImageHeight;
+            }
+        }
+
+        .image-container-3,
+        .image-container-4 {
+            width: (100% - 1*$margin) / 2;
+            margin-bottom: 0;
+
+            &:not(:nth-child(5)) {
+                margin-right: $margin;
+            }
+
+            img {
+                min-height: $bigImageHeight;
+                max-height: $bigImageHeight;
+                height: $bigImageHeight;
+            }
+        }
+    }
+
+    .image-container {
+        img {
+            width: 100%;
+            min-width: 100%;
+            max-width: 100%;
+            height: auto;
+            max-height: 500px;
+            background-color: $color-gray;
+        }
+    }
+}

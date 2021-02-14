@@ -17,29 +17,11 @@
 // v-tooltip
 @import '../../node_modules/v-tooltip/dist/v-tooltip.css';
 
-//#region Variables
+// Rewrites for lib styles
+@import './vue-multiselect-rewrite';
 
-// Main colors according to 
-// https://colorhunt.co/palette/171392
-$main-color1: #142850;
-$main-color2: #27496d;
-$main-color3: #0c7b93;
-$main-color4: #00a8cc;
-
-// Semantic colors
-$backgroung-color-main: #FBFBFB;
-$border-color-gray: #EDEDED;
-
-$color-white: #fff;
-$color-black: rgb(26, 25, 25);
-$color-gray: #BFCCD5;
-$color-green: #26ab26;
-$color-green-dark: #239423;
-$color-blue: #13B1E8;
-$color-blue-dark: #0056b3;
-
-//#endregion
-
+@import './variables';
+@import './image-collage';
 
 //#region General overrides
 
