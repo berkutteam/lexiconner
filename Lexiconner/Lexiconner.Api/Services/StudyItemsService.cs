@@ -72,6 +72,10 @@ namespace Lexiconner.Api.Services
                 {
                     predicate.And(x => x.IsFavourite);
                 }
+                if (searchFilter.IsTrained != null)
+                {
+                    predicate.And(x => x.TrainingInfo != null && x.TrainingInfo.IsTrained == searchFilter.IsTrained);
+                }
             }
 
             if(collectionId != null)
@@ -82,7 +86,7 @@ namespace Lexiconner.Api.Services
             var totalTask = _dataRepository.CountAllAsync<StudyItemEntity>(predicate);
             var total = await totalTask;
 
-            if (searchFilter.IsShuffle)
+            if (searchFilter != null && searchFilter.IsShuffle)
             {
                 // get random N items
                 var random = new Random();

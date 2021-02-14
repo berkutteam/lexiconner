@@ -91,6 +91,7 @@ export default new Vuex.Store({
             search: null,
             isFavourite: null,
             isShuffle: false,
+            isTrained: null,
         },
 
         // paginationResult (store only current page)

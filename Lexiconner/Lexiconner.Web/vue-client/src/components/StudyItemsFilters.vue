@@ -30,6 +30,28 @@
                 <i v-on:click="setIsFavorite(false)" v-bind:class="{'text-warning': sharedState.studyItemsRequestParams.isFavourite === false}" class="far fa-star"></i>
             </div>
 
+             <!-- Trained/Not trained -->
+            <div class="form-group mr-2 cursor-pointer">
+                <div class="form-check form-check-inline">
+                    <input  v-on:change="(e) => setIsTrained(e.target.checked ? true : null)" 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        value="option1"
+                        v-bind:checked="sharedState.studyItemsRequestParams.isTrained === true"
+                    >
+                    <label class="form-check-label" for="inlineCheckbox1">Trained</label>
+                </div>
+                <div class="form-check form-check-inline mr-0">
+                    <input  v-on:change="(e) => setIsTrained(e.target.checked ? false : null)" 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        value="option2"
+                        v-bind:checked="sharedState.studyItemsRequestParams.isTrained === false"
+                    >
+                    <label class="form-check-label" for="inlineCheckbox2">Not trained</label>
+                </div>
+            </div>
+
             <!-- Shuffle -->
             <div class="form-group mr-2 cursor-pointer">
                 <i 
@@ -140,6 +162,12 @@ export default {
         setIsShuffle: function(value) {
             this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
                 isShuffle: value,
+            });
+            this.callOnChange();
+        },
+        setIsTrained: function(value) {
+            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
+                isTrained: value,
             });
             this.callOnChange();
         },
