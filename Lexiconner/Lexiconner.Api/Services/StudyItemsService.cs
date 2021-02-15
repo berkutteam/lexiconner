@@ -253,6 +253,7 @@ namespace Lexiconner.Api.Services
                     await getTrainingStatisticsItem(userId, TrainingType.FlashCards),
                     await getTrainingStatisticsItem(userId, TrainingType.WordMeaning),
                     await getTrainingStatisticsItem(userId, TrainingType.MeaningWord),
+                    await getTrainingStatisticsItem(userId, TrainingType.MatchWords),
                 }
             };
 
