@@ -9,6 +9,7 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
     <PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.45.0-beta01" />
     <PackageReference Include="Google.Cloud.Translation.V2" Version="2.0.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
     <PackageReference Include="LinqKit.Core" Version="1.1.17" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="9.3.0" />
@@ -24,6 +25,7 @@
   <ItemGroup>
     <Folder Include="ApiClients\Exceptions\" />
     <Folder Include="ApiClients\Interfaces\" />
+    <Folder Include="Scrapers\" />
   </ItemGroup>
 
   <ItemGroup>
