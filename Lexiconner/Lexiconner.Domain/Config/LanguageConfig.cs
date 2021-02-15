@@ -30,6 +30,11 @@ namespace Lexiconner.Domain.Config
             },
         };
 
+        public static bool HasLanguageByCode(string code)
+        {
+            return SupportedLanguages.Any(x => x.Iso639_1_Code == code);
+        }
+
         public static SupportedLanguageModel GetLanguageByCode(string code)
         {
             var language = SupportedLanguages.FirstOrDefault(x => x.Iso639_1_Code == code);

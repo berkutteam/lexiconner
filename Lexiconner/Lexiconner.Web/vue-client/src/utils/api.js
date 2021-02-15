@@ -290,6 +290,11 @@ class API {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/${studyItemId}/favourites`, {}), method: "delete", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
 
+            // Words
+            getWordExamples({ languageCode, word }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/examples`, { languageCode, word }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+
             // trainings
             getTrainingStatistics() {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/stats`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);

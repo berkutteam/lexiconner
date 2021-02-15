@@ -100,6 +100,8 @@ export default new Vuex.Store({
 
         studyItem: null, // object
 
+        wordExamples: null, // object
+
         trainingStats: null, // object
         trainingFlashcards: null, // object
         trainingWordMeaning: null, // object
@@ -308,6 +310,17 @@ export default new Vuex.Store({
         },
 
         //#endregion
+
+        [storeTypes.WORD_EXAMPLES_SET](state, payload) {
+            let { wordExamples } = payload;
+            state.wordExamples = wordExamples;
+        },
+
+        //#region Words
+
+
+
+        //#endregion Words
 
 
         //#region Trainings
@@ -806,6 +819,48 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEM_DELETE_FROM_FAVOURITES,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        //#endregion
+
+
+        //#region Words
+
+        [storeTypes.WORD_EXAMPLES_LOAD](context, { languageCode, word }) {
+            let { commit, dispatch, state, getters } = context;
+
+            // don't load already loaded word
+            if (
+                state.wordExamples != null && 
+                state.wordExamples.languageCode === languageCode &&
+                state.wordExamples.word === word
+            ) {
+                return Promise.resolve(state.wordExamples);
+            }
+
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORD_EXAMPLES_LOAD,
+                loading: true,
+            });
+            return api.webApi().getWordExamples({
+                languageCode, 
+                word,
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_EXAMPLES_LOAD,
+                    loading: false,
+                });
+                commit(storeTypes.WORD_EXAMPLES_SET, {
+                    wordExamples: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_EXAMPLES_LOAD,
                     loading: false,
                 });
                 throw err;

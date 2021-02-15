@@ -40,15 +40,15 @@ namespace Lexiconner.Api.Controllers.V2
             _wordsService = wordsService;
         }
 
-        [HttpGet]
+        [HttpGet("examples")]
         [ProducesResponseType(typeof(BaseApiResponseDto<WordExamplesDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetWordExamples([FromQuery] string languageCode, [FromQuery] string word)
+        public async Task<IActionResult> GetWordExamples([FromQuery] WordExamplesRequestDto dto)
         {
-            var result = await _wordsService.GetWordExamplesAsync(languageCode, word);
+            var result = await _wordsService.GetWordExamplesAsync(dto.LanguageCode, dto.Word);
             return BaseResponse(result);
         }
     }
