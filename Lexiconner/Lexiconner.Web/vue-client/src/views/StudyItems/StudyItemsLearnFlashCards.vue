@@ -34,15 +34,17 @@
                             </div>
                         </div>
                         <div class="card-bottom-controls">
-                            <span v-on:click="onPrevClick()" class="card-bottom-control-item">
+                            <!-- <span v-on:click="onPrevClick()" class="card-bottom-control-item">
                                 <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span v-on:click="onShowClick()" class="card-bottom-control-item text-danger">
+                            </span> -->
+                            <span v-on:click="onShowAnswerClick()" class="card-bottom-control-item text-danger">
                                 <i class="fas fa-question"></i>
                             </span>
-                            <span v-on:click="onNextClick()" class="card-bottom-control-item text-success">
-                                <!-- <i class="fas fa-chevron-right"></i> -->
+                            <span v-if="!privateState.isShowNextButton" v-on:click="onSubmitAnswerClick()" class="card-bottom-control-item text-success">
                                 <i class="fas fa-check"></i>
+                            </span>
+                            <span v-if="privateState.isShowNextButton" v-on:click="onNextClick()" class="card-bottom-control-item">
+                                <i class="fas fa-chevron-right"></i>
                             </span>
                         </div>
                     </div>
@@ -103,6 +105,7 @@ export default {
                 storeTypes: storeTypes,
                 currentItemIndex: 0,
                 isShowCurrentItemDetails: false,
+                isShowNextButton: false,
                 itemResults: [],
                 isTrainingFinished: false,
                 summary: {
@@ -163,6 +166,7 @@ export default {
             this.privateState.isShowCurrentItemDetails = 0;
             this.privateState.itemResults = [];
             this.privateState.isTrainingFinished = false;
+            this.privateState.summary.trainedItemsCount = 0;
             this.privateState.summary.correctItemsCount = 0;
             this.privateState.summary.incorrectItemsCount = 0;
 
@@ -188,19 +192,25 @@ export default {
         onPrevClick: function() {
             this.goToCard(this.privateState.currentItemIndex - 1);
         },
-        onShowClick: function() {
+        onNextClick: function() {
+            this.goToCard(this.privateState.currentItemIndex + 1);
+            this.privateState.isShowNextButton = false;
+        },
+        onShowAnswerClick: function() {
             this.handleItemResponse({
                 itemId: this.currentItem.id, 
                 isCorrect: false
             });
             this.privateState.isShowCurrentItemDetails = true;
+            this.privateState.isShowNextButton = true;
         },
-        onNextClick: function() {
+        onSubmitAnswerClick: function() {
             this.handleItemResponse({
                 itemId: this.currentItem.id, 
                 isCorrect: true
             });
-            this.goToCard(this.privateState.currentItemIndex + 1);
+            this.privateState.isShowCurrentItemDetails = true;
+            this.privateState.isShowNextButton = true;
         },
         handleItemResponse: function({itemId, isCorrect}) {
             let isHandled = this.privateState.itemResults.some(x => x.itemId === itemId);

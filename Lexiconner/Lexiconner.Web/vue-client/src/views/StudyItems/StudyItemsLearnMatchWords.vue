@@ -91,7 +91,7 @@
                             <span v-on:click="onShowAnswersClick()" class="card-bottom-control-item text-danger">
                                 <i class="fas fa-question"></i>
                             </span>
-                            <span v-on:click="submitClick()" class="card-bottom-control-item text-success" v-bind:class="{'disabled': !isCanBeSubmited}">
+                            <span v-on:click="onSubmitAnswerClick()" class="card-bottom-control-item text-success" v-bind:class="{'disabled': !isCanBeSubmited}">
                                 <i class="fas fa-check"></i>
                             </span>
                         </div>
@@ -245,7 +245,7 @@ export default {
             this.saveTraining();
             this.privateState.isShowAnswers = true;
         },
-        submitClick: function() {
+        onSubmitAnswerClick: function() {
             this.saveTraining();
             this.privateState.isShowAnswers = true;
         },
