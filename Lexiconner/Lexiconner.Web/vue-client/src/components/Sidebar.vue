@@ -2,6 +2,7 @@
   <div id="sidebar" class="app-sidebar no-print">
     <!-- Hide all links if not completed registration, so user complete it first -->
     <div v-if="sharedState.auth.isAuthenticated">
+      <!-- User profile -->
       <div class="sidebar-header" v-if="sharedState.auth.isAuthenticated">
         <router-link v-bind:to="{ name: 'user-profile'}" class="sidebar-user">
           <div class="d-flex justify-content-start align-items-start">
@@ -25,10 +26,10 @@
       </div>
 
       <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
-        <router-link v-bind:to="{ name: 'study-items-dashboard'}" class="sidebar-link">Study items</router-link>
+        <router-link v-bind:to="{ name: 'study-items-dashboard'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">Study items</router-link>
       </div>
       <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
-        <router-link v-bind:to="{ name: 'user-films-browse'}" class="sidebar-link">My films</router-link>
+        <router-link v-bind:to="{ name: 'user-films-browse'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">My films</router-link>
       </div>
 
       <!-- <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
@@ -43,15 +44,16 @@
       </div> -->
       
       <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
-        <router-link v-bind:to="{ name: 'logout'}" class="sidebar-link">Logout</router-link>
+        <router-link v-bind:to="{ name: 'logout'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">Logout</router-link>
       </div>
     </div>
+
     <div v-if="!sharedState.auth.isAuthenticated">
       <div v-if="!sharedState.auth.isAuthenticated" class="sidebar-item">
-        <router-link v-bind:to="{ name: 'home'}" class="sidebar-link">Home</router-link>
+        <router-link v-bind:to="{ name: 'home'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">Home</router-link>
       </div>
       <div v-if="!sharedState.auth.isAuthenticated" class="sidebar-item">
-        <router-link v-bind:to="{ name: 'login'}" class="sidebar-link">Login</router-link>
+        <router-link v-bind:to="{ name: 'login'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">Login</router-link>
       </div>
       <!-- <div v-if="!sharedState.auth.isAuthenticated" class="sidebar-item">
         <router-link v-bind:to="{ name: 'register'}" class="sidebar-link">Register</router-link>
@@ -66,6 +68,7 @@
 
 import { mapState, mapGetters } from "vuex";
 import authService from "@/services/authService";
+import DeviceDetectHelper from "@/helpers/deviceDetectHelper";
 
 let Sidebar = {
   name: "sidebar",
@@ -76,20 +79,14 @@ let Sidebar = {
       }
     };
   },
-  methods: {
-  },
   computed: {
     // local computed go here
 
     // store state computed go here
     ...mapState({
       sharedState: state => state,
-      // isReortsSelected: state => {
-      //   console.log(this.$router.currentRoute);
-      //   return false;
-      // },
       currentRouteName() {
-        console.log(this.$route);
+        // console.log(this.$route);
         return this.$route.name;
       }
     })
@@ -97,7 +94,15 @@ let Sidebar = {
   created: async function() {},
   mounted: function() {},
   updated: function() {},
-  destroyed: function() {}
+  destroyed: function() {},
+  methods: {
+    handleNavLinkClick: function(e) {
+      if(DeviceDetectHelper.checkIsMobile()) {
+        // hide sidebar on mobile after lick
+        Sidebar.toggleSidebar();
+      }
+    },
+  }
 };
 
 Sidebar.toggleSidebar = function() {

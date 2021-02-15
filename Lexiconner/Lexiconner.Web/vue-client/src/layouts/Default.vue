@@ -16,7 +16,7 @@
             </div>
           </nav>
 
-          <!-- route component is rendered here -->
+          <!-- Route component is rendered here -->
           <slot></slot>
         </div>
       </div>
