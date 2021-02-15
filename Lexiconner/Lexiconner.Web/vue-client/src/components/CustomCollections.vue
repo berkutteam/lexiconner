@@ -22,6 +22,7 @@
                 width="450px"
                 v-bind:classes="['v--modal', 'v--modal-box', 'v--modal-box--overflow-visible', 'v--modal-box--sm-fullwidth']"
                 v-bind:clickToClose="false"
+                v-bind:scrollable="true"    
             >
                 <div class="app-modal">
                     <div class="app-modal-header">
@@ -57,6 +58,7 @@
                 width="450px"
                 v-bind:classes="['v--modal', 'v--modal-box', 'v--modal-box--overflow-visible', 'v--modal-box--sm-fullwidth']"
                 v-bind:clickToClose="false"
+                v-bind:scrollable="true"
             >
                 <div class="app-modal">
                     <div class="app-modal-header">
