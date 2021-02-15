@@ -34,6 +34,18 @@
                             </div>
                         </div>
                         <div class="card-bottom-controls">
+                            <!-- Dropdown with dditional actions -->
+                            <div class="card-bottom-control-item dropdown">
+                                <span class="contained-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </span>
+                                <div class="dropdown-menu dropdown-menu-left" aria-labelledby="dropdownMenuButton">
+                                    <button v-on:click="onWordDeleteClick(currentItem.id)" class="dropdown-item" type="button">
+                                        <i class="fas fa-trash mr-2"></i>
+                                        <span>Delete word</span>
+                                    </button>
+                                </div>
+                            </div>
                             <!-- <span v-on:click="onPrevClick()" class="card-bottom-control-item">
                                 <i class="fas fa-chevron-left"></i>
                             </span> -->
@@ -212,6 +224,9 @@ export default {
             this.privateState.isShowCurrentItemDetails = true;
             this.privateState.isShowNextButton = true;
         },
+        onWordDeleteClick: function(wordId) {
+            this.deleteWord(wordId);
+        },
         handleItemResponse: function({itemId, isCorrect}) {
             let isHandled = this.privateState.itemResults.some(x => x.itemId === itemId);
             if(isHandled) {
@@ -243,6 +258,28 @@ export default {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
+        },
+        deleteWord: function(wordId) {
+            // this.$store.dispatch(storeTypes.STUDY_ITEM_DELETE, {
+            //     studyItemId: wordId,
+            // }).then(() => {
+            //      this.$notify({
+            //         group: 'app',
+            //         type: 'success',
+            //         title: `Word has been deleted!`,
+            //         text: '',
+            //         duration: 5000,
+            //     });
+
+            //     const itemCountThresholdBeforeReload = 3;
+            //     if(this.studyItems.length <= itemCountThresholdBeforeReload) {
+            //         // reload
+            //         this.loadStudyItems();
+            //     }
+            // }).catch(err => {
+            //     console.error(err);
+            //     notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            // });
         },
     },
 }
