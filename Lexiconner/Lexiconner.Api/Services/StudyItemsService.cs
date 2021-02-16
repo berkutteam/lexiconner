@@ -23,7 +23,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -33,18 +35,21 @@ namespace Lexiconner.Api.Services
     {
         private readonly IMapper _mapper;
         private readonly IDataRepository _dataRepository;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IImageService _imageService;
         private readonly ITwinwordWordDictionaryApiClient _twinwordWordDictionaryApiClient;
 
         public StudyItemsService(
             IMapper mapper,
             IDataRepository MongoDataRepository,
+            IHttpClientFactory httpClientFactory,
             IImageService imageService,
             ITwinwordWordDictionaryApiClient twinwordWordDictionaryApiClient
         )
         {
             _mapper = mapper;
             _dataRepository = MongoDataRepository;
+            _httpClientFactory = httpClientFactory;
             _imageService = imageService;
             _twinwordWordDictionaryApiClient = twinwordWordDictionaryApiClient;
         }
@@ -101,7 +106,7 @@ namespace Lexiconner.Api.Services
             var result = new PaginationResponseDto<StudyItemDto>
             {
               
-                Items = CustomMapper.MapToDto(items),
+                Items = _mapper.Map<IEnumerable<StudyItemDto>>(items),
                 Pagination = new PaginationInfoDto()
                 {
                     TotalCount = total,
@@ -117,7 +122,7 @@ namespace Lexiconner.Api.Services
         public async Task<StudyItemDto> GetStudyItemAsync(string userId, string studyItemId)
         {
             var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == studyItemId && x.UserId == userId);
-            return CustomMapper.MapToDto(entity);
+            return _mapper.Map<StudyItemDto>(entity);
         }
 
         public async Task<StudyItemDto> CreateStudyItemAsync(string userId, StudyItemCreateDto createDto)
@@ -133,7 +138,7 @@ namespace Lexiconner.Api.Services
                 if (imagesResult.Any())
                 {
                     // try to find suitable image
-                    var image = _imageService.GetSuitableImages(imagesResult);
+                    var image = _imageService.GetSuitableImages(imagesResult).FirstOrDefault();
                     if (image != null)
                     {
                         entity.Image = new StudyItemImageEntity
@@ -152,7 +157,7 @@ namespace Lexiconner.Api.Services
 
 
             await _dataRepository.AddAsync(entity);
-            return CustomMapper.MapToDto(entity);
+            return _mapper.Map<StudyItemDto>(entity);
         }
 
         public async Task<StudyItemDto> UpdateStudyItemAsync(string userId, string studyItemId, StudyItemUpdateDto updateDto)
@@ -176,7 +181,7 @@ namespace Lexiconner.Api.Services
                     if (imagesResult.Any())
                     {
                         // try to find suitable image
-                        var image = _imageService.GetSuitableImages(imagesResult);
+                        var image = _imageService.GetSuitableImages(imagesResult).FirstOrDefault();
                         if (image != null)
                         {
                             entity.Image = new StudyItemImageEntity
@@ -195,7 +200,7 @@ namespace Lexiconner.Api.Services
             }
 
             await _dataRepository.UpdateAsync(entity);
-            return CustomMapper.MapToDto(entity);
+            return _mapper.Map<StudyItemDto>(entity);
         }
 
         public async Task DeleteStudyItem(string userId, string sutyItemId)
@@ -206,6 +211,64 @@ namespace Lexiconner.Api.Services
                 throw new NotFoundException();
             }
             await _dataRepository.DeleteAsync<StudyItemEntity>(x => x.Id == existing.Id);
+        }
+
+        public async Task<PaginationResponseDto<StudyItemImageDto>> FindWordImagesAsync(string userId, string wordId)
+        {
+            var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == wordId && x.UserId == userId);
+            if (entity == null)
+            {
+                throw new NotFoundException();
+            }
+
+            var imagesResult = await _imageService.FindImagesAsync(entity.LanguageCode, entity.Title, limit: 100);
+            imagesResult = _imageService.GetSuitableImages(imagesResult).Take(10).ToList();
+
+            var result = new PaginationResponseDto<StudyItemImageDto>()
+            {
+                Items = imagesResult.Select(x => _mapper.Map<StudyItemImageDto>(x)),
+                Pagination = new PaginationInfoDto()
+                {
+                    Offset = 0,
+                    Limit = 10,
+                    ReturnedCount = imagesResult.Count,
+                    TotalCount = imagesResult.Count,
+                },
+            };
+
+            return result;
+        }
+
+        public async Task<StudyItemDto> UpdateWordImagesAsync(string userId, string wordId, UpdateWordImagesDto dto)
+        {
+            var entity = await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == wordId && x.UserId == userId);
+            if (entity == null)
+            {
+                throw new NotFoundException();
+            }
+
+            if (dto.Images == null || !dto.Images.Any())
+            {
+                return _mapper.Map<StudyItemDto>(entity);
+            }
+
+            // set width/height for images added by URL
+            foreach (var image in dto.Images.Where(x => x.IsAddedByUrl))
+            {
+                var httpClent = _httpClientFactory.CreateClient();
+                using (var stream = await httpClent.GetStreamAsync(image.Url))
+                {
+                    var bitmap = new Bitmap(stream);
+                    image.Width = bitmap.Width.ToString();
+                    image.Height = bitmap.Height.ToString();
+                }
+            }
+
+            entity.Image = _mapper.Map<StudyItemImageEntity>(dto.Images.First());
+            entity.Images = _mapper.Map<List<StudyItemImageEntity>>(dto.Images);
+
+            await _dataRepository.UpdateAsync(entity);
+            return _mapper.Map<StudyItemDto>(entity);
         }
 
         #endregion

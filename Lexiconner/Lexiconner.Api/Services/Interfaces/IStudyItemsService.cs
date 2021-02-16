@@ -31,6 +31,8 @@ namespace Lexiconner.Api.Services.Interfaces
         Task<StudyItemDto> CreateStudyItemAsync(string userId, StudyItemCreateDto createDto);
         Task<StudyItemDto> UpdateStudyItemAsync(string userId, string studyItemId, StudyItemUpdateDto updateDto);
         Task DeleteStudyItem(string userId, string sutyItemId);
+        Task<PaginationResponseDto<StudyItemImageDto>> FindWordImagesAsync(string userId, string wordId);
+        Task<StudyItemDto> UpdateWordImagesAsync(string userId, string wordId, UpdateWordImagesDto dto);
 
         Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId);
         Task MarkStudyItemAsTrainedAsync(string userId, string studyItemId);

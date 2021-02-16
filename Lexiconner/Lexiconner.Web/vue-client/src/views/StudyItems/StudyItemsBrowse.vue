@@ -140,6 +140,11 @@
                                     v-bind:key="`card-${item.id}`"
                                     class="card bg-light item-card" 
                                 >
+                                    <div class="item-card-overlay-controls">
+                                        <button v-on:click="onFindNextWordImagesClick(item.id)" class="btn btn-sm custom-btn-normal">
+                                            <i class="far fa-image"></i>
+                                        </button>
+                                    </div>
                                     <!-- <div class="card-header"></div> -->
                                     <img v-if="item.image" class="card-img-top item-card-image" v-bind:src="item.image.url" v-bind:alt="item.title">
                                     <img v-else class="card-img-top item-card-image" src="/img/empty-image.png">
@@ -210,11 +215,17 @@
                 </div>
 
 
-                <!-- Study item create/edit -->
+                <!-- Word create/edit -->
                 <study-item-create-update-modal
                     ref="studyItemCreateUpdateModal"
                 >
                 </study-item-create-update-modal>
+
+                <!-- Word images -->
+                <word-images-modal
+                    ref="wordImagesModal"
+                >
+                </word-images-modal>
             </div>
         </div>
     </div>
@@ -236,6 +247,7 @@ import PaginationWrapper from '@/components/PaginationWrapper';
 import CustomCollections from '@/components/CustomCollections';
 import StudyItemsFilters from '@/components/StudyItemsFilters';
 import StudyItemCreateUpdateModal from './StudyItemCreateUpdateModal';
+import WordImagesModal from './WordImagesModal';
 
 import ProgressBar from 'vue-simple-progress'
 
@@ -247,6 +259,7 @@ export default {
         CustomCollections,
         StudyItemsFilters,
         StudyItemCreateUpdateModal,
+        WordImagesModal,
         ProgressBar,
     },
     data: function() {
@@ -331,6 +344,9 @@ export default {
         },
         onMarkStudyItemAsNotTrained: function(studyItemId) {
             this.markStudyItemAsNotTrained(studyItemId);
+        },
+        onFindNextWordImagesClick: function(wordId) {
+            this.$refs.wordImagesModal.show({ wordId });
         },
         deleteStudyItem: function(studyItemId) {
             this.$store.dispatch(storeTypes.STUDY_ITEM_DELETE, {

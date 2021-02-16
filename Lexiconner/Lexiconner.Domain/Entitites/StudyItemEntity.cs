@@ -18,6 +18,7 @@ namespace Lexiconner.Domain.Entitites
         {
             CustomCollectionIds = new List<string>();
             ExampleTexts = new List<string>();
+            Images = new List<StudyItemImageEntity>();
             Tags = new List<string>();
             TrainingInfo = new StudyItemTrainingInfoEntity();
         }
@@ -38,7 +39,9 @@ namespace Lexiconner.Domain.Entitites
 
         public List<string> Tags { get; set; }
 
+        [Obsolete("Use Images")]
         public StudyItemImageEntity Image { get; set; }
+        public List<StudyItemImageEntity> Images { get; set; }
         public StudyItemTrainingInfoEntity TrainingInfo { get; set; }
 
 

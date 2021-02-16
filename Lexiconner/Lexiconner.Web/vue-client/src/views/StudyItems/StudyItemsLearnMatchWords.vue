@@ -35,7 +35,7 @@
                         <!-- Image -->
                         <div class="card-img-top">
                             
-                            <div class="image-collage image-collage--5images">
+                            <div class="image-grid image-grid--5images">
                                 <div 
                                     v-for="(item, index) in trainingMatchWords.items"
                                     v-bind:key="item.studyItem.id"

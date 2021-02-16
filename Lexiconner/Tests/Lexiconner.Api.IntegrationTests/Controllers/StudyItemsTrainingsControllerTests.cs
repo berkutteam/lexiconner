@@ -89,7 +89,7 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
             {
 
                 TrainingType = TrainingType.FlashCards,
-                ItemsResults = trainingDto.Items.Select((x, i) => new FlashCardsTrainingResultDto.FlashCardsTrainingResultForItemDto
+                ItemsResults = trainingDto.Items.Select((x, i) => new FlashCardsTrainingResultForItemDto
                 {
                     ItemId = x.Id,
                     IsCorrect = i % 2 == 0 ? true : false,

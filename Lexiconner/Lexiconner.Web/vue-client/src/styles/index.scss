@@ -43,7 +43,7 @@ $danger: $color-danger;
 // Rewrites for lib styles
 @import './vue-multiselect-rewrite';
 
-@import './image-collage';
+@import './image-grid';
 
 //#region General overrides
 
@@ -817,6 +817,13 @@ a {
     .item-card {
         width: 19.6%;
         margin: 0 0 0.5% 0;
+        position: relative;
+
+        &:hover {
+            .item-card-overlay-controls {
+                display: block;
+            }
+        }
 
         &:not(:nth-child(5n)) {
             margin-right: 0.5%;
@@ -824,6 +831,13 @@ a {
 
         &:nth-last-child(-n + 5) {
             margin-bottom: 0;
+        }
+
+        .item-card-overlay-controls {
+            display: none;
+            position: absolute;
+            top: 1%;
+            right: 1%;
         }
 
         .item-card-image {

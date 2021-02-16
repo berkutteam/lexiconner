@@ -688,7 +688,7 @@ namespace Lexiconner.Seed.Seed
                     if (imagesResult.Any())
                     {
                         // try to find suitable image
-                        ImageSearchResponseDto.ImageSearchResponseItemDto image = _imageService.GetSuitableImages(imagesResult);
+                        ImageSearchResponseDto.ImageSearchResponseItemDto image = _imageService.GetSuitableImages(imagesResult).FirstOrDefault();
 
                         if (image != null)
                         {

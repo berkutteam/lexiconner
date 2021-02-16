@@ -13,6 +13,7 @@ namespace Lexiconner.Domain.Dtos.StudyItems
             CustomCollectionIds = new List<string>();
             ExampleTexts = new List<string>();
             Tags = new List<string>();
+            Images = new List<StudyItemImageDto>();
         }
 
         public string Id { get; set; }
@@ -25,11 +26,18 @@ namespace Lexiconner.Domain.Dtos.StudyItems
         public List<string> Tags { get; set; }
 
         public StudyItemImageDto Image { get; set; }
+        public List<StudyItemImageDto> Images { get; set; }
         public StudyItemTrainingInfoDto TrainingInfo { get; set; }
     }
 
     public class StudyItemImageDto
     {
+        public StudyItemImageDto()
+        {
+            RandomId = Guid.NewGuid().ToString();
+        }
+
+        public string RandomId { get; set; }
         public string Url { get; set; }
         public string Height { get; set; }
         public string Width { get; set; }

@@ -282,6 +282,12 @@ class API {
             deleteStudyItem({ studyItemId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/${studyItemId}`, {}), method: "delete", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
+            findNextWordImages({ wordId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/${wordId}/images/find`, {}), method: "post", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            updateWordImages({ wordId, data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `studyitems/${wordId}/images`, {}), method: "put", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
 
             addStudyItemToFavourites({ studyItemId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `studyitems/${studyItemId}/favourites`, {}), method: "post", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);

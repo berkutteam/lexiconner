@@ -102,6 +102,10 @@ export default new Vuex.Store({
 
         wordExamples: null, // object
 
+         // paginationResult (store only current page)
+        // {items: [], pagination: {}}
+        wordImagesPaginationResult: null,
+
         trainingStats: null, // object
         trainingFlashcards: null, // object
         trainingWordMeaning: null, // object
@@ -295,6 +299,10 @@ export default new Vuex.Store({
             if(state.studyItemsPaginationResult !== null) {
                 state.studyItemsPaginationResult.items = state.studyItemsPaginationResult.items.filter(x => x.id !== studyItemId);
             }
+        },
+        [storeTypes.WORD_IMAGES_FIND_SET](state, payload) {
+            let { wordImagesPaginationResult } = payload;
+            state.wordImagesPaginationResult = wordImagesPaginationResult;
         },
 
         [storeTypes.STUDY_ITEM_IS_FAVOURITE_SET](state, payload) {
@@ -770,6 +778,52 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEM_DELETE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.WORD_IMAGES_FIND](context, { wordId }) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORD_IMAGES_FIND,
+                loading: true,
+            });
+            return api.webApi().findNextWordImages({ wordId }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_IMAGES_FIND,
+                    loading: false,
+                });
+                commit(storeTypes.WORD_IMAGES_FIND_SET, {
+                    wordImagesPaginationResult: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_IMAGES_FIND,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.WORD_IMAGES_UPDATE](context, { wordId, data }) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORD_IMAGES_UPDATE,
+                loading: true,
+            });
+            return api.webApi().updateWordImages({ wordId, data }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_IMAGES_UPDATE,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEM_UPDATE_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_IMAGES_UPDATE,
                     loading: false,
                 });
                 throw err;
