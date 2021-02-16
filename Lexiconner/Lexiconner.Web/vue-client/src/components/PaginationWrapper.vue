@@ -16,7 +16,7 @@
         </div> 
 
          <!-- Pagination -->
-         <div v-if="pageCount !== 0" class="d-flex justify-content-center mt-4">
+         <div v-if="pageCount !== 0" class="d-flex justify-content-center mt-2">
             <paginate
                 v-model="privateState.currentPage"
                 :page-count="pageCount"

@@ -29,7 +29,7 @@
                             <button 
                                 v-on:click="onCreateUserFilm" 
                                 type="button" 
-                                class="btn btn-success"
+                                class="btn custom-btn-normal"
                             >
                                 <i class="fas fa-plus"></i>
                             </button>
@@ -231,7 +231,7 @@
                                 <loading-button 
                                     type="submit"
                                     v-bind:loading="sharedState.loading[privateState.storeTypes.USER_FILM_CREATE] || sharedState.loading[privateState.storeTypes.USER_FILM_UPDATE]"
-                                    class="btn btn-outline-success btn-block"
+                                    class="btn custom-btn-normal btn-block"
                                 >Save</loading-button>
                             </form>
                         </div>

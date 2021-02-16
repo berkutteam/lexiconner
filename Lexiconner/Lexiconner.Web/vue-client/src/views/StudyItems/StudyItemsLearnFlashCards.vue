@@ -77,11 +77,11 @@
                             </div>
                             <div v-if="privateState.isTrainingFinished" class="mt-2">
                                 <div>
-                                    <router-link v-bind:to="{ name: 'study-items-dashboard', params: {}}" class="btn btn-secondary btn-sm text-white">
+                                    <router-link v-bind:to="{ name: 'study-items-dashboard', params: {}}" class="btn custom-btn-normal btn-sm text-white">
                                         <i class="fas fa-chevron-left mr-1"></i>
                                         <span>Back</span>
                                     </router-link>
-                                    <button v-on:click="startTraining" type="button" class="btn btn-success btn-sm ml-1">
+                                    <button v-on:click="startTraining" type="button" class="btn custom-btn-normal btn-sm ml-1">
                                         Train next
                                         <i class="fas fa-play ml-1"></i>
                                     </button>

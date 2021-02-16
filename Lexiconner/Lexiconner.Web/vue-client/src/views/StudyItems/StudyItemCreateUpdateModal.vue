@@ -47,14 +47,14 @@
                                 <button 
                                     v-on:click="onAddStudyItemExampleText" 
                                     type="button" 
-                                    class="btn btn-sm btn-secondary mr-0"
+                                    class="btn btn-sm custom-btn-normal mr-0"
                                 >
                                     <i class="fas fa-plus"></i>
                                 </button>
                                 <button 
                                     v-on:click="onRemoveStudyItemExampleText" 
                                     type="button" 
-                                    class="btn btn-sm btn-secondary"
+                                    class="btn btn-sm custom-btn-normal"
                                 >
                                     <i class="fas fa-minus"></i>
                                 </button>
@@ -64,7 +64,7 @@
                                 v-on:click="onSearchWordExamplesClick"
                                 v-bind:disabled="!canLoadWordExamples"
                                 type="button" 
-                                class="btn btn-sm btn-secondary mr-0"
+                                class="btn btn-sm custom-btn-normal mr-0"
                             >
                                 <i class="fas fa-search-plus"></i>
                             </button>
@@ -103,7 +103,7 @@
                         <loading-button 
                             type="submit"
                             v-bind:loading="sharedState.loading[privateState.storeTypes.STUDY_ITEM_CREATE] || sharedState.loading[privateState.storeTypes.STUDY_ITEM_UPDATE]"
-                            class="btn btn-outline-success btn-block"
+                            class="btn custom-btn-normal btn-block"
                         >Save</loading-button>
                     </form>
                 </div>
@@ -149,7 +149,7 @@
                             <loading-button 
                                 type="submit"
                                 v-bind:loading="false"
-                                class="btn btn-outline-success btn-block mt-2"
+                                class="btn custom-btn-normal btn-block mt-2"
                             >Save</loading-button>
                     </form>
                 </div>

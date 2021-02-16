@@ -44,7 +44,7 @@
                             <loading-button 
                                 type="submit"
                                 v-bind:loading="sharedState.loading[privateState.storeTypes.CUSTOM_COLLECTION_CREATE] || sharedState.loading[privateState.storeTypes.CUSTOM_COLLECTION_UPDATE]"
-                                class="btn btn-outline-success btn-block"
+                                class="btn custom-btn-normal btn-block"
                             >Save</loading-button>
                         </form>
                     </div>
@@ -82,7 +82,7 @@
                             <loading-button 
                                 type="submit"
                                 v-bind:loading="sharedState.loading[privateState.storeTypes.CUSTOM_COLLECTION_DELETE]"
-                                class="btn btn-outline-danger btn-block mt-3"
+                                class="btn custom-btn-danger btn-block mt-3"
                             >Delete</loading-button>
                         </form>
                     </div>

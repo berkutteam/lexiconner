@@ -1,10 +1,19 @@
 
 // Main colors according to 
 // https://colorhunt.co/palette/171392
-$main-color1: #142850;
-$main-color2: #27496d;
-$main-color3: #0c7b93;
-$main-color4: #00a8cc;
+// $main-color1: #142850;
+// $main-color2: #27496d;
+// $main-color3: #0c7b93;
+// $main-color4: #00a8cc;
+
+// https://colorhunt.co/palette/13712
+// + custom colors
+$main-color1: #3a3a3a;
+$main-color2: #444444;
+$main-color3: #4d606e;
+$main-color4: #b5c71d;
+$main-color5: #d3d4d8;
+$main-color6: #f5f5f5;
 
 // Semantic colors
 $backgroung-color-main: #FBFBFB;
@@ -20,6 +29,16 @@ $color-green-dark: #239423;
 $color-blue: #13B1E8;
 $color-blue-dark: #0056b3;
 
+$color-primary: $color-blue-dark;
+$color-secondary: $main-color3;
 $color-succes: $color-green;
+$color-info: $color-blue;
 $color-warning: $color-yellow;
 $color-danger: $color-red;
+
+$custom-btn-dark-color: $main-color3;
+$custom-btn-light-color: $main-color6;
+$custom-btn-danger-color: $color-danger;
+
+$card-light-color: $main-color4;
+$card-dark-color: $main-color1;

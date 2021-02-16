@@ -36,7 +36,7 @@
                             <button 
                                 v-on:click="onCreateStudyItem" 
                                 type="button" 
-                                class="btn btn-success"
+                                class="btn custom-btn-normal"
                             >
                                 <i class="fas fa-plus"></i>
                             </button>
