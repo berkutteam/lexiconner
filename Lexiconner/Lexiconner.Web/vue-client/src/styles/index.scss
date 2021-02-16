@@ -832,6 +832,18 @@ a {
             background-color: gainsboro;
         }
 
+        .item-card-example-text {
+            font-style: italic;
+            font-size: 0.8rem;
+            line-height: 1rem;
+
+            .example-text-dot-icon {
+                font-size: 0.4rem;
+                margin-right: 0.3rem;
+                vertical-align: middle;
+            }
+        }
+
         .card-bottom-controls {
             display: flex;
             align-items: start;
@@ -874,6 +886,18 @@ a {
     .study-items-list {
         .study-item {
             cursor: auto;
+
+            .study-item-example-text {
+                font-style: italic;
+                font-size: 0.8rem;
+                line-height: 1rem;
+
+                .example-text-dot-icon {
+                    font-size: 0.4rem;
+                    margin-right: 0.3rem;
+                    vertical-align: middle;
+                }
+            }
         }
     }
 }

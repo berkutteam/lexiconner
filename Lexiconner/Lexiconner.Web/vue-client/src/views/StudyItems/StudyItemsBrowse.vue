@@ -65,8 +65,8 @@
                                     href="javascript:void(0)" 
                                     class="list-group-item list-group-item-action flex-column align-items-start study-item"
                                 >
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">{{item.title}}</h6>
+                                    <div class="d-flex w-100 justify-content-between mb-1">
+                                        <h6 class="mb-0">{{item.title}}</h6>
 
                                         <!-- Controls -->
                                         <div class="d-flex justify-content-end flex-grow-1">
@@ -117,15 +117,17 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div>
+                                    <div class="mb-1">
                                         <small>{{ item.description }}</small>
                                     </div>
                                     <div class="text-secondary">
                                         <div
                                             v-for="(exampleText, index2) in item.exampleTexts"
                                             v-bind:key="`card-${item.id}-exampleText-${index2}`"
+                                            class="study-item-example-text mb-1"
                                         >
-                                            <small><em>{{ exampleText }}</em></small>
+                                            <i class="fas fa-circle example-text-dot-icon"></i>
+                                            <span>{{ exampleText }}</span>
                                         </div>
                                     </div>
                                 </a>
@@ -151,12 +153,14 @@
                                         <div class="card-text small mb-1">
                                             <div>{{ item.description }}</div>
                                         </div>
-                                        <div class="card-text text-secondary mb-1">
+                                        <div class="card-text text-secondary">
                                             <div
                                                 v-for="(exampleText, index2) in item.exampleTexts"
                                                 v-bind:key="`card-${item.id}-exampleText-${index2}`"
+                                                class="item-card-example-text mb-1"
                                             >
-                                                <small><em>{{ exampleText }}</em></small>
+                                                <i class="fas fa-circle example-text-dot-icon"></i>
+                                                <span>{{ exampleText }}</span>
                                             </div>
                                         </div>
                                         <div class="card-text">
