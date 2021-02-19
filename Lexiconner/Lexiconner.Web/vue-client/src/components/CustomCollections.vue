@@ -89,11 +89,11 @@
                 </div>
             </modal>
 
-            <!-- Study item create/edit -->
-            <study-item-create-update-modal
-                ref="customCollections_studyItemCreateUpdateModal"
+            <!-- Word create/edit -->
+            <word-create-update-modal
+                ref="customCollections_wordCreateUpdateModal"
             >
-            </study-item-create-update-modal>
+            </word-create-update-modal>
         </div>
     </div>
 </template>
@@ -108,7 +108,7 @@ import notificationUtil from '@/utils/notification';
 import RowLoader from '@/components/loaders/RowLoader';
 import LoadingButton from '@/components/LoadingButton';
 import FolderTreeView from '@/components/FolderTreeView';
-import StudyItemCreateUpdateModal from '@/views/StudyItems/StudyItemCreateUpdateModal';
+import WordCreateUpdateModal from '@/views/Words/WordCreateUpdateModal';
 
 const customCollectionModelDefault = {
     name: null,
@@ -132,7 +132,7 @@ export default {
         RowLoader,
         LoadingButton,
         FolderTreeView,
-        StudyItemCreateUpdateModal,
+        WordCreateUpdateModal,
     },
     data: function() {
         return {
@@ -197,8 +197,8 @@ export default {
             this.$modal.show('custom-collection-edit');
         },
         onCreateFolderItem: function(parentFolder) {
-            this.$refs.customCollections_studyItemCreateUpdateModal.show({
-                studyItemId: null,
+            this.$refs.customCollections_wordCreateUpdateModal.show({
+                wordId: null,
                 customCollectionIds: [parentFolder.id],
             });
         },

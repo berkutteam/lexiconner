@@ -9,9 +9,9 @@ namespace Lexiconner.Persistence.JsonStore
     {
         public JsonStoreModel()
         {
-            StudyItems = new List<StudyItemEntity>();
+            Words = new List<WordEntity>();
         }
 
-        public List<StudyItemEntity> StudyItems { get; set; }
+        public List<WordEntity> Words { get; set; }
     }
 }

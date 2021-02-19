@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using IdentityModel;
-using Lexiconner.Api.DTOs;
-using Lexiconner.Api.Models;
+﻿using IdentityModel;
 using Lexiconner.Domain.Dtos;
-using Lexiconner.Domain.Entitites;
-using Lexiconner.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace Lexiconner.Api.Controllers.V2
 {

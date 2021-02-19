@@ -84,13 +84,13 @@ namespace Lexiconner.Application.ApiClients.Dtos
         /// If the source language isn't specified, the API attempts to identify the source language automatically and returns the source language within the response.
         /// </summary>
         [JsonProperty("sourceLanguageCode")]
-        public string SourceLanguageCode { get; set; }
+        public string WordLanguageCode { get; set; }
 
         /// <summary>
         /// Required. The BCP-47 language code to use for translation of the input text, set to one of the language codes listed in Language Support.
         /// </summary>
         [JsonProperty("targetLanguageCode")]
-        public string TargetLanguageCode { get; set; }
+        public string MeaningLanguageCode { get; set; }
 
         /// <summary>
         /// Optional. The model type requested for this translation.

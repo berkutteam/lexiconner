@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Lexiconner.Api.DTOs.StudyItemsTrainings;
+using Lexiconner.Api.DTOs.WordsTrainings;
 using Lexiconner.Api.IntegrationTests.Auth;
 using Lexiconner.Api.IntegrationTests.Utils;
 using Lexiconner.Domain.Attributes;
@@ -15,9 +15,9 @@ using Xunit;
 
 namespace Lexiconner.Api.IntegrationTests.Controllers
 {
-    public class StudyItemsFavouritesControllerTests : TestBase
+    public class WordsFavouritesControllerTests : TestBase
     {
-        public StudyItemsFavouritesControllerTests(CustomWebApplicationFactory<Startup> factory) : base(factory)
+        public WordsFavouritesControllerTests(CustomWebApplicationFactory<Startup> factory) : base(factory)
         {
         }
 
@@ -26,14 +26,14 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
         {
             await PrepareTestUser();
 
-            var studyItemsEntityBefore = await _dataUtil.CreateStudyItemAsync(_userEntity.Id);
+            var wordsEntityBefore = await _dataUtil.CreateWordAsync(_userEntity.Id);
 
-            await _apiUtil.AddToFavouritesAsync(_accessToken, studyItemsEntityBefore.Id);
+            await _apiUtil.AddToFavouritesAsync(_accessToken, wordsEntityBefore.Id);
 
-            var studyItemsEntityAfter = await _dataUtil.GetStudyItemAsync(studyItemsEntityBefore.Id);
+            var wordsEntityAfter = await _dataUtil.GetWordAsync(wordsEntityBefore.Id);
 
-            studyItemsEntityBefore.IsFavourite.Should().BeFalse();
-            studyItemsEntityAfter.IsFavourite.Should().BeTrue();
+            wordsEntityBefore.IsFavourite.Should().BeFalse();
+            wordsEntityAfter.IsFavourite.Should().BeTrue();
         }
 
         [Fact(DisplayName = "Should delte item from favourites")]
@@ -41,17 +41,17 @@ namespace Lexiconner.Api.IntegrationTests.Controllers
         {
             await PrepareTestUser();
 
-            var studyItemsEntityBefore = await _dataUtil.CreateStudyItemAsync(_userEntity.Id);
+            var wordsEntityBefore = await _dataUtil.CreateWordAsync(_userEntity.Id);
 
-            await _apiUtil.AddToFavouritesAsync(_accessToken, studyItemsEntityBefore.Id);
-            studyItemsEntityBefore = await _dataUtil.GetStudyItemAsync(studyItemsEntityBefore.Id);
+            await _apiUtil.AddToFavouritesAsync(_accessToken, wordsEntityBefore.Id);
+            wordsEntityBefore = await _dataUtil.GetWordAsync(wordsEntityBefore.Id);
 
-            await _apiUtil.DeleteFromFavouritesAsync(_accessToken, studyItemsEntityBefore.Id);
+            await _apiUtil.DeleteFromFavouritesAsync(_accessToken, wordsEntityBefore.Id);
 
-            var studyItemsEntityAfter = await _dataUtil.GetStudyItemAsync(studyItemsEntityBefore.Id);
+            var wordsEntityAfter = await _dataUtil.GetWordAsync(wordsEntityBefore.Id);
 
-            studyItemsEntityBefore.IsFavourite.Should().BeTrue();
-            studyItemsEntityAfter.IsFavourite.Should().BeFalse();
+            wordsEntityBefore.IsFavourite.Should().BeTrue();
+            wordsEntityAfter.IsFavourite.Should().BeFalse();
         }
     }
 }

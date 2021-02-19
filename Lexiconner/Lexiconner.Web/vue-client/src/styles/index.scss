@@ -896,12 +896,12 @@ a {
     }
 }
 
-.study-items-wrapper {
-    .study-items-list {
-        .study-item {
+.words-wrapper {
+    .words-list {
+        .word {
             cursor: auto;
 
-            .study-item-example-text {
+            .word-example-text {
                 font-style: italic;
                 font-size: 0.8rem;
                 line-height: 1rem;
@@ -924,10 +924,10 @@ a {
     }
 }
 
-.study-items-learn-flash-cards-wrapper,
-.study-items-learn-wordmeaning-wrapper,
-.study-items-learn-meaningword-wrapper,
-.study-items-learn-matchwords-wrapper {
+.words-learn-flash-cards-wrapper,
+.words-learn-wordmeaning-wrapper,
+.words-learn-meaningword-wrapper,
+.words-learn-matchwords-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -9,12 +9,12 @@ import Login from './views/Login.vue';
 import Register from './views/Register.vue';
 import Logout from './views/Logout.vue';
 
-import StudyItemsDashboard from './views/StudyItems/StudyItemsDashboard.vue';
-import StudyItemsBrowse from './views/StudyItems/StudyItemsBrowse.vue';
-import StudyItemsLearnFlashCards from './views/StudyItems/StudyItemsLearnFlashCards.vue';
-import StudyItemsLearnWordMeaning from './views/StudyItems/StudyItemsLearnWordMeaning.vue';
-import StudyItemsLearnMeaningWord from './views/StudyItems/StudyItemsLearnMeaningWord.vue';
-import StudyItemsLearnMatchWords from './views/StudyItems/StudyItemsLearnMatchWords.vue';
+import WordsDashboard from './views/Words/WordsDashboard.vue';
+import WordsBrowse from './views/Words/WordsBrowse.vue';
+import WordsLearnFlashCards from './views/Words/WordsLearnFlashCards.vue';
+import WordsLearnWordMeaning from './views/Words/WordsLearnWordMeaning.vue';
+import WordsLearnMeaningWord from './views/Words/WordsLearnMeaningWord.vue';
+import WordsLearnMatchWords from './views/Words/WordsLearnMatchWords.vue';
 import UserFilmsBrowse from './views/UserFilms/UserFilmsBrowse.vue';
 
 import Dashboard from './views/Dashboard.vue';
@@ -145,9 +145,9 @@ export default new Router({
             meta: { layout: 'no-sidebar' },
         },
         {
-            path: '/study-items-dashboard',
-            name: 'study-items-dashboard',
-            component: StudyItemsDashboard,
+            path: '/words-dashboard',
+            name: 'words-dashboard',
+            component: WordsDashboard,
             props: true,
             meta: { layout: 'default' },
             beforeEnter: async (to, from, next) => {
@@ -156,9 +156,9 @@ export default new Router({
             },
         },
         {
-            path: '/study-items/browse',
-            name: 'study-items-browse',
-            component: StudyItemsBrowse,
+            path: '/words/browse',
+            name: 'words-browse',
+            component: WordsBrowse,
             props: true,
             meta: { layout: 'default' },
             beforeEnter: async (to, from, next) => {
@@ -167,9 +167,9 @@ export default new Router({
             },
         },
         {
-            path: '/study-items/learn/falshcards',
-            name: 'study-items-learn-falshcards',
-            component: StudyItemsLearnFlashCards,
+            path: '/words/learn/falshcards',
+            name: 'words-learn-falshcards',
+            component: WordsLearnFlashCards,
             props: true,
             meta: { layout: 'default' },
             beforeEnter: async (to, from, next) => {
@@ -178,9 +178,9 @@ export default new Router({
             },
         },
         {
-            path: '/study-items/learn/wordmeaning',
-            name: 'study-items-learn-wordmeaning',
-            component: StudyItemsLearnWordMeaning,
+            path: '/words/learn/wordmeaning',
+            name: 'words-learn-wordmeaning',
+            component: WordsLearnWordMeaning,
             props: true,
             meta: { layout: 'default' },
             beforeEnter: async (to, from, next) => {
@@ -189,9 +189,9 @@ export default new Router({
             },
         },
         {
-            path: '/study-items/learn/meaningword',
-            name: 'study-items-learn-meaningword',
-            component: StudyItemsLearnMeaningWord,
+            path: '/words/learn/meaningword',
+            name: 'words-learn-meaningword',
+            component: WordsLearnMeaningWord,
             props: true,
             meta: { layout: 'default' },
             beforeEnter: async (to, from, next) => {
@@ -200,9 +200,9 @@ export default new Router({
             },
         },
         {
-            path: '/study-items/learn/matchwords',
-            name: 'study-items-learn-matchwords',
-            component: StudyItemsLearnMatchWords,
+            path: '/words/learn/matchwords',
+            name: 'words-learn-matchwords',
+            component: WordsLearnMatchWords,
             props: true,
             meta: { layout: 'default' },
             beforeEnter: async (to, from, next) => {

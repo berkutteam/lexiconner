@@ -26,9 +26,9 @@
       </div>
 
       <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
-        <router-link v-bind:to="{ name: 'study-items-dashboard'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">
+        <router-link v-bind:to="{ name: 'words-dashboard'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">
           <i class="fas fa-spell-check mr-2"></i>
-          <span>Study items</span>
+          <span>Words</span>
         </router-link>
       </div>
       <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">

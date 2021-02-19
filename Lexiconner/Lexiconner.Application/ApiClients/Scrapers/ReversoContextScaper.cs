@@ -76,9 +76,9 @@ namespace Lexiconner.Application.ApiClients.Scrapers
 
             var result = new ReversoContextTraslationScraperResultDto()
             {
-                SourceLanguageCode = sourceLanguageCode,
+                WordLanguageCode = sourceLanguageCode,
                 SourceLanguage = sourceLanguage,
-                TargetLanguageCode = targetLanguageCode,
+                MeaningLanguageCode = targetLanguageCode,
                 TargetLanguage = tragetLanguage,
                 SearchedWord = word,
             };

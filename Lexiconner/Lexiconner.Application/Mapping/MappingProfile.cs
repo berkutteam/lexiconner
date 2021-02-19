@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Lexiconner.Domain.Dtos.StudyItems;
-using Lexiconner.Domain.DTOs.CustomCollections;
+using Lexiconner.Domain.Dtos.Words;
+using Lexiconner.Domain.Dtos.CustomCollections;
 using Lexiconner.Domain.Entitites;
 using System;
 using System.Collections.Generic;
@@ -13,12 +13,12 @@ namespace Lexiconner.Application.Mapping
     {
         public MappingProfile()
         {
-            // StudyItem
-            CreateMap<StudyItemEntity, StudyItemDto>();
-            CreateMap<StudyItemImageEntity, StudyItemImageDto>();
-            CreateMap<ImageSearchResponseItemDto, StudyItemImageDto>();
-            CreateMap<StudyItemImageDto, StudyItemImageEntity>();
-            CreateMap<StudyItemTrainingInfoEntity, StudyItemTrainingInfoDto>();
+            // Word
+            CreateMap<WordEntity, WordDto>();
+            CreateMap<WordImageEntity, WordImageDto>();
+            CreateMap<ImageSearchResponseItemDto, WordImageDto>();
+            CreateMap<WordImageDto, WordImageEntity>();
+            CreateMap<WordTrainingInfoEntity, WordTrainingInfoDto>();
 
             // CustomCollection
             CreateMap<CustomCollectionEntity, CustomCollectionDto>();

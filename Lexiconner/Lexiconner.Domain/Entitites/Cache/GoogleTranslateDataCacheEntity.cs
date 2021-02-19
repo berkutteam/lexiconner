@@ -16,23 +16,23 @@ namespace Lexiconner.Domain.Entitites.Cache
         )
         {
             Contents = contents;
-            SourceLanguageCode = sourceLanguageCode;
-            TargetLanguageCode = targetLanguageCode;
+            WordLanguageCode = sourceLanguageCode;
+            MeaningLanguageCode = targetLanguageCode;
 
             CacheKey = GetCacheKey();
         }
 
         // api request params
         public List<string> Contents { get; private set; }
-        public string SourceLanguageCode { get; private set; }
-        public string TargetLanguageCode { get; private set; }
+        public string WordLanguageCode { get; private set; }
+        public string MeaningLanguageCode { get; private set; }
 
         // api response
         public DataCacheEntity Data { get; set; }
 
         public override string GetCacheKey()
         {
-            return $"{nameof(Contents)}=={string.Join("_", Contents)}__{nameof(SourceLanguageCode)}=={SourceLanguageCode}__{nameof(TargetLanguageCode)}=={TargetLanguageCode}";
+            return $"{nameof(Contents)}=={string.Join("_", Contents)}__{nameof(WordLanguageCode)}=={WordLanguageCode}__{nameof(MeaningLanguageCode)}=={MeaningLanguageCode}";
         }
 
         public class DataCacheEntity

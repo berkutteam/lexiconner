@@ -1,4 +1,4 @@
-﻿using Lexiconner.Domain.DTOs.CustomCollections;
+﻿using Lexiconner.Domain.Dtos.CustomCollections;
 using Lexiconner.Domain.Entitites.Base;
 using Newtonsoft.Json;
 using System;

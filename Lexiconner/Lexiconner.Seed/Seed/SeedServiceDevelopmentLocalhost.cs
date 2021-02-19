@@ -208,8 +208,8 @@ namespace Lexiconner.Seed.Seed
             // seed imported data for marked users
             var usersWithImport = _identityServerConfig.GetInitialdentityUsers().Where(x => x.IsImportInitialData);
 
-            // StudyItems
-            _logger.LogInformation("StudyItems...");
+            // Words
+            _logger.LogInformation("Words...");
             foreach (var user in usersWithImport)
             {
                 // create default custom collections
@@ -274,14 +274,14 @@ namespace Lexiconner.Seed.Seed
                 {
                     new
                     {
-                        SourceLanguageCode = "ru",
+                        WordLanguageCode = "ru",
                         ImportFilePath = _config.Import.RuWordsFilePath,
                         ImportFormat = ".txt",
                         ParentCollectionId = ruWordsCollection.Id,
                     },
                     new
                     {
-                        SourceLanguageCode = "en",
+                        WordLanguageCode = "en",
                         ImportFilePath = _config.Import.EnWordsFilePath,
                         ImportFormat = ".md",
                         ParentCollectionId = enWordsCollection.Id,
@@ -289,14 +289,14 @@ namespace Lexiconner.Seed.Seed
                 };
 
                 // import
-                if (!await _dataRepository.ExistsAsync<StudyItemEntity>(x => x.UserId == user.Id))
+                if (!await _dataRepository.ExistsAsync<WordEntity>(x => x.UserId == user.Id))
                 {
                     foreach (var import in imports)
                     {
-                        await SeedStudyItemsForCollection(
+                        await SeedWordsForCollection(
                             user,
                             rootCollection,
-                            import.SourceLanguageCode,
+                            import.WordLanguageCode,
                             import.ImportFilePath,
                             import.ImportFormat,
                             import.ParentCollectionId
@@ -305,7 +305,7 @@ namespace Lexiconner.Seed.Seed
                 }
                 
             }
-            _logger.LogInformation("StudyItems Done.");
+            _logger.LogInformation("Words Done.");
 
             // Films
             _logger.LogInformation("Films...");
@@ -564,7 +564,7 @@ namespace Lexiconner.Seed.Seed
             }
         }
 
-        private async Task SeedStudyItemsForCollection(
+        private async Task SeedWordsForCollection(
             ApplicationUserEntity user,
             CustomCollectionEntity rootCollection,
             string sourceLanguageCode, 
@@ -573,7 +573,7 @@ namespace Lexiconner.Seed.Seed
             string parentCollectionId
         )
         {
-            _logger.LogInformation($"Importing StudyItems {sourceLanguageCode}, {importFilePath}, {importFormat}...");
+            _logger.LogInformation($"Importing Words {sourceLanguageCode}, {importFilePath}, {importFormat}...");
 
             // import from file
             WordImportResultModel importResult = null;
@@ -619,7 +619,7 @@ namespace Lexiconner.Seed.Seed
             createCollections(rootCollection, parentCollectionId, importResult.Collections);
             await _dataRepository.UpdateAsync(rootCollection);
 
-            var studyItemEntities = importResult.Words.Select(x => 
+            var wordEntities = importResult.Words.Select(x => 
             {
                 List<string> customCollectionIds;
                 if(x.CollectionTempId != null && collectionMap.ContainsKey(x.CollectionTempId))
@@ -631,40 +631,41 @@ namespace Lexiconner.Seed.Seed
                     customCollectionIds = new List<string>() { parentCollectionId };
                 }
 
-                return new StudyItemEntity
+                return new WordEntity
                 {
                     UserId = user.Id,
                     CustomCollectionIds = customCollectionIds,
-                    Title = x.Title,
-                    Description = x.Description,
-                    ExampleTexts = x.ExampleTexts,
-                    LanguageCode = sourceLanguageCode,
+                    Word = x.Title,
+                    Meaning = x.Description,
+                    Examples = x.ExampleTexts,
+                    WordLanguageCode = sourceLanguageCode,
+                    MeaningLanguageCode = null, // TODO
                     Tags = x.Tags,
-                    Image = null,
+                    Images = new List<WordImageEntity>(),
                 };
             }).ToList();
 
             // fix same ids for different users
-            studyItemEntities.ToList().ForEach(x =>
+            wordEntities.ToList().ForEach(x =>
             {
                 x.RegenerateId();
-                x.Image?.RegenerateId();
+                x.Images.ForEach(x => x.RegenerateId());
             });
 
             // set images
-            await SetStudyItemsImages(studyItemEntities);
+            await SetWordsImages(wordEntities);
 
             const int chunkSize = 50;
-            int chunkCount = (int)(Math.Ceiling((double)studyItemEntities.Count / (double)chunkSize));
+            int chunkCount = (int)(Math.Ceiling((double)wordEntities.Count / (double)chunkSize));
             for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
             {
-                var items = studyItemEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
+                var items = wordEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
 
                 // only unexisting
-                var itemsToCreate = new List<StudyItemEntity>();
+                var itemsToCreate = new List<WordEntity>();
                 foreach (var item in items)
                 {
-                    if(!(await _dataRepository.ExistsAsync<StudyItemEntity>(x => x.Title == item.Title)))
+                    if(!(await _dataRepository.ExistsAsync<WordEntity>(x => x.Word == item.Word)))
                     {
                         itemsToCreate.Add(item);
                     }
@@ -672,18 +673,18 @@ namespace Lexiconner.Seed.Seed
 
                 await _dataRepository.AddManyAsync(itemsToCreate);
 
-                _logger.LogInformation($"StudyItems processed chunk {chunkNumber + 1} / {chunkCount}.");
+                _logger.LogInformation($"Words processed chunk {chunkNumber + 1} / {chunkCount}.");
             }
-            _logger.LogInformation($"StudyItems were added for user #{user.Email}.");
+            _logger.LogInformation($"Words were added for user #{user.Email}.");
         }
 
-        private async Task SetStudyItemsImages(IEnumerable<StudyItemEntity> studyItemEntities)
+        private async Task SetWordsImages(IEnumerable<WordEntity> wordEntities)
         {
-            foreach (StudyItemEntity entity in studyItemEntities)
+            foreach (WordEntity entity in wordEntities)
             {
                 try
                 {
-                    var imagesResult = await _imageService.FindImagesAsync(entity.LanguageCode, entity.Title);
+                    var imagesResult = await _imageService.FindImagesAsync(entity.WordLanguageCode, entity.Word);
 
                     if (imagesResult.Any())
                     {
@@ -692,7 +693,7 @@ namespace Lexiconner.Seed.Seed
 
                         if (image != null)
                         {
-                            entity.Image = new StudyItemImageEntity
+                            entity.Images.Add(new WordImageEntity
                             {
                                 Url = image.Url,
                                 Height = image.Height,
@@ -701,7 +702,7 @@ namespace Lexiconner.Seed.Seed
                                 ThumbnailHeight = image.ThumbnailHeight,
                                 ThumbnailWidth = image.ThumbnailWidth,
                                 Base64Encoding = image.Base64Encoding,
-                            };
+                            });
                         }
                     }
                 }

@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Lexiconner.Application.Services.Interfacse;
+using Lexiconner.Domain.Dtos;
+using Lexiconner.Domain.Dtos.UserFilms;
+using Lexiconner.Persistence.Repositories;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
-using Lexiconner.Api.DTOs;
-using Lexiconner.Api.Mappers;
-using Lexiconner.Api.Models;
-using Lexiconner.Api.Services;
-using Lexiconner.Api.Services.Interfaces;
-using Lexiconner.Application.Exceptions;
-using Lexiconner.Application.Services;
-using Lexiconner.Domain.Dtos;
-using Lexiconner.Domain.Dtos.StudyItems;
-using Lexiconner.Domain.Dtos.UserFilms;
-using Lexiconner.Domain.Entitites;
-using Lexiconner.Persistence.Repositories;
-using Lexiconner.Persistence.Repositories.MongoDb;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Lexiconner.Api.Controllers.V2
 {
@@ -48,8 +35,7 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetAll([FromQuery] UserFilmsRequestDto dto)
         {
-            var searchFilter = new UserFilmsSearchFilterModel(dto.Search);
-            var result = await _filmsService.GetAllUserFilmsAsync(GetUserId(), dto.Offset, dto.Limit, searchFilter);
+            var result = await _filmsService.GetAllUserFilmsAsync(GetUserId(), dto.Offset, dto.Limit, dto.Search);
             return BaseResponse(result);
         }
 
