@@ -1,10 +1,39 @@
 <template>
     <div class="dashboard-wrapper">
-        <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.STUDY_ITEM_TRAINING_STATS_LOAD]"></row-loader>
+        <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.STUDY_ITEM_TRAINING_STATS_LOAD]" class="mb-2"></row-loader>
 
         <!-- Collections -->
         <custom-collections>
         </custom-collections>
+
+        <!-- Nav -->
+        <div class="app-card-nav mb-2">
+            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-browse-folder-96.png)`}">
+                <router-link v-bind:to="{ name: 'study-items-browse', params: {}}" class="app-card-nav-link">
+                    <span>Browse items</span>
+                </router-link>
+            </div>
+            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-red-card-80.png)`}">
+                <router-link v-bind:to="{ name: 'study-items-learn-falshcards', params: {}}" class="app-card-nav-link">
+                    <span>Flash cards</span>
+                </router-link>
+            </div>
+            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-rich-text-converter-96.png)`}">
+                <router-link v-bind:to="{ name: 'study-items-learn-wordmeaning', params: {}}" class="app-card-nav-link">
+                    <span>Word-Meaning</span>
+                </router-link>
+            </div>
+            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-dictionary-64.png)`}">
+                <router-link v-bind:to="{ name: 'study-items-learn-meaningword', params: {}}" class="app-card-nav-link">
+                    <span>Meaning-Word</span>
+                </router-link>
+            </div>
+            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-compare-64.png)`}">
+                <router-link v-bind:to="{ name: 'study-items-learn-matchwords', params: {}}" class="app-card-nav-link">
+                    <span>Match words</span>
+                </router-link>
+            </div>
+        </div>
 
         <!-- Stats -->
         <div class="mb-2">
@@ -47,35 +76,6 @@
                         </div>
                     </div>
                 </div>             
-            </div>
-        </div>
-
-        <!-- Nav -->
-        <div class="app-card-nav">
-            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-browse-folder-96.png)`}">
-                <router-link v-bind:to="{ name: 'study-items-browse', params: {}}" class="app-card-nav-link">
-                    <span>Browse items</span>
-                </router-link>
-            </div>
-            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-red-card-80.png)`}">
-                <router-link v-bind:to="{ name: 'study-items-learn-falshcards', params: {}}" class="app-card-nav-link">
-                    <span>Flash cards</span>
-                </router-link>
-            </div>
-            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-rich-text-converter-96.png)`}">
-                <router-link v-bind:to="{ name: 'study-items-learn-wordmeaning', params: {}}" class="app-card-nav-link">
-                    <span>Word-Meaning</span>
-                </router-link>
-            </div>
-            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-dictionary-64.png)`}">
-                <router-link v-bind:to="{ name: 'study-items-learn-meaningword', params: {}}" class="app-card-nav-link">
-                    <span>Meaning-Word</span>
-                </router-link>
-            </div>
-            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-compare-64.png)`}">
-                <router-link v-bind:to="{ name: 'study-items-learn-matchwords', params: {}}" class="app-card-nav-link">
-                    <span>Match words</span>
-                </router-link>
             </div>
         </div>
     </div>

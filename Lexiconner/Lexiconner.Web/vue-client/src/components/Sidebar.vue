@@ -26,10 +26,16 @@
       </div>
 
       <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
-        <router-link v-bind:to="{ name: 'study-items-dashboard'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">Study items</router-link>
+        <router-link v-bind:to="{ name: 'study-items-dashboard'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">
+          <i class="fas fa-spell-check mr-2"></i>
+          <span>Study items</span>
+        </router-link>
       </div>
       <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
-        <router-link v-bind:to="{ name: 'user-films-browse'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">My films</router-link>
+        <router-link v-bind:to="{ name: 'user-films-browse'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">
+          <i class="fas fa-film mr-2"></i>
+          <span>My films</span>
+        </router-link>
       </div>
 
       <!-- <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
@@ -44,16 +50,25 @@
       </div> -->
       
       <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
-        <router-link v-bind:to="{ name: 'logout'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">Logout</router-link>
+        <router-link v-bind:to="{ name: 'logout'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">
+          <i class="fas fa-sign-out-alt mr-2"></i>
+          <span>Logout</span>
+        </router-link>
       </div>
     </div>
 
     <div v-if="!sharedState.auth.isAuthenticated">
       <div v-if="!sharedState.auth.isAuthenticated" class="sidebar-item">
-        <router-link v-bind:to="{ name: 'home'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">Home</router-link>
+        <router-link v-bind:to="{ name: 'home'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">
+          <i class="fas fa-home mr-2"></i>
+          <span>Home</span>
+        </router-link>
       </div>
       <div v-if="!sharedState.auth.isAuthenticated" class="sidebar-item">
-        <router-link v-bind:to="{ name: 'login'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">Login</router-link>
+        <router-link v-bind:to="{ name: 'login'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">
+          <i class="fas fa-sign-in-alt mr-2"></i>
+          <span>Login</span>
+        </router-link>
       </div>
       <!-- <div v-if="!sharedState.auth.isAuthenticated" class="sidebar-item">
         <router-link v-bind:to="{ name: 'register'}" class="sidebar-link">Register</router-link>

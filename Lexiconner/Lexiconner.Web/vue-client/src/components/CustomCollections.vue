@@ -1,6 +1,6 @@
 <template>
     <div>
-        <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.CUSTOM_COLLECTIONS_LOAD]"></row-loader>
+        <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.CUSTOM_COLLECTIONS_LOAD]" class="mb-2"></row-loader>
 
         <div v-if="sharedState.customCollectionsResult">
             <folder-tree-view
