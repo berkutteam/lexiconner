@@ -53,7 +53,7 @@
                                     <button 
                                         v-on:click="onPossibleMeaningClick(possibleOption)"
                                         type="button" 
-                                        class="btn btn-block mb-1 text-left"
+                                        class="btn btn-block custom-btn-normal mb-1 text-left"
                                         v-bind:class="{
                                             'btn-outline-secondary': !privateState.isCurrentItemAnswered || (privateState.isCurrentItemAnswered && !possibleOption.isCorrect && currentItemAnswerOptionIdOrNotSet !== possibleOption.randomId),
                                             'btn-success': privateState.isCurrentItemAnswered && possibleOption.isCorrect,
@@ -111,11 +111,11 @@
                             </div>
                             <div v-if="privateState.isTrainingFinished" class="mt-2">
                                 <div>
-                                    <router-link v-bind:to="{ name: 'study-items-dashboard', params: {}}" class="btn btn-secondary btn-sm text-white">
+                                    <router-link v-bind:to="{ name: 'study-items-dashboard', params: {}}" class="btn custom-btn-normal btn-sm text-white">
                                         <i class="fas fa-chevron-left mr-1"></i>
                                         <span>Back</span>
                                     </router-link>
-                                    <button v-on:click="startTraining" type="button" class="btn btn-success btn-sm ml-1">
+                                    <button v-on:click="startTraining" type="button" class="btn custom-btn-normalbtn-sm ml-1">
                                         Train next
                                         <i class="fas fa-play ml-1"></i>
                                     </button>

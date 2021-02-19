@@ -35,7 +35,7 @@
                         <!-- Image -->
                         <div class="card-img-top">
                             
-                            <div class="image-collage image-collage--5images">
+                            <div class="image-grid image-grid--5images">
                                 <div 
                                     v-for="(item, index) in trainingMatchWords.items"
                                     v-bind:key="item.studyItem.id"
@@ -91,7 +91,7 @@
                             <span v-on:click="onShowAnswersClick()" class="card-bottom-control-item text-danger">
                                 <i class="fas fa-question"></i>
                             </span>
-                            <span v-on:click="submitClick()" class="card-bottom-control-item text-success" v-bind:class="{'disabled': !isCanBeSubmited}">
+                            <span v-on:click="onSubmitAnswerClick()" class="card-bottom-control-item text-success" v-bind:class="{'disabled': !isCanBeSubmited}">
                                 <i class="fas fa-check"></i>
                             </span>
                         </div>
@@ -110,11 +110,11 @@
                             </div>
                             <div v-if="privateState.isTrainingFinished" class="mt-2">
                                 <div>
-                                    <router-link v-bind:to="{ name: 'study-items-dashboard', params: {}}" class="btn btn-secondary btn-sm text-white">
+                                    <router-link v-bind:to="{ name: 'study-items-dashboard', params: {}}" class="btn custom-btn-normal btn-sm text-white">
                                         <i class="fas fa-chevron-left mr-1"></i>
                                         <span>Back</span>
                                     </router-link>
-                                    <button v-on:click="startTraining" type="button" class="btn btn-success btn-sm ml-1">
+                                    <button v-on:click="startTraining" type="button" class="btn custom-btn-normal btn-sm ml-1">
                                         Train next
                                         <i class="fas fa-play ml-1"></i>
                                     </button>
@@ -245,7 +245,7 @@ export default {
             this.saveTraining();
             this.privateState.isShowAnswers = true;
         },
-        submitClick: function() {
+        onSubmitAnswerClick: function() {
             this.saveTraining();
             this.privateState.isShowAnswers = true;
         },

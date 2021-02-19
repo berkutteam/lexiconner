@@ -24,6 +24,11 @@ namespace Lexiconner.Application.ApiClients.Dtos
 
         public class ImageSearchResponseItemDto
         {
+            public ImageSearchResponseItemDto()
+            {
+                RandomId = Guid.NewGuid().ToString();
+            }
+
             [JsonProperty("url")]
             public string Url { get; set; }
 
@@ -44,6 +49,9 @@ namespace Lexiconner.Application.ApiClients.Dtos
 
             [JsonProperty("base64Encoding")]
             public string Base64Encoding { get; set; }
+
+            // Custom props
+            public string RandomId { get; set; }
         }
     }
 }

@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Lexiconner.Domain.Config
 {
+    /// <summary>
+    /// Based on https://cloud.google.com/translate/docs/languages
+    /// </summary>
     public static class LanguageConfig
     {
         public const string UndefinedLanguageCode = "und";
@@ -25,6 +29,21 @@ namespace Lexiconner.Domain.Config
                 Iso639_1_Code = "ru",
             },
         };
+
+        public static bool HasLanguageByCode(string code)
+        {
+            return SupportedLanguages.Any(x => x.Iso639_1_Code == code);
+        }
+
+        public static SupportedLanguageModel GetLanguageByCode(string code)
+        {
+            var language = SupportedLanguages.FirstOrDefault(x => x.Iso639_1_Code == code);
+            if(language == null)
+            {
+                throw new NullReferenceException($"Language with code {code} not found.");
+            }
+            return language;
+        }
     }
 
     /// <summary>

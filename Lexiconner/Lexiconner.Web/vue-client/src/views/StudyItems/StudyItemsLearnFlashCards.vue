@@ -34,15 +34,29 @@
                             </div>
                         </div>
                         <div class="card-bottom-controls">
-                            <span v-on:click="onPrevClick()" class="card-bottom-control-item">
+                            <!-- Dropdown with dditional actions -->
+                            <div class="card-bottom-control-item dropdown">
+                                <span class="contained-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </span>
+                                <div class="dropdown-menu dropdown-menu-left" aria-labelledby="dropdownMenuButton">
+                                    <button v-on:click="onWordDeleteClick(currentItem.id)" class="dropdown-item" type="button">
+                                        <i class="fas fa-trash mr-2"></i>
+                                        <span>Delete word</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- <span v-on:click="onPrevClick()" class="card-bottom-control-item">
                                 <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span v-on:click="onShowClick()" class="card-bottom-control-item text-danger">
+                            </span> -->
+                            <span v-on:click="onShowAnswerClick()" class="card-bottom-control-item text-danger">
                                 <i class="fas fa-question"></i>
                             </span>
-                            <span v-on:click="onNextClick()" class="card-bottom-control-item text-success">
-                                <!-- <i class="fas fa-chevron-right"></i> -->
+                            <span v-if="!privateState.isShowNextButton" v-on:click="onSubmitAnswerClick()" class="card-bottom-control-item text-success">
                                 <i class="fas fa-check"></i>
+                            </span>
+                            <span v-if="privateState.isShowNextButton" v-on:click="onNextClick()" class="card-bottom-control-item">
+                                <i class="fas fa-chevron-right"></i>
                             </span>
                         </div>
                     </div>
@@ -63,11 +77,11 @@
                             </div>
                             <div v-if="privateState.isTrainingFinished" class="mt-2">
                                 <div>
-                                    <router-link v-bind:to="{ name: 'study-items-dashboard', params: {}}" class="btn btn-secondary btn-sm text-white">
+                                    <router-link v-bind:to="{ name: 'study-items-dashboard', params: {}}" class="btn custom-btn-normal btn-sm text-white">
                                         <i class="fas fa-chevron-left mr-1"></i>
                                         <span>Back</span>
                                     </router-link>
-                                    <button v-on:click="startTraining" type="button" class="btn btn-success btn-sm ml-1">
+                                    <button v-on:click="startTraining" type="button" class="btn custom-btn-normal btn-sm ml-1">
                                         Train next
                                         <i class="fas fa-play ml-1"></i>
                                     </button>
@@ -103,6 +117,7 @@ export default {
                 storeTypes: storeTypes,
                 currentItemIndex: 0,
                 isShowCurrentItemDetails: false,
+                isShowNextButton: false,
                 itemResults: [],
                 isTrainingFinished: false,
                 summary: {
@@ -163,6 +178,7 @@ export default {
             this.privateState.isShowCurrentItemDetails = 0;
             this.privateState.itemResults = [];
             this.privateState.isTrainingFinished = false;
+            this.privateState.summary.trainedItemsCount = 0;
             this.privateState.summary.correctItemsCount = 0;
             this.privateState.summary.incorrectItemsCount = 0;
 
@@ -188,19 +204,28 @@ export default {
         onPrevClick: function() {
             this.goToCard(this.privateState.currentItemIndex - 1);
         },
-        onShowClick: function() {
+        onNextClick: function() {
+            this.goToCard(this.privateState.currentItemIndex + 1);
+            this.privateState.isShowNextButton = false;
+        },
+        onShowAnswerClick: function() {
             this.handleItemResponse({
                 itemId: this.currentItem.id, 
                 isCorrect: false
             });
             this.privateState.isShowCurrentItemDetails = true;
+            this.privateState.isShowNextButton = true;
         },
-        onNextClick: function() {
+        onSubmitAnswerClick: function() {
             this.handleItemResponse({
                 itemId: this.currentItem.id, 
                 isCorrect: true
             });
-            this.goToCard(this.privateState.currentItemIndex + 1);
+            this.privateState.isShowCurrentItemDetails = true;
+            this.privateState.isShowNextButton = true;
+        },
+        onWordDeleteClick: function(wordId) {
+            this.deleteWord(wordId);
         },
         handleItemResponse: function({itemId, isCorrect}) {
             let isHandled = this.privateState.itemResults.some(x => x.itemId === itemId);
@@ -233,6 +258,28 @@ export default {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
+        },
+        deleteWord: function(wordId) {
+            // this.$store.dispatch(storeTypes.STUDY_ITEM_DELETE, {
+            //     studyItemId: wordId,
+            // }).then(() => {
+            //      this.$notify({
+            //         group: 'app',
+            //         type: 'success',
+            //         title: `Word has been deleted!`,
+            //         text: '',
+            //         duration: 5000,
+            //     });
+
+            //     const itemCountThresholdBeforeReload = 3;
+            //     if(this.studyItems.length <= itemCountThresholdBeforeReload) {
+            //         // reload
+            //         this.loadStudyItems();
+            //     }
+            // }).catch(err => {
+            //     console.error(err);
+            //     notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            // });
         },
     },
 }

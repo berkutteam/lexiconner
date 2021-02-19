@@ -102,5 +102,29 @@ namespace Lexiconner.Api.Controllers.V2
             await _studyItemsService.DeleteStudyItem(GetUserId(), id);
             return StatusCodeBaseResponse();
         }
+
+        [HttpPost("{wordId}/images/find")]
+        [ProducesResponseType(typeof(BaseApiResponseDto<PaginationResponseDto<StudyItemImageDto>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> FindNextWordImages([FromRoute] string wordId)
+        {
+            var result = await _studyItemsService.FindWordImagesAsync(GetUserId(), wordId);
+            return BaseResponse(result);
+        }
+
+        [HttpPut("{wordId}/images")]
+        [ProducesResponseType(typeof(BaseApiResponseDto<PaginationResponseDto<StudyItemImageDto>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> UpdateWordImages([FromRoute] string wordId, [FromBody] UpdateWordImagesDto dto)
+        {
+            var result = await _studyItemsService.UpdateWordImagesAsync(GetUserId(), wordId, dto);
+            return BaseResponse(result);
+        }
     }
 }

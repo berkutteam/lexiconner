@@ -45,6 +45,8 @@ using Lexiconner.Persistence;
 using AutoMapper;
 using Lexiconner.Application.Mapping;
 using Lexiconner.Application.Middlewares;
+using Lexiconner.Application.Services.Interfacse;
+using Lexiconner.Application.ApiClients.Scrapers;
 
 namespace Lexiconner.Api
 {
@@ -100,16 +102,19 @@ namespace Lexiconner.Api
             {
                 return new TMDbClient(config.TheMovieDatabase.ApiKeyV3Auth);    
             });
+            services.AddTransient<IReversoContextScraper, ReversoContextScraper>();
 
             services.AddTransient<IDataCache, DataCacheDataRepository>(sp => {
                 var logger = sp.GetService<ILogger<IDataCache>>();
                 ISharedCacheDataRepository dataRepository = sp.GetService<ISharedCacheDataRepository>();
                 return new DataCacheDataRepository(logger, dataRepository);
             });
+
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IStudyItemsService, StudyItemsService>();
             services.AddTransient<ICustomCollectionsService, CustomCollectionsService>();
             services.AddTransient<IFilmsService, FilmsService>();
+            services.AddTransient<IWordsService, WordsService>();
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
@@ -272,6 +277,8 @@ namespace Lexiconner.Api
         {
             //var ssss = app.ApplicationServices.GetService<IGoogleTranslateApiClient>();
             //ssss.Translate("", "", "").GetAwaiter().GetResult();
+            //var scraper = app.ApplicationServices.GetService<IReversoContextScraper>();
+            //scraper.GetWordTranslationAsync("cat", "en", "ru").Wait();
 
             // Request/Response logging middleware
             app.UseMiddleware<RequestResponseLoggingMiddleware>();

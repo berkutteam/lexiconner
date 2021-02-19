@@ -7,6 +7,7 @@
             width="450px"
             v-bind:classes="['v--modal', 'v--modal-box', 'v--modal-box--overflow-visible', 'v--modal-box--sm-fullwidth']"
             v-bind:clickToClose="false"
+            v-bind:scrollable="true"
         >
             <div class="app-modal">
                 <div class="app-modal-header">
@@ -42,22 +43,31 @@
                                 class="form-control mb-1" 
                                 id="studyItemModel__exampleText" 
                             />
-                            <div class="btn-group" role="group">
+                            <div class="btn-group mr-1" role="group">
                                 <button 
                                     v-on:click="onAddStudyItemExampleText" 
                                     type="button" 
-                                    class="btn btn-sm btn-secondary mr-0"
+                                    class="btn btn-sm custom-btn-normal mr-0"
                                 >
                                     <i class="fas fa-plus"></i>
                                 </button>
                                 <button 
                                     v-on:click="onRemoveStudyItemExampleText" 
                                     type="button" 
-                                    class="btn btn-sm btn-secondary"
+                                    class="btn btn-sm custom-btn-normal"
                                 >
                                     <i class="fas fa-minus"></i>
                                 </button>
                             </div>
+
+                             <button 
+                                v-on:click="onSearchWordExamplesClick"
+                                v-bind:disabled="!canLoadWordExamples"
+                                type="button" 
+                                class="btn btn-sm custom-btn-normal mr-0"
+                            >
+                                <i class="fas fa-search-plus"></i>
+                            </button>
                         </div>
                         <div class="form-group form-check">
                             <!-- <input v-model="privateState.studyItemModel.isFavourite" class="form-check-input" type="checkbox" id="studyItemModel__isFavourite"> -->
@@ -93,8 +103,54 @@
                         <loading-button 
                             type="submit"
                             v-bind:loading="sharedState.loading[privateState.storeTypes.STUDY_ITEM_CREATE] || sharedState.loading[privateState.storeTypes.STUDY_ITEM_UPDATE]"
-                            class="btn btn-outline-success btn-block"
+                            class="btn custom-btn-normal btn-block"
                         >Save</loading-button>
+                    </form>
+                </div>
+            </div>
+        </modal>
+
+        <modal 
+            name="word-examples" 
+            height="auto"
+            width="400px"
+            v-bind:classes="['v--modal', 'v--modal-box', 'v--modal-box--overflow-visible', 'v--modal-box--sm-fullwidth']"
+            v-bind:clickToClose="false"
+            v-bind:scrollable="true"
+        >
+            <div class="app-modal">
+                <div class="app-modal-header">
+                    <div class="app-modal-title">
+                        <span>Word examples</span>
+                    </div>
+                    <div v-on:click="$modal.hide('word-examples')" class="app-modal-close">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                
+                <div class="app-modal-content">
+                    <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.WORD_EXAMPLES_LOAD]"></row-loader>
+
+                    <form v-on:submit.prevent="addWordExamples()" class="mt-2">
+                            <div>
+                                <multiselect 
+                                    v-model="privateState.selectedWordExamples" 
+                                    v-bind:class="{}"
+                                    v-bind:placeholder="'Select example'"
+                                    v-bind:selectLabel="''" 
+                                    v-bind:options="wordExamplesOptions" 
+                                    v-bind:multiple="true" 
+                                    v-bind:searchable="true" 
+                                    v-bind:taggable="false" 
+                                >
+                                </multiselect>
+                            </div>
+
+                            <loading-button 
+                                type="submit"
+                                v-bind:loading="false"
+                                class="btn custom-btn-normal btn-block mt-2"
+                            >Save</loading-button>
                     </form>
                 </div>
             </div>
@@ -150,16 +206,27 @@ export default {
                 storeTypes: storeTypes,
                 studyItemModel: _.cloneDeep(studyItemModelDefault),
                 modalMode: 'create', // ['create', 'edit']
+                selectedWordExamples: [], // string[]
             },
         };
     },
     computed: {
         // local computed go here
+        canLoadWordExamples: function() {
+            return this.privateState.studyItemModel.languageCode && this.privateState.studyItemModel.title;
+        },
+        // exampels options excluding already selected examples
+        wordExamplesOptions: function() {
+            return !this.wordExamples ? [] : this.wordExamples.examples.filter(x => {
+                return !this.privateState.studyItemModel.exampleTexts.some(y => y === x);
+            });
+        },
 
         // store state computed go here
         ...mapState({
             sharedState: state => state,
             studyItem: state => state.studyItem,
+            wordExamples: state => state.wordExamples,
         }),
     },
     watch:  {
@@ -218,6 +285,15 @@ export default {
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
         },
+        loadWordExamples: function({ languageCode, word } = {}) {
+            return this.$store.dispatch(storeTypes.WORD_EXAMPLES_LOAD, {
+                languageCode,
+                word, 
+            }).then().catch(err => {
+                console.error(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            });
+        },
         onFavoriteChange: function(value) {
             this.privateState.studyItemModel.isFavourite = value;
         },
@@ -228,6 +304,27 @@ export default {
             if(this.privateState.studyItemModel.exampleTexts.length > 1) {
                 this.privateState.studyItemModel.exampleTexts.pop();
             }
+        },
+        onSearchWordExamplesClick: function() {
+            if(!this.canLoadWordExamples) {
+                return;
+            }
+
+            // reset
+            this.privateState.selectedWordExamples = [];
+
+            this.loadWordExamples({
+                languageCode: this.privateState.studyItemModel.languageCode, 
+                word: this.privateState.studyItemModel.title,
+            });
+            this.$modal.show('word-examples');
+        },
+        addWordExamples: function() {
+            this.privateState.studyItemModel.exampleTexts = [
+                ...this.privateState.studyItemModel.exampleTexts.filter(x => !!x),
+                ...this.privateState.selectedWordExamples,
+            ];
+            this.$modal.hide('word-examples');
         },
         createEditStudyItem: function() {
             if(this.privateState.modalMode === 'create') {

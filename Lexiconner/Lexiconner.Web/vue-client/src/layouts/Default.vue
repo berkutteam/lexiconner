@@ -10,13 +10,13 @@
           <!-- Sidebar toggle button -->
           <nav class="navbar navbar-expand-lg navbar-light bg-light app-navbar no-print">
             <div class>
-              <button v-on:click="toggleSidebar" type="button" class="btn btn-info">
+              <button v-on:click="toggleSidebar" type="button" class="btn custom-btn-normal">
                 <i class="fas fa-align-left"></i>
               </button>
             </div>
           </nav>
 
-          <!-- route component is rendered here -->
+          <!-- Route component is rendered here -->
           <slot></slot>
         </div>
       </div>

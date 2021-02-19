@@ -1,0 +1,153 @@
+.image-grid {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    &.image-grid--5images {
+        $margin: 0.5%;
+        $smallImageHeight: 15vh;
+        $bigImageHeight: 20vh;
+
+        .image-container-0,
+        .image-container-1,
+        .image-container-2 {
+            width: (100% - 2*$margin) / 3;
+            margin-bottom: $margin;
+
+            &:not(:nth-child(3)) {
+                margin-right: $margin;
+            }
+
+            img {
+                min-height: $smallImageHeight;
+                max-height: $smallImageHeight;
+                height: $smallImageHeight;
+            }
+        }
+
+        .image-container-3,
+        .image-container-4 {
+            width: (100% - 1*$margin) / 2;
+            margin-bottom: 0;
+
+            &:not(:nth-child(5)) {
+                margin-right: $margin;
+            }
+
+            img {
+                min-height: $bigImageHeight;
+                max-height: $bigImageHeight;
+                height: $bigImageHeight;
+            }
+        }
+    }
+
+    &.image-grid--3-columns {
+        $margin: 1%;
+
+        .image-grid-column {
+            flex: (100% / 3);
+            max-width: (100% / 3);
+        }
+
+        .image-container {
+            margin-bottom: $margin;
+            margin-right: $margin;
+
+            &:not(:last-child) {
+                margin-right: $margin;
+            }
+        }
+    }
+
+    .image-container {
+        &.image-container--selected {
+            // show color strip
+            &:after {
+                content: "";
+                position: absolute;
+                display: block;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                height: 3px;
+                background-color: $color-red;
+            }
+        }
+
+        &.image-container--interactable {
+            cursor: pointer;
+            &:hover {
+                img {
+                    box-shadow: #00000085 0px 0px 2px 1px;
+                }
+            }
+        }
+
+        img {
+            width: 100%;
+            min-width: 100%;
+            max-width: 100%;
+            height: auto;
+            max-height: 500px;
+            min-height: 100px;
+            // min-height: 500px;
+            background-color: $color-gray;
+        }
+    }
+
+    .image-grid-row {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0
+    }
+
+    /* Create four equal columns that sits next to each other */
+    .image-grid-column {
+        $margin: 0.3rem;
+
+        flex: 25%;
+        max-width: 25%;
+
+        &:not(:last-child) {
+            padding-right: 0.3rem;
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            min-width: 100%;
+            max-width: 100%;
+
+            &:not(:last-child) {
+                margin-bottom: 0.3rem;
+            }
+
+            img { 
+                width: 100%;
+                min-width: 100%;
+                max-width: 100%;
+                height: auto;
+                max-height: 600px;
+                vertical-align: middle;
+            }
+        }
+    }
+
+    /* Responsive layout - makes a two column-layout instead of four columns */
+    @media screen and (max-width: 800px) {
+        .image-grid-column {
+            flex: 50%;
+            max-width: 50%;
+        }
+    }
+
+    /* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+    @media screen and (max-width: 600px) {
+        .image-grid-column {
+            flex: 100%;
+            max-width: 100%;
+        }
+    }
+}

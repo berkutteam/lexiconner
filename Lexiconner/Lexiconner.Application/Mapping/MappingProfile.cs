@@ -5,6 +5,7 @@ using Lexiconner.Domain.Entitites;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static Lexiconner.Application.ApiClients.Dtos.ImageSearchResponseDto;
 
 namespace Lexiconner.Application.Mapping
 {
@@ -15,6 +16,8 @@ namespace Lexiconner.Application.Mapping
             // StudyItem
             CreateMap<StudyItemEntity, StudyItemDto>();
             CreateMap<StudyItemImageEntity, StudyItemImageDto>();
+            CreateMap<ImageSearchResponseItemDto, StudyItemImageDto>();
+            CreateMap<StudyItemImageDto, StudyItemImageEntity>();
             CreateMap<StudyItemTrainingInfoEntity, StudyItemTrainingInfoDto>();
 
             // CustomCollection

@@ -22,8 +22,8 @@ namespace Lexiconner.Application.Services
 {
     public interface IImageService
     {
-        Task<List<ImageSearchResponseItemDto>> FindImagesAsync(string sourceLanguageCode, string imageQuery);
-        ImageSearchResponseItemDto GetSuitableImages(List<ImageSearchResponseItemDto> imageResult);
+        Task<List<ImageSearchResponseItemDto>> FindImagesAsync(string sourceLanguageCode, string imageQuery, int limit = 10);
+        IEnumerable<ImageSearchResponseItemDto> GetSuitableImages(IEnumerable<ImageSearchResponseItemDto> imageResult);
     }
 
     public class ImageService : IImageService
@@ -46,8 +46,10 @@ namespace Lexiconner.Application.Services
             _contextualWebSearchApiClient = contextualWebSearchApiClient;
         }
 
-        public async Task<List<ImageSearchResponseItemDto>> FindImagesAsync(string sourceLanguageCode, string imageQuery)
+        public async Task<List<ImageSearchResponseItemDto>> FindImagesAsync(string sourceLanguageCode, string imageQuery, int limit = 10)
         {
+            imageQuery = imageQuery.ToLowerInvariant();
+
             // get translation ru -> en (images can be searched only using en)
             // https://cloud.google.com/translate/docs/languages
             string targetLanguageCode = "en";
@@ -179,8 +181,8 @@ namespace Lexiconner.Application.Services
                 if (!String.IsNullOrEmpty(imageQueryEn))
                 {
                     string query = imageQueryEn;
-                    int pageNumber = 1;
-                    int pageSize = 10;
+                    int pageNumber = 1; // counting from 1
+                    int pageSize = limit;
                     bool isAutoCorrect = false;
                     bool isSafeSearch = true;
 
@@ -261,18 +263,19 @@ namespace Lexiconner.Application.Services
             return result;
         }
 
-        public ImageSearchResponseItemDto GetSuitableImages(List<ImageSearchResponseItemDto> imageResult)
+        public IEnumerable<ImageSearchResponseItemDto> GetSuitableImages(IEnumerable<ImageSearchResponseItemDto> imageResult)
         {
             const int preferredImageWidth = 600;
             const int maxImageWidth = 1000;
+            const int preferredImageHeight = 400;
+            const int maxImageHeight = 600;
 
             // try to find suitable image
-            ImageSearchResponseDto.ImageSearchResponseItemDto image = null;
-            image = imageResult.FirstOrDefault(x => int.Parse(x.Width) <= preferredImageWidth);
-            image = image ?? imageResult.FirstOrDefault(x => int.Parse(x.Width) <= maxImageWidth);
-            // image = image ?? imagesResult.First(); // do not take big images
+            IEnumerable<ImageSearchResponseItemDto> images = null;
+            images = imageResult.Where(x => int.Parse(x.Width) <= preferredImageWidth && int.Parse(x.Height) <= preferredImageHeight);
+            images = images.Any() ? images : imageResult.Where(x => int.Parse(x.Width) <= maxImageWidth && int.Parse(x.Height) <= maxImageHeight);
 
-            return image;
+            return images;
         }
     }
 }

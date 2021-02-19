@@ -22,6 +22,11 @@ export default {
             required: false,
             default: 'line', // line, circle
         },
+        class: {
+            type: String,
+            required: false,
+            default: '',
+        },
     },
     components: {
     },

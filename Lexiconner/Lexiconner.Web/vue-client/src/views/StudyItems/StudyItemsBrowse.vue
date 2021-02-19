@@ -36,7 +36,7 @@
                             <button 
                                 v-on:click="onCreateStudyItem" 
                                 type="button" 
-                                class="btn btn-success"
+                                class="btn custom-btn-normal"
                             >
                                 <i class="fas fa-plus"></i>
                             </button>
@@ -65,8 +65,8 @@
                                     href="javascript:void(0)" 
                                     class="list-group-item list-group-item-action flex-column align-items-start study-item"
                                 >
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">{{item.title}}</h6>
+                                    <div class="d-flex w-100 justify-content-between mb-1">
+                                        <h6 class="mb-0">{{item.title}}</h6>
 
                                         <!-- Controls -->
                                         <div class="d-flex justify-content-end flex-grow-1">
@@ -117,15 +117,17 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div>
+                                    <div class="mb-1">
                                         <small>{{ item.description }}</small>
                                     </div>
                                     <div class="text-secondary">
                                         <div
                                             v-for="(exampleText, index2) in item.exampleTexts"
                                             v-bind:key="`card-${item.id}-exampleText-${index2}`"
+                                            class="study-item-example-text mb-1"
                                         >
-                                            <small><em>{{ exampleText }}</em></small>
+                                            <i class="fas fa-circle example-text-dot-icon"></i>
+                                            <span>{{ exampleText }}</span>
                                         </div>
                                     </div>
                                 </a>
@@ -138,6 +140,11 @@
                                     v-bind:key="`card-${item.id}`"
                                     class="card bg-light item-card" 
                                 >
+                                    <div class="item-card-overlay-controls">
+                                        <button v-on:click="onFindNextWordImagesClick(item.id)" class="btn btn-sm custom-btn-normal">
+                                            <i class="far fa-image"></i>
+                                        </button>
+                                    </div>
                                     <!-- <div class="card-header"></div> -->
                                     <img v-if="item.image" class="card-img-top item-card-image" v-bind:src="item.image.url" v-bind:alt="item.title">
                                     <img v-else class="card-img-top item-card-image" src="/img/empty-image.png">
@@ -151,12 +158,14 @@
                                         <div class="card-text small mb-1">
                                             <div>{{ item.description }}</div>
                                         </div>
-                                        <div class="card-text text-secondary mb-1">
+                                        <div class="card-text text-secondary">
                                             <div
                                                 v-for="(exampleText, index2) in item.exampleTexts"
                                                 v-bind:key="`card-${item.id}-exampleText-${index2}`"
+                                                class="item-card-example-text mb-1"
                                             >
-                                                <small><em>{{ exampleText }}</em></small>
+                                                <i class="fas fa-circle example-text-dot-icon"></i>
+                                                <span>{{ exampleText }}</span>
                                             </div>
                                         </div>
                                         <div class="card-text">
@@ -206,11 +215,17 @@
                 </div>
 
 
-                <!-- Study item create/edit -->
+                <!-- Word create/edit -->
                 <study-item-create-update-modal
                     ref="studyItemCreateUpdateModal"
                 >
                 </study-item-create-update-modal>
+
+                <!-- Word images -->
+                <word-images-modal
+                    ref="wordImagesModal"
+                >
+                </word-images-modal>
             </div>
         </div>
     </div>
@@ -232,6 +247,7 @@ import PaginationWrapper from '@/components/PaginationWrapper';
 import CustomCollections from '@/components/CustomCollections';
 import StudyItemsFilters from '@/components/StudyItemsFilters';
 import StudyItemCreateUpdateModal from './StudyItemCreateUpdateModal';
+import WordImagesModal from './WordImagesModal';
 
 import ProgressBar from 'vue-simple-progress'
 
@@ -243,6 +259,7 @@ export default {
         CustomCollections,
         StudyItemsFilters,
         StudyItemCreateUpdateModal,
+        WordImagesModal,
         ProgressBar,
     },
     data: function() {
@@ -327,6 +344,9 @@ export default {
         },
         onMarkStudyItemAsNotTrained: function(studyItemId) {
             this.markStudyItemAsNotTrained(studyItemId);
+        },
+        onFindNextWordImagesClick: function(wordId) {
+            this.$refs.wordImagesModal.show({ wordId });
         },
         deleteStudyItem: function(studyItemId) {
             this.$store.dispatch(storeTypes.STUDY_ITEM_DELETE, {

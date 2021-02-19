@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using TMDbLib.Client;
 
@@ -144,14 +145,16 @@ namespace Lexiconner.Seed
                 return new GoogleTranslateApiClient(
                     config.Google.ProjectId,
                     config.Google.WebApiServiceAccount,
-                    sp.GetService<ILogger<IGoogleTranslateApiClient>>()
+                    sp.GetService<ILogger<IGoogleTranslateApiClient>>(),
+                    sp.GetService<IHttpClientFactory>()
                 );
             });
             services.AddTransient<IContextualWebSearchApiClient, ContextualWebSearchApiClient>(sp =>
             {
                 return new ContextualWebSearchApiClient(
                     config.RapidApi,
-                    sp.GetService<ILogger<IContextualWebSearchApiClient>>()
+                    sp.GetService<ILogger<IContextualWebSearchApiClient>>(),
+                    sp.GetService<IHttpClientFactory>()
                 );
             });
             services.AddSingleton<TMDbClient>(sp =>

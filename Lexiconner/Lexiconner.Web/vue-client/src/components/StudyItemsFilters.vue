@@ -63,14 +63,14 @@
 
             <!-- Reload -->
             <div class="form-group mr-2">
-                <button v-on:click="reload" type="button" class="btn btn-outline-secondary">
+                <button v-on:click="reload" type="button" class="btn custom-btn-normal">
                     <i class="fas fa-sync-alt"></i>
                 </button>
             </div>
 
             <!-- Reset -->
             <div class="form-group mr-2">
-                <button v-on:click="resetRequestParams" type="button" class="btn btn-outline-secondary">
+                <button v-on:click="resetRequestParams" type="button" class="btn custom-btn-normal">
                     <i class="fas fa-times"></i>
                 </button>
             </div>

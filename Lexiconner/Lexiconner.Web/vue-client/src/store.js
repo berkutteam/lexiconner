@@ -100,6 +100,12 @@ export default new Vuex.Store({
 
         studyItem: null, // object
 
+        wordExamples: null, // object
+
+         // paginationResult (store only current page)
+        // {items: [], pagination: {}}
+        wordImagesPaginationResult: null,
+
         trainingStats: null, // object
         trainingFlashcards: null, // object
         trainingWordMeaning: null, // object
@@ -294,6 +300,10 @@ export default new Vuex.Store({
                 state.studyItemsPaginationResult.items = state.studyItemsPaginationResult.items.filter(x => x.id !== studyItemId);
             }
         },
+        [storeTypes.WORD_IMAGES_FIND_SET](state, payload) {
+            let { wordImagesPaginationResult } = payload;
+            state.wordImagesPaginationResult = wordImagesPaginationResult;
+        },
 
         [storeTypes.STUDY_ITEM_IS_FAVOURITE_SET](state, payload) {
             let { studyItemId, isFavourite } = payload;
@@ -308,6 +318,17 @@ export default new Vuex.Store({
         },
 
         //#endregion
+
+        [storeTypes.WORD_EXAMPLES_SET](state, payload) {
+            let { wordExamples } = payload;
+            state.wordExamples = wordExamples;
+        },
+
+        //#region Words
+
+
+
+        //#endregion Words
 
 
         //#region Trainings
@@ -762,6 +783,52 @@ export default new Vuex.Store({
                 throw err;
             });
         },
+        [storeTypes.WORD_IMAGES_FIND](context, { wordId }) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORD_IMAGES_FIND,
+                loading: true,
+            });
+            return api.webApi().findNextWordImages({ wordId }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_IMAGES_FIND,
+                    loading: false,
+                });
+                commit(storeTypes.WORD_IMAGES_FIND_SET, {
+                    wordImagesPaginationResult: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_IMAGES_FIND,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.WORD_IMAGES_UPDATE](context, { wordId, data }) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORD_IMAGES_UPDATE,
+                loading: true,
+            });
+            return api.webApi().updateWordImages({ wordId, data }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_IMAGES_UPDATE,
+                    loading: false,
+                });
+                commit(storeTypes.STUDY_ITEM_UPDATE_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_IMAGES_UPDATE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
 
         [storeTypes.STUDY_ITEM_ADD_TO_FAVOURITES](context, {studyItemId}) {
             let { commit, dispatch, getters } = context;
@@ -806,6 +873,48 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEM_DELETE_FROM_FAVOURITES,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        //#endregion
+
+
+        //#region Words
+
+        [storeTypes.WORD_EXAMPLES_LOAD](context, { languageCode, word }) {
+            let { commit, dispatch, state, getters } = context;
+
+            // don't load already loaded word
+            if (
+                state.wordExamples != null && 
+                state.wordExamples.languageCode === languageCode &&
+                state.wordExamples.word === word
+            ) {
+                return Promise.resolve(state.wordExamples);
+            }
+
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORD_EXAMPLES_LOAD,
+                loading: true,
+            });
+            return api.webApi().getWordExamples({
+                languageCode, 
+                word,
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_EXAMPLES_LOAD,
+                    loading: false,
+                });
+                commit(storeTypes.WORD_EXAMPLES_SET, {
+                    wordExamples: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_EXAMPLES_LOAD,
                     loading: false,
                 });
                 throw err;
