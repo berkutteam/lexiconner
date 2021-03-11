@@ -96,7 +96,7 @@ steps:
     pwd
     echo ""
     cd Lexiconner
-    docker build -f Lexiconner.Api/Dockerfile.ci -t $(imageName1) .
+    docker build -f Lexiconner.Api/Dockerfile -t $(imageName1) .
     docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
     docker tag $(imageName1) registry.heroku.com/$(herokuAppNameApi)/web
     docker push registry.heroku.com/$(herokuAppNameApi)/web
@@ -107,7 +107,7 @@ steps:
     pwd
     echo ""
     cd Lexiconner
-    docker build -f Lexiconner.IdentityServer4/Dockerfile.ci -t $(imageName2) .
+    docker build -f Lexiconner.IdentityServer4/Dockerfile -t $(imageName2) .
     docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
     docker tag $(imageName2) registry.heroku.com/$(herokuAppNameIdentity)/web
     docker push registry.heroku.com/$(herokuAppNameIdentity)/web
@@ -118,7 +118,7 @@ steps:
     pwd
     echo ""
     cd Lexiconner
-    docker build -f Lexiconner.Web/Dockerfile.ci -t $(imageName3) .
+    docker build -f Lexiconner.Web/Dockerfile -t $(imageName3) .
     docker login --username=$(HEROKU_USERNAME) --password=$(HEROKU_API_KEY) registry.heroku.com
     docker tag $(imageName3) registry.heroku.com/$(herokuAppNameWeb)/web
     docker push registry.heroku.com/$(herokuAppNameWeb)/web
