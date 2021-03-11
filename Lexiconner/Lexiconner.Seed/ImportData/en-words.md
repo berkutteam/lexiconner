@@ -4,6 +4,11 @@ Document is in markdown format.
 Each peace of data (field) is in a new line.
 Basic structure for a particular word:
 
+(all headers must be unique to be able to distinguish and search them during import)
+# Header 1
+...
+###### Header 6
+
 *** (3 asterisks)
 <Word or phrase>
 <Translation>
@@ -601,8 +606,358 @@ Watch your language
 Watch your language. Now, why the hell not?
 ---
 
+## True detective
+
+### Season 3
+
+***
+Run somebody/something down
+To criticize somebody/something in an unkind way
+He's always running her down in front of other people.
+---
+
+***
+Scrapyard
+A place where old cars, machines, etc. are collected, so that parts of them, or the metal they are made of, can be sold to be used again
+We should try the scrapyard for some robot parts tonight.
+---
+
+***
+Mania
+An extremely strong desire or enthusiasm for something, often shared by a lot of people at the same time
+Football mania is sweeping the country.
+---
+
+***
+Outcast
+A person who is not accepted by society or by a particular group
+People with the disease were often treated as social outcasts.
+Her criminal past made her an outcast.
+---
+
+***
+Disruptive
+Causing problems, noise, etc. so that something cannot continue normally
+She had a disruptive influence on the rest of the class.
+---
+
+***
+Dispatch somebody/something
+To send somebody/something somewhere, especially for a special purpose
+Troops have been dispatched to the area.
+A courier was dispatched to collect the documents.
+---
+
+***
+Blackout
+A temporary loss of consciousness, sight or memory
+She had a blackout and couldn't remember anything about the accident.
+---
+
+***
+Clock out
+To record the time at which you leave work, especially by putting a card into a machine
+She clocks off at 5.15.
+It’s time to clock off and go home.
+---
+
+## Rick and Morty
+
+***
+Flattering
+Saying nice things about somebody/something
+He made several flattering remarks.
+A not very flattering cartoon about the police I imagine caused that sneer just before you left the room.
+This is all very flattering, but, you don't want me.
+---
+
+***
+Chuckle
+An act of laughing quietly
+She gave a chuckle of delight.
+We had a good chuckle at that idea.
+---
+
+***
+Delight
+A feeling of great pleasure
+She couldn't hide her delight at the news.
+The children squealed with delight when they saw the puppy.
+He expressed his delight at seeing us all again.
+---
+
+***
+Dump
+To get rid of something you do not want, especially in a place that is not suitable
+Too much toxic waste is being dumped at sea.
+The dead body was just dumped by the roadside.
+Any vessel dumping at sea without a licence will be prosecuted.
+---
+
+***
+Betray
+To hurt somebody who trusts you, especially by lying to or about them or telling their secrets to other people
+She felt betrayed when she found out the truth about him.
+She betrayed his trust over and over again.
+I have never known her to betray a confidence (= tell other people something that should be kept secret).
+---
+
+***
+
+---
+
+***
+
+---
+
+***
+
+---
+
 
 # English for everyone
+
+## General vocabulary
+
+***
+Farmland
+---
+
+***
+
+---
+
+***
+
+---
+
+***
+
+---
+
+***
+
+---
+
+***
+
+---
+
+***
+
+---
+
+***
+
+---
+
+***
+
+---
+
+## Emotions
+
+***
+Calm
+---
+
+***
+Relaxed
+---
+
+***
+Happy
+---
+
+***
+Confident
+---
+
+***
+Proud
+---
+
+***
+Excited
+---
+
+***
+Surprised
+---
+
+***
+Pleased
+---
+
+***
+Cheerful
+---
+
+***
+Thrilled
+---
+
+***
+Interested
+---
+
+***
+Amazed
+---
+
+***
+Amused
+---
+
+***
+Delighted
+---
+
+***
+Ecstatic
+---
+
+***
+Angry / mad
+---
+
+***
+Annoyed
+---
+
+***
+Irritated
+---
+
+***
+Furious
+---
+
+***
+Frustrated
+---
+
+***
+Disgusted
+---
+
+***
+Sad
+---
+
+***
+Unhappy
+---
+
+***
+Upset
+---
+
+***
+Lonely
+---
+
+***
+Worried
+---
+
+***
+Miserable
+---
+
+***
+Depressed
+---
+
+***
+Stressed
+---
+
+***
+Jealous
+---
+
+***
+Disappointed
+---
+
+***
+Unimpressed
+---
+
+***
+Unenthusuastic
+---
+
+***
+Embarrassed
+---
+
+***
+Scared
+---
+
+***
+Shocked
+---
+
+***
+Frightened
+---
+
+***
+Terrified
+---
+
+***
+Nervous
+---
+
+***
+Anxious
+---
+
+***
+Tired
+---
+
+***
+Exhausted
+---
+
+***
+Bored
+---
+
+***
+Distracted
+---
+
+***
+Confused
+---
+
+***
+Curious
+---
+
+***
+Intrigued
+---
+
+***
+Grateful
+---
+
+***
+Lucky
+---
+
+***
+Serious
+---
+
+## Common English idioms
 
 ***
 Get cold feet
@@ -662,7 +1017,7 @@ I didn't sleep well last night and I'm not really on the ball today.
 ***
 Be against the clock
 Be under time pressure to ge something done
-I'm really orking against the clock to submit my essay on time.
+I'm really working against the clock to submit my essay on time.
 ---
 
 ***
@@ -737,6 +1092,9 @@ Snap down
 Защелкнуться
 When the trainee stood on the lower jaw of the shark, the upper jaw snapped down on his foot, trapping it completely.
 ---
+
+
+## Travel and tourism
 
 ***
 Get away form it all
@@ -885,6 +1243,9 @@ This approach may well be the shape of things to come.
 Wouldn't that change the shape of things to come?
 ---
 
+
+## Family and relationships
+
 ***
 Look up to somebody
 Have respect and admiration for someone
@@ -970,4 +1331,312 @@ Think the world of somebody
 Have a very high opinion of somebody
 I think the world of my first grandchild
 ---
+
+## Studying
+
+
+***
+Take a year off
+Have a year away from education or work
+My daughter took a year off before starting university
+---
+
+***
+Undergraduate
+Someone studying for a first degree at college or university
+The college provides housing for undergraduates
+---
+
+***
+Freshman
+A student in their first year at college or university
+When I was a freshman, everything seemed so exciting
+---
+
+***
+Get a degree
+Be awarded a qualification after college or university
+I will be the first person in my family to get a degree
+---
+
+***
+Enroll in
+Register to start something
+My brother enrolled in an accounting course this week
+---
+
+***
+Graduate
+Study carried out following graduation from a first degree
+She is a graduate student of biochemistry
+---
+
+***
+Attend classes
+Go to lessons or lectures
+It is very important to attend classes regularly and keep notes
+---
+
+***
+Meet a deadline
+Finish something within a given time
+I worked late last night  to meet the deadline for this report
+---
+
+***
+Continuous assessment
+Grading based on work done over a long period
+We have continuous assessment, not final exams
+---
+
+***
+Compare similarities
+Consider and descsribe how things are alike
+The essay asked us to compare the similarities between the countries
+---
+
+***
+Polar opposite
+Completely different
+Their views on this subject are polar opposites
+---
+
+***
+Strikingly diffrent
+Surprisingly not alike
+For twins, their interests are strikingly different
+---
+
+***
+Miss a deadline
+Fail to finish something withing a given time
+He's so unreliable!He's always missing deadlines for projects
+---
+
+***
+Draw a comparison between
+Point out similarities between things
+You can't draw a comparison between then and now
+---
+
+***
+Contrast differences
+Consider and describe how things differ from each other
+We looked at two pictures and contrasted the differences
+---
+
+***
+Clear distinction
+An obvious difference
+There is a clear distinction between these projects
+---
+
+***
+World of difference
+A significant level of difference
+Your hard work has made a world of difference this year
+---
+
+## Working
+
+***
+Nine-to-five
+A job with regular hours
+It is difficult to work a nine-to-five job when you have young children
+---
+
+***
+Hands-on-experience
+The knowledge and skill gained through doing something yourself
+Our employees are qualified and also have hands-on-experience
+---
+
+***
+Take off
+Suddenly begin to have more success
+My career really took off after I got that first big deal
+---
+
+***
+Bottom of the career ladder
+A poistion with the lowest level of responsibility or compensation
+I worked my way up from the bottom of the career ladder
+---
+
+***
+Be fired
+Be forced to leave your job for doing somethig wrong
+He was fired for stealing goods from the warehouse
+---
+
+***
+Working environment
+The conditions in which your work
+We've built a positive working environment for our staff
+---
+
+***
+Hold a position
+Have a job
+Have you ever held a position in management
+---
+
+***
+Career path
+Progression within a profession, in a job or through a series of jobs
+Her chosen career path meant she worked abroad a lot
+---
+
+***
+Dead-end job
+A position without many prospects
+I'm going to college so I don't have to get a dead-end job
+---
+
+***
+Laid off (make redundant (UK))
+Made to leave a job because there is not enough work available
+Many people were laid off from the factory
+---
+
+***
+Step down
+Stop doing a job voluntarily
+I'm stepping down to left another person do the job
+---
+
+***
+Set your sights on something
+Aim to achieve a particular goal
+We've set our sights on being number on in our industry
+---
+
+***
+Take somebody on / take on somebody
+Employ somebody
+We took on three new members of staff this year
+---
+
+***
+Have your hands full
+Be busy with a task or many tasks
+She must have her hands full with those four children
+---
+
+***
+Go the extra mile
+Do more than your are required to do
+He always goes the extra mile to ensure deliveries are on time
+---
+
+***
+Tackle something head-on
+Deal with something directly
+We had totackle this problem head-on before it got worse
+---
+
+***
+Get ahead
+Make more progress than others
+You need to work hard to get ahead in this industry
+---
+
+***
+Be snowed under
+Have to much work to do
+I'm sorry I didn't answer your email. I was snowed under.
+---
+
+***
+Be up to your eyes / ears
+Be so busy that you can't take on anything else
+I can't come out because I'm up to my eyes with work
+---
+
+***
+Give and take
+Compromise
+The deal involved give and take on both sides
+---
+
+***
+
+---
+
+***
+
+---
+
+***
+
+---
+
+***
+
+---
+
+***
+
+---
+
+***
+
+---
+
+
+# Slang
+
+***
+ballin
+---
+
+***
+triping
+---
+
+***
+flossin
+---
+
+***
+plug
+---
+
+***
+Draco
+---
+
+***
+shawty
+---
+
+***
+pink slip
+---
+
+***
+Steelo
+---
+
+***
+lowkey
+---
+
+***
+Onyx
+---
+
+***
+
+---
+
+***
+
+---
+
+
+
+
+
+
 
