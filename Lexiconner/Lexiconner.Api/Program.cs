@@ -93,6 +93,17 @@ namespace Lexiconner.Api
                 DotNetEnv.Env.Load(envFilePath);
             }
 
+            // check environment is set (ASPNETCORE_ENVIRONMENT or Environment might be set in .env file)
+            // exception will be thrown by helper in case of error
+            string temp = HostingEnvironmentHelper.Environment;
+
+            // load env variables from specific .env file
+            string envFileSpecificPath = Path.Combine(Directory.GetCurrentDirectory(), $".env__{HostingEnvironmentHelper.Environment}");
+            if (File.Exists(envFileSpecificPath))
+            {
+                DotNetEnv.Env.Load(envFileSpecificPath);
+            }
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)

@@ -54,7 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update=".env">
+    <None Update=".env__DevelopmentLocalhost">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
