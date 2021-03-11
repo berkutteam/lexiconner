@@ -10,6 +10,8 @@
                 ></keyboard-event-listener>
 
                 <div class="words-learn-meaningword-wrapper">
+                    <div v-bind:id="`trainingTopAnchor`"></div>
+
                     <h5 class="mb-3 d-flex">
                         Meaning-Word
 
@@ -38,7 +40,7 @@
                         
                         <div class="card-body">
                             <div class="d-flex w-100 justify-content-between align-items-center mb-2">
-                                <h6 class="card-title mb-0">
+                                <h6 class="card-title training-title mb-0">
                                     <span>{{currentItem.word.meaning}}</span>
                                 </h6>
                             </div>
@@ -53,7 +55,7 @@
                                     <button 
                                         v-on:click="onPossibleMeaningClick(possibleOption)"
                                         type="button" 
-                                        class="btn btn-block custom-btn-outline-normal mb-1 text-left"
+                                        class="btn btn-block mb-1 text-left"
                                         v-bind:class="{
                                             'btn-outline-secondary': !privateState.isCurrentItemAnswered || (privateState.isCurrentItemAnswered && !possibleOption.isCorrect && currentItemAnswerOptionIdOrNotSet !== possibleOption.randomId),
                                             'btn-success': privateState.isCurrentItemAnswered && possibleOption.isCorrect,
@@ -61,7 +63,9 @@
                                         }"
                                         v-bind:disabled="privateState.isCurrentItemAnswered"
                                     >
-                                        {{ index + 1 }}. {{possibleOption.value}}
+                                        <span class="training-option-text">
+                                            {{ index + 1 }}. {{possibleOption.value}}
+                                        </span>
                                     </button>
                                 </div>
                             </div>
@@ -72,12 +76,14 @@
                                 <div v-if="privateState.isShowCurrentItemDetails" class="card-text mb-1 training-description">
                                     <div>{{ currentItem.word.meaning }}</div>
                                 </div>
-                                <div v-if="privateState.isShowCurrentItemDetails" class="card-text text-secondary mb-1 training-example">
+                                <div v-if="privateState.isShowCurrentItemDetails" class="card-text text-secondary training-example-text mb-1">
                                     <div
                                         v-for="(exampleText, index2) in currentItem.word.examples"
                                         v-bind:key="`card-${currentItem.word.id}-exampleText-${index2}`"
+                                        class="mb-1"
                                     >
-                                        {{ exampleText }}
+                                        <i class="fas fa-circle example-text-dot-icon"></i>
+                                        <span>{{ exampleText }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -224,6 +230,10 @@ export default {
 
             this.loadTraining();
         },
+        scrollTop: function() {
+            let elSelector = `#trainingTopAnchor`;
+            this.$scrollTo(elSelector);
+        },
         goToCard: function(index = 0) {
             if(this.trainingMeaningWord === null) {
                 return;
@@ -269,6 +279,7 @@ export default {
             if(!this.privateState.isCurrentItemAnswered) {
                 return;
             }
+            this.scrollTop();
             this.goToCard(this.privateState.currentItemIndex + 1);
         },
         handleItemResponse: function({itemId, isCorrect, optionId}) {

@@ -464,13 +464,31 @@ a {
             width: 100%;
             height: 100%;
             padding: 0.5rem;
-            color: rgba($color-white, 0.75);
-            text-shadow: $color-black 1px 1px 0px;
-            background-color: rgba($color-black, 0.1);
+            color: $color-black;
+            // text-shadow: $color-black 1px 1px 0px;
+            // background-color: rgba($color-black, 0.1);
 
             &:hover {
                 text-decoration: none;
-                color: rgba($color-white, 1);
+                // color: rgba($color-white, 1);
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        $margin: 2%;
+
+        .app-card-nav-item {
+            
+            width: ((100% - $margin) / 2);
+            margin: 0 $margin 0 0 !important;
+
+            &:nth-child(2n) {
+                margin-right: 0 !important;
+            }
+
+            &:not(:last-child), :not(:nth-last-child(2)) {
+                margin-bottom: $margin !important;
             }
         }
     }
@@ -884,7 +902,7 @@ a {
     justify-content: start;
 
     .training-card {
-        width: 80%;
+        width: auto;
         max-width: 400px;
 
         .training-tooltip {
@@ -897,17 +915,33 @@ a {
             background-color: gainsboro;
         }
 
-        .training-title {
-
-        }
-
         .training-description {
             font-size: 0.95rem;
         }
 
-        .training-example {
+        .training-title {
+            color: $black;
+            // background-color: $border-color-gray;
+            background-color:  rgba(0, 0, 0, 0.025);
+            padding: 0.5rem;
+            width: 100%;
+        }
+
+        .training-option-text {
+            font-size: 0.80rem;
+            line-height: 1rem;
+        }
+
+        .training-example-text {
             font-style: italic;
             font-size: 0.80rem;
+            line-height: 1rem;
+
+            .example-text-dot-icon {
+                font-size: 0.4rem;
+                margin-right: 0.3rem;
+                vertical-align: middle;
+            }
         }
 
         .card-bottom-controls {
@@ -941,6 +975,13 @@ a {
                     align-items: center;
                 }
             }
+        }
+    }
+
+    @media(max-width: 768px) {
+        .training-card {
+            width: 100%;
+            max-width: 100%;
         }
     }
 }

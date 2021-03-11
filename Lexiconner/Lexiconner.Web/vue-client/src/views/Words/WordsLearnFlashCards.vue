@@ -5,6 +5,8 @@
                 <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.WORD_TRAINING_FLASHCARDS_START]"></row-loader>
 
                 <div class="words-learn-flash-cards-wrapper">
+                    <div v-bind:id="`trainingTopAnchor`"></div>
+
                     <h5 class="mb-3">Flash cards</h5>
                     <div v-if="isAllTrained">
                         <div class="alert alert-secondary" role="alert">
@@ -16,7 +18,7 @@
                         <img v-else class="card-img-top" src="/img/empty-image.png">
                         <div class="card-body">
                             <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                <h6 class="card-title mb-0">
+                                <h6 class="card-title training-title mb-0">
                                     <span>{{currentItem.word}}</span>
                                 </h6>
                             </div>
@@ -24,12 +26,14 @@
                             <div v-if="privateState.isShowCurrentItemDetails" class="card-text small mb-1">
                                 <div>{{ currentItem.meaning }}</div>
                             </div>
-                            <div v-if="privateState.isShowCurrentItemDetails" class="card-text small text-secondary mb-1">
+                            <div v-if="privateState.isShowCurrentItemDetails" class="card-text text-secondary training-example-text mb-1">
                                 <div
                                     v-for="(exampleText, index2) in currentItem.examples"
                                     v-bind:key="`card-${currentItem.id}-exampleText-${index2}`"
+                                    class="mb-1"
                                 >
-                                    <small><em>{{ exampleText }}</em></small>
+                                    <i class="fas fa-circle example-text-dot-icon"></i>
+                                    <span>{{ exampleText }}</span>
                                 </div>
                             </div>
                         </div>
@@ -184,6 +188,10 @@ export default {
 
             this.loadTraining();
         },
+        scrollTop: function() {
+            let elSelector = `#trainingTopAnchor`;
+            this.$scrollTo(elSelector);
+        },
         goToCard: function(index = 0) {
             if(this.trainingFlashcards === null) {
                 return;
@@ -205,6 +213,7 @@ export default {
             this.goToCard(this.privateState.currentItemIndex - 1);
         },
         onNextClick: function() {
+            this.scrollTop();
             this.goToCard(this.privateState.currentItemIndex + 1);
             this.privateState.isShowNextButton = false;
         },

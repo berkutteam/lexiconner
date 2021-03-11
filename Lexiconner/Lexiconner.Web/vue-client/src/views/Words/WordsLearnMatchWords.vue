@@ -10,6 +10,8 @@
                 ></keyboard-event-listener>
 
                 <div class="words-learn-matchwords-wrapper">
+                    <div v-bind:id="`trainingTopAnchor`"></div>
+
                     <h5 class="mb-3 d-flex">
                         Match words
 
@@ -223,6 +225,10 @@ export default {
 
             this.loadTraining();
         },
+        scrollTop: function() {
+            let elSelector = `#trainingTopAnchor`;
+            this.$scrollTo(elSelector);
+        },
         onOptionSelect: function(wordId, possibleOption) {
             this.handleItemResponse({
                 itemId: wordId, 
@@ -246,6 +252,7 @@ export default {
             this.privateState.isShowAnswers = true;
         },
         onSubmitAnswerClick: function() {
+            this.scrollTop();
             this.saveTraining();
             this.privateState.isShowAnswers = true;
         },

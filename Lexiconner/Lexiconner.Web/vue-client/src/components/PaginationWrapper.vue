@@ -1,6 +1,6 @@
 <template>
      <div class="app-pagination-wrapper">
-         <div v-bind:id="scrollTopElId"></div>
+        <div v-bind:id="scrollTopElId"></div>
 
         <!-- Go bottom -->
         <div v-if="showGoToButtons" v-on:click="scrollBottom" class="scroll-to-button">
