@@ -1,7 +1,6 @@
 <template>
     <div class="home-wrapper">
-        Test 1
-       <!-- <img src="img/logo.png" alt=""> -->
+        
     </div>
 </template>
 

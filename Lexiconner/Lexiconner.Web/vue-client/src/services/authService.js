@@ -67,6 +67,8 @@ class AuthService {
     }
 
     init(authConfig) {
+        console.log(1, new Oidc.WebStorageStateStore({ store: window.localStorage }));
+
         let self = this;
         this.config = authConfig;
         this.userManager = new Oidc.UserManager({
@@ -82,7 +84,16 @@ class AuthService {
             silentRequestTimeout: 10000,
             accessTokenExpiringNotificationTime: 3 * 60, // 3 mins in secs
 
+            // Flag to control if additional identity data is loaded from the user info endpoint in order to populate the user's profile
             loadUserInfo: true,
+
+            // Store any oidc info in localStorage to preserve user session when tab closed and reopened
+
+            // (default: local storage): Storage object used to persist interaction state
+            stateStore: new Oidc.WebStorageStateStore({ store: window.localStorage }),
+
+            // (default: session storage): Storage object used to persist User for currently authenticated user
+            userStore: new Oidc.WebStorageStateStore({ store: window.localStorage }),
         });
 
 
