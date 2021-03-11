@@ -990,6 +990,7 @@ a {
 
 .folder-tree-view {
     list-style-type: none;
+    padding-inline-start: 20px; // for ul
 
     &.folder-tree-view--root {
         padding: 0;
@@ -1003,6 +1004,12 @@ a {
         .tree-item-toggle {
             &:hover {
                 color: $color-green-dark;
+            }
+
+            .toggle-icon {
+                display: inline-block;
+                width: 20px;
+                min-width: 20px;
             }
         }
 

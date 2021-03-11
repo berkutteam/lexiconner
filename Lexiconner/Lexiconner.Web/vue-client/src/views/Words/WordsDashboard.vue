@@ -42,16 +42,16 @@
                     <div class="card-body">
                         <h4>Training stats</h4>
                         <hr/>
-                        <div class="d-flex mb-3">
+                        <div class="mb-3">
                             <div class="h5">
                                 <span>Total</span>
                                 <span class="badge badge-secondary ml-1">{{trainingStats.totalItemCount}}</span>
                             </div>
-                            <div class="h5 ml-2">
+                            <div class="h5">
                                 <span>Trained</span>
                                 <span class="badge badge-success ml-1">{{trainingStats.trainedItemCount}}</span>
                             </div>     
-                            <div class="h5 ml-2">
+                            <div class="h5">
                                 <span>On training</span>
                                 <span class="badge badge-info ml-1">{{trainingStats.onTrainingItemCount}}</span>
                             </div>               
@@ -63,14 +63,24 @@
                                     v-bind:key="`key-training-${item.trainingType}`"
                                 >
                                     <span class="badge badge-secondary">{{item.trainingTypeFormatted}}</span>
-                                    <span class="ml-1">
+                                    <!-- <span class="ml-1">
                                         <span>Trained</span>
                                         <span class="badge badge-success ml-1">{{item.trainedItemCount}}</span>
                                     </span>
                                      <span class="ml-1">
                                         <span>On training</span>
                                         <span class="badge badge-info ml-1">{{item.onTrainingItemCount}}</span>
-                                    </span>
+                                    </span> -->
+                                    <ul>
+                                        <li>
+                                            <span>Trained</span>
+                                            <span class="badge badge-success ml-1">{{item.trainedItemCount}}</span>
+                                        </li>
+                                        <li>
+                                            <span>Training</span>
+                                            <span class="badge badge-info ml-1">{{item.onTrainingItemCount}}</span>
+                                        </li>
+                                    </ul>
                                 </li>
                             </ul>
                         </div>
