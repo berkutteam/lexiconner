@@ -1,4 +1,5 @@
-﻿using Lexiconner.Application.Exceptions;
+﻿using AutoMapper;
+using Lexiconner.Application.Exceptions;
 using Lexiconner.Application.Mappers;
 using Lexiconner.Application.Services.Interfacse;
 using Lexiconner.Application.Validation;
@@ -8,6 +9,8 @@ using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories;
 using LinqKit;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,14 +18,17 @@ namespace Lexiconner.Application.Services
 {
     public class FilmsService : IFilmsService
     {
+        private readonly IMapper _mapper;
         private readonly IDataRepository _dataRepository;
         private readonly IImageService _imageService;
 
         public FilmsService(
+            IMapper mapper,
             IDataRepository MongoDataRepository,
             IImageService imageService
         )
         {
+            _mapper = mapper;
             _dataRepository = MongoDataRepository;
             _imageService = imageService;
         }
@@ -51,7 +57,7 @@ namespace Lexiconner.Application.Services
             var result = new PaginationResponseDto<UserFilmDto>
             {
 
-                Items = CustomMapper.MapToDto(items),
+                Items = _mapper.Map<IEnumerable<UserFilmDto>>(items),
                 Pagination = new PaginationInfoDto()
                 {
                     TotalCount = total,
@@ -67,12 +73,13 @@ namespace Lexiconner.Application.Services
         public async Task<UserFilmDto> GetUserFilmAsync(string userId, string userFilmId)
         {
             var entity = await _dataRepository.GetOneAsync<UserFilmEntity>(x => x.Id == userFilmId && x.UserId == userId);
-            return CustomMapper.MapToDto(entity);
+            return _mapper.Map<UserFilmDto>(entity);
         }
 
         public async Task<UserFilmDto> CreateUserFilmAsync(string userId, UserFilmCreateDto createDto)
         {
-            var entity = CustomMapper.MapToEntity(userId, createDto);
+            var entity = _mapper.Map<UserFilmEntity>(createDto);
+            entity.UserId = userId;
             CustomValidationHelper.Validate(entity);
 
             // set image
@@ -101,7 +108,7 @@ namespace Lexiconner.Application.Services
             //}
 
             await _dataRepository.AddAsync(entity);
-            return CustomMapper.MapToDto(entity);
+            return _mapper.Map<UserFilmDto>(entity);
         }
 
         public async Task<UserFilmDto> UpdateUserFilmAsync(string userId, string userFilmId, UserFilmUpdateDto updateDto)
@@ -144,7 +151,7 @@ namespace Lexiconner.Application.Services
             //}
 
             await _dataRepository.UpdateAsync(entity);
-            return CustomMapper.MapToDto(entity);
+            return _mapper.Map<UserFilmDto>(entity);
         }
 
         public async Task DeleteUserFilm(string userId, string userFilmId)

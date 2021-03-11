@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using static Lexiconner.Application.ApiClients.Dtos.ImageSearchResponseDto;
+using Lexiconner.Domain.Dtos.UserFilms;
 
 namespace Lexiconner.Application.Mapping
 {
@@ -16,12 +17,17 @@ namespace Lexiconner.Application.Mapping
             // Word
             CreateMap<WordEntity, WordDto>();
             CreateMap<WordImageEntity, WordImageDto>();
+            CreateMap<WordCreateDto, WordEntity>();
             CreateMap<ImageSearchResponseItemDto, WordImageDto>();
             CreateMap<WordImageDto, WordImageEntity>();
             CreateMap<WordTrainingInfoEntity, WordTrainingInfoDto>();
 
             // CustomCollection
             CreateMap<CustomCollectionEntity, CustomCollectionDto>();
+
+            // Film
+            CreateMap<UserFilmEntity, UserFilmDto>();
+            CreateMap<UserFilmCreateDto, UserFilmEntity>();
         }
     }
 }

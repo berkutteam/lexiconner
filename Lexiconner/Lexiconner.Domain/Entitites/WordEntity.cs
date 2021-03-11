@@ -133,11 +133,11 @@ namespace Lexiconner.Domain.Entitites
     public class WordImageEntity : BaseEntity
     {
         public string Url { get; set; }
-        public string Height { get; set; }
-        public string Width { get; set; }
+        public int Height { get; set; }
+        public int Width { get; set; }
         public string Thumbnail { get; set; }
-        public string ThumbnailHeight { get; set; }
-        public string ThumbnailWidth { get; set; }
+        public int? ThumbnailHeight { get; set; }
+        public int? ThumbnailWidth { get; set; }
         public string Base64Encoding { get; set; }
     }
 

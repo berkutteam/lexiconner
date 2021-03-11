@@ -696,11 +696,11 @@ namespace Lexiconner.Seed.Seed
                             entity.Images.Add(new WordImageEntity
                             {
                                 Url = image.Url,
-                                Height = image.Height,
-                                Width = image.Width,
+                                Height = int.Parse(image.Height),
+                                Width = int.Parse(image.Width),
                                 Thumbnail = image.Thumbnail,
-                                ThumbnailHeight = image.ThumbnailHeight,
-                                ThumbnailWidth = image.ThumbnailWidth,
+                                ThumbnailHeight = int.Parse(image.ThumbnailHeight),
+                                ThumbnailWidth = int.Parse(image.ThumbnailWidth),
                                 Base64Encoding = image.Base64Encoding,
                             });
                         }

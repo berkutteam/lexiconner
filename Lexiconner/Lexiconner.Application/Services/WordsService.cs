@@ -124,7 +124,8 @@ namespace Lexiconner.Application.Services
 
         public async Task<WordDto> CreateWordAsync(string userId, WordCreateDto createDto)
         {
-            var entity = CustomMapper.MapToEntity(userId, createDto);
+            var entity = _mapper.Map<WordEntity>(createDto);
+            entity.UserId = userId;
             CustomValidationHelper.Validate(entity);
 
             // set image
@@ -141,11 +142,11 @@ namespace Lexiconner.Application.Services
                         entity.Images.Add(new WordImageEntity
                         {
                             Url = image.Url,
-                            Height = image.Height,
-                            Width = image.Width,
+                            Height = int.Parse(image.Height),
+                            Width = int.Parse(image.Width),
                             Thumbnail = image.Thumbnail,
-                            ThumbnailHeight = image.ThumbnailHeight,
-                            ThumbnailWidth = image.ThumbnailWidth,
+                            ThumbnailHeight = int.Parse(image.ThumbnailHeight),
+                            ThumbnailWidth = int.Parse(image.ThumbnailWidth),
                             Base64Encoding = image.Base64Encoding,
                         });
                     }
@@ -184,11 +185,11 @@ namespace Lexiconner.Application.Services
                             entity.Images.Add(new WordImageEntity
                             {
                                 Url = image.Url,
-                                Height = image.Height,
-                                Width = image.Width,
+                                Height = int.Parse(image.Height),
+                                Width = int.Parse(image.Width),
                                 Thumbnail = image.Thumbnail,
-                                ThumbnailHeight = image.ThumbnailHeight,
-                                ThumbnailWidth = image.ThumbnailWidth,
+                                ThumbnailHeight = int.Parse(image.ThumbnailHeight),
+                                ThumbnailWidth = int.Parse(image.ThumbnailWidth),
                                 Base64Encoding = image.Base64Encoding,
                             });
                         }
@@ -256,8 +257,8 @@ namespace Lexiconner.Application.Services
                 using (var stream = await httpClent.GetStreamAsync(image.Url))
                 {
                     var bitmap = new Bitmap(stream);
-                    image.Width = bitmap.Width.ToString();
-                    image.Height = bitmap.Height.ToString();
+                    image.Width = bitmap.Width;
+                    image.Height = bitmap.Height;
                 }
             }
 
