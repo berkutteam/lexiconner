@@ -12,70 +12,71 @@
 
         @if (Model.EnableLocalLogin)
         {
-            <div class="col-sm-6">
-                <div class="card">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Local Account</h2>
+                </div>
+
+                <div class="card-body">
+                    <form asp-route="Login">
+                        <input type="hidden" asp-for="ReturnUrl" />
+
+                        <div class="form-group">
+                            <label asp-for="Username">Email</label>
+                            <input type="email" class="form-control" placeholder="Username" asp-for="Username" autofocus>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Password"></label>
+                            <input type="password" class="form-control" placeholder="Password" asp-for="Password" autocomplete="off">
+                        </div>
+                        @if (Model.AllowRememberLogin)
+                        {
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" asp-for="RememberLogin">
+                                    <label class="form-check-label" asp-for="RememberLogin">
+                                        Remember My Login
+                                    </label>
+                                </div>
+                            </div>
+                        }
+
+                        @*<div>
+                        <p>The default users are alice/bob, password: Pass123$</p>
+                    </div>*@
+
+                        <button class="btn btn-primary" name="button" value="login">Login</button>
+                        <button class="btn btn-secondary" name="button" value="cancel">Cancel</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Demo user login -->
+            @if (Model.DemoUser != null)
+            {
+                <div class="card mt-2">
                     <div class="card-header">
-                        <h2>Local Account</h2>
+                        <h2>Demo Account</h2>
                     </div>
 
                     <div class="card-body">
                         <form asp-route="Login">
-                            <input type="hidden" asp-for="ReturnUrl" />
+                            <input type="hidden" asp-for="ReturnUrl" value="@Model.DemoUser.ReturnUrl" />
+                            <input type="hidden" asp-for="Username" value="@Model.DemoUser.Username" />
+                            <input type="hidden" asp-for="Password" value="@Model.DemoUser.Password" />
+                            <input type="hidden" asp-for="RememberLogin" value="@Model.DemoUser.RememberLogin" />
 
-                            <div class="form-group">
-                                <label asp-for="Username"></label>
-                                <input class="form-control" placeholder="Username" asp-for="Username" autofocus>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Password"></label>
-                                <input type="password" class="form-control" placeholder="Password" asp-for="Password" autocomplete="off">
-                            </div>
-                            @if (Model.AllowRememberLogin)
-                            {
-                                <div class="form-group">
-                                    <div class="form-check">
-                                        <input class="form-check-input" asp-for="RememberLogin">
-                                        <label class="form-check-label" asp-for="RememberLogin">
-                                            Remember My Login
-                                        </label>
-                                    </div>
+                            <fieldset>
+                                <div class="form-group d-flex">
+                                    <button class="btn btn-primary" name="button" value="login">Login as @Model.DemoUser.Username</button>
                                 </div>
-                            }
-
-                            <div>
-                                <p>The default users are alice/bob, password: Pass123$</p>
-                            </div>
-
-                            <button class="btn btn-primary" name="button" value="login">Login</button>
-                            <button class="btn btn-secondary" name="button" value="cancel">Cancel</button>
+                            </fieldset>
                         </form>
                     </div>
                 </div>
-
-                <!-- Demo user login -->
-                @if(Model.DemoUser != null)
-                {
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Login as Demo user</h3>
-                        </div>
-                        <div class="panel-body">
-                            <form asp-route="Login">
-                                <input type="hidden" asp-for="ReturnUrl" value="@Model.DemoUser.ReturnUrl" />
-                                <input type="hidden" asp-for="Username" value="@Model.DemoUser.Username" />
-                                <input type="hidden" asp-for="Password" value="@Model.DemoUser.Password" />
-                                <input type="hidden" asp-for="RememberLogin" value="@Model.DemoUser.RememberLogin" />
-
-                                <fieldset>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" name="button" value="login">Login</button>
-                                    </div>
-                                </fieldset>
-                            </form>
-                        </div>
-                    </div>
-                }
-            </div>
+            }
+        </div>
         }
 
         @if (Model.VisibleExternalProviders.Any())
