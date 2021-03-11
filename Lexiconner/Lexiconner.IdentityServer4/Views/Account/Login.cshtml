@@ -53,7 +53,7 @@
             </div>
 
             <!-- Demo user login -->
-            @if (Model.DemoUser != null)
+            @if (Model.DemoUsers != null && Model.DemoUsers.Any())
             {
                 <div class="card mt-2">
                     <div class="card-header">
@@ -61,18 +61,21 @@
                     </div>
 
                     <div class="card-body">
-                        <form asp-route="Login">
-                            <input type="hidden" asp-for="ReturnUrl" value="@Model.DemoUser.ReturnUrl" />
-                            <input type="hidden" asp-for="Username" value="@Model.DemoUser.Username" />
-                            <input type="hidden" asp-for="Password" value="@Model.DemoUser.Password" />
-                            <input type="hidden" asp-for="RememberLogin" value="@Model.DemoUser.RememberLogin" />
+                        @foreach (var demoUser in Model.DemoUsers)
+                        {
+                            <form asp-route="Login" class="mb-2">
+                                <input type="hidden" asp-for="ReturnUrl" value="@demoUser.ReturnUrl" />
+                                <input type="hidden" asp-for="Username" value="@demoUser.Username" />
+                                <input type="hidden" asp-for="Password" value="@demoUser.Password" />
+                                <input type="hidden" asp-for="RememberLogin" value="@demoUser.RememberLogin" />
 
-                            <fieldset>
-                                <div class="form-group d-flex">
-                                    <button class="btn btn-primary" name="button" value="login">Login as @Model.DemoUser.Username</button>
-                                </div>
-                            </fieldset>
-                        </form>
+                                <fieldset>
+                                    <div class="form-group d-flex m-0">
+                                        <button class="btn btn-primary" name="button" value="login">Login as @demoUser.Username</button>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        }
                     </div>
                 </div>
             }

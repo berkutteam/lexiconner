@@ -406,19 +406,15 @@ namespace IdentityServer4.Quickstart.UI
                 }
             }
 
-            // demo user
-            var demoUser = _identityServerConfig.GetInitialdentityUsers().FirstOrDefault(x => x.IsDemo);
-            LoginInputModel demoUserModel = null;
-            if (demoUser != null)
+            // add demo users
+            var demoUsers = _identityServerConfig.GetInitialdentityUsers().Where(x => x.IsDemo);
+            var demoUserModels = demoUsers.Select(demoUser => new LoginInputModel()
             {
-                demoUserModel = new LoginInputModel()
-                {
-                    Username = demoUser.UserName,
-                    Password = _identityServerConfig.DefaultUserPassword,
-                    RememberLogin = false,
-                    ReturnUrl = returnUrl,
-                };
-            }
+                Username = demoUser.UserName,
+                Password = _identityServerConfig.DefaultUserPassword,
+                RememberLogin = false,
+                ReturnUrl = returnUrl,
+            });
 
             return new LoginViewModel
             {
@@ -427,7 +423,7 @@ namespace IdentityServer4.Quickstart.UI
                 ReturnUrl = returnUrl,
                 Username = context?.LoginHint,
                 ExternalProviders = providers.ToArray(),
-                DemoUser = demoUserModel,
+                DemoUsers = demoUserModels,
             };
         }
 
