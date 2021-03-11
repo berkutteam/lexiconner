@@ -1,21 +1,24 @@
 #!!!this dockerfile is changed manually
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
-#heroku:
-#fails on 80
-#The web process must listen for HTTP traffic on $PORT, which is set by Heroku. EXPOSE in Dockerfile is not respected, but can be used for local testing. Only HTTP requests are supported.
+
+# Heroku fails on port 80.
+# The web process must listen for HTTP traffic on $PORT, which is set by Heroku. 
+# EXPOSE in Dockerfile is not respected by Heroku, but can be used for local testing. Only HTTP requests are supported.
+
 #EXPOSE 8080
 #ENV ASPNETCORE_URLS=http://*:8080
 #ENV ASPNETCORE_URLS=http://*:$PORT
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["Lexiconner/Lexiconner.Web/Lexiconner.Web.csproj", "Lexiconner.Web/"]
-COPY ["Lexiconner/Lexiconner.Application/Lexiconner.Application.csproj", "Lexiconner.Application/"]
+COPY ["Lexiconner.Web/Lexiconner.Web.csproj", "Lexiconner.Web/"]
+COPY ["Lexiconner.Application/Lexiconner.Application.csproj", "Lexiconner.Application/"]
 RUN dotnet restore "Lexiconner.Web/Lexiconner.Web.csproj"
 #WORKDIR "/src/Lexiconner.Web"
 #COPY "Lexiconner/Lexiconner.Web/" .
-COPY "Lexiconner/"  .
+#COPY "Lexiconner/"  .
+COPY "./"  .
 WORKDIR "/src/Lexiconner.Web"
 RUN dotnet build "Lexiconner.Web.csproj" -c Release -o /app
 

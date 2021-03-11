@@ -29,6 +29,7 @@ README.md
 .env
 .env.local
 .env.*.local
+.env__*
 
 .git
 .gitignore
