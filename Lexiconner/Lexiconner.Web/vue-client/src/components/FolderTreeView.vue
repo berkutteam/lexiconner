@@ -9,10 +9,13 @@
                 v-bind:class="{'font-weight-bold': false}"
                 class="tree-item"
             >
-                <!-- Expand button -->
+                <!-- Expand button or placeholder -->
                 <span v-if="hasChildren" v-on:click="toggle" class="tree-item-toggle mr-1">
-                    <i v-if="!isOpenComputed" class="fas fa-chevron-down"></i>
-                    <i v-if="isOpenComputed" class="fas fa-chevron-up"></i>
+                    <i v-if="!isOpenComputed" class="fas fa-chevron-down toggle-icon"></i>
+                    <i v-if="isOpenComputed" class="fas fa-chevron-up toggle-icon"></i>
+                </span>
+                <span v-if="!hasChildren" class="tree-item-toggle mr-1">
+                    <i class="toggle-icon"></i>
                 </span>
 
                 <span 

@@ -44,6 +44,7 @@ $danger: $color-danger;
 @import './vue-multiselect-rewrite';
 
 @import './image-grid';
+@import './loaders';
 
 //#region General overrides
 
@@ -463,13 +464,31 @@ a {
             width: 100%;
             height: 100%;
             padding: 0.5rem;
-            color: rgba($color-white, 0.75);
-            text-shadow: $color-black 1px 1px 0px;
-            background-color: rgba($color-black, 0.1);
+            color: $color-black;
+            // text-shadow: $color-black 1px 1px 0px;
+            // background-color: rgba($color-black, 0.1);
 
             &:hover {
                 text-decoration: none;
-                color: rgba($color-white, 1);
+                // color: rgba($color-white, 1);
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        $margin: 2%;
+
+        .app-card-nav-item {
+            
+            width: ((100% - $margin) / 2);
+            margin: 0 $margin 0 0 !important;
+
+            &:nth-child(2n) {
+                margin-right: 0 !important;
+            }
+
+            &:not(:last-child), :not(:nth-last-child(2)) {
+                margin-bottom: $margin !important;
             }
         }
     }
@@ -547,57 +566,6 @@ a {
         }
     }
 }
-
-.app-row-loader {
-    display: flex;
-    justify-content: center;
-
-    .loader-spinner {
-        display: block;
-        color: $color-blue;
-    }
-
-    // CSS source: https://codepen.io/petersonby/pen/BVwxGP
-    .loading-line {
-        $mainColor: #111;
-        $loaderColor: #007efd;
-        $backColor: #87c3ff;
-        $time: 2s;
-        $size: 3px;
-
-        background-color: $mainColor;
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-        // position: fixed;
-        // top: 0; left: 0;
-        display: flex;
-        align-items: center;
-        align-content: center; 
-        justify-content: flex-start;  
-        z-index: 100000;
-
-        .loading-line__element {
-            height: $size;
-            width: 100%;
-            background: $backColor;
-
-            &:before {
-                content: '';
-                display: block;
-                background-color: $loaderColor;
-                height: $size;
-                width: 0;
-                animation: getWidth $time ease-in infinite;
-            }
-            
-            @keyframes getWidth {
-                100% { width: 100%; }
-            }
-        }
-    }
-}
-
 
 .app-loading-button {
 
@@ -896,12 +864,12 @@ a {
     }
 }
 
-.study-items-wrapper {
-    .study-items-list {
-        .study-item {
+.words-wrapper {
+    .words-list {
+        .word {
             cursor: auto;
 
-            .study-item-example-text {
+            .word-example-text {
                 font-style: italic;
                 font-size: 0.8rem;
                 line-height: 1rem;
@@ -924,17 +892,17 @@ a {
     }
 }
 
-.study-items-learn-flash-cards-wrapper,
-.study-items-learn-wordmeaning-wrapper,
-.study-items-learn-meaningword-wrapper,
-.study-items-learn-matchwords-wrapper {
+.words-learn-flash-cards-wrapper,
+.words-learn-wordmeaning-wrapper,
+.words-learn-meaningword-wrapper,
+.words-learn-matchwords-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: start;
 
     .training-card {
-        width: 80%;
+        width: auto;
         max-width: 400px;
 
         .training-tooltip {
@@ -947,17 +915,33 @@ a {
             background-color: gainsboro;
         }
 
-        .training-title {
-
-        }
-
         .training-description {
             font-size: 0.95rem;
         }
 
-        .training-example {
+        .training-title {
+            color: $black;
+            // background-color: $border-color-gray;
+            background-color:  rgba(0, 0, 0, 0.025);
+            padding: 0.5rem;
+            width: 100%;
+        }
+
+        .training-option-text {
+            font-size: 0.80rem;
+            line-height: 1rem;
+        }
+
+        .training-example-text {
             font-style: italic;
             font-size: 0.80rem;
+            line-height: 1rem;
+
+            .example-text-dot-icon {
+                font-size: 0.4rem;
+                margin-right: 0.3rem;
+                vertical-align: middle;
+            }
         }
 
         .card-bottom-controls {
@@ -993,12 +977,20 @@ a {
             }
         }
     }
+
+    @media(max-width: 768px) {
+        .training-card {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
 }
 
 //#region Custom components
 
 .folder-tree-view {
     list-style-type: none;
+    padding-inline-start: 20px; // for ul
 
     &.folder-tree-view--root {
         padding: 0;
@@ -1012,6 +1004,12 @@ a {
         .tree-item-toggle {
             &:hover {
                 color: $color-green-dark;
+            }
+
+            .toggle-icon {
+                display: inline-block;
+                width: 20px;
+                min-width: 20px;
             }
         }
 

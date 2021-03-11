@@ -164,7 +164,7 @@
                 </div>
 
 
-                <!-- Study item create/edit -->
+                <!-- Word create/edit -->
                 <modal 
                     name="user-film-create-edit" 
                     height="auto"

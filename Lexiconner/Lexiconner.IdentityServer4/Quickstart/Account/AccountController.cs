@@ -128,10 +128,15 @@ namespace IdentityServer4.Quickstart.UI
 
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberLogin, lockoutOnFailure: true);
+                // allow login by email and username
+                var user = await _userManager.FindByEmailAsync(model.Username);
+                if(user == null)
+                {
+                    user = await _userManager.FindByNameAsync(model.Username);
+                }
+                var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberLogin, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.FindByNameAsync(model.Username);
                     await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
 
                     if (context != null)
@@ -401,19 +406,15 @@ namespace IdentityServer4.Quickstart.UI
                 }
             }
 
-            // demo user
-            var demoUser = _identityServerConfig.GetInitialdentityUsers().FirstOrDefault(x => x.IsDemo);
-            LoginInputModel demoUserModel = null;
-            if (demoUser != null)
+            // add demo users
+            var demoUsers = _identityServerConfig.GetInitialdentityUsers().Where(x => x.IsDemo);
+            var demoUserModels = demoUsers.Select(demoUser => new LoginInputModel()
             {
-                demoUserModel = new LoginInputModel()
-                {
-                    Username = demoUser.UserName,
-                    Password = _identityServerConfig.DefaultUserPassword,
-                    RememberLogin = false,
-                    ReturnUrl = returnUrl,
-                };
-            }
+                Username = demoUser.UserName,
+                Password = _identityServerConfig.DefaultUserPassword,
+                RememberLogin = false,
+                ReturnUrl = returnUrl,
+            });
 
             return new LoginViewModel
             {
@@ -422,7 +423,7 @@ namespace IdentityServer4.Quickstart.UI
                 ReturnUrl = returnUrl,
                 Username = context?.LoginHint,
                 ExternalProviders = providers.ToArray(),
-                DemoUser = demoUserModel,
+                DemoUsers = demoUserModels,
             };
         }
 

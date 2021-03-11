@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lexiconner.Domain.DTOs.CustomCollections
+namespace Lexiconner.Domain.Dtos.CustomCollections
 {
     public class CustomCollectionCreateDto
     {

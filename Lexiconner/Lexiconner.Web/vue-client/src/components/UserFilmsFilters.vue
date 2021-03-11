@@ -42,7 +42,7 @@ import RowLoader from '@/components/loaders/RowLoader';
 import LoadingButton from '@/components/LoadingButton';
 
 export default {
-    name: 'study-items-filters',
+    name: 'words-filters',
     props: {
         onChange: {
             type: Function,

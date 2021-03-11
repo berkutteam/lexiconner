@@ -1,13 +1,7 @@
-﻿using Lexiconner.Api.DTOs.Misc;
-using Lexiconner.Api.Services.Interfaces;
-using Lexiconner.Domain.Config;
-using Lexiconner.Domain.DTOs.CustomCollections;
+﻿using Lexiconner.Application.Services.Interfacse;
+using Lexiconner.Domain.Dtos.CustomCollections;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Lexiconner.Api.Controllers.V2

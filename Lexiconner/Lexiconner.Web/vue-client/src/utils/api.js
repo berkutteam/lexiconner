@@ -267,33 +267,33 @@ class API {
             // },
 
             // study items
-            getStudyItems({ offset, limit, search, isFavourite, isShuffle, isTrained, collectionId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems`, { offset, limit, search, isFavourite, isShuffle, isTrained, collectionId}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            getWords({ offset, limit, search, isFavourite, isShuffle, isTrained, collectionId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words`, { offset, limit, search, isFavourite, isShuffle, isTrained, collectionId}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
-            getStudyItem({ studyItemId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/${studyItemId}`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            getWord({ wordId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/${wordId}`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
-            createStudyItem({ data }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            createWord({ data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
-            updateStudyItem({ studyItemId, data }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/${studyItemId}`, {}), method: "put", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            updateWord({ wordId, data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/${wordId}`, {}), method: "put", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
-            deleteStudyItem({ studyItemId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/${studyItemId}`, {}), method: "delete", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
+            deleteWord({ wordId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/${wordId}`, {}), method: "delete", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             findNextWordImages({ wordId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/${wordId}/images/find`, {}), method: "post", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
+                return axiosAuthRequest({ url: buildUrl(url, `words/${wordId}/images/find`, {}), method: "post", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             updateWordImages({ wordId, data }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/${wordId}/images`, {}), method: "put", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+                return axiosAuthRequest({ url: buildUrl(url, `words/${wordId}/images`, {}), method: "put", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
 
-            addStudyItemToFavourites({ studyItemId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/${studyItemId}/favourites`, {}), method: "post", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
+            addWordToFavourites({ wordId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/${wordId}/favourites`, {}), method: "post", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
-            deleteStudyItemFromFavourites({ studyItemId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/${studyItemId}/favourites`, {}), method: "delete", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
+            deleteWordFromFavourites({ wordId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/${wordId}/favourites`, {}), method: "delete", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
 
             // Words
@@ -303,37 +303,37 @@ class API {
 
             // trainings
             getTrainingStatistics() {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/stats`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/stats`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
-            markStudyItemAsTrained({ studyItemId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/trained/${studyItemId}`, {}), method: "put" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            markWordAsTrained({ wordId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/trained/${wordId}`, {}), method: "put" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
-            markStudyItemAsNotTrained({ studyItemId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/not_trained/${studyItemId}`, {}), method: "put" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            markWordAsNotTrained({ wordId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/not_trained/${wordId}`, {}), method: "put" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             flashcardsTrainingStart({collectionId, limit}) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/flashcards`, {collectionId, limit}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/flashcards`, {collectionId, limit}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             flashcardsTrainingSave({data}) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/flashcards/save`, {}), method: "post", data: {...data} }).then(handleApiResponse).catch(handleApiErrorResponse);
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/flashcards/save`, {}), method: "post", data: {...data} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             wordmeaningTrainingStart({ collectionId, limit }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/wordmeaning`, { collectionId, limit }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/wordmeaning`, { collectionId, limit }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             wordmeaningTrainingSave({ data }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/wordmeaning/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/wordmeaning/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             meaningwordTrainingStart({ collectionId, limit }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/meaningword`, { collectionId, limit }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/meaningword`, { collectionId, limit }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             meaningwordTrainingSave({ data }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/meaningword/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/meaningword/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             matchwordsTrainingStart({ collectionId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/matchwords`, { collectionId }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/matchwords`, { collectionId }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             matchwordsTrainingSave({ data }) {
-                return axiosAuthRequest({ url: buildUrl(url, `studyitems/trainings/matchwords/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/matchwords/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
 
             // custom collections

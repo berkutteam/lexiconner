@@ -1,20 +1,14 @@
 ﻿using Lexiconner.Application.ApiClients;
 using Lexiconner.Application.ApiClients.Dtos;
 using Lexiconner.Application.Exceptions;
-using Lexiconner.Application.ImportAndExport;
-using Lexiconner.Domain.Config;
-using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.Persistence.Cache;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
 using static Lexiconner.Application.ApiClients.Dtos.GoogleTranslateResponseDto;
 using static Lexiconner.Application.ApiClients.Dtos.ImageSearchResponseDto;
 
@@ -24,23 +18,27 @@ namespace Lexiconner.Application.Services
     {
         Task<List<ImageSearchResponseItemDto>> FindImagesAsync(string sourceLanguageCode, string imageQuery, int limit = 10);
         IEnumerable<ImageSearchResponseItemDto> GetSuitableImages(IEnumerable<ImageSearchResponseItemDto> imageResult);
+        Task<IEnumerable<ImageSearchResponseItemDto>> ExcludeUnavailableImagesAsync(IEnumerable<ImageSearchResponseItemDto> imageResult);
     }
 
     public class ImageService : IImageService
     {
         private readonly ILogger<IImageService> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IDataCache _dataCache;
         private readonly IGoogleTranslateApiClient _googleTranslateApiClient;
         private readonly IContextualWebSearchApiClient _contextualWebSearchApiClient;
 
         public ImageService(
             ILogger<IImageService> logger,
+            IHttpClientFactory httpClientFactory,
             IDataCache dataCache,
             IGoogleTranslateApiClient googleTranslateApiClient,
             IContextualWebSearchApiClient contextualWebSearchApiClient
         )
         {
             _logger = logger;
+            _httpClientFactory = httpClientFactory;
             _dataCache = dataCache;
             _googleTranslateApiClient = googleTranslateApiClient;
             _contextualWebSearchApiClient = contextualWebSearchApiClient;
@@ -276,6 +274,37 @@ namespace Lexiconner.Application.Services
             images = images.Any() ? images : imageResult.Where(x => int.Parse(x.Width) <= maxImageWidth && int.Parse(x.Height) <= maxImageHeight);
 
             return images;
+        }
+
+        public async Task<IEnumerable<ImageSearchResponseItemDto>> ExcludeUnavailableImagesAsync(IEnumerable<ImageSearchResponseItemDto> imageResult)
+        {
+            var httpClient = _httpClientFactory.CreateClient();
+
+            var availableImages = (await Task.WhenAll(imageResult.Select(async (image) =>
+            {
+                var requestMessage = new HttpRequestMessage()
+                {
+                    RequestUri = new Uri(image.Url),
+                    Method = HttpMethod.Get,
+                };
+
+                // pretend a normal web browser
+                requestMessage.Headers.Add("User-Agent", "Mozilla/5.0");
+
+                var response = await httpClient.SendAsync(requestMessage);
+                string content = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                // TODO: try to read response or figure out it's an image
+
+                return image;
+            }))).Where(x => x != null);
+
+            return availableImages;
         }
     }
 }

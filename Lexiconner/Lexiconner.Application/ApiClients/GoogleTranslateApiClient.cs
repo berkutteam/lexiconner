@@ -115,8 +115,8 @@ namespace Lexiconner.Application.ApiClients
             var requestDto = new GoogleTranslateRequestDto
             {
                 Contents = contents,
-                SourceLanguageCode = sourceLanguageCode,
-                TargetLanguageCode = targetLanguageCode,
+                WordLanguageCode = sourceLanguageCode,
+                MeaningLanguageCode = targetLanguageCode,
             };
             var request = new HttpRequestMessage(new HttpMethod("POST"), url)
             {

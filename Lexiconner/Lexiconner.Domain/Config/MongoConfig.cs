@@ -23,7 +23,7 @@ namespace Lexiconner.Domain.Config
         private const string IdentityPersistedGrant = "identityPersistedGrant";
 
         private const string UserInfo = "userInfo";
-        private const string StudyItems = "studyItems";
+        private const string Words = "words";
         private const string CustomCollections = "customCollections";
         private const string UserFilms = "userFilms";
 
@@ -47,7 +47,7 @@ namespace Lexiconner.Domain.Config
         //    { typeof(PersistedGrant).Name,   IdentityPersistedGrant },
 
         //    // custom entities
-        //    { typeof(StudyItemEntity).Name,   StudyItems },
+        //    { typeof(WordEntity).Name,   Words },
 
         //    // cache
         //    { typeof(GoogleTranslateDataCacheEntity).Name,   CacheGoogleTranslateApi },
@@ -159,8 +159,8 @@ namespace Lexiconner.Domain.Config
             },
             new MongoCollectionConfig
             {
-                CollectionType = typeof(StudyItemEntity),
-                CollectionName = StudyItems,
+                CollectionType = typeof(WordEntity),
+                CollectionName = Words,
                 Indexes = new List<string> {
                 }
             },

@@ -1,4 +1,4 @@
-﻿using Lexiconner.Domain.DTOs.CustomCollections;
+﻿using Lexiconner.Domain.Dtos.CustomCollections;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -19,9 +19,9 @@ namespace Lexiconner.Application.ApiClients.Dtos.ReversoContext
         /// <summary>
         /// E.g. en
         /// </summary>
-        public string SourceLanguageCode { get; set; }
+        public string WordLanguageCode { get; set; }
         public string TargetLanguage { get; set; }
-        public string TargetLanguageCode { get; set; }
+        public string MeaningLanguageCode { get; set; }
         public string SearchedWord { get; set; }
         public IList<ReversoContextTraslationScraperResultItemDto> Results { get; set; }
     }

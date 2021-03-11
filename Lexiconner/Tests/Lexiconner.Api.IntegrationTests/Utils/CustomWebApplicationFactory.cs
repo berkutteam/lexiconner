@@ -26,6 +26,8 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Lexiconner.Persistence.Repositories;
 using Lexiconner.Persistence;
+using Lexiconner.Application.Helpers;
+using Microsoft.Extensions.Hosting;
 
 namespace Lexiconner.Api.IntegrationTests.Utils
 {
@@ -37,43 +39,67 @@ namespace Lexiconner.Api.IntegrationTests.Utils
         public CustomWebApplicationFactory() : base()
         {
             // Do "global" initialization here; Only called once (for every class under test).
+
+            // NB: The WebApplicationFactory description says that it searches for TEntryPoint (i.e. TStartup),
+            // which in our case can be the original Startup, from the source project that is tested, but with some rewrites.
+            // This means it pick ups CreateWebHostBuilder method which is in Program.cs, so all the code in Program.CreateWebHostBuilder is called
+            // when running tests but Program.Main isn't called. 
+            // Keep this in mind.
+
+            // Rewrite env variables for sure
+            if (
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")) ||
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("Environment")) ||
+                !HostingEnvironmentHelper.IsTestingAny()
+            )
+            {
+                Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", HostingEnvironmentHelper.HostingEnvironmentDefaults.TestingLocalhost);
+                Environment.SetEnvironmentVariable("Environment", HostingEnvironmentHelper.HostingEnvironmentDefaults.TestingLocalhost);
+            }
+            if (!HostingEnvironmentHelper.IsTestingAny())
+            {
+                throw new Exception("Environment must set to any testing env.");
+            }
+        }
+
+        protected override IHostBuilder CreateHostBuilder()
+        {
+            Log.Information("Creating host ({ApplicationContext})...", _appName);
+            return base.CreateHostBuilder();
         }
 
         protected override IWebHostBuilder CreateWebHostBuilder()
         {
-            // Rewrite env variables for sure
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Testing");
-            Environment.SetEnvironmentVariable("Environment", "Testing");
+            // Not executed for .NET Core 3.0+
+            // The reason for this is that WebApplicationFactory supports both the legacy WebHost and the generic Host.
+            // If the app you're testing uses a WebHostBuilder in Program.cs, then the factory calls CreateWebHostBuilder() and runs the overridden method. 
+            // However if the app you're testing uses the generic HostBuilder, then the factory calls a different method, CreateHostBuilder().
 
-            Log.Information("Configuring web host ({ApplicationContext})...", _appName);
-            var builder = WebHost.CreateDefaultBuilder()
-                .UseEnvironment("Testing")
-                .ConfigureServices(services => services.AddAutofac())
-                .UseStartup<TStartup>()
-                .UseSerilog();
-
-            return builder;
+            Log.Information("Creating web host ({ApplicationContext})...", _appName);
+            return base.CreateWebHostBuilder();
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            //// When using Autofac and returning its service provider in ConfigureServices
-            //// using below methods can cause an exception. Be careful.
+            // Executed after Host created
 
-            //// !!! Called before the Startup's service configuration and get overwritten by it
-            //builder.ConfigureServices(services =>
-            //{
-            //    Log.Information("ConfigureServices in {ApplicationContext}", _appName);
-            //});
+            // When using Autofac and returning its service provider in ConfigureServices
+            // using below methods can cause an exception. Be careful.
 
-            // !!! Called after the Startup's service configuration and override it
+            // Executed before the Startup.ConfigureServices and is overwritten by it
+            // From ASP.NET Core 3.0 executed after Startup.ConfigureServices code is executed.
+            builder.ConfigureServices(services =>
+            {
+                Log.Information("ConfigureServices in {ApplicationContext}", _appName);
+            });
+
+            // Executed after the Startup.ConfigureServices and is overwritten by it
             builder.ConfigureTestServices(services =>
             {
                 Log.Information("ConfigureTestServices in {ApplicationContext}", _appName);
 
                 var serviceProvider = services.BuildServiceProvider();
                 ApplicationSettings config = serviceProvider.GetService<IOptions<ApplicationSettings>>().Value;
-                IHostingEnvironment hostingEnvironment = serviceProvider.GetService<IHostingEnvironment>();
 
                 ConfigureMongoDb(services);
 

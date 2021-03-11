@@ -239,15 +239,18 @@ namespace Lexiconner.Application.ImportAndExport
                         isWordEntered = false;
 
                         // save word
-                        result.Words.Add(new WordImportModel
+                        if(!string.IsNullOrEmpty(currentTitle))
                         {
-                            CollectionTempId = lastAddedCollection?.TempId,
-                            CollectionName = lastAddedCollection?.Name,
-                            Title = currentTitle,
-                            Description = currentDescription,
-                            ExampleTexts = currentExamples,
-                            Tags = new List<string>(),
-                        });
+                            result.Words.Add(new WordImportModel
+                            {
+                                CollectionTempId = lastAddedCollection?.TempId,
+                                CollectionName = lastAddedCollection?.Name,
+                                Title = currentTitle,
+                                Description = currentDescription,
+                                ExampleTexts = currentExamples,
+                                Tags = new List<string>(),
+                            });
+                        }
                         resetCurrentWord();
                         continue;
                     }

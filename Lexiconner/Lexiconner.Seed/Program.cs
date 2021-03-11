@@ -114,6 +114,7 @@ namespace Lexiconner.Seed
             var services = new ServiceCollection();
 
             services.AddOptions();
+            services.AddHttpClient();
             services.Configure<ApplicationSettings>(configuration);
             services.Configure<Lexiconner.IdentityServer4.ApplicationSettings>(configuration); // map current config to identity  config
 

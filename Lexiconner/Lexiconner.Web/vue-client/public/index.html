@@ -30,10 +30,11 @@
       continue.</strong>
   </noscript>
   <div id="app">
-    <!-- will be dropped when app rendered -->
-    <!-- put styles here (css files load takes time) -->
+    <!-- Intial loader -->
+    <!-- Will be dropped when app rendered. -->
+    <!-- Put styles here to be displayed quickly (css files load takes time) -->
     <style>
-      .app-initial-loader {
+      .app-loader-initial {
         position: fixed;
         top: 0;
         left: 0;
@@ -46,16 +47,17 @@
         align-items: center;
       }
 
-      .app-initial-loader .loader {
+      .app-loader-initial .loader-icon {
         font-size: 140px;
-        color: #13B1E8;
+        color: #3b749e;
         margin: 20px 0 0 0;
       }
     </style>
-    <div class="app-initial-loader">
-      <i class="fas fa-circle-notch fa-spin loader"></i>
+    <div class="app-loader-initial">
+      <i class="far fa-clock fa-spin loader-icon"></i>
     </div>
   </div>
+
 
   <!-- Bootstrap4 -->
 

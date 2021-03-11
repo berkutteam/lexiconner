@@ -83,11 +83,11 @@ export default new Vuex.Store({
         },
         myCompanyInvitations: null,
 
-        studyItemsRequestParamsDefault: {
+        wordsRequestParamsDefault: {
             search: null,
             isFavourite: null,
         },
-        studyItemsRequestParams: {
+        wordsRequestParams: {
             search: null,
             isFavourite: null,
             isShuffle: false,
@@ -96,9 +96,9 @@ export default new Vuex.Store({
 
         // paginationResult (store only current page)
         // {items: [], pagination: {}}
-        studyItemsPaginationResult: null, // object
+        wordsPaginationResult: null, // object
 
-        studyItem: null, // object
+        word: null, // object
 
         wordExamples: null, // object
 
@@ -255,38 +255,38 @@ export default new Vuex.Store({
         //#endregion
 
 
-        //#region Study items
+        //#region Words
 
         [storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET](state, payload) {
             let params= payload;
-            state.studyItemsRequestParams = {
-                ...state.studyItemsRequestParams,
+            state.wordsRequestParams = {
+                ...state.wordsRequestParams,
                 ...params,
             };
         },
         [storeTypes.STUDY_ITEMS_REQUEST_PARAMS_RESET](state, payload) {
-            state.studyItemsRequestParams = {
-                ...state.studyItemsRequestParamsDefault,
+            state.wordsRequestParams = {
+                ...state.wordsRequestParamsDefault,
             };
         },
         [storeTypes.STUDY_ITEMS_LOAD_SET](state, payload) {
             let { data } = payload;
-            state.studyItemsPaginationResult = data;
+            state.wordsPaginationResult = data;
         },
-        [storeTypes.STUDY_ITEM_LOAD_SET](state, payload) {
-            let { studyItem } = payload;
-            state.studyItem = studyItem;
+        [storeTypes.WORD_LOAD_SET](state, payload) {
+            let { word } = payload;
+            state.word = word;
         },
-        [storeTypes.STUDY_ITEM_CREATE_SET](state, payload) {
+        [storeTypes.WORD_CREATE_SET](state, payload) {
             let { data } = payload;
-            if(state.studyItemsPaginationResult !== null) {
-                state.studyItemsPaginationResult.items.unshift({...data});
+            if(state.wordsPaginationResult !== null) {
+                state.wordsPaginationResult.items.unshift({...data});
             }
         },
-        [storeTypes.STUDY_ITEM_UPDATE_SET](state, payload) {
+        [storeTypes.WORD_UPDATE_SET](state, payload) {
             let { data } = payload;
-            if(state.studyItemsPaginationResult !== null) {
-                state.studyItemsPaginationResult.items = state.studyItemsPaginationResult.items.map(x => {
+            if(state.wordsPaginationResult !== null) {
+                state.wordsPaginationResult.items = state.wordsPaginationResult.items.map(x => {
                     if(x.id === data.id) {
                         return {...data};
                     }
@@ -294,10 +294,10 @@ export default new Vuex.Store({
                 });
             }
         },
-        [storeTypes.STUDY_ITEM_DELETE_SET](state, payload) {
-            let { studyItemId } = payload;
-            if(state.studyItemsPaginationResult !== null) {
-                state.studyItemsPaginationResult.items = state.studyItemsPaginationResult.items.filter(x => x.id !== studyItemId);
+        [storeTypes.WORD_DELETE_SET](state, payload) {
+            let { wordId } = payload;
+            if(state.wordsPaginationResult !== null) {
+                state.wordsPaginationResult.items = state.wordsPaginationResult.items.filter(x => x.id !== wordId);
             }
         },
         [storeTypes.WORD_IMAGES_FIND_SET](state, payload) {
@@ -305,11 +305,11 @@ export default new Vuex.Store({
             state.wordImagesPaginationResult = wordImagesPaginationResult;
         },
 
-        [storeTypes.STUDY_ITEM_IS_FAVOURITE_SET](state, payload) {
-            let { studyItemId, isFavourite } = payload;
-            if(state.studyItemsPaginationResult !== null) {
-                state.studyItemsPaginationResult.items = state.studyItemsPaginationResult.items.map(x => {
-                    if(x.id === studyItemId) {
+        [storeTypes.WORD_IS_FAVOURITE_SET](state, payload) {
+            let { wordId, isFavourite } = payload;
+            if(state.wordsPaginationResult !== null) {
+                state.wordsPaginationResult.items = state.wordsPaginationResult.items.map(x => {
+                    if(x.id === wordId) {
                         return {...x, isFavourite: isFavourite};
                     }
                     return x;
@@ -333,29 +333,29 @@ export default new Vuex.Store({
 
         //#region Trainings
 
-        [storeTypes.STUDY_ITEM_TRAINING_STATS_SET](state, payload) {
+        [storeTypes.WORD_TRAINING_STATS_SET](state, payload) {
             let { data } = payload;
             state.trainingStats = data;
         },
-        [storeTypes.STUDY_ITEM_TRAINING_MARK_AS_TRAINED_SET](state, payload) {
-            let { studyItemId } = payload;
+        [storeTypes.WORD_TRAINING_MARK_AS_TRAINED_SET](state, payload) {
+            let { wordId } = payload;
         },
-        [storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED_SET](state, payload) {
-            let { studyItemId } = payload;
+        [storeTypes.WORD_TRAINING_MARK_AS_NOT_TRAINED_SET](state, payload) {
+            let { wordId } = payload;
         },
-        [storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START_SET](state, payload) {
+        [storeTypes.WORD_TRAINING_FLASHCARDS_START_SET](state, payload) {
             let { data } = payload;
             state.trainingFlashcards = data;
         },
-        [storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_START_SET](state, payload) {
+        [storeTypes.WORD_TRAINING_WORDMEANING_START_SET](state, payload) {
             let { data } = payload;
             state.trainingWordMeaning = data;
         },
-        [storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START_SET](state, payload) {
+        [storeTypes.WORD_TRAINING_MEANINGWORD_START_SET](state, payload) {
             let { data } = payload;
             state.trainingMeaningWord = data;
         },
-        [storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START_SET](state, payload) {
+        [storeTypes.WORD_TRAINING_MATCHWORDS_START_SET](state, payload) {
             let { data } = payload;
             state.trainingMatchWords = data;
         },
@@ -660,7 +660,7 @@ export default new Vuex.Store({
         //#endregion
 
 
-        //#region Study items
+        //#region Words
 
         [storeTypes.STUDY_ITEMS_LOAD](context, params) {
             let { commit, dispatch, state, getters } = context;
@@ -668,10 +668,10 @@ export default new Vuex.Store({
                 target: storeTypes.STUDY_ITEMS_LOAD,
                 loading: true,
             });
-            return api.webApi().getStudyItems({
+            return api.webApi().getWords({
                 collectionId: getters.currentCustomCollectionId,
                 ...params,
-                ...state.studyItemsRequestParams, // apply params from state
+                ...state.wordsRequestParams, // apply params from state
             }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.STUDY_ITEMS_LOAD,
@@ -689,95 +689,95 @@ export default new Vuex.Store({
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_LOAD](context, { studyItemId }) {
+        [storeTypes.WORD_LOAD](context, { wordId }) {
             let { commit, dispatch, state, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_LOAD,
+                target: storeTypes.WORD_LOAD,
                 loading: true,
             });
-            return api.webApi().getStudyItem({
-                studyItemId
+            return api.webApi().getWord({
+                wordId
             }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_LOAD,
+                    target: storeTypes.WORD_LOAD,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_LOAD_SET, {
-                    studyItem: data
+                commit(storeTypes.WORD_LOAD_SET, {
+                    word: data
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_LOAD,
+                    target: storeTypes.WORD_LOAD,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_CREATE](context, {data}) {
+        [storeTypes.WORD_CREATE](context, {data}) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_CREATE,
+                target: storeTypes.WORD_CREATE,
                 loading: true,
             });
-            return api.webApi().createStudyItem({data}).then(({ data, ok }) => {
+            return api.webApi().createWord({data}).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_CREATE,
+                    target: storeTypes.WORD_CREATE,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_CREATE_SET, {
+                commit(storeTypes.WORD_CREATE_SET, {
                     data: data
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_CREATE,
+                    target: storeTypes.WORD_CREATE,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_UPDATE](context, {studyItemId, data}) {
+        [storeTypes.WORD_UPDATE](context, {wordId, data}) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_UPDATE,
+                target: storeTypes.WORD_UPDATE,
                 loading: true,
             });
-            return api.webApi().updateStudyItem({studyItemId, data}).then(({ data, ok }) => {
+            return api.webApi().updateWord({wordId, data}).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_UPDATE,
+                    target: storeTypes.WORD_UPDATE,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_UPDATE_SET, {
+                commit(storeTypes.WORD_UPDATE_SET, {
                     data: data
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_UPDATE,
+                    target: storeTypes.WORD_UPDATE,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_DELETE](context, {studyItemId}) {
+        [storeTypes.WORD_DELETE](context, {wordId}) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_DELETE,
+                target: storeTypes.WORD_DELETE,
                 loading: true,
             });
-            return api.webApi().deleteStudyItem({studyItemId}).then(({ data, ok }) => {
+            return api.webApi().deleteWord({wordId}).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_DELETE,
+                    target: storeTypes.WORD_DELETE,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_DELETE_SET, {
-                    studyItemId: studyItemId
+                commit(storeTypes.WORD_DELETE_SET, {
+                    wordId: wordId
                 });
                 // returns nothing
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_DELETE,
+                    target: storeTypes.WORD_DELETE,
                     loading: false,
                 });
                 throw err;
@@ -817,7 +817,7 @@ export default new Vuex.Store({
                     target: storeTypes.WORD_IMAGES_UPDATE,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_UPDATE_SET, {
+                commit(storeTypes.WORD_UPDATE_SET, {
                     data: data
                 });
                 return data;
@@ -830,49 +830,49 @@ export default new Vuex.Store({
             });
         },
 
-        [storeTypes.STUDY_ITEM_ADD_TO_FAVOURITES](context, {studyItemId}) {
+        [storeTypes.WORD_ADD_TO_FAVOURITES](context, {wordId}) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_ADD_TO_FAVOURITES,
+                target: storeTypes.WORD_ADD_TO_FAVOURITES,
                 loading: true,
             });
-            return api.webApi().addStudyItemToFavourites({studyItemId}).then(({ data, ok }) => {
+            return api.webApi().addWordToFavourites({wordId}).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_ADD_TO_FAVOURITES,
+                    target: storeTypes.WORD_ADD_TO_FAVOURITES,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_IS_FAVOURITE_SET, {
-                    studyItemId: studyItemId,
+                commit(storeTypes.WORD_IS_FAVOURITE_SET, {
+                    wordId: wordId,
                     isFavourite: true,
                 });
                 // returns nothing
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_ADD_TO_FAVOURITES,
+                    target: storeTypes.WORD_ADD_TO_FAVOURITES,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_DELETE_FROM_FAVOURITES](context, {studyItemId}) {
+        [storeTypes.WORD_DELETE_FROM_FAVOURITES](context, {wordId}) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_DELETE_FROM_FAVOURITES,
+                target: storeTypes.WORD_DELETE_FROM_FAVOURITES,
                 loading: true,
             });
-            return api.webApi().deleteStudyItemFromFavourites({studyItemId}).then(({ data, ok }) => {
+            return api.webApi().deleteWordFromFavourites({wordId}).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_DELETE_FROM_FAVOURITES,
+                    target: storeTypes.WORD_DELETE_FROM_FAVOURITES,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_IS_FAVOURITE_SET, {
-                    studyItemId: studyItemId,
+                commit(storeTypes.WORD_IS_FAVOURITE_SET, {
+                    wordId: wordId,
                     isFavourite: false,
                 });
                 // returns nothing
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_DELETE_FROM_FAVOURITES,
+                    target: storeTypes.WORD_DELETE_FROM_FAVOURITES,
                     loading: false,
                 });
                 throw err;
@@ -926,258 +926,258 @@ export default new Vuex.Store({
 
         //#region Trainings
 
-        [storeTypes.STUDY_ITEM_TRAINING_STATS_LOAD](context, params) {
+        [storeTypes.WORD_TRAINING_STATS_LOAD](context, params) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_TRAINING_STATS_LOAD,
+                target: storeTypes.WORD_TRAINING_STATS_LOAD,
                 loading: true,
             });
             return api.webApi().getTrainingStatistics().then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_STATS_LOAD,
+                    target: storeTypes.WORD_TRAINING_STATS_LOAD,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_TRAINING_STATS_SET, {
+                commit(storeTypes.WORD_TRAINING_STATS_SET, {
                     data: data
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_STATS_LOAD,
+                    target: storeTypes.WORD_TRAINING_STATS_LOAD,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_TRAINING_MARK_AS_TRAINED](context, { studyItemId }) {
+        [storeTypes.WORD_TRAINING_MARK_AS_TRAINED](context, { wordId }) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_TRAINED,
+                target: storeTypes.WORD_TRAINING_MARK_AS_TRAINED,
                 loading: true,
             });
-            return api.webApi().markStudyItemAsTrained({ studyItemId }).then(({ data, ok }) => {
+            return api.webApi().markWordAsTrained({ wordId }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_TRAINED,
+                    target: storeTypes.WORD_TRAINING_MARK_AS_TRAINED,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_TRAINING_MARK_AS_TRAINED_SET, {
-                    studyItemId
+                commit(storeTypes.WORD_TRAINING_MARK_AS_TRAINED_SET, {
+                    wordId
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_TRAINED,
+                    target: storeTypes.WORD_TRAINING_MARK_AS_TRAINED,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED](context, { studyItemId }) {
+        [storeTypes.WORD_TRAINING_MARK_AS_NOT_TRAINED](context, { wordId }) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED,
+                target: storeTypes.WORD_TRAINING_MARK_AS_NOT_TRAINED,
                 loading: true,
             });
-            return api.webApi().markStudyItemAsNotTrained({ studyItemId }).then(({ data, ok }) => {
+            return api.webApi().markWordAsNotTrained({ wordId }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED,
+                    target: storeTypes.WORD_TRAINING_MARK_AS_NOT_TRAINED,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED_SET, {
-                    studyItemId
+                commit(storeTypes.WORD_TRAINING_MARK_AS_NOT_TRAINED_SET, {
+                    wordId
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MARK_AS_NOT_LEARNED,
+                    target: storeTypes.WORD_TRAINING_MARK_AS_NOT_TRAINED,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START](context, params) {
+        [storeTypes.WORD_TRAINING_FLASHCARDS_START](context, params) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START,
+                target: storeTypes.WORD_TRAINING_FLASHCARDS_START,
                 loading: true,
             });
             return api.webApi().flashcardsTrainingStart({...params}).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START,
+                    target: storeTypes.WORD_TRAINING_FLASHCARDS_START,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START_SET, {
+                commit(storeTypes.WORD_TRAINING_FLASHCARDS_START_SET, {
                     data: data
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START,
+                    target: storeTypes.WORD_TRAINING_FLASHCARDS_START,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_SAVE](context, {data}) {
+        [storeTypes.WORD_TRAINING_FLASHCARDS_SAVE](context, {data}) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_SAVE,
+                target: storeTypes.WORD_TRAINING_FLASHCARDS_SAVE,
                 loading: true,
             });
             return api.webApi().flashcardsTrainingSave({data}).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_SAVE,
+                    target: storeTypes.WORD_TRAINING_FLASHCARDS_SAVE,
                     loading: false,
                 });
                 // reset
-                commit(storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_START_SET, {
+                commit(storeTypes.WORD_TRAINING_FLASHCARDS_START_SET, {
                     data: null
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_FLASHCARDS_SAVE,
+                    target: storeTypes.WORD_TRAINING_FLASHCARDS_SAVE,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_START](context, params) {
+        [storeTypes.WORD_TRAINING_WORDMEANING_START](context, params) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_START,
+                target: storeTypes.WORD_TRAINING_WORDMEANING_START,
                 loading: true,
             });
             return api.webApi().wordmeaningTrainingStart({ ...params }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_START,
+                    target: storeTypes.WORD_TRAINING_WORDMEANING_START,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_START_SET, {
+                commit(storeTypes.WORD_TRAINING_WORDMEANING_START_SET, {
                     data: data
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_START,
+                    target: storeTypes.WORD_TRAINING_WORDMEANING_START,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_SAVE](context, { data }) {
+        [storeTypes.WORD_TRAINING_WORDMEANING_SAVE](context, { data }) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_SAVE,
+                target: storeTypes.WORD_TRAINING_WORDMEANING_SAVE,
                 loading: true,
             });
             return api.webApi().wordmeaningTrainingSave({ data }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_SAVE,
+                    target: storeTypes.WORD_TRAINING_WORDMEANING_SAVE,
                     loading: false,
                 });
                 // reset
-                commit(storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_START_SET, {
+                commit(storeTypes.WORD_TRAINING_WORDMEANING_START_SET, {
                     data: null
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_WORDMEANING_SAVE,
+                    target: storeTypes.WORD_TRAINING_WORDMEANING_SAVE,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START](context, params) {
+        [storeTypes.WORD_TRAINING_MEANINGWORD_START](context, params) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START,
+                target: storeTypes.WORD_TRAINING_MEANINGWORD_START,
                 loading: true,
             });
             return api.webApi().meaningwordTrainingStart({ ...params }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START,
+                    target: storeTypes.WORD_TRAINING_MEANINGWORD_START,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START_SET, {
+                commit(storeTypes.WORD_TRAINING_MEANINGWORD_START_SET, {
                     data: data
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START,
+                    target: storeTypes.WORD_TRAINING_MEANINGWORD_START,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_SAVE](context, { data }) {
+        [storeTypes.WORD_TRAINING_MEANINGWORD_SAVE](context, { data }) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_SAVE,
+                target: storeTypes.WORD_TRAINING_MEANINGWORD_SAVE,
                 loading: true,
             });
             return api.webApi().meaningwordTrainingSave({ data }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_SAVE,
+                    target: storeTypes.WORD_TRAINING_MEANINGWORD_SAVE,
                     loading: false,
                 });
                 // reset
-                commit(storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_START_SET, {
+                commit(storeTypes.WORD_TRAINING_MEANINGWORD_START_SET, {
                     data: null
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MEANINGWORD_SAVE,
+                    target: storeTypes.WORD_TRAINING_MEANINGWORD_SAVE,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START](context, params) {
+        [storeTypes.WORD_TRAINING_MATCHWORDS_START](context, params) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START,
+                target: storeTypes.WORD_TRAINING_MATCHWORDS_START,
                 loading: true,
             });
             return api.webApi().matchwordsTrainingStart({ ...params }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START,
+                    target: storeTypes.WORD_TRAINING_MATCHWORDS_START,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START_SET, {
+                commit(storeTypes.WORD_TRAINING_MATCHWORDS_START_SET, {
                     data: data
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START,
+                    target: storeTypes.WORD_TRAINING_MATCHWORDS_START,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_SAVE](context, { data }) {
+        [storeTypes.WORD_TRAINING_MATCHWORDS_SAVE](context, { data }) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_SAVE,
+                target: storeTypes.WORD_TRAINING_MATCHWORDS_SAVE,
                 loading: true,
             });
             return api.webApi().matchwordsTrainingSave({ data }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_SAVE,
+                    target: storeTypes.WORD_TRAINING_MATCHWORDS_SAVE,
                     loading: false,
                 });
                 // reset
-                // commit(storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_START_SET, {
+                // commit(storeTypes.WORD_TRAINING_MATCHWORDS_START_SET, {
                 //     data: null
                 // });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEM_TRAINING_MATCHWORDS_SAVE,
+                    target: storeTypes.WORD_TRAINING_MATCHWORDS_SAVE,
                     loading: false,
                 });
                 throw err;

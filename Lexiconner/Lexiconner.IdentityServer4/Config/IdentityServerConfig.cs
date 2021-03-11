@@ -349,28 +349,59 @@ namespace Lexiconner.IdentityServer4.Config
                 new ApplicationUserEntity
                 {
                     IsDemo = true,
-                    Id = "01DGMH8EQAZS9M4VS6X5FB2HDA",
-                    Name = "John Doe1",
-                    UserName = "johndoe1",
+                    Id = "604a1fc449aa2772d6a6674b",
+                    Name = "John Doe",
+                    UserName = "johndoe",
                     LockoutEnabled = false,
                     EmailConfirmed = true,
-                    Email = "johndoe1@test.com",
+                    Email = "johndoe@test.com",
                     Roles = new List<string>
                     {
-                        "RootAdmin",
-                        "Admin",
                         "User",
                     },
                     Claims = new List<MongoClaim>
                     {
                         new MongoClaim() {
                             Type = JwtClaimTypes.Name,
-                            Value = "John Doe1",
+                            Value = "John Doe",
                             Issuer = null,
                         },
                         new MongoClaim() {
                             Type = JwtClaimTypes.Email,
-                            Value = "johndoe1@gmail.com",
+                            Value = "johndoe@gmail.com",
+                            Issuer = null,
+                        },
+                        new MongoClaim() {
+                            Type = JwtClaimTypes.EmailVerified,
+                            Value = "true",
+                            Issuer = null,
+                        },
+                    },
+                    IsImportInitialData = true
+                },
+                new ApplicationUserEntity
+                {
+                    IsDemo = true,
+                    Id = "604a1fc1a2f958bcf8a11c21",
+                    Name = "Bob Marley",
+                    UserName = "bobmarley",
+                    LockoutEnabled = false,
+                    EmailConfirmed = true,
+                    Email = "bobmarley@test.com",
+                    Roles = new List<string>
+                    {
+                        "User",
+                    },
+                    Claims = new List<MongoClaim>
+                    {
+                        new MongoClaim() {
+                            Type = JwtClaimTypes.Name,
+                            Value = "Bob Marley",
+                            Issuer = null,
+                        },
+                        new MongoClaim() {
+                            Type = JwtClaimTypes.Email,
+                            Value = "bobmarley@gmail.com",
                             Issuer = null,
                         },
                         new MongoClaim() {
@@ -384,7 +415,7 @@ namespace Lexiconner.IdentityServer4.Config
                 new ApplicationUserEntity
                 {
                     IsDemo = false,
-                    Id = "01DGMH8EQC7V8N3R6RHQYY2VH7",
+                    Id = "604a1fc96eb1dbf7894939d4",
                     Name = "Vadym Berkut",
                     UserName = "vadymberkut",
                     LockoutEnabled = false,
@@ -419,7 +450,7 @@ namespace Lexiconner.IdentityServer4.Config
                 new ApplicationUserEntity
                 {
                     IsDemo = false,
-                    Id = "01DGMH8EQC2B6F26KAPF9PRW59",
+                    Id = "604a1fce40273f1a7ab652fc",
                     Name = "Bogdan Berkut",
                     UserName = "bogdanberkut",
                     LockoutEnabled = false,

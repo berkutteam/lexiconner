@@ -89,15 +89,15 @@ namespace Lexiconner.Api.IntegrationTests.Utils
         #endregion
 
 
-        #region Study items
+        #region Words
 
-        public StudyItemEntity PrepareStudyItemCreateDto()
+        public WordEntity PrepareWordCreateDto()
         {
-            return new StudyItemEntity
+            return new WordEntity
             {
-                Title = _faker.Lorem.Word(),
-                Description = _faker.Lorem.Text(),
-                ExampleTexts = new List<string>() { _faker.Lorem.Text() },
+                Word = _faker.Lorem.Word(),
+                Meaning = _faker.Lorem.Text(),
+                Examples = new List<string>() { _faker.Lorem.Text() },
                 Tags = new List<string>
                     {
                         _faker.Lorem.Word(),
@@ -106,76 +106,76 @@ namespace Lexiconner.Api.IntegrationTests.Utils
             };
         }
 
-        public StudyItemEntity PrepareStudyItemUpdateDto(StudyItemEntity dto)
+        public WordEntity PrepareWordUpdateDto(WordEntity dto)
         {
-            return new StudyItemEntity
+            return new WordEntity
             {
                 Id = dto.Id,
-                Title = _faker.Lorem.Word(),
-                Description = _faker.Lorem.Word()
+                Word = _faker.Lorem.Word(),
+                Meaning = _faker.Lorem.Word()
             };
         }
 
-        public async Task<StudyItemEntity> GetStudyItemAsync(
+        public async Task<WordEntity> GetWordAsync(
             string id
         )
         {
-            return await _dataRepository.GetOneAsync<StudyItemEntity>(x => x.Id == id);
+            return await _dataRepository.GetOneAsync<WordEntity>(x => x.Id == id);
         }
 
-        public async Task<List<StudyItemEntity>> GetStudyItemsAsync(
+        public async Task<List<WordEntity>> GetWordsAsync(
            string userId
        )
         {
-            return (await _dataRepository.GetManyAsync<StudyItemEntity>(x => x.UserId == userId)).ToList();
+            return (await _dataRepository.GetManyAsync<WordEntity>(x => x.UserId == userId)).ToList();
         }
 
-        public async Task<List<StudyItemEntity>> CreateStudyItemsAsync(
+        public async Task<List<WordEntity>> CreateWordsAsync(
             string userId,
             int count = 10
         )
         {
             var entities = Enumerable.Range(0, count).Select(x =>
             {
-                return new StudyItemEntity()
+                return new WordEntity()
                 {
                     UserId = userId,
-                    Title = _faker.Lorem.Word(),
-                    Description = _faker.Lorem.Text(),
-                    ExampleTexts = new List<string>() { _faker.Lorem.Text() },
+                    Word = _faker.Lorem.Word(),
+                    Meaning = _faker.Lorem.Text(),
+                    Examples = new List<string>() { _faker.Lorem.Text() },
                     Tags = new List<string>
                     {
                         _faker.Lorem.Word(),
                         _faker.Lorem.Word(),
                     },
-                    Image = null
+                    Images = new List<WordImageEntity>(),
                 };
             }).ToList();
 
-            await _dataRepository.AddManyAsync<StudyItemEntity>(entities);
+            await _dataRepository.AddManyAsync<WordEntity>(entities);
 
             return entities;
         }
 
-        public async Task<StudyItemEntity> CreateStudyItemAsync(
+        public async Task<WordEntity> CreateWordAsync(
             string userId
         )
         {
-            var entity =new StudyItemEntity()
+            var entity =new WordEntity()
             {
                 UserId = userId,
-                Title = _faker.Lorem.Word(),
-                Description = _faker.Lorem.Text(),
-                ExampleTexts = new List<string>() { _faker.Lorem.Text() },
+                Word = _faker.Lorem.Word(),
+                Meaning = _faker.Lorem.Text(),
+                Examples = new List<string>() { _faker.Lorem.Text() },
                 Tags = new List<string>
                     {
                         _faker.Lorem.Word(),
                         _faker.Lorem.Word(),
                     },
-                Image = null
+                Images = new List<WordImageEntity>(),
             };
 
-            await _dataRepository.AddAsync<StudyItemEntity>(entity);
+            await _dataRepository.AddAsync<WordEntity>(entity);
 
             return entity;
         }
