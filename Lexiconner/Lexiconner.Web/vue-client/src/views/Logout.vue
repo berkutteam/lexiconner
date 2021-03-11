@@ -1,7 +1,6 @@
 <template>
   <div class="logout-wrapper">
-    <!-- <p>Redirecting to logout page...</p> -->
-    <i class="fas fa-circle-notch fa-spin loader"></i>
+    <main-loader v-bind:visible="true" v-bind:topText="`Logout...`" />
   </div>
 </template>
 
@@ -9,12 +8,15 @@
 'use strict';
 
 import authService from '@/services/authService';
+import MainLoader from '@/components/loaders/MainLoader';
 
 export default {
     name: 'logout',
+    components: {
+        MainLoader,
+    },
     created: async function() {
         console.log('Logout.vue created');
-
         authService.logout();
     },
     mounted: function() {

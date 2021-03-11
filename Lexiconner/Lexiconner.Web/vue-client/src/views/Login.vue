@@ -1,7 +1,6 @@
 <template>
   <div class="login-wrapper">
-    <!-- <p>Redirecting to login page...</p> -->
-    <i class="fas fa-circle-notch fa-spin loader"></i>
+    <main-loader v-bind:visible="true" v-bind:topText="`Redirecting to login page...`" />
   </div>
 </template>
 
@@ -10,9 +9,13 @@
 
 import { storeTypes } from '@/constants/index';
 import authService from '@/services/authService';
+import MainLoader from '@/components/loaders/MainLoader';
 
 export default {
     name: 'login',
+    components: {
+        MainLoader,
+    },
     created: async function() {
         console.log('Login.vue created');
 

@@ -1,0 +1,69 @@
+
+.app-loader-main {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .loader-icon {
+        font-size: 120px;
+        color: #3b749e;
+        margin: 0 0 0 0;
+    }
+}
+
+.app-row-loader {
+    display: flex;
+    justify-content: center;
+
+    .loader-spinner {
+        display: block;
+        color: $color-blue;
+    }
+
+    // CSS source: https://codepen.io/petersonby/pen/BVwxGP
+    .loading-line {
+        $mainColor: #111;
+        $loaderColor: #007efd;
+        $backColor: #87c3ff;
+        $time: 2s;
+        $size: 3px;
+
+        background-color: $mainColor;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        // position: fixed;
+        // top: 0; left: 0;
+        display: flex;
+        align-items: center;
+        align-content: center; 
+        justify-content: flex-start;  
+        z-index: 100000;
+
+        .loading-line__element {
+            height: $size;
+            width: 100%;
+            background: $backColor;
+
+            &:before {
+                content: '';
+                display: block;
+                background-color: $loaderColor;
+                height: $size;
+                width: 0;
+                animation: getWidth $time ease-in infinite;
+            }
+            
+            @keyframes getWidth {
+                100% { width: 100%; }
+            }
+        }
+    }
+}
