@@ -340,7 +340,7 @@ export default new Vuex.Store({
         [storeTypes.WORD_TRAINING_MARK_AS_TRAINED_SET](state, payload) {
             let { wordId } = payload;
         },
-        [storeTypes.WORD_TRAINING_MARK_AS_NOT_LEARNED_SET](state, payload) {
+        [storeTypes.WORD_TRAINING_MARK_AS_NOT_TRAINED_SET](state, payload) {
             let { wordId } = payload;
         },
         [storeTypes.WORD_TRAINING_FLASHCARDS_START_SET](state, payload) {
@@ -972,24 +972,24 @@ export default new Vuex.Store({
                 throw err;
             });
         },
-        [storeTypes.WORD_TRAINING_MARK_AS_NOT_LEARNED](context, { wordId }) {
+        [storeTypes.WORD_TRAINING_MARK_AS_NOT_TRAINED](context, { wordId }) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.WORD_TRAINING_MARK_AS_NOT_LEARNED,
+                target: storeTypes.WORD_TRAINING_MARK_AS_NOT_TRAINED,
                 loading: true,
             });
             return api.webApi().markWordAsNotTrained({ wordId }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.WORD_TRAINING_MARK_AS_NOT_LEARNED,
+                    target: storeTypes.WORD_TRAINING_MARK_AS_NOT_TRAINED,
                     loading: false,
                 });
-                commit(storeTypes.WORD_TRAINING_MARK_AS_NOT_LEARNED_SET, {
+                commit(storeTypes.WORD_TRAINING_MARK_AS_NOT_TRAINED_SET, {
                     wordId
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.WORD_TRAINING_MARK_AS_NOT_LEARNED,
+                    target: storeTypes.WORD_TRAINING_MARK_AS_NOT_TRAINED,
                     loading: false,
                 });
                 throw err;

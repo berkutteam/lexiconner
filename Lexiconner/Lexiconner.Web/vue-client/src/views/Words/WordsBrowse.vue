@@ -408,7 +408,7 @@ export default {
             });
         },
         markWordAsNotTrained: function(wordId) {
-            this.$store.dispatch(storeTypes.WORD_TRAINING_MARK_AS_NOT_LEARNED, {
+            this.$store.dispatch(storeTypes.WORD_TRAINING_MARK_AS_NOT_TRAINED, {
                 wordId: wordId,
             }).then(() => {
                  this.$notify({

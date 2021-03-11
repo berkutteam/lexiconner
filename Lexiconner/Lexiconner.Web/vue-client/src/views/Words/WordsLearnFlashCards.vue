@@ -38,16 +38,20 @@
                             </div>
                         </div>
                         <div class="card-bottom-controls">
-                            <!-- Dropdown with dditional actions -->
+                            <!-- Dropdown with aditional actions -->
                             <div class="card-bottom-control-item dropdown">
                                 <span class="contained-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-ellipsis-v"></i>
                                 </span>
                                 <div class="dropdown-menu dropdown-menu-left" aria-labelledby="dropdownMenuButton">
-                                    <button v-on:click="onWordDeleteClick(currentItem.id)" class="dropdown-item" type="button">
+                                    <button v-on:click="onWordMarkAsLearnedClick(currentItem.id)" class="dropdown-item" type="button">
+                                        <i class="fas fa-check-double text-success mr-2"></i>
+                                        <span>Mark as learned</span>
+                                    </button>
+                                    <!-- <button v-on:click="onWordDeleteClick(currentItem.id)" class="dropdown-item" type="button">
                                         <i class="fas fa-trash mr-2"></i>
                                         <span>Delete word</span>
-                                    </button>
+                                    </button> -->
                                 </div>
                             </div>
                             <!-- <span v-on:click="onPrevClick()" class="card-bottom-control-item">
@@ -236,6 +240,9 @@ export default {
         onWordDeleteClick: function(wordId) {
             this.deleteWord(wordId);
         },
+        onWordMarkAsLearnedClick: function(wordId) {
+            this.markWordAsLearned(wordId);
+        },
         handleItemResponse: function({itemId, isCorrect}) {
             let isHandled = this.privateState.itemResults.some(x => x.itemId === itemId);
             if(isHandled) {
@@ -289,6 +296,30 @@ export default {
             //     console.error(err);
             //     notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             // });
+        },
+        markWordAsLearned: function(wordId) {
+            this.$store.dispatch(storeTypes.WORD_TRAINING_MARK_AS_TRAINED, {
+                wordId: wordId,
+            }).then(() => {
+                 this.$notify({
+                    group: 'app',
+                    type: 'success',
+                    title: `Word marked as trained.`,
+                    text: '',
+                    duration: 5000,
+                });
+
+                // treat as answered correctly and go to the next
+                this.handleItemResponse({
+                    itemId: wordId, 
+                    isCorrect: true
+                });
+
+                this.onNextClick();
+            }).catch(err => {
+                console.error(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            });
         },
     },
 }
