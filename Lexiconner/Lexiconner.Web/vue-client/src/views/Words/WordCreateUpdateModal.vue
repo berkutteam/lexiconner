@@ -83,9 +83,15 @@
                             </span>
                         </div>
                         <div class="form-group">
-                            <label for="">Language</label>
+                            <label for="">Word language</label>
                             <language-code-select
-                                v-model="privateState.wordModel.sourceLanguageCode"
+                                v-model="privateState.wordModel.wordLanguageCode"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="">Meaning language</label>
+                            <language-code-select
+                                v-model="privateState.wordModel.meaningLanguageCode"
                             />
                         </div>
                         <div class="form-group">
@@ -184,7 +190,8 @@ const wordModelDefault = {
     description: null,
     examples: [""],
     isFavourite: false,
-    languageCode: "en",
+    wordLanguageCode: "en",
+    meaningLanguageCode: "ru",
     tags: [],
     customCollectionIds: [],
 };
@@ -213,7 +220,7 @@ export default {
     computed: {
         // local computed go here
         canLoadWordExamples: function() {
-            return this.privateState.wordModel.sourceLanguageCode && this.privateState.wordModel.word;
+            return this.privateState.wordModel.wordLanguageCode && this.privateState.wordModel.word;
         },
         // exampels options excluding already selected examples
         wordExamplesOptions: function() {
@@ -314,7 +321,7 @@ export default {
             this.privateState.selectedWordExamples = [];
 
             this.loadWordExamples({
-                languageCode: this.privateState.wordModel.sourceLanguageCode, 
+                languageCode: this.privateState.wordModel.wordLanguageCode, 
                 word: this.privateState.wordModel.word,
             });
             this.$modal.show('word-examples');
