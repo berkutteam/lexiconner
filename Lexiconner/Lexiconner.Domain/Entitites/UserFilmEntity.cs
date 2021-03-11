@@ -1,6 +1,8 @@
 ﻿using Lexiconner.Domain.Dtos.UserFilms;
 using Lexiconner.Domain.Entitites.Base;
 using Lexiconner.Domain.Enums;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -17,7 +19,9 @@ namespace Lexiconner.Domain.Entitites
             Genres = new List<string>();
         }
 
+        [BsonRepresentation(BsonType.ObjectId)]
         public string UserId { get; set; }
+
         public string Title { get; set; }
         public decimal? MyRating { get; set; }
         public string Comment { get; set; }

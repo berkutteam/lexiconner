@@ -23,8 +23,12 @@ namespace Lexiconner.Domain.Entitites
             TrainingInfo = new WordTrainingInfoEntity();
         }
 
+        [BsonRepresentation(BsonType.ObjectId)]
         public string UserId { get; set; }
+
+        [BsonRepresentation(BsonType.ObjectId)]
         public List<string> CustomCollectionIds { get; set; }
+
         public string Word { get; set; }
         public string Meaning { get; set; }
         public List<string> Examples { get; set; }

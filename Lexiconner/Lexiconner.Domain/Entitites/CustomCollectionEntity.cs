@@ -1,5 +1,7 @@
 ﻿using Lexiconner.Domain.Dtos.CustomCollections;
 using Lexiconner.Domain.Entitites.Base;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,9 @@ namespace Lexiconner.Domain.Entitites
             Children = new List<CustomCollectionEntity>();
         }
 
+        [BsonRepresentation(BsonType.ObjectId)]
         public string UserId { get; set; }
+
         public string Name { get; set; }
         public bool IsRoot { get; set; }
         public bool IsSelected { get; set; }
