@@ -208,7 +208,7 @@ namespace Lexiconner.Seed.Seed
             // seed imported data for marked users
             var usersWithImport = _identityServerConfig.GetInitialdentityUsers().Where(x => x.IsImportInitialData);
 
-            // Words
+            #region Words
             _logger.LogInformation("Words...");
             foreach (var user in usersWithImport)
             {
@@ -289,7 +289,8 @@ namespace Lexiconner.Seed.Seed
                 };
 
                 // import
-                if (!await _dataRepository.ExistsAsync<WordEntity>(x => x.UserId == user.Id))
+                var hasSomeWords = await _dataRepository.ExistsAsync<WordEntity>(x => x.UserId == user.Id);
+                if (!hasSomeWords)
                 {
                     foreach (var import in imports)
                     {
@@ -307,7 +308,10 @@ namespace Lexiconner.Seed.Seed
             }
             _logger.LogInformation("Words Done.");
 
-            // Films
+            #endregion
+
+            #region Films
+
             _logger.LogInformation("Films...");
             const string filmsLanguageCode = "ru";
             const string filmsTz = "Europe/Zaporozhye";
@@ -468,6 +472,7 @@ namespace Lexiconner.Seed.Seed
             }
             _logger.LogInformation("Films Done.");
 
+            #endregion
 
             _logger.LogInformation("Done.");
         }
@@ -619,6 +624,7 @@ namespace Lexiconner.Seed.Seed
             createCollections(rootCollection, parentCollectionId, importResult.Collections);
             await _dataRepository.UpdateAsync(rootCollection);
 
+            // build words
             var wordEntities = importResult.Words.Select(x => 
             {
                 List<string> customCollectionIds;
@@ -645,6 +651,9 @@ namespace Lexiconner.Seed.Seed
                 };
             }).ToList();
 
+            // set images
+            await SetWordsImages(wordEntities);
+
             // fix same ids for different users
             wordEntities.ToList().ForEach(x =>
             {
@@ -652,20 +661,23 @@ namespace Lexiconner.Seed.Seed
                 x.Images.ForEach(x => x.RegenerateId());
             });
 
-            // set images
-            await SetWordsImages(wordEntities);
-
+            // save words
             const int chunkSize = 50;
             int chunkCount = (int)(Math.Ceiling((double)wordEntities.Count / (double)chunkSize));
+            IEnumerable<WordEntity> userExistingWords = null;
             for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
             {
                 var items = wordEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
 
                 // only unexisting
+                if (userExistingWords == null)
+                {
+                    userExistingWords = await _dataRepository.GetManyAsync<WordEntity>(x => x.UserId == user.Id);
+                }
                 var itemsToCreate = new List<WordEntity>();
                 foreach (var item in items)
                 {
-                    if(!(await _dataRepository.ExistsAsync<WordEntity>(x => x.Word == item.Word)))
+                    if(!userExistingWords.Any(x => x.Word == item.Word))
                     {
                         itemsToCreate.Add(item);
                     }
@@ -678,18 +690,29 @@ namespace Lexiconner.Seed.Seed
             _logger.LogInformation($"Words were added for user #{user.Email}.");
         }
 
+        private static Dictionary<Tuple<string, string>, IEnumerable<ImageSearchResponseItemDto>> ImagesCache = new Dictionary<Tuple<string, string>, IEnumerable<ImageSearchResponseItemDto>>();
         private async Task SetWordsImages(IEnumerable<WordEntity> wordEntities)
         {
             foreach (WordEntity entity in wordEntities)
             {
                 try
                 {
-                    var imagesResult = await _imageService.FindImagesAsync(entity.WordLanguageCode, entity.Word);
+                    IEnumerable<ImageSearchResponseItemDto> imagesResult = null;
+                    var cacheKey = new Tuple<string, string>(entity.WordLanguageCode, entity.Word);
+                    if (ImagesCache.ContainsKey(cacheKey))
+                    {
+                        imagesResult = ImagesCache[cacheKey];
+                    }
+                    else
+                    {
+                        imagesResult = await _imageService.FindImagesAsync(entity.WordLanguageCode, entity.Word);
+                        ImagesCache.Add(cacheKey, imagesResult);
+                    }
 
                     if (imagesResult.Any())
                     {
                         // try to find suitable image
-                        ImageSearchResponseDto.ImageSearchResponseItemDto image = _imageService.GetSuitableImages(imagesResult).FirstOrDefault();
+                        var image = _imageService.GetSuitableImages(imagesResult).FirstOrDefault();
 
                         if (image != null)
                         {

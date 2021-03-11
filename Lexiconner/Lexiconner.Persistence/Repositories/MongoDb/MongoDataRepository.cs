@@ -146,11 +146,17 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             return result;
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate) where T : class, IIdentifiableEntity
+        public async Task<IEnumerable<T>> GetManyAsync<T>(Expression<Func<T, bool>> predicate /*, ProjectionDefinition<T> projection = null*/) where T : class, IIdentifiableEntity
         {
             CheckCollectionConfig<T>();
 
             var query = _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).Find(predicate);
+            
+            //if (projection != null)
+            //{
+            //    query.Options.Projection = projection;
+            //}
+
             List<T> result = await query
                 .SortByDescending(x => x.Id)
                 .ToListAsync();
