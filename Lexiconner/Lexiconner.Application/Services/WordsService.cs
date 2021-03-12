@@ -273,7 +273,10 @@ namespace Lexiconner.Application.Services
             {
                 LanguageCode = languageCode,
                 Word = word,
-                Examples = translationResult.Results.Select(x => x.SourceLanguageSentence),
+                Examples = translationResult.Results.Select(x => new WordExampleItemDto()
+                {
+                    Example = x.SourceLanguageSentence,
+                }),
             };
             return result;
         }

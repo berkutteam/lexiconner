@@ -116,6 +116,7 @@
             </div>
         </modal>
 
+        <!-- Word examples modal -->
         <modal 
             name="word-examples" 
             height="auto"
@@ -138,24 +139,30 @@
                     <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.WORD_EXAMPLES_LOAD]"></row-loader>
 
                     <form v-on:submit.prevent="addWordExamples()" class="mt-2">
-                            <div>
-                                <multiselect 
-                                    v-model="privateState.selectedWordExamples" 
-                                    v-bind:class="{}"
-                                    v-bind:placeholder="'Select example'"
-                                    v-bind:selectLabel="''" 
-                                    v-bind:options="wordExamplesOptions" 
-                                    v-bind:multiple="true" 
-                                    v-bind:searchable="true" 
-                                    v-bind:taggable="false" 
-                                >
-                                </multiselect>
+                            <div
+                                v-for="(exampleOption) in wordExamplesOptions"
+                                v-bind:key="exampleOption.randomId"
+                                class="w-100"
+                            >
+                                <div class="form-check mb-2">
+                                    <input 
+                                        v-bind:id="`example-${exampleOption.randomId}`" 
+                                        v-on:change="(e) => toggleSuggestedWordExample(exampleOption.randomId)"
+                                        v-bind:checked="privateState.selectedWordExampleIds.includes(exampleOption.randomId)"
+                                        class="form-check-input cursor-pointer" 
+                                        type="checkbox" 
+                                        value="something" 
+                                    >
+                                    <label for="`example-${exampleOption.randomId}`" class="form-check-label">
+                                        {{exampleOption.example}}
+                                    </label>
+                                </div>
                             </div>
 
                             <loading-button 
                                 type="submit"
                                 v-bind:loading="false"
-                                class="btn custom-btn-normal btn-block mt-2"
+                                class="btn custom-btn-normal btn-block mt-3"
                             >Save</loading-button>
                     </form>
                 </div>
@@ -213,7 +220,7 @@ export default {
                 storeTypes: storeTypes,
                 wordModel: _.cloneDeep(wordModelDefault),
                 modalMode: 'create', // ['create', 'edit']
-                selectedWordExamples: [], // string[]
+                selectedWordExampleIds: [], // string[]
             },
         };
     },
@@ -318,7 +325,7 @@ export default {
             }
 
             // reset
-            this.privateState.selectedWordExamples = [];
+            this.privateState.selectedWordExampleIds = [];
 
             this.loadWordExamples({
                 languageCode: this.privateState.wordModel.wordLanguageCode, 
@@ -326,10 +333,20 @@ export default {
             });
             this.$modal.show('word-examples');
         },
+        toggleSuggestedWordExample: function(exampleRandomId) {
+            const isAlreadySelected = this.privateState.selectedWordExampleIds.includes(exampleRandomId);
+            if(isAlreadySelected) {
+                this.privateState.selectedWordExampleIds = this.privateState.selectedWordExampleIds.filter(x => x !== exampleRandomId);
+            } else {
+                this.privateState.selectedWordExampleIds.push(exampleRandomId);
+            }
+        },
         addWordExamples: function() {
+            var selectedExamples = this.wordExamplesOptions.filter(x => this.privateState.selectedWordExampleIds.includes(x.randomId));
+
             this.privateState.wordModel.examples = [
                 ...this.privateState.wordModel.examples.filter(x => !!x),
-                ...this.privateState.selectedWordExamples,
+                ...selectedExamples.map(x => x.example),
             ];
             this.$modal.hide('word-examples');
         },

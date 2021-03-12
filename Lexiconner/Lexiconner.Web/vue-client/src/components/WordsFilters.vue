@@ -34,6 +34,7 @@
             <div class="form-group mr-2 cursor-pointer">
                 <div class="form-check form-check-inline">
                     <input  v-on:change="(e) => setIsTrained(e.target.checked ? true : null)" 
+                        id="inlineCheckbox1"
                         class="form-check-input" 
                         type="checkbox" 
                         value="option1"
@@ -43,6 +44,7 @@
                 </div>
                 <div class="form-check form-check-inline mr-0">
                     <input  v-on:change="(e) => setIsTrained(e.target.checked ? false : null)" 
+                        id="inlineCheckbox2"
                         class="form-check-input" 
                         type="checkbox" 
                         value="option2"
