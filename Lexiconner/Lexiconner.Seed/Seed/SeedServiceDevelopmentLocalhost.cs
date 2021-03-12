@@ -290,7 +290,7 @@ namespace Lexiconner.Seed.Seed
 
                 // import
                 var hasSomeWords = await _dataRepository.ExistsAsync<WordEntity>(x => x.UserId == user.Id);
-                if (!hasSomeWords)
+                if (!hasSomeWords || user.IsUpdateExistingDataOnSeed)
                 {
                     foreach (var import in imports)
                     {
@@ -703,22 +703,23 @@ namespace Lexiconner.Seed.Seed
             {
                 try
                 {
-                    IEnumerable<ImageSearchResponseItemDto> imagesResult = null;
+                    IEnumerable<ImageSearchResponseItemDto> imagesResults = null;
                     var cacheKey = new Tuple<string, string>(entity.WordLanguageCode, entity.Word);
                     if (ImagesCache.ContainsKey(cacheKey))
                     {
-                        imagesResult = ImagesCache[cacheKey];
+                        imagesResults = ImagesCache[cacheKey];
                     }
                     else
                     {
-                        imagesResult = await _imageService.FindImagesAsync(entity.WordLanguageCode, entity.Word);
-                        ImagesCache.Add(cacheKey, imagesResult);
+                        imagesResults = await _imageService.FindImagesAsync(entity.WordLanguageCode, entity.Word);
+                        imagesResults = _imageService.GetSuitableImages(imagesResults);
+                        ImagesCache.Add(cacheKey, imagesResults);
                     }
 
-                    if (imagesResult.Any())
+                    if (imagesResults.Any())
                     {
                         // try to find suitable image
-                        var image = _imageService.GetSuitableImages(imagesResult).FirstOrDefault();
+                        var image = imagesResults.FirstOrDefault();
 
                         if (image != null)
                         {
