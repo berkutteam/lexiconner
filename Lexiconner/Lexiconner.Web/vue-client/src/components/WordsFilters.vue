@@ -1,7 +1,8 @@
 <template>
     <div class="mb-3">
         <form v-on:submit.prevent="() => {}" class="form-inline">
-            <div class="form-group mr-2">
+            <!-- Search -->
+            <div class="form-group mr-3">
                 <label class="sr-only" for="wordsRequestParams__search">Search</label>
                 <input 
                     v-bind:value="sharedState.wordsRequestParams.search"
@@ -20,18 +21,29 @@
                 v-bind:labels="{checked: '★', unchecked: '⁂'}"
                 v-bind:font-size="16"
                 v-bind:color="{checked: '#ffc107', unchecked: '#6c757d'}"
-                v-bind:class="' mr-2'"
+                v-bind:class="' mr-3'"
             /> -->
 
             <!-- Favorite -->
-            <div class="form-group mr-2 cursor-pointer">
-                <i v-on:click="setIsFavorite(null)" v-bind:class="{'text-warning': sharedState.wordsRequestParams.isFavourite === null}" class="fas fa-star-half-alt mr-1"></i>
-                <i v-on:click="setIsFavorite(true)" v-bind:class="{'text-warning': sharedState.wordsRequestParams.isFavourite === true}" class="fas fa-star mr-1"></i>
-                <i v-on:click="setIsFavorite(false)" v-bind:class="{'text-warning': sharedState.wordsRequestParams.isFavourite === false}" class="far fa-star"></i>
+            <div class="form-group mr-3 cursor-pointer">
+                <!-- <i v-on:click="setIsFavorite(null)" v-bind:class="{'text-warning': sharedState.wordsRequestParams.isFavourite === null}" class="fas fa-star-half-alt mr-1"></i> -->
+                <!-- <i v-on:click="setIsFavorite(true)" v-bind:class="{'text-warning': sharedState.wordsRequestParams.isFavourite === true}" class="fas fa-star mr-1"></i> -->
+                <!-- <i v-on:click="setIsFavorite(false)" v-bind:class="{'text-warning': sharedState.wordsRequestParams.isFavourite === false}" class="far fa-star"></i> -->
+                
+                <i 
+                    v-if="sharedState.wordsRequestParams.isFavourite"
+                    v-on:click="setIsFavorite(!sharedState.wordsRequestParams.isFavourite)" 
+                    class="fas fa-star text-warning"
+                ></i>
+                <i 
+                    v-if="!sharedState.wordsRequestParams.isFavourite"
+                    v-on:click="setIsFavorite(!sharedState.wordsRequestParams.isFavourite)" 
+                    class="far fa-star"
+                ></i>
             </div>
 
              <!-- Trained/Not trained -->
-            <div class="form-group mr-2 cursor-pointer">
+            <div class="form-group mr-3 cursor-pointer">
                 <div class="form-check form-check-inline">
                     <input  v-on:change="(e) => setIsTrained(e.target.checked ? true : null)" 
                         id="inlineCheckbox1"
@@ -55,7 +67,7 @@
             </div>
 
             <!-- Shuffle -->
-            <div class="form-group mr-2 cursor-pointer">
+            <div class="form-group mr-3 cursor-pointer">
                 <i 
                     v-on:click="setIsShuffle(!sharedState.wordsRequestParams.isShuffle)" 
                     v-bind:class="{'text-info': sharedState.wordsRequestParams.isShuffle === true}"
@@ -64,14 +76,14 @@
             </div>
 
             <!-- Reload -->
-            <div class="form-group mr-2">
+            <div class="form-group mr-3">
                 <button v-on:click="reload" type="button" class="btn custom-btn-normal">
                     <i class="fas fa-sync-alt"></i>
                 </button>
             </div>
 
             <!-- Reset -->
-            <div class="form-group mr-2">
+            <div class="form-group mr-3">
                 <button v-on:click="resetRequestParams" type="button" class="btn custom-btn-normal">
                     <i class="fas fa-times"></i>
                 </button>
@@ -150,11 +162,12 @@ export default {
             });
             this.callOnChangeDebounce();
         },
-        // onIsFavoriteChange: function({value, tag, srcEvent}) {
-            // this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
-            //     isFavourite: value,
-            // });
-        // },
+        onIsFavoriteChange: function({value, tag, srcEvent}) {
+            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
+                isFavourite: value,
+            });
+             this.callOnChange();
+        },
         setIsFavorite: function(value) {
             this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
                 isFavourite: value,

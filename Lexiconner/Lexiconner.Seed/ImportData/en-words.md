@@ -1,8 +1,8 @@
 <!--
 Rules:
-Document is in markdown format.
-Each peace of data (field) is in a new line.
-Basic structure for a particular word:
+The document is in markdown format.
+Each piece of data (field) is in a new line.
+The basic structure for a particular word:
 
 (all headers must be unique to be able to distinguish and search them during import)
 # Header 1
@@ -24,9 +24,9 @@ E.g.: Закапывать, хоронить
 Different parts of speach are separated with '<space>/<space>'
 E.g.: Отшельник / отшельнечиский, уедененный
 
-Each line with text could end with dot '.' symbol, but not necessarily.
+Each line with text could end with a dot '.' symbol, but not necessarily.
 
-In collocations words like somebody, something, etc. can be replaced with <somebody>, <something>, etc. That should help to parse and view that more user friendly.
+In collocations words like somebody, something, etc. can be replaced with <somebody>, <something>, etc. That should help to parse and view that more user-friendly.
 E.g.: Bleed <somebody> dry
 
 -->
@@ -65,6 +65,12 @@ The police decide on a domestic accident but they, nevertheless, insist on Sarah
 Recluse
 Отшельник / отшельнечиский, уедененный
 They live a recluse life there with their only son, Simon.
+---
+
+***
+Lowkey
+Quiet, modest, not very assertive
+They rented a low-key dorm for their meetings.
 ---
 
 
@@ -1016,7 +1022,7 @@ I didn't sleep well last night and I'm not really on the ball today.
 
 ***
 Be against the clock
-Be under time pressure to ge something done
+Be under time pressure to get something done
 I'm really working against the clock to submit my essay on time.
 ---
 
@@ -1041,7 +1047,7 @@ Sandra is a teacher's pet. She always arrives early and stays late.
 ***
 Over the top
 An overreaction or a lack of restraint
-As usual, Paola's reaction to her team losing was ovver the top.
+As usual, Paola's reaction to her team losing was over the top.
 ---
 
 ***
@@ -1058,7 +1064,7 @@ I wouldn't take what Derek said seriously. He was just pulling your leg.
 
 ***
 Sit on the fence
-Be unwilling to commit or make decision
+Be unwilling to commit or make a decision
 I have no idea who to vote for. I'm sitting on the fence.
 ---
 
@@ -1097,7 +1103,7 @@ When the trainee stood on the lower jaw of the shark, the upper jaw snapped down
 ## Travel and tourism
 
 ***
-Get away form it all
+Get away from it all
 Ухеать куда-то чтобы расслабиться и одохнуть
 We need a vacation to get away from it all.
 ---
@@ -1126,7 +1132,7 @@ The hotels in this area all look a little bit run-down.
 ***
 Itchy feet
 Желание путешествовать или переезжать
-I'll never settle down. I get itchy feets every few years.
+I'll never settle down. I get itchy feet every few years.
 ---
 
 
@@ -1189,7 +1195,7 @@ We have to check out of the hotel before 1pm.
 ***
 Leg of the journey
 Этап путушествия от одного места к другому
-The firts leg of the journey is long flight to Singapore.
+The first leg of the journey is a long flight to Singapore.
 ---
 
 
@@ -1274,7 +1280,7 @@ They drifted apart after they stopped working for the same company
 
 ***
 Take after somebody
-Have characteristics of a parant or relative
+Have characteristics of a parent or relative
 You're lucky that you take after your intelligent mother
 ---
 
@@ -1287,7 +1293,7 @@ My siblings fell out with each other for a few years
 ***
 Make friends with somebody
 Become friendly with a person
-I made friends with her a ling time ago
+I made friends with her a long time ago
 ---
 
 ***
@@ -1386,12 +1392,12 @@ I worked late last night  to meet the deadline for this report
 ***
 Continuous assessment
 Grading based on work done over a long period
-We have continuous assessment, not final exams
+We have a continuous assessment, not final exams
 ---
 
 ***
 Compare similarities
-Consider and descsribe how things are alike
+Consider and describe how things are alike
 The essay asked us to compare the similarities between the countries
 ---
 
@@ -1402,15 +1408,15 @@ Their views on this subject are polar opposites
 ---
 
 ***
-Strikingly diffrent
+Strikingly different
 Surprisingly not alike
 For twins, their interests are strikingly different
 ---
 
 ***
 Miss a deadline
-Fail to finish something withing a given time
-He's so unreliable!He's always missing deadlines for projects
+Fail to finish something within a given time
+He's so unreliable! He's always missing deadlines for projects
 ---
 
 ***
@@ -1459,13 +1465,13 @@ My career really took off after I got that first big deal
 
 ***
 Bottom of the career ladder
-A poistion with the lowest level of responsibility or compensation
+A position with the lowest level of responsibility or compensation
 I worked my way up from the bottom of the career ladder
 ---
 
 ***
 Be fired
-Be forced to leave your job for doing somethig wrong
+Be forced to leave your job for doing something wrong
 He was fired for stealing goods from the warehouse
 ---
 
@@ -1502,13 +1508,13 @@ Many people were laid off from the factory
 ***
 Step down
 Stop doing a job voluntarily
-I'm stepping down to left another person do the job
+I'm stepping down to let another person do the job
 ---
 
 ***
 Set your sights on something
 Aim to achieve a particular goal
-We've set our sights on being number on in our industry
+We've set our sights on being number one in our industry
 ---
 
 ***
@@ -1525,14 +1531,14 @@ She must have her hands full with those four children
 
 ***
 Go the extra mile
-Do more than your are required to do
+Do more than you are required to do
 He always goes the extra mile to ensure deliveries are on time
 ---
 
 ***
 Tackle something head-on
 Deal with something directly
-We had totackle this problem head-on before it got worse
+We had to tackle this problem head-on before it got worse
 ---
 
 ***
@@ -1543,7 +1549,7 @@ You need to work hard to get ahead in this industry
 
 ***
 Be snowed under
-Have to much work to do
+Have too much work to do
 I'm sorry I didn't answer your email. I was snowed under.
 ---
 
@@ -1559,6 +1565,143 @@ Compromise
 The deal involved give and take on both sides
 ---
 
+## Meeting and presenting
+
+***
+Attend a meeting
+Go to a meeting
+You will neet to attend the finance meeting tomorrow
+---
+
+***
+Put forward an agenda
+Suggest what will be discussed in a meeting
+The CEO has put forward an agenda for tomorrow's meeting
+---
+
+***
+Get down to business
+Start working or doing something that you have to do
+Ok, now you've all been introduced, let's get down to business
+---
+
+***
+Conference call
+A telephone call with a number of people at the same time
+We've arranged a conference call with our French and Germa managers
+---
+
+***
+
+Look at
+Begin to consider or discuss
+Let's look at last year's sales figures for this product
+---
+
+***
+Give a presentation
+Present a formal talk for a group of people
+I'd like you to give a presentation on your research
+---
+
+***
+On the agenda
+Included in a list of things to discuss
+Our falling profits will be on the agenda today
+---
+
+***
+Absent
+Not present
+John is still ill and he will be absent from the meeting
+---
+
+***
+Board of directors
+A group of people who manage a business or organization
+Sanjay has been on the board of directors for three years
+---
+
+***
+On the one hand / on the other hand
+Something to consider / a contrasting thing to consider
+On the one hand it is affordable, but on the other hand it is not durable
+---
+
+***
+Show of hands
+A vote performed by raising hands to show agreement with a proposal
+Can we have a show of hands for those who agree with idea
+---
+
+***
+Unanimous
+When everyone is in agreement
+We reached a unanimous agreement on the plan
+---
+
+***
+Set a date
+Agree on a date in the future
+Shall we set a date for the next meeting?
+---
+
+***
+Take questions
+Listen to and answer questions
+I will take questions at the end of the presentation
+---
+
+***
+Take the minutes
+Write the record of what was said during a meeting
+Maria will take the minutes of the meeting today
+---
+
+***
+Reach a consensus
+Arrive at a position of agreement
+It took hours to reach a consensus
+---
+
+***
+Sum up
+Conclude
+So, to sum up, we need to increase sales in this area
+---
+
+***
+Any other business (AOB)
+Any matter discussed in a meeting that is not on the agenda
+I think we're finished unless there is any other business
+---
+
+***
+Run out of time
+Have no time left for something
+We ca't discuss replacing the printers because we've run out of time
+---
+
+***
+Review the minutes
+Look again at the written record of a past meeting
+Let's start by reviewing the minutes of last month's meeting
+---
+
+## Environmental concerns
+
+## Tradition, luck, and superstition
+
+## Media and celebrity
+
+## Crime and the law
+
+## Customs and cultures
+
+## Technology and the future
+
+## Art and culture
+
 ***
 
 ---
@@ -1578,52 +1721,67 @@ The deal involved give and take on both sides
 ***
 
 ---
-
-***
-
----
-
 
 # Slang
 
 ***
-ballin
+Ballin
+To have it going on with money, cars, hoes, clothes, style, body, and pimping.
+Yea im ballin.
+Im still ballin" (im still livin the good life)
+lil' joe is ballin' wit dat phat gold chain and ice.(too bad he spent all of his momma's hidden stash buying it).
 ---
 
 ***
-triping
+Triping
+Freak out, acting crazy or funny. Experiencing the effects of a psychedelic substance.
+U gotta stop tripping!
+I was tripping on shrooms the other day and I became one with the universe.
+I'm tripping over my last midterm grade; I'm headed for some serious failability.
+Man! That plane looks like its gunna crash and kill a few niggas! Shit, I'm tripping!
 ---
 
 ***
-flossin
+Flossin
+Showing off an object in which usually posesses great value. Generally living large; living life well.
+Flossin my grill like a dentist
+Go listen to some rap, youll hear an example of someone using flossin sooner or later
+You know I look good, I be straight flossin.
+I was flossin'this weekend in my new Escalade with its phat-ass rims.
 ---
 
 ***
-plug
+Plug
+Slang for a big time drug dealer, who supplies lesser drug dealers with their drugs. Also referred to as a drug 'connect'.
+My plug fijisplash he got them all for the low and they real bro!
+Yo, lemmie get the number of your plug man...
+I think my plug from outer space, man/because his number is so crazy, man' -Gucci Mane
 ---
 
 ***
 Draco
+A Romanian Kalashnikov variant for commercial sale in the US that fires 7.62x39 round.
 ---
 
 ***
-shawty
+Shawty
+A shawty means a woman/lady that is fine. Men typically use this word to their girlfriend or someone they likem.
+Hey shawty, what we gonna talk about?
+Did y'all see that chick I slept with the other night, she my shawty
 ---
 
 ***
-pink slip
+Pink slip
+Refers to the employee's copy of a notice terminating employment, formerly colored pink.
+Three employees were given a pink slip.
+He was laid off from work today. He received his pink slip.
 ---
 
 ***
 Steelo
----
-
-***
-lowkey
----
-
-***
-Onyx
+Slang for style
+You should know my steelo.
+Yo, mah brotha, I'm peepin' her steelo!!
 ---
 
 ***
