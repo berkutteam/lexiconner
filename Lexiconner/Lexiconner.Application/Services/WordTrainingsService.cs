@@ -202,6 +202,8 @@ namespace Lexiconner.Application.Services
 
             var predicate = PredicateBuilder.New<WordEntity>(x =>
                 x.UserId == userId &&
+                x.Word != null &&
+                x.Meaning != null &&
                 (
                     x.TrainingInfo == null ||
                     !x.TrainingInfo.Trainings.Any() ||
@@ -235,13 +237,13 @@ namespace Lexiconner.Application.Services
                 };
 
                 // other similar meanings
-                // v1: search from other study items with the same language
-                long otherWordsCount = await _dataRepository.CountAllAsync<WordEntity>(x => x.WordLanguageCode == entity.WordLanguageCode && x.Id != entity.Id);
+                // v1: search from other words with the same language
+                long otherWordsCount = await _dataRepository.CountAllAsync<WordEntity>(x => x.WordLanguageCode == entity.WordLanguageCode && x.Id != entity.Id && x.Meaning != null);
                 int otherWordsCountInt = otherWordsCount > int.MaxValue ? int.MaxValue : (int)otherWordsCount;
                 int otherWordsLimit = meaningsPerWord - 1;
                 int otherWordsOffset = random.Next(0, otherWordsCountInt - otherWordsLimit);
                 var otherWords = await _dataRepository.GetManyAsync<WordEntity>(
-                    x => x.WordLanguageCode == entity.WordLanguageCode && x.Id != entity.Id,
+                    x => x.WordLanguageCode == entity.WordLanguageCode && x.Id != entity.Id && x.Meaning != null,
                     otherWordsOffset,
                     otherWordsLimit
                 );
@@ -336,6 +338,8 @@ namespace Lexiconner.Application.Services
 
             var predicate = PredicateBuilder.New<WordEntity>(x =>
                 x.UserId == userId &&
+                x.Word != null &&
+                x.Meaning != null &&
                 (
                     x.TrainingInfo == null ||
                     !x.TrainingInfo.Trainings.Any() ||
@@ -369,13 +373,13 @@ namespace Lexiconner.Application.Services
                 };
 
                 // other similar words
-                // v1: search from other study items with the same language
-                long otherWordsCount = await _dataRepository.CountAllAsync<WordEntity>(x => x.WordLanguageCode == entity.WordLanguageCode && x.Id != entity.Id);
+                // v1: search from other words with the same language
+                long otherWordsCount = await _dataRepository.CountAllAsync<WordEntity>(x => x.WordLanguageCode == entity.WordLanguageCode && x.Id != entity.Id && x.Word != null);
                 int otherWordsCountInt = otherWordsCount > int.MaxValue ? int.MaxValue : (int)otherWordsCount;
                 int otherWordsLimit = meaningsPerWord - 1;
                 int otherWordsOffset = random.Next(0, otherWordsCountInt - otherWordsLimit);
                 var otherWords = await _dataRepository.GetManyAsync<WordEntity>(
-                    x => x.WordLanguageCode == entity.WordLanguageCode && x.Id != entity.Id,
+                    x => x.WordLanguageCode == entity.WordLanguageCode && x.Id != entity.Id && x.Word != null,
                     otherWordsOffset,
                     otherWordsLimit
                 );
@@ -471,6 +475,8 @@ namespace Lexiconner.Application.Services
 
             var predicate = PredicateBuilder.New<WordEntity>(x =>
                 x.UserId == userId &&
+                x.Word != null &&
+                x.Meaning != null &&
                 (
                     x.TrainingInfo == null ||
                     !x.TrainingInfo.Trainings.Any() ||
@@ -498,13 +504,13 @@ namespace Lexiconner.Application.Services
             string languageCode = entities.First().WordLanguageCode;
 
             // other similar words
-            // v1: search from other study items with the same language
-            long otherWordsCount = await _dataRepository.CountAllAsync<WordEntity>(x => x.WordLanguageCode == languageCode && !entitiesIds.Contains(x.Id));
+            // v1: search from other words with the same language
+            long otherWordsCount = await _dataRepository.CountAllAsync<WordEntity>(x => x.WordLanguageCode == languageCode && !entitiesIds.Contains(x.Id) && x.Word != null && x.Meaning != null);
             int otherWordsCountInt = otherWordsCount > int.MaxValue ? int.MaxValue : (int)otherWordsCount;
             int otherWordsLimit = additionalOptionsCount;
             int otherWordsOffset = random.Next(0, otherWordsCountInt - otherWordsLimit);
             var otherWords = await _dataRepository.GetManyAsync<WordEntity>(
-                x => x.WordLanguageCode == languageCode && !entitiesIds.Contains(x.Id),
+                x => x.WordLanguageCode == languageCode && !entitiesIds.Contains(x.Id) && x.Word != null && x.Meaning != null,
                 otherWordsOffset,
                 otherWordsLimit
             );
