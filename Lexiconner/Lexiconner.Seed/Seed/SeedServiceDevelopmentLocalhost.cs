@@ -312,165 +312,165 @@ namespace Lexiconner.Seed.Seed
 
             #region Films
 
-            _logger.LogInformation("Films...");
-            const string filmsLanguageCode = "ru";
-            const string filmsTz = "Europe/Zaporozhye";
+            //_logger.LogInformation("Films...");
+            //const string filmsLanguageCode = "ru";
+            //const string filmsTz = "Europe/Zaporozhye";
 
-            // check TMDb configuration
-            var tMDbConfigration = await _theMovieDbClient.GetConfigAsync();
-            int posterWidth = 500;
-            int backdropWidth = 780;
-            int thumbnailWidth = 92; // use poster with small size
-            if (!tMDbConfigration.Images.PosterSizes.Any(x => x == $"w{posterWidth}"))
-            {
-                throw new Exception($"IMDb doesn't support 'w{posterWidth}' poster size!");
-            }
-            if (!tMDbConfigration.Images.BackdropSizes.Any(x => x == $"w{backdropWidth}"))
-            {
-                throw new Exception($"IMDb doesn't support 'w{backdropWidth}' backdrop size!");
-            }
-            if (!tMDbConfigration.Images.PosterSizes.Any(x => x == $"w{thumbnailWidth}"))
-            {
-                throw new Exception($"IMDb doesn't support 'w{thumbnailWidth}' poster size (try to use for thumbnail)!");
-            }
+            //// check TMDb configuration
+            //var tMDbConfigration = await _theMovieDbClient.GetConfigAsync();
+            //int posterWidth = 500;
+            //int backdropWidth = 780;
+            //int thumbnailWidth = 92; // use poster with small size
+            //if (!tMDbConfigration.Images.PosterSizes.Any(x => x == $"w{posterWidth}"))
+            //{
+            //    throw new Exception($"IMDb doesn't support 'w{posterWidth}' poster size!");
+            //}
+            //if (!tMDbConfigration.Images.BackdropSizes.Any(x => x == $"w{backdropWidth}"))
+            //{
+            //    throw new Exception($"IMDb doesn't support 'w{backdropWidth}' backdrop size!");
+            //}
+            //if (!tMDbConfigration.Images.PosterSizes.Any(x => x == $"w{thumbnailWidth}"))
+            //{
+            //    throw new Exception($"IMDb doesn't support 'w{thumbnailWidth}' poster size (try to use for thumbnail)!");
+            //}
 
-            // TMDb response cache
-            var tmdbSearchMovieCache = new ConcurrentDictionary<string, TMDbLib.Objects.General.SearchContainer<TMDbLib.Objects.Search.SearchMovie>>();
-            var tmdbMovieDetailsCache = new ConcurrentDictionary<int, TMDbLib.Objects.Movies.Movie>();
+            //// TMDb response cache
+            //var tmdbSearchMovieCache = new ConcurrentDictionary<string, TMDbLib.Objects.General.SearchContainer<TMDbLib.Objects.Search.SearchMovie>>();
+            //var tmdbMovieDetailsCache = new ConcurrentDictionary<int, TMDbLib.Objects.Movies.Movie>();
 
-            var filmsImportResult = await _filmImporter.ImportTxtFormatFilmsAsync(_config.Import.FilmsFilePath);
+            //var filmsImportResult = await _filmImporter.ImportTxtFormatFilmsAsync(_config.Import.FilmsFilePath);
 
-            foreach (var user in usersWithImport)
-            {
-                if(await _dataRepository.ExistsAsync<UserFilmEntity>(x => x.UserId == user.Id))
-                {
-                    continue;
-                }
-                var filmEntities = filmsImportResult.Select(x =>
-                {
-                    return new UserFilmEntity
-                    {
-                        UserId = user.Id,
-                        Title = x.Title,
-                        MyRating = x.MyRating,
-                        Comment = x.Comment,
+            //foreach (var user in usersWithImport)
+            //{
+            //    if(await _dataRepository.ExistsAsync<UserFilmEntity>(x => x.UserId == user.Id))
+            //    {
+            //        continue;
+            //    }
+            //    var filmEntities = filmsImportResult.Select(x =>
+            //    {
+            //        return new UserFilmEntity
+            //        {
+            //            UserId = user.Id,
+            //            Title = x.Title,
+            //            MyRating = x.MyRating,
+            //            Comment = x.Comment,
                         
-                        // store in UTC
-                        //WatchedAt = x.WatchedAt == null ? default(DateTimeOffset?) : DateTimeHelper.LocalToUtcOffset(x.WatchedAt.GetValueOrDefault(), filmsTz),
-                        WatchedAt = x.WatchedAt == null ? default(DateTimeOffset?) : x.WatchedAt.Value,
+            //            // store in UTC
+            //            //WatchedAt = x.WatchedAt == null ? default(DateTimeOffset?) : DateTimeHelper.LocalToUtcOffset(x.WatchedAt.GetValueOrDefault(), filmsTz),
+            //            WatchedAt = x.WatchedAt == null ? default(DateTimeOffset?) : x.WatchedAt.Value,
                         
-                        ReleaseYear = x.ReleaseYear,
-                        Genres = x.Genres,
-                        LanguageCode = filmsLanguageCode,
-                    };
-                }).OrderByDescending(x => x.WatchedAt != null ? x.WatchedAt : DateTimeOffset.MinValue ).ToList();
+            //            ReleaseYear = x.ReleaseYear,
+            //            Genres = x.Genres,
+            //            LanguageCode = filmsLanguageCode,
+            //        };
+            //    }).OrderByDescending(x => x.WatchedAt != null ? x.WatchedAt : DateTimeOffset.MinValue ).ToList();
 
-                // fix same ids for different users
-                filmEntities.ToList().ForEach(x =>
-                {
-                    x.RegenerateId();
-                    // x.Image?.RegenerateId();
-                });
+            //    // fix same ids for different users
+            //    filmEntities.ToList().ForEach(x =>
+            //    {
+            //        x.RegenerateId();
+            //        // x.Image?.RegenerateId();
+            //    });
 
-                // search for movie reference in TMDB
-                // tMDbConfigration.Images.BaseUrl - has preceeding /
-                // movieDetails.PosterPath - has leading /
-                _logger.LogInformation($"Searching films in TMDb...");
-                var workerBlock = new ActionBlock<UserFilmEntity>(
-                    async (userFilmEntity) =>
-                    {
-                        try
-                        {
-                            _logger.LogInformation($"Searching '{userFilmEntity.Title}'...");
+            //    // search for movie reference in TMDB
+            //    // tMDbConfigration.Images.BaseUrl - has preceeding /
+            //    // movieDetails.PosterPath - has leading /
+            //    _logger.LogInformation($"Searching films in TMDb...");
+            //    var workerBlock = new ActionBlock<UserFilmEntity>(
+            //        async (userFilmEntity) =>
+            //        {
+            //            try
+            //            {
+            //                _logger.LogInformation($"Searching '{userFilmEntity.Title}'...");
                             
-                            // search movie
-                            var searchMovieResult = tmdbSearchMovieCache.GetValueOrDefault(userFilmEntity.Title);
-                            if(searchMovieResult == null)
-                            {
-                                searchMovieResult = await _theMovieDbClient.SearchMovieAsync(
-                                   query: userFilmEntity.Title,
-                                   language: userFilmEntity.LanguageCode,
-                                   page: 0,
-                                   includeAdult: false
-                                );
-                                tmdbSearchMovieCache.TryAdd(userFilmEntity.Title, searchMovieResult);
-                            }
+            //                // search movie
+            //                var searchMovieResult = tmdbSearchMovieCache.GetValueOrDefault(userFilmEntity.Title);
+            //                if(searchMovieResult == null)
+            //                {
+            //                    searchMovieResult = await _theMovieDbClient.SearchMovieAsync(
+            //                       query: userFilmEntity.Title,
+            //                       language: userFilmEntity.LanguageCode,
+            //                       page: 0,
+            //                       includeAdult: false
+            //                    );
+            //                    tmdbSearchMovieCache.TryAdd(userFilmEntity.Title, searchMovieResult);
+            //                }
                             
-                            if (searchMovieResult.Results.Any())
-                            {
-                                var first = searchMovieResult.Results[0];
+            //                if (searchMovieResult.Results.Any())
+            //                {
+            //                    var first = searchMovieResult.Results[0];
 
-                                // get movie details
-                                var movieDetails = tmdbMovieDetailsCache.GetValueOrDefault(first.Id);
-                                if (movieDetails == null)
-                                {
-                                    movieDetails = await _theMovieDbClient.GetMovieAsync(first.Id);
-                                    tmdbMovieDetailsCache.TryAdd(first.Id, movieDetails);
-                                }
+            //                    // get movie details
+            //                    var movieDetails = tmdbMovieDetailsCache.GetValueOrDefault(first.Id);
+            //                    if (movieDetails == null)
+            //                    {
+            //                        movieDetails = await _theMovieDbClient.GetMovieAsync(first.Id);
+            //                        tmdbMovieDetailsCache.TryAdd(first.Id, movieDetails);
+            //                    }
 
-                                userFilmEntity.Details = new UserFilmDetailsEntity()
-                                {
-                                    TMDbId = movieDetails.Id,
-                                    IMDbId = movieDetails.ImdbId,
-                                    IsAdult = movieDetails.Adult,
-                                    Budget = movieDetails.Budget,
-                                    Genres = movieDetails.Genres.Select(x => new FilmGenreEntity()
-                                    {
-                                        TMDbGenreId = x.Id,
-                                        Name = x.Name,
-                                    }).ToList(),
-                                    OriginalLanguage = movieDetails.OriginalLanguage,
-                                    OriginalTitle = movieDetails.OriginalTitle,
-                                    ProductionCountries = movieDetails.ProductionCountries.Select(x => new FilmProductionCountryEntity()
-                                    {
-                                        Iso_3166_1 = x.Iso_3166_1,
-                                        Name = x.Name,
-                                    }).ToList(),
-                                    ReleaseDate = movieDetails.ReleaseDate,
-                                    Revenue = movieDetails.Revenue,
-                                    Status = movieDetails.Status,
-                                    Title = movieDetails.Title,
-                                    VoteAverage = movieDetails.VoteAverage,
-                                    VoteCount = movieDetails.VoteCount,
-                                    Image = new UserFilmImageEntity()
-                                    {
-                                        PosterUrl = $"{tMDbConfigration.Images.BaseUrl}w{posterWidth}{movieDetails.PosterPath}",
-                                        PosterWidth = posterWidth,
-                                        BackdropUrl = $"{tMDbConfigration.Images.BaseUrl}w{backdropWidth}{movieDetails.BackdropPath}",
-                                        BackdropWidth = backdropWidth,
-                                        ThumbnailUrl = $"{tMDbConfigration.Images.BaseUrl}w{thumbnailWidth}{movieDetails.PosterPath}",
-                                        ThumbnailWidth = thumbnailWidth,
-                                    },
-                                };
-                            }
-                        }
-                        catch(TMDbLib.Objects.Exceptions.GeneralHttpException ex)
-                        {
-                            _logger.LogError(ex, $"TMDb error for '{userFilmEntity.Title}'. Error: {ex.Message}");
-                            // skip
-                        }
+            //                    userFilmEntity.Details = new UserFilmDetailsEntity()
+            //                    {
+            //                        TMDbId = movieDetails.Id,
+            //                        IMDbId = movieDetails.ImdbId,
+            //                        IsAdult = movieDetails.Adult,
+            //                        Budget = movieDetails.Budget,
+            //                        Genres = movieDetails.Genres.Select(x => new FilmGenreEntity()
+            //                        {
+            //                            TMDbGenreId = x.Id,
+            //                            Name = x.Name,
+            //                        }).ToList(),
+            //                        OriginalLanguage = movieDetails.OriginalLanguage,
+            //                        OriginalTitle = movieDetails.OriginalTitle,
+            //                        ProductionCountries = movieDetails.ProductionCountries.Select(x => new FilmProductionCountryEntity()
+            //                        {
+            //                            Iso_3166_1 = x.Iso_3166_1,
+            //                            Name = x.Name,
+            //                        }).ToList(),
+            //                        ReleaseDate = movieDetails.ReleaseDate,
+            //                        Revenue = movieDetails.Revenue,
+            //                        Status = movieDetails.Status,
+            //                        Title = movieDetails.Title,
+            //                        VoteAverage = movieDetails.VoteAverage,
+            //                        VoteCount = movieDetails.VoteCount,
+            //                        Image = new UserFilmImageEntity()
+            //                        {
+            //                            PosterUrl = $"{tMDbConfigration.Images.BaseUrl}w{posterWidth}{movieDetails.PosterPath}",
+            //                            PosterWidth = posterWidth,
+            //                            BackdropUrl = $"{tMDbConfigration.Images.BaseUrl}w{backdropWidth}{movieDetails.BackdropPath}",
+            //                            BackdropWidth = backdropWidth,
+            //                            ThumbnailUrl = $"{tMDbConfigration.Images.BaseUrl}w{thumbnailWidth}{movieDetails.PosterPath}",
+            //                            ThumbnailWidth = thumbnailWidth,
+            //                        },
+            //                    };
+            //                }
+            //            }
+            //            catch(TMDbLib.Objects.Exceptions.GeneralHttpException ex)
+            //            {
+            //                _logger.LogError(ex, $"TMDb error for '{userFilmEntity.Title}'. Error: {ex.Message}");
+            //                // skip
+            //            }
                         
-                    },
-                    new ExecutionDataflowBlockOptions()
-                    {
-                        MaxDegreeOfParallelism = 10,
-                    }
-                );
-                await Task.WhenAll(filmEntities.Select(x => workerBlock.SendAsync(x)));
-                workerBlock.Complete();
-                await workerBlock.Completion;
+            //        },
+            //        new ExecutionDataflowBlockOptions()
+            //        {
+            //            MaxDegreeOfParallelism = 10,
+            //        }
+            //    );
+            //    await Task.WhenAll(filmEntities.Select(x => workerBlock.SendAsync(x)));
+            //    workerBlock.Complete();
+            //    await workerBlock.Completion;
 
-                const int chunkSize = 50;
-                int chunkCount = (int)(Math.Ceiling((double)filmEntities.Count() / (double)chunkSize));
-                for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
-                {
-                    var items = filmEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
-                    await _dataRepository.AddManyAsync(items);
-                    _logger.LogInformation($"Films processed chunk {chunkNumber + 1} / {chunkCount}.");
-                }
-                _logger.LogInformation($"Films were added for user #{user.Email}.");
-            }
-            _logger.LogInformation("Films Done.");
+            //    const int chunkSize = 50;
+            //    int chunkCount = (int)(Math.Ceiling((double)filmEntities.Count() / (double)chunkSize));
+            //    for (int chunkNumber = 0; chunkNumber < chunkCount; chunkNumber++)
+            //    {
+            //        var items = filmEntities.Skip(chunkNumber * chunkSize).Take(chunkSize).ToList();
+            //        await _dataRepository.AddManyAsync(items);
+            //        _logger.LogInformation($"Films processed chunk {chunkNumber + 1} / {chunkCount}.");
+            //    }
+            //    _logger.LogInformation($"Films were added for user #{user.Email}.");
+            //}
+            //_logger.LogInformation("Films Done.");
 
             #endregion
 
