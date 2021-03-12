@@ -275,15 +275,16 @@ a {
 }
 
 .app-sidebar {
-    $app-sidebar-bg-dark: $main-color1;
     $app-sidebar-bg: $main-color2;
+    $app-sidebar-bg-dark: $main-color1;
+    $app-sidebar-color-light: $color-white;
+    $app-sidebar-color-dark: $color-black;
 
     min-width: 250px;
     max-width: 250px;
     min-height: 100vh;
 
     background: $app-sidebar-bg;
-    color: $color-white;
     transition: all 0.3s;
 
     &.active {
@@ -303,15 +304,15 @@ a {
         padding: .7rem 1rem;
         font-weight: bold;
         text-align: left;
-        color: $color-white;
+        color: $app-sidebar-color-light;
 
         &.router-link-exact-active {
-            color: $color-white;
+            color: $app-sidebar-color-light;
             background-color: $app-sidebar-bg-dark;
         }
         &:hover {
-            color: $app-sidebar-bg-dark;
-            background-color: $color-white;
+            color: $app-sidebar-color-light;
+            background-color: $app-sidebar-bg-dark;
             text-decoration: none;
         }
     }
@@ -809,8 +810,9 @@ a {
         }
 
         .item-card-image {
-            max-height: 20rem;
-            min-height: 10rem;
+            height: auto;
+            max-height: 600px;
+            min-height: 200px;
             background-color: gainsboro;
         }
 
@@ -859,6 +861,10 @@ a {
 
             &:not(:last-child) {
                 margin-bottom: 0.75rem !important;
+            }
+
+            .item-card-overlay-controls {
+                display: block;
             }
         }
     }
@@ -910,8 +916,9 @@ a {
         }
 
         .training-image {
-            max-height: 250px;
-            min-height: 250px;
+            height: auto;
+            max-height: 600px;
+            min-height: 200px;
             background-color: gainsboro;
         }
 
