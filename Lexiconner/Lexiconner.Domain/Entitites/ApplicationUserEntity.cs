@@ -47,8 +47,15 @@ namespace Lexiconner.Domain.Entitites
         public string Name { get; set; }
 
         /// <summary>
-        /// true - create imported data for user
+        /// True - create imported data for user
         /// </summary>
         public bool IsImportInitialData { get; set; }
+
+        /// <summary>
+        /// True - existing items will be replaced with ones from the seed
+        /// </summary>
+        [JsonIgnore]
+        [BsonIgnore]
+        public bool IsUpdateExistingDataOnSeed { get; set; }
     }
 }

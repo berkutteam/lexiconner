@@ -677,8 +677,14 @@ namespace Lexiconner.Seed.Seed
                 var itemsToCreate = new List<WordEntity>();
                 foreach (var item in items)
                 {
-                    if(!userExistingWords.Any(x => x.Word == item.Word))
+                    var exists = userExistingWords.Any(x => x.Word == item.Word);
+                    if (!exists)
                     {
+                        itemsToCreate.Add(item);
+                    }
+                    else if(exists && user.IsUpdateExistingDataOnSeed)
+                    {
+                        await _dataRepository.DeleteAsync<WordEntity>(x => x.Word == item.Word);
                         itemsToCreate.Add(item);
                     }
                 }

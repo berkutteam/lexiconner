@@ -33,7 +33,7 @@ namespace Lexiconner.Api.Attributes
                 _logger.LogError($"Exception handler caught error: {context.Exception}");
 
                 // set generic user friendly error
-                string title = "Something went wrong.";
+                string title = "Error happened.";
                 string message = "Looks like we are experiencing some problems. Please, try again.";
 
                 // display messages from exceptions that inherit ApplicationBaseException as they should contain user friendly messages

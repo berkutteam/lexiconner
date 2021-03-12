@@ -20,7 +20,7 @@ namespace Lexiconner.Application.ApiClients.Dtos
         public long TotalCount { get; set; }
 
         [JsonProperty("value")]
-        public List<ImageSearchResponseItemDto> Value { get; set; }
+        public IEnumerable<ImageSearchResponseItemDto> Value { get; set; }
 
         public class ImageSearchResponseItemDto
         {

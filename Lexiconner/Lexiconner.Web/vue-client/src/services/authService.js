@@ -67,8 +67,6 @@ class AuthService {
     }
 
     init(authConfig) {
-        console.log(1, new Oidc.WebStorageStateStore({ store: window.localStorage }));
-
         let self = this;
         this.config = authConfig;
         this.userManager = new Oidc.UserManager({

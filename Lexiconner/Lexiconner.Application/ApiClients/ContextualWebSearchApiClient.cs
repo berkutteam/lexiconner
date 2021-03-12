@@ -97,9 +97,7 @@ namespace Lexiconner.Application.ApiClients
             string url = $"https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/Search/ImageSearchAPI?autoCorrect={autoCorrect}&pageNumber={pageNumber}&pageSize={pageSize}&q={query}&safeSearch={safeSearch}";
             url = Uri.EscapeUriString(url);
 
-            var request = new HttpRequestMessage(new HttpMethod("GET"), url)
-            {
-            };
+            using var request = new HttpRequestMessage(new HttpMethod("GET"), url);
             request.Headers.Add("X-RapidAPI-Key", _settings.ContextualWebSearch.ApplicationKey);
 
             var response = await _httpClient.SendAsync(request);
@@ -109,25 +107,6 @@ namespace Lexiconner.Application.ApiClients
 
             var responseContent = await response.Content.ReadAsStringAsync();
             var responseDto = JsonConvert.DeserializeObject<ImageSearchResponseDto>(responseContent);
-
-            // test images available
-            var validImages = new ConcurrentBag<ImageSearchResponseItemDto>();
-            var workerBlock = new ActionBlock<ImageSearchResponseItemDto>(
-                async (image) =>
-                {
-                    if (await this.TestImageAvailable(image))
-                    {
-                        validImages.Add(image);
-                    }
-                },
-                new ExecutionDataflowBlockOptions()
-                {
-                    MaxDegreeOfParallelism = 10,
-                }
-            );
-            await Task.WhenAll(responseDto.Value.Select(x => workerBlock.SendAsync(x)));
-            workerBlock.Complete();
-            await workerBlock.Completion;
 
             return responseDto;
         }
@@ -179,20 +158,6 @@ namespace Lexiconner.Application.ApiClients
                 string message = $"Contextual Web Search API returned error response: {responseContent}";
                 _logger.LogError(message);
                 throw new ApiErrorException(message);
-            }
-        }
-
-        private async Task<bool> TestImageAvailable(ImageSearchResponseItemDto image)
-        {
-            try
-            {
-                var request = new HttpRequestMessage(new HttpMethod("GET"), image.Url);
-                var response = await _httpClientForTests.SendAsync(request);
-                return response.IsSuccessStatusCode;
-            }
-            catch (Exception)
-            {
-                return false;
             }
         }
     }

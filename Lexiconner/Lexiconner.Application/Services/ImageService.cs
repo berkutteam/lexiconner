@@ -5,10 +5,12 @@ using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.Persistence.Cache;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using static Lexiconner.Application.ApiClients.Dtos.GoogleTranslateResponseDto;
 using static Lexiconner.Application.ApiClients.Dtos.ImageSearchResponseDto;
 
@@ -16,8 +18,16 @@ namespace Lexiconner.Application.Services
 {
     public interface IImageService
     {
-        Task<List<ImageSearchResponseItemDto>> FindImagesAsync(string sourceLanguageCode, string imageQuery, int limit = 10);
+        /// <summary>
+        /// Searches images over the internet
+        /// </summary>
+        Task<IEnumerable<ImageSearchResponseItemDto>> FindImagesAsync(string sourceLanguageCode, string imageQuery, int limit = 10, bool returnOnlyAvailable = true);
+        
+        /// <summary>
+        /// Returns imagesthat can be consumed by the app according to some conditions
+        /// </summary>
         IEnumerable<ImageSearchResponseItemDto> GetSuitableImages(IEnumerable<ImageSearchResponseItemDto> imageResult);
+
         Task<IEnumerable<ImageSearchResponseItemDto>> ExcludeUnavailableImagesAsync(IEnumerable<ImageSearchResponseItemDto> imageResult);
     }
 
@@ -44,7 +54,7 @@ namespace Lexiconner.Application.Services
             _contextualWebSearchApiClient = contextualWebSearchApiClient;
         }
 
-        public async Task<List<ImageSearchResponseItemDto>> FindImagesAsync(string sourceLanguageCode, string imageQuery, int limit = 10)
+        public async Task<IEnumerable<ImageSearchResponseItemDto>> FindImagesAsync(string sourceLanguageCode, string imageQuery, int limit = 10, bool returnOnlyAvailable = true)
         {
             imageQuery = imageQuery.ToLowerInvariant();
 
@@ -52,7 +62,7 @@ namespace Lexiconner.Application.Services
             // https://cloud.google.com/translate/docs/languages
             string targetLanguageCode = "en";
             string imageQueryEn = null;
-            List<ImageSearchResponseItemDto> result = new List<ImageSearchResponseItemDto>();
+            var result = new List<ImageSearchResponseItemDto>();
 
             try
             {
@@ -193,6 +203,12 @@ namespace Lexiconner.Application.Services
                         // call api
                         _logger.LogInformation($"Calling Contextual Web Search API for '{imageQuery}' -> '{query}'...");
                         imageSearchResult = await _contextualWebSearchApiClient.ImageSearchAsync(query, pageNumber, pageSize, isAutoCorrect, isSafeSearch);
+
+                        // filter out unavailable images (there are a lot of them usually)
+                        if(returnOnlyAvailable)
+                        {
+                            imageSearchResult.Value = await ExcludeUnavailableImagesAsync(imageSearchResult.Value);
+                        }
                         
                         // cache response
                         _logger.LogInformation($"Caching Contextual Web Search API response for '{imageQuery}'-> '{query}'...");
@@ -264,11 +280,15 @@ namespace Lexiconner.Application.Services
         public IEnumerable<ImageSearchResponseItemDto> GetSuitableImages(IEnumerable<ImageSearchResponseItemDto> imageResult)
         {
             const int preferredImageWidth = 600;
-            const int maxImageWidth = 1000;
+            const int maxImageWidth = 1400;
             const int preferredImageHeight = 400;
-            const int maxImageHeight = 600;
+            const int maxImageHeight = 800;
 
             // try to find suitable image
+            if(imageResult == null)
+            {
+                return new List<ImageSearchResponseItemDto>();
+            }
             IEnumerable<ImageSearchResponseItemDto> images = null;
             images = imageResult.Where(x => int.Parse(x.Width) <= preferredImageWidth && int.Parse(x.Height) <= preferredImageHeight);
             images = images.Any() ? images : imageResult.Where(x => int.Parse(x.Width) <= maxImageWidth && int.Parse(x.Height) <= maxImageHeight);
@@ -276,35 +296,50 @@ namespace Lexiconner.Application.Services
             return images;
         }
 
-        public async Task<IEnumerable<ImageSearchResponseItemDto>> ExcludeUnavailableImagesAsync(IEnumerable<ImageSearchResponseItemDto> imageResult)
+        public async Task<IEnumerable<ImageSearchResponseItemDto>> ExcludeUnavailableImagesAsync(IEnumerable<ImageSearchResponseItemDto> imageResults)
         {
-            var httpClient = _httpClientFactory.CreateClient();
+            using var httpClient = _httpClientFactory.CreateClient();
 
-            var availableImages = (await Task.WhenAll(imageResult.Select(async (image) =>
-            {
-                var requestMessage = new HttpRequestMessage()
+            var validImages = new ConcurrentBag<ImageSearchResponseItemDto>();
+            var actionBlock = new ActionBlock<ImageSearchResponseItemDto>(
+                async (image) =>
                 {
-                    RequestUri = new Uri(image.Url),
-                    Method = HttpMethod.Get,
-                };
+                    try
+                    {
+                        var requestMessage = new HttpRequestMessage()
+                        {
+                            RequestUri = new Uri(image.Url),
+                            Method = HttpMethod.Get,
+                        };
 
-                // pretend a normal web browser
-                requestMessage.Headers.Add("User-Agent", "Mozilla/5.0");
+                        // pretend a normal web browser
+                        requestMessage.Headers.Add("User-Agent", "Mozilla/5.0");
 
-                var response = await httpClient.SendAsync(requestMessage);
-                string content = await response.Content.ReadAsStringAsync();
+                        var response = await httpClient.SendAsync(requestMessage);
+                        string content = await response.Content.ReadAsStringAsync();
 
-                if (!response.IsSuccessStatusCode)
+                        if (response.IsSuccessStatusCode)
+                        {
+                            validImages.Add(image);
+                        }
+
+                        // TODO: try to read response or figure out it's an image
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        // ignore
+                    }
+                },
+                new ExecutionDataflowBlockOptions()
                 {
-                    return null;
+                    MaxDegreeOfParallelism = 10,
                 }
+            );
+            await Task.WhenAll(imageResults.Select(x => actionBlock.SendAsync(x)));
+            actionBlock.Complete();
+            await actionBlock.Completion;
 
-                // TODO: try to read response or figure out it's an image
-
-                return image;
-            }))).Where(x => x != null);
-
-            return availableImages;
+            return validImages.ToList();
         }
     }
 }

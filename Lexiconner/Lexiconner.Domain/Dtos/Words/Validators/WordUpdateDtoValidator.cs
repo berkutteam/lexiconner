@@ -13,7 +13,7 @@ namespace Lexiconner.Domain.Dtos.Words.Validators
             RuleFor(x => x.Word).NotEmpty().MaximumLength(50);
             RuleFor(x => x.Meaning).NotEmpty().MaximumLength(200);
             RuleFor(x => x.WordLanguageCode).NotEmpty();
-            RuleFor(x => x.MeaningLanguageCode).NotEmpty();
+            //RuleFor(x => x.MeaningLanguageCode).NotEmpty(); // TODO
         }
     }
 }

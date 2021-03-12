@@ -377,7 +377,8 @@ namespace Lexiconner.IdentityServer4.Config
                             Issuer = null,
                         },
                     },
-                    IsImportInitialData = true
+                    IsImportInitialData = true,
+                    IsUpdateExistingDataOnSeed = true,
                 },
                 new ApplicationUserEntity
                 {
@@ -410,7 +411,8 @@ namespace Lexiconner.IdentityServer4.Config
                             Issuer = null,
                         },
                     },
-                    IsImportInitialData = true
+                    IsImportInitialData = true,
+                    IsUpdateExistingDataOnSeed = true,
                 },
                 new ApplicationUserEntity
                 {
@@ -445,7 +447,8 @@ namespace Lexiconner.IdentityServer4.Config
                             Issuer = null,
                         },
                     },
-                    IsImportInitialData = true
+                    IsImportInitialData = true,
+                    IsUpdateExistingDataOnSeed = true,
                 },
                 new ApplicationUserEntity
                 {
@@ -480,7 +483,8 @@ namespace Lexiconner.IdentityServer4.Config
                             Issuer = null,
                         },
                     },
-                    IsImportInitialData = true
+                    IsImportInitialData = true,
+                    IsUpdateExistingDataOnSeed = true,
                 },
             };
         }

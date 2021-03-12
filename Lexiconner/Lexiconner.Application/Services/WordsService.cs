@@ -131,25 +131,21 @@ namespace Lexiconner.Application.Services
             // set image
             if (entity.Word.Length > 3)
             {
-                var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: entity.WordLanguageCode, entity.Word);
-
-                if (imagesResult.Any())
+                var imagesResults = await _imageService.FindImagesAsync(sourceLanguageCode: entity.WordLanguageCode, entity.Word);
+                imagesResults = _imageService.GetSuitableImages(imagesResults);
+                var image = imagesResults.FirstOrDefault();
+                if (image != null)
                 {
-                    // try to find suitable image
-                    var image = _imageService.GetSuitableImages(imagesResult).FirstOrDefault();
-                    if (image != null)
+                    entity.Images.Add(new WordImageEntity
                     {
-                        entity.Images.Add(new WordImageEntity
-                        {
-                            Url = image.Url,
-                            Height = int.Parse(image.Height),
-                            Width = int.Parse(image.Width),
-                            Thumbnail = image.Thumbnail,
-                            ThumbnailHeight = int.Parse(image.ThumbnailHeight),
-                            ThumbnailWidth = int.Parse(image.ThumbnailWidth),
-                            Base64Encoding = image.Base64Encoding,
-                        });
-                    }
+                        Url = image.Url,
+                        Height = int.Parse(image.Height),
+                        Width = int.Parse(image.Width),
+                        Thumbnail = image.Thumbnail,
+                        ThumbnailHeight = int.Parse(image.ThumbnailHeight),
+                        ThumbnailWidth = int.Parse(image.ThumbnailWidth),
+                        Base64Encoding = image.Base64Encoding,
+                    });
                 }
             }
 
@@ -174,25 +170,21 @@ namespace Lexiconner.Application.Services
             {
                 if (entity.Word.Length > 3)
                 {
-                    var imagesResult = await _imageService.FindImagesAsync(sourceLanguageCode: entity.WordLanguageCode, entity.Word);
-
-                    if (imagesResult.Any())
+                    var imagesResults = await _imageService.FindImagesAsync(sourceLanguageCode: entity.WordLanguageCode, entity.Word);
+                    imagesResults = _imageService.GetSuitableImages(imagesResults);
+                    var image = imagesResults.FirstOrDefault();
+                    if (image != null)
                     {
-                        // try to find suitable image
-                        var image = _imageService.GetSuitableImages(imagesResult).FirstOrDefault();
-                        if (image != null)
+                        entity.Images.Add(new WordImageEntity
                         {
-                            entity.Images.Add(new WordImageEntity
-                            {
-                                Url = image.Url,
-                                Height = int.Parse(image.Height),
-                                Width = int.Parse(image.Width),
-                                Thumbnail = image.Thumbnail,
-                                ThumbnailHeight = int.Parse(image.ThumbnailHeight),
-                                ThumbnailWidth = int.Parse(image.ThumbnailWidth),
-                                Base64Encoding = image.Base64Encoding,
-                            });
-                        }
+                            Url = image.Url,
+                            Height = int.Parse(image.Height),
+                            Width = int.Parse(image.Width),
+                            Thumbnail = image.Thumbnail,
+                            ThumbnailHeight = int.Parse(image.ThumbnailHeight),
+                            ThumbnailWidth = int.Parse(image.ThumbnailWidth),
+                            Base64Encoding = image.Base64Encoding,
+                        });
                     }
                 }
             }
@@ -219,18 +211,19 @@ namespace Lexiconner.Application.Services
                 throw new NotFoundException();
             }
 
-            var imagesResult = await _imageService.FindImagesAsync(entity.WordLanguageCode, entity.Word, limit: 100);
-            imagesResult = _imageService.GetSuitableImages(imagesResult).Take(10).ToList();
+            var imagesResults = await _imageService.FindImagesAsync(entity.WordLanguageCode, entity.Word, limit: 100);
+            imagesResults = _imageService.GetSuitableImages(imagesResults);
+            imagesResults = imagesResults.Take(10).ToList();
 
             var result = new PaginationResponseDto<WordImageDto>()
             {
-                Items = imagesResult.Select(x => _mapper.Map<WordImageDto>(x)),
+                Items = imagesResults.Select(x => _mapper.Map<WordImageDto>(x)),
                 Pagination = new PaginationInfoDto()
                 {
                     Offset = 0,
                     Limit = 10,
-                    ReturnedCount = imagesResult.Count,
-                    TotalCount = imagesResult.Count,
+                    ReturnedCount = imagesResults.Count(),
+                    TotalCount = imagesResults.Count(),
                 },
             };
 
@@ -251,7 +244,7 @@ namespace Lexiconner.Application.Services
             }
 
             // set width/height for images added by URL
-            foreach (var image in dto.Images.Where(x => x.IsAddedByUrl))
+            foreach (var image in dto.Images.Where(x => x != null && x.IsAddedByUrl))
             {
                 var httpClent = _httpClientFactory.CreateClient();
                 using (var stream = await httpClent.GetStreamAsync(image.Url))
