@@ -57,24 +57,25 @@
                                 v-bind:key="item.word.id"
                                 v-bind:class="{'mt-2': index !== 0}"
                             >
-                                <div class="col-md-6 d-flex align-items-center">
-                                    <div class="w-100">
+                                <div class="col-md-12">
+                                    <div class="w-100 mb-1">
                                         <span class="badge badge-secondary mr-1">{{ index + 1 }}.</span>
                                         <span>{{ item.word.word }}</span>
                                     </div>
-                                </div>
-                                <div class="col-md-6 d-flex align-items-center">
+
                                     <!-- Render select for answer for each word -->
                                     <div class="w-100">
                                         <multiselect 
                                             v-model="privateState.wordSelectedOptions[index]" 
                                             v-bind:class="{
+                                                'multiselect--disableSelectLabel': true,
                                                 'multiselect--fixSmallWidthOptions': true,
                                                 'multiselect--correctAnswer': privateState.isShowAnswers && checkItemAnswerCorrect(item.word.id) === true,
                                                 'multiselect--wrongAnswer': privateState.isShowAnswers && checkItemAnswerCorrect(item.word.id) === false,
                                             }"
                                             v-bind:placeholder="'Select meaning'"
                                             v-bind:selectLabel="''" 
+                                            v-bind:showLabels="false" 
                                             v-bind:label="'value'"
                                             v-bind:track-by="'randomId'" 
                                             v-bind:options="leftOptions" 

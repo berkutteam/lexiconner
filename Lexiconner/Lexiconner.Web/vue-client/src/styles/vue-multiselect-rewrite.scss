@@ -1,5 +1,62 @@
 @import './variables';
 
+$multiselect-color: $main-color-light;
+
+// general rewrite for all multiselect
+.multiselect {
+    // placeholder
+    .multiselect__tags {
+        .multiselect__placeholder {
+            font-size: 0.9rem;
+            line-height: 1rem;
+        }
+    }
+
+    // selected text
+    .multiselect__single {
+        font-size: 0.9rem;
+        line-height: 1rem;
+    }
+
+    // options
+    .multiselect__content-wrapper {
+        .multiselect__content {
+            .multiselect__element {
+                .multiselect__option {
+                    outline: none;
+                    font-size: 0.8rem;
+                    line-height: 1rem;
+
+                    &.multiselect__option--highlight {
+                        background: $multiselect-color;
+                        color: $main-color-black;
+
+                        &::after {
+                            display: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.multiselect--disableSelectLabel {
+    .multiselect__content-wrapper {
+        .multiselect__content {
+            .multiselect__element {
+                .multiselect__option {
+                    &.multiselect__option--highlight {
+                        &::after {
+                            display: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 .multiselect--fixSmallWidthOptions {
     // Break spacs for options when small width
     .multiselect__option {
