@@ -47,12 +47,22 @@
 
                             <!-- Pronunciation audio -->
                             <div class="trainig-word-pronunciation-audio d-flex flex-row justify-content-center align-items-start mt-2">
-                                <i v-if="!privateState.isPronunciationAudioPlaying" v-on:click="onWordPronunciationAudioClick()" class="fas fa-volume-off pronunciation-audio-icon"></i>
-                                <i v-else class="fas fa-volume-up pronunciation-audio-icon"></i>
+                                <i 
+                                    v-if="currentWordPronunciationAudio && !privateState.isPronunciationAudioPlaying" 
+                                    v-on:click="onWordPronunciationAudioClick()" 
+                                    class="fas fa-volume-off pronunciation-audio-icon"
+                                    v-bind:class="{'disabled': !currentWordPronunciationAudio}"
+                                ></i>
+                                <i 
+                                    v-if="currentWordPronunciationAudio && privateState.isPronunciationAudioPlaying" 
+                                    class="fas fa-volume-up pronunciation-audio-icon"
+                                ></i>
+
+                                <i v-if="!currentWordPronunciationAudio" class="fas fa-volume-mute pronunciation-audio-icon disabled"></i>
 
                                 <audio ref="pronunciationAudioEl" v-if="currentWordPronunciationAudio" controls class="hidden">
-                                    <source v-bind:src="currentWordPronunciationAudio.audioMp3Url" type="audio/mpeg">
-                                    <source v-bind:src="currentWordPronunciationAudio.audioOggUrl" type="audio/ogg">
+                                    <source v-if="currentWordPronunciationAudio.audioMp3Url" v-bind:src="currentWordPronunciationAudio.audioMp3Url" type="audio/mpeg">
+                                    <source v-if="currentWordPronunciationAudio.audioOggUrl" v-bind:src="currentWordPronunciationAudio.audioOggUrl" type="audio/ogg">
                                     Your browser does not support the audio element.
                                 </audio>
                             </div>
@@ -214,7 +224,11 @@ export default {
         ...mapState({
             sharedState: state => state,
             trainingListenWords: state => state.trainingListenWords,
-            currentWordPronunciationAudio: state => state.wordPronunciationAudio,
+            currentWordPronunciationAudio: (state) => {
+                return state.wordPronunciationAudio && 
+                       (state.wordPronunciationAudio.audioMp3Url ||
+                        state.wordPronunciationAudio.audioOggUrl) ? state.wordPronunciationAudio : null;
+            },
         }),
     },
     created: async function() {
@@ -288,14 +302,24 @@ export default {
                 word: this.currentItem.word.word
             }).then(() => {
                 // hack to ensure audio element is rendered before playing
-                setTimeout(() => {
-                    this.privateState.isPronunciationAudioPlaying = true;
-                    this.$refs.pronunciationAudioEl.play();
-
+                if(this.currentWordPronunciationAudio != null && this.$refs.pronunciationAudioEl) {
                     setTimeout(() => {
-                        this.privateState.isPronunciationAudioPlaying = false;
-                    }, 1200);
-                }, 500);
+                        this.privateState.isPronunciationAudioPlaying = true;
+                        this.$refs.pronunciationAudioEl.play();
+
+                        setTimeout(() => {
+                            this.privateState.isPronunciationAudioPlaying = false;
+                        }, 1200);
+                    }, 500);
+                } else {
+                    this.$notify({
+                        group: 'app',
+                        type: 'info',
+                        title: `Sorry, but we can't find pronunciation.`,
+                        text: '',
+                        duration: 5000,
+                    });
+                }
             });
         },
         onCurrentWordEnteredChange: function(e) {
@@ -402,7 +426,7 @@ export default {
             this.$store.dispatch(storeTypes.WORD_TRAINING_MARK_AS_TRAINED, {
                 wordId: wordId,
             }).then(() => {
-                 this.$notify({
+                this.$notify({
                     group: 'app',
                     type: 'success',
                     title: `Word marked as trained.`,
