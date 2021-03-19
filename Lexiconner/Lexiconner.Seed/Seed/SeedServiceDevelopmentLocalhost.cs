@@ -647,7 +647,12 @@ namespace Lexiconner.Seed.Seed
                     WordLanguageCode = sourceLanguageCode,
                     MeaningLanguageCode = null, // TODO
                     Tags = x.Tags,
-                    Images = new List<WordImageEntity>(),
+                    Images = x.ImageUrls.Select(imageUrl => new WordImageEntity()
+                    {
+                        IsAddedByUrl = true,
+                        Url = imageUrl,
+                        // set other fields later
+                    }).ToList(),
                 };
             }).ToList();
 
@@ -703,6 +708,29 @@ namespace Lexiconner.Seed.Seed
             {
                 try
                 {
+                    // handle with images added by URLs
+                    if(entity.Images.Any(x => x.IsAddedByUrl))
+                    {
+                        entity.Images = (await Task.WhenAll(entity.Images.Select(async image =>
+                        {
+                            if (!image.IsAddedByUrl)
+                            {
+                                return image;
+                            }
+                            var imageInfo = await _imageService.GetImageInfoByUrlAsync(image.Url);
+                            if (imageInfo == null)
+                            {
+                                return null;
+                            }
+
+                            image.Width = imageInfo.Width;
+                            image.Height = imageInfo.Height;
+                            return image;
+                        }))).Where(x => x != null).ToList();
+                        continue;
+                    }
+
+                    // search for images
                     IEnumerable<ImageSearchResponseItemDto> imagesResults = null;
                     var cacheKey = new Tuple<string, string>(entity.WordLanguageCode, entity.Word);
                     if (ImagesCache.ContainsKey(cacheKey))

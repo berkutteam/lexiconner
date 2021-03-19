@@ -10,6 +10,7 @@ namespace Lexiconner.Domain.Models
         public WordImportModel()
         {
             ExampleTexts = new List<string>();
+            ImageUrls = new List<string>();
             Tags = new List<string>();
         }
 
@@ -18,6 +19,7 @@ namespace Lexiconner.Domain.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public List<string> ExampleTexts { get; set; }
+        public List<string> ImageUrls { get; set; }
         public List<string> Tags { get; set; }
     }
 }

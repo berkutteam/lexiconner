@@ -727,18 +727,37 @@ I have never known her to betray a confidence (= tell other people something tha
 
 ***
 Farmland
+Land that is used for farming
+The prosperous farmlands of Picardy
+Dai’s family had been working on the farmlands around Rhydoldog for generations.
+The United States loses over 4 000 acres of farmland every day.
+https://images.glaciermedia.ca/polopoly_fs/1.23288937.1525290783!/fileImage/httpImage/image.jpg_gen/derivatives/original_size/farmland.jpg
 ---
 
 ***
-
+Resignation
+The act of giving up your job or position; the occasion when you do this
+CEO leaves coworkers mystified following surprise resignation.
+There were calls for her resignation from the board of directors.
+The defeat led to his resignation as team manager.
+https://cdn.corporatefinanceinstitute.com/assets/letter-of-resignation-1024x664.jpg
 ---
 
 ***
-
+Knock off
+(informal) To stop doing something, especially work
+Do you want to knock off early today?
+What time do you knock off work?
+Let's knock off for lunch.
+https://image.shutterstock.com/image-vector/cartoon-character-business-women-go-260nw-399586102.jpg
 ---
 
 ***
-
+Take on
+To decide to do something; to agree to be responsible for something/somebody
+I can't take on any extra work.
+We're not taking on any new clients at present.
+https://www.betterhealthworx.com/images/never-take-on-more-than-you-can-handle.jpg
 ---
 
 ***
@@ -765,14 +784,29 @@ Farmland
 
 ***
 Calm
+Not excited, nervous or upset
+It is important to keep calm in an emergency.
+He always stays calm under pressure.
+Try to remain calm.
+https://assets.entrepreneur.com/content/3x2/2000/20150824181921-meditate-yoga-relax-calm-zen.jpeg
 ---
 
 ***
 Relaxed
+Calm and not anxious or worried
+He appeared relaxed and confident before the match.
+She had a very relaxed manner.
+She looked completely relaxed, as if she didn't have a worry in the world.
+https://www.rogerkallen.com/wp-content/uploads/2017/06/relax-4.jpg
 ---
 
 ***
 Happy
+Feeling or showing pleasure; pleased
+He always seemed happy enough.
+I've never felt so happy.
+Money won't make you happy.
+https://cached.imagescaler.hbpl.co.uk/resize/scaleHeight/815/cached.offlinehbpl.hbpl.co.uk/news/OMC/happybaby-20161017044332188.jpg
 ---
 
 ***
@@ -969,6 +1003,9 @@ Serious
 Get cold feet
 Have a sudden loss of confidence
 She had agreed to make a speech, but at the last minute she got cold feet.
+He was going to ask her but he got cold feet and said nothing.
+
+https://www.thepodiatrygroup.com.au/wp-content/uploads/2016/05/Cold-Feet.jpg
 ---
 
 ***
@@ -976,12 +1013,14 @@ Be head over heels
 Be completely and utterly in love with someone
 It's obvious that they're head over heels in love with each other.
 I have been head over heels about my girlfriend since the day I met her.
+https://mrsnaze.files.wordpress.com/2016/12/girl-head-over-heels-in-love.png?w=900
 ---
 
 ***
 Lend a hand
 Help someone
 I've got so much to do. Do you think you can lend a hand?
+https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0FJAWTnawX0matAhA8hCRI4QJ0FSNARl7s9wvEwTylDNfuLeH4fyD8aZgBv_VqOAwJSI&usqp=CAU
 ---
 
 ***
@@ -990,12 +1029,14 @@ Hear information or news via gossip or rumor
 I heard on the grapevine that Marina got the job.
 But she said she heard on the grapevine the best way to get funding was to hire a specialist company to do the work.
 I had heard through the grapevine that he was a pretty serious poker player, but we hadn't crossed paths in a long time.
+https://previews.123rf.com/images/blueringmedia/blueringmedia1502/blueringmedia150200533/36779818-an-idiom-showing-a-girl-and-a-grapevine-on-a-white-background.jpg
 ---
 
 ***
 Be a pain in the neck
 Be a nuisance
 The children won't behave today. They are a pain in the neck.
+https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcXu162Y96U2JZHhWXPIz0dOEzNJ5hKEE9q8TFswBatn3S0t6oxz_LUC4g5B2k8ScKxQI&usqp=CAU
 ---
 
 ***
@@ -1003,6 +1044,7 @@ Feel under the weather
 Feel unwell, ill
 I was feeling under the weather for a few days, but I'm better now.
 I'm feeling a bit under the weather - I think I'm getting a cold.
+https://friendlystock.com/wp-content/uploads/2018/05/5-man-feeling-under-the-weather-cartoon-clipart.jpg
 ---
 
 ***
@@ -1011,6 +1053,7 @@ To describe exactly what is causing a situation or problem
 You're exactly right about Dad. He's so lazy! You've hit the nail on the head.
 I think Mick hit the nail on the head when he said that what's lacking in this company is a feeling of confidence.
 I think David hit the nail on the head when he said that kids won't want to buy this product.
+https://americancultureconsultants.com/wp-content/uploads/2019/04/hit-nail-on-head.jpg
 ---
 
 ***
@@ -1018,66 +1061,77 @@ Be on the ball
 Be alert, knowledgeable, or competent, to be quick to understand and react to things 
 I slept terribly last night! I'm really not on the ball today.
 I didn't sleep well last night and I'm not really on the ball today.
+http://www.observerbd.com/2015/05/08/1431112160.jpg
 ---
 
 ***
 Be against the clock
 Be under time pressure to get something done
 I'm really working against the clock to submit my essay on time.
+https://st.depositphotos.com/2778793/3811/v/380/depositphotos_38113327-stock-illustration-abstract-businesswoman-running-against-the.jpg
 ---
 
 ***
 Keep an eye on
 Look after or watch carefully
 Aziz told his aunt that he'd keep an eye on her house while she was away.
+https://www.hallaminternet.com/wp-content/uploads/2005/01/keep-an-eye-on-the-competion-featured.jpg
 ---
 
 ***
 Have a heart of gold
 to be kind and good-natured
 Peter always helps his grandma with her bags. He has a heart of gold.
+http://i.kinja-img.com/gawker-media/image/upload/s--JroX8FbH--/c_scale,fl_progressive,q_80,w_800/17p6tj4cs1fd1jpg.jpg
 ---
 
 ***
 Teacher's pet
 Someone who seeks and gets approval from a person in a position of authority
 Sandra is a teacher's pet. She always arrives early and stays late.
+http://ww2.kqed.org/mindshift/wp-content/uploads/sites/23/2015/02/teachers-pet_slide-e5b6b0ba34a365514b5f5ae913a1e1e1d0df22d01-e1424805430496.jpg
 ---
 
 ***
 Over the top
 An overreaction or a lack of restraint
 As usual, Paola's reaction to her team losing was over the top.
+https://stockhead.com.au/wp-content/uploads/2019/03/homer-640x360.jpg
 ---
 
 ***
 Take something with a pinch of salt
 Not completely believe something or someone
 My aunt tells great stories, but we take what she says with a pinch of salt.
+https://elensentier.files.wordpress.com/2019/04/pinch-of-salt.jpg?w=640
 ---
 
 ***
 Pull someone's leg
 Tease or fool someone
 I wouldn't take what Derek said seriously. He was just pulling your leg.
+https://im.rediff.com/getahead/2016/aug/17english-idiom10.jpg
 ---
 
 ***
 Sit on the fence
 Be unwilling to commit or make a decision
 I have no idea who to vote for. I'm sitting on the fence.
+https://friendlystock.com/wp-content/uploads/2018/05/1-old-man-sitting-on-the-fence-cartoon-clipart.jpg
 ---
 
 ***
 Cut corners
 To do something the easiest or shortest wat, at the expense of high standards
 They cut corners to get the project finished, and the quality really suffered.
+https://miro.medium.com/max/4800/0*uOozIUBMt5jKu3am.jpg
 ---
 
 ***
 Face the music
 Confront the consequences of your actions
 I think I'm going to get into trouble for this, but I'm ready to face the music.
+https://cdn.empoweringparents.com/consequences.jpg
 ---
 
 ***

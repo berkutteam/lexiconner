@@ -243,17 +243,25 @@ namespace Lexiconner.Application.Services
                 return _mapper.Map<WordDto>(entity);
             }
 
+            dto.Images = dto.Images.Where(x => x != null).ToList();
+
             // set width/height for images added by URL
-            foreach (var image in dto.Images.Where(x => x != null && x.IsAddedByUrl))
+            dto.Images = (await Task.WhenAll(dto.Images.Select(async image =>
             {
-                var httpClent = _httpClientFactory.CreateClient();
-                using (var stream = await httpClent.GetStreamAsync(image.Url))
+                if(!image.IsAddedByUrl)
                 {
-                    var bitmap = new Bitmap(stream);
-                    image.Width = bitmap.Width;
-                    image.Height = bitmap.Height;
+                    return image;
                 }
-            }
+                var imageInfo = await _imageService.GetImageInfoByUrlAsync(image.Url);
+                if (imageInfo == null)
+                {
+                    return null;
+                }
+
+                image.Width = imageInfo.Width;
+                image.Height = imageInfo.Height;
+                return image;
+            }))).Where(x => x != null).ToList();
 
             entity.Images = _mapper.Map<List<WordImageEntity>>(dto.Images);
 

@@ -94,6 +94,9 @@ namespace Lexiconner.Application.ImportAndExport
             // Example 2
             // ...
             // Example N
+            // Image URL 1
+            // ...
+            // Image URL N
             // --- (3 hyphens)
             // ...
 
@@ -123,12 +126,14 @@ namespace Lexiconner.Application.ImportAndExport
             string currentTitle = null;
             string currentDescription = null;
             List<string> currentExamples = new List<string>();
+            List<string> currentImageUrls = new List<string>();
             var resetCurrentWord = new Action(() =>
             {
                 isWordEntered = false;
                 currentTitle = null;
                 currentDescription = null;
                 currentExamples = new List<string>();
+                currentImageUrls = new List<string>();
             });
             resetCurrentWord();
 
@@ -248,6 +253,7 @@ namespace Lexiconner.Application.ImportAndExport
                                 Title = currentTitle,
                                 Description = currentDescription,
                                 ExampleTexts = currentExamples,
+                                ImageUrls = currentImageUrls,
                                 Tags = new List<string>(),
                             });
                         }
@@ -258,19 +264,30 @@ namespace Lexiconner.Application.ImportAndExport
                     // word fields
                     else if (isWordEntered)
                     {
+                        // word
                         if (String.IsNullOrEmpty(currentTitle))
                         {
                             currentTitle = line;
                             continue;
                         }
+                        // meaning
                         else if (String.IsNullOrEmpty(currentDescription))
                         {
                             currentDescription = line;
                             continue;
                         }
-
-                        currentExamples.Add(line);
-                        continue;
+                        // image URL
+                        else if(Uri.IsWellFormedUriString(line, UriKind.Absolute))
+                        {
+                            currentImageUrls.Add(line);
+                            continue;
+                        }
+                        // example
+                        else
+                        {
+                            currentExamples.Add(line);
+                            continue;
+                        }
                     }
                 }
             }

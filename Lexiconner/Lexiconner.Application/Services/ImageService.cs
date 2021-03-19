@@ -2,11 +2,13 @@
 using Lexiconner.Application.ApiClients.Dtos;
 using Lexiconner.Application.Exceptions;
 using Lexiconner.Domain.Entitites.Cache;
+using Lexiconner.Domain.Models;
 using Lexiconner.Persistence.Cache;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -29,6 +31,7 @@ namespace Lexiconner.Application.Services
         IEnumerable<ImageSearchResponseItemDto> GetSuitableImages(IEnumerable<ImageSearchResponseItemDto> imageResult);
 
         Task<IEnumerable<ImageSearchResponseItemDto>> ExcludeUnavailableImagesAsync(IEnumerable<ImageSearchResponseItemDto> imageResult);
+        Task<GeneralImageModel> GetImageInfoByUrlAsync(string imageUrl);
     }
 
     public class ImageService : IImageService
@@ -340,6 +343,35 @@ namespace Lexiconner.Application.Services
             await actionBlock.Completion;
 
             return validImages.ToList();
+        }
+
+        public async Task<GeneralImageModel> GetImageInfoByUrlAsync(string imageUrl)
+        {
+            if(!Uri.IsWellFormedUriString(imageUrl, UriKind.Absolute))
+            {
+                return null;
+            }
+
+            try
+            {
+                var httpClent = _httpClientFactory.CreateClient();
+                using (var stream = await httpClent.GetStreamAsync(imageUrl))
+                {
+                    var bitmap = new Bitmap(stream);
+
+                    return new GeneralImageModel()
+                    {
+                        Url = imageUrl,
+                        Width = bitmap.Width,
+                        Height = bitmap.Height,
+                    };
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, $"Can't get image info for URL: {imageUrl}");
+                return null;
+            }
         }
     }
 }
