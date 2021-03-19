@@ -149,6 +149,9 @@ a {
 
 //#endregion
 
+.hidden {
+    display: none;
+}
 
 .disabled, .block-disabled {
     opacity: 0.5;
@@ -1020,7 +1023,7 @@ a {
 
         .pronunciation-audio-icon {
             color: $color;
-            font-size: 2rem;
+            font-size: 3rem;
             cursor: pointer;
 
                &:hover {
@@ -1055,7 +1058,7 @@ a {
     }
 
     .trainig-word-input {
-        
+
     }
 
     @media(max-width: 768px) {
