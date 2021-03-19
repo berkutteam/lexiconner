@@ -177,29 +177,57 @@ namespace Lexiconner.Api.Controllers.V2
 
         #endregion
 
-        #region Build word
+        #region Build words
 
-        [HttpGet("buildword")]
-        [ProducesResponseType(typeof(BaseApiResponseDto<BuildWordTrainingDto>), (int)HttpStatusCode.OK)]
+        [HttpGet("buildwords")]
+        [ProducesResponseType(typeof(BaseApiResponseDto<BuildWordsTrainingDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> BuildWordTrainingStart([FromQuery] string collectionId, [FromQuery] int limit)
+        public async Task<IActionResult> BuildWordsTrainingStart([FromQuery] string collectionId, [FromQuery] int limit)
         {
-            var result = await _wordTrainingsService.GetTrainingItemsForBuildWordAsync(GetUserId(), collectionId, limit);
+            var result = await _wordTrainingsService.GetTrainingItemsForBuildWordsAsync(GetUserId(), collectionId, limit);
             return BaseResponse(result);
         }
 
-        [HttpPost("buildword/save")]
+        [HttpPost("buildwords/save")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> BuildWordTrainingSave([FromBody] BuildWordTrainingResultDto dto)
+        public async Task<IActionResult> BuildWordsTrainingSave([FromBody] BuildWordsTrainingResultDto dto)
         {
-            await _wordTrainingsService.SaveTrainingResultsForBuildWordAsync(GetUserId(), dto);
+            await _wordTrainingsService.SaveTrainingResultsForBuildWordsAsync(GetUserId(), dto);
+            return StatusCodeBaseResponse();
+        }
+
+        #endregion
+
+        #region Listen words
+
+        [HttpGet("listenwords")]
+        [ProducesResponseType(typeof(BaseApiResponseDto<ListenWordsTrainingDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> ListenWordsTrainingStart([FromQuery] string collectionId, [FromQuery] int limit)
+        {
+            var result = await _wordTrainingsService.GetTrainingItemsForListenWordsAsync(GetUserId(), collectionId, limit);
+            return BaseResponse(result);
+        }
+
+        [HttpPost("listenwords/save")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> ListenWordsTrainingSave([FromBody] ListenWordsTrainingResultDto dto)
+        {
+            await _wordTrainingsService.SaveTrainingResultsForListenWordsAsync(GetUserId(), dto);
             return StatusCodeBaseResponse();
         }
 

@@ -93,6 +93,7 @@ namespace Lexiconner.Api
                 return new TMDbClient(config.TheMovieDatabase.ApiKeyV3Auth);    
             });
             services.AddTransient<IReversoContextScraper, ReversoContextScraper>();
+            services.AddTransient<IOxfordLearnersDictionariesScrapper, OxfordLearnersDictionariesScrapper>();
 
             services.AddTransient<IDataCache, DataCacheDataRepository>(sp => {
                 var logger = sp.GetService<ILogger<IDataCache>>();

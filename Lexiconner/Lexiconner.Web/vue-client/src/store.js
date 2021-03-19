@@ -101,6 +101,7 @@ export default new Vuex.Store({
         word: null, // object
 
         wordExamples: null, // object
+        wordPronunciationAudio: null, // object
 
          // paginationResult (store only current page)
         // {items: [], pagination: {}}
@@ -111,7 +112,8 @@ export default new Vuex.Store({
         trainingWordMeaning: null, // object
         trainingMeaningWord: null, // object
         trainingMatchWords: null, // object
-        trainingBuildWord: null, // object
+        trainingBuildWords: null, // object
+        trainingListenWords: null, // object
         
         customCollectionsResult: null, // object
         currentCustomCollection: null, // object
@@ -324,6 +326,10 @@ export default new Vuex.Store({
             let { wordExamples } = payload;
             state.wordExamples = wordExamples;
         },
+        [storeTypes.WORD_PRONUNCIATION_AUDIO_SET](state, payload) {
+            let { wordPronunciationAudio } = payload;
+            state.wordPronunciationAudio = wordPronunciationAudio;
+        },
 
         //#region Words
 
@@ -360,9 +366,13 @@ export default new Vuex.Store({
             let { data } = payload;
             state.trainingMatchWords = data;
         },
-        [storeTypes.WORD_TRAINING_BUILDWORD_START_SET](state, payload) {
+        [storeTypes.WORD_TRAINING_BUILDWORDS_START_SET](state, payload) {
             let { data } = payload;
-            state.trainingBuildWord = data;
+            state.trainingBuildWords = data;
+        },
+        [storeTypes.WORD_TRAINING_LISTENWORDS_START_SET](state, payload) {
+            let { data } = payload;
+            state.trainingListenWords = data;
         },
 
 
@@ -925,6 +935,42 @@ export default new Vuex.Store({
                 throw err;
             });
         },
+        [storeTypes.WORD_PRONUNCIATION_AUDIO_LOAD](context, { languageCode, word }) {
+            let { commit, dispatch, state, getters } = context;
+
+            // don't load already loaded word
+            if (
+                state.wordPronunciationAudio != null &&
+                state.wordPronunciationAudio.languageCode === languageCode &&
+                state.wordPronunciationAudio.word === word
+            ) {
+                return Promise.resolve(state.wordPronunciationAudio);
+            }
+
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORD_PRONUNCIATION_AUDIO_LOAD,
+                loading: true,
+            });
+            return api.webApi().getWordPronunciationAudio({
+                languageCode,
+                word,
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_PRONUNCIATION_AUDIO_LOAD,
+                    loading: false,
+                });
+                commit(storeTypes.WORD_PRONUNCIATION_AUDIO_SET, {
+                    wordPronunciationAudio: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_PRONUNCIATION_AUDIO_LOAD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
 
         //#endregion
 
@@ -1188,48 +1234,95 @@ export default new Vuex.Store({
                 throw err;
             });
         },
-        [storeTypes.WORD_TRAINING_BUILDWORD_START](context, params) {
+        [storeTypes.WORD_TRAINING_BUILDWORDS_START](context, params) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.WORD_TRAINING_BUILDWORD_START,
+                target: storeTypes.WORD_TRAINING_BUILDWORDS_START,
                 loading: true,
             });
-            return api.webApi().buildwordTrainingStart({ ...params }).then(({ data, ok }) => {
+            return api.webApi().buildwordsTrainingStart({ ...params }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.WORD_TRAINING_BUILDWORD_START,
+                    target: storeTypes.WORD_TRAINING_BUILDWORDS_START,
                     loading: false,
                 });
-                commit(storeTypes.WORD_TRAINING_BUILDWORD_START_SET, {
+                commit(storeTypes.WORD_TRAINING_BUILDWORDS_START_SET, {
                     data: data
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.WORD_TRAINING_BUILDWORD_START,
+                    target: storeTypes.WORD_TRAINING_BUILDWORDS_START,
                     loading: false,
                 });
                 throw err;
             });
         },
-        [storeTypes.WORD_TRAINING_BUILDWORD_SAVE](context, { data }) {
+        [storeTypes.WORD_TRAINING_BUILDWORDS_SAVE](context, { data }) {
             let { commit, dispatch, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.WORD_TRAINING_BUILDWORD_SAVE,
+                target: storeTypes.WORD_TRAINING_BUILDWORDS_SAVE,
                 loading: true,
             });
-            return api.webApi().buildwordTrainingSave({ data }).then(({ data, ok }) => {
+            return api.webApi().buildwordsTrainingSave({ data }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.WORD_TRAINING_BUILDWORD_SAVE,
+                    target: storeTypes.WORD_TRAINING_BUILDWORDS_SAVE,
                     loading: false,
                 });
                 // reset
-                commit(storeTypes.WORD_TRAINING_BUILDWORD_START_SET, {
+                commit(storeTypes.WORD_TRAINING_BUILDWORDS_START_SET, {
                     data: null
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.WORD_TRAINING_BUILDWORD_SAVE,
+                    target: storeTypes.WORD_TRAINING_BUILDWORDS_SAVE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.WORD_TRAINING_LISTENWORDS_START](context, params) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORD_TRAINING_LISTENWORDS_START,
+                loading: true,
+            });
+            return api.webApi().listenwordsTrainingStart({ ...params }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_TRAINING_LISTENWORDS_START,
+                    loading: false,
+                });
+                commit(storeTypes.WORD_TRAINING_LISTENWORDS_START_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_TRAINING_LISTENWORDS_START,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.WORD_TRAINING_LISTENWORDS_SAVE](context, { data }) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORD_TRAINING_LISTENWORDS_SAVE,
+                loading: true,
+            });
+            return api.webApi().listenwordsTrainingSave({ data }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_TRAINING_LISTENWORDS_SAVE,
+                    loading: false,
+                });
+                // reset
+                commit(storeTypes.WORD_TRAINING_LISTENWORDS_START_SET, {
+                    data: null
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_TRAINING_LISTENWORDS_SAVE,
                     loading: false,
                 });
                 throw err;

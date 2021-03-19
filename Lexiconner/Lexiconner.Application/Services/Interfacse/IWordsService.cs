@@ -28,6 +28,7 @@ namespace Lexiconner.Application.Services.Interfacse
         Task<PaginationResponseDto<WordImageDto>> FindWordImagesAsync(string userId, string wordId);
         Task<WordDto> UpdateWordImagesAsync(string userId, string wordId, UpdateWordImagesDto dto);
         Task<WordExamplesDto> GetWordExamplesAsync(string languageCode, string word);
+        Task<WordPronunciationAudioDto> GetWordPronunciationAudioAsync(string languageCode, string word);
 
         Task AddToFavouritesAsync(string userId, IEnumerable<string> itemIds);
         Task DeleteFromFavouritesAsync(string userId, IEnumerable<string> itemIds);

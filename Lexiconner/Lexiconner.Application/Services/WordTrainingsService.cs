@@ -629,11 +629,8 @@ namespace Lexiconner.Application.Services
             await _dataRepository.UpdateManyAsync(entities);
         }
 
-        public async Task<BuildWordTrainingDto> GetTrainingItemsForBuildWordAsync(string userId, string collectionId, int limit)
+        public async Task<BuildWordsTrainingDto> GetTrainingItemsForBuildWordsAsync(string userId, string collectionId, int limit)
         {
-            const int meaningsPerWord = 5;
-            var random = new Random();
-
             var predicate = PredicateBuilder.New<WordEntity>(x =>
                 x.UserId == userId &&
                 x.Word != null &&
@@ -644,7 +641,7 @@ namespace Lexiconner.Application.Services
                     (
                         x.TrainingInfo != null &&
                         !x.TrainingInfo.IsTrained &&
-                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.BuildWord && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
+                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.BuildWords && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
                     )
                 )
             );
@@ -657,7 +654,7 @@ namespace Lexiconner.Application.Services
             var entities = await _dataRepository.GetManyAsync<WordEntity>(predicate, 0, limit);
 
 
-            var result = new BuildWordTrainingDto
+            var result = new BuildWordsTrainingDto
             {
                Items = entities.Select(x => new BuildWordTrainingItemDto()
                {
@@ -670,9 +667,9 @@ namespace Lexiconner.Application.Services
             return result;
         }
 
-        public async Task SaveTrainingResultsForBuildWordAsync(string userId, BuildWordTrainingResultDto results)
+        public async Task SaveTrainingResultsForBuildWordsAsync(string userId, BuildWordsTrainingResultDto results)
         {
-            if(results.TrainingType != TrainingType.BuildWord)
+            if(results.TrainingType != TrainingType.BuildWords)
             {
                 throw new BadRequestException("Incorrect training type passed!");
             }
@@ -682,7 +679,7 @@ namespace Lexiconner.Application.Services
                 x => x.UserId == userId && ids.Contains(x.Id)
             )).ToList();
 
-            var infoAttribute = TrainingTypeHelper.GetAttribute(TrainingType.BuildWord);
+            var infoAttribute = TrainingTypeHelper.GetAttribute(TrainingType.BuildWords);
 
             entities = entities.Select(x =>
             {
@@ -691,12 +688,112 @@ namespace Lexiconner.Application.Services
                 x.TrainingInfo = x.TrainingInfo ?? new WordTrainingInfoEntity();
                 x.TrainingInfo.Trainings = x.TrainingInfo.Trainings ?? new List<WordTrainingInfoEntity.WordTrainingProgressItemEntity>();
 
-                var training = x.TrainingInfo.Trainings.FirstOrDefault(y => y.TrainingType == TrainingType.BuildWord);
+                var training = x.TrainingInfo.Trainings.FirstOrDefault(y => y.TrainingType == TrainingType.BuildWords);
                 if (training == null)
                 {
                     training = new WordTrainingInfoEntity.WordTrainingProgressItemEntity()
                     {
-                        TrainingType = TrainingType.BuildWord,
+                        TrainingType = TrainingType.BuildWords,
+                    };
+                    x.TrainingInfo.Trainings.Add(training);
+                }
+
+                if (isCorrect)
+                {
+                    training.Progress = training.Progress + infoAttribute.CorrectAnswerProgressRate;
+                    training.Progress = Math.Min(training.Progress, 1);
+                }
+                else
+                {
+                    training.Progress = training.Progress + infoAttribute.WrongAnswerProgressRate;
+                    training.Progress = Math.Max(training.Progress, 0);
+                }
+                training.Progress = Math.Round(training.Progress, 2);
+
+                training.LastTrainingdAt = DateTimeOffset.UtcNow;
+
+                if (training.Progress < 1)
+                {
+                    training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalTimespan);
+                }
+                else
+                {
+                    training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalForRepeatTimespan);
+                }
+
+                x.RecalculateTotalTrainingProgress();
+
+                return x;
+            }).ToList();
+
+            CustomValidationHelper.Validate(entities);
+            await _dataRepository.UpdateManyAsync(entities);
+        }
+
+        public async Task<ListenWordsTrainingDto> GetTrainingItemsForListenWordsAsync(string userId, string collectionId, int limit)
+        {
+            var predicate = PredicateBuilder.New<WordEntity>(x =>
+                x.UserId == userId &&
+                x.Word != null &&
+                x.Meaning != null &&
+                (
+                    x.TrainingInfo == null ||
+                    !x.TrainingInfo.Trainings.Any() ||
+                    (
+                        x.TrainingInfo != null &&
+                        !x.TrainingInfo.IsTrained &&
+                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.ListenWords && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
+                    )
+                )
+            );
+
+            if (collectionId != null)
+            {
+                predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+
+            var entities = await _dataRepository.GetManyAsync<WordEntity>(predicate, 0, limit);
+
+
+            var result = new ListenWordsTrainingDto
+            {
+                Items = entities.Select(x => new ListenWordsTrainingItemDto()
+                {
+                    Word = _mapper.Map<WordDto>(x),
+                    WordPronunciationAudioUrl = null, // TODO
+                    CorrectAnswer = x.Word.ToLowerInvariant(),
+                }),
+            };
+            return result;
+        }
+
+        public async Task SaveTrainingResultsForListenWordsAsync(string userId, ListenWordsTrainingResultDto results)
+        {
+            if (results.TrainingType != TrainingType.ListenWords)
+            {
+                throw new BadRequestException("Incorrect training type passed!");
+            }
+
+            var ids = results.ItemsResults.Select(x => x.WordId);
+            var entities = (await _dataRepository.GetManyAsync<WordEntity>(
+                x => x.UserId == userId && ids.Contains(x.Id)
+            )).ToList();
+
+            var infoAttribute = TrainingTypeHelper.GetAttribute(TrainingType.ListenWords);
+
+            entities = entities.Select(x =>
+            {
+                bool isCorrect = results.ItemsResults.Any(y => y.WordId == x.Id && y.Answer?.ToLowerInvariant() == x.Word.ToLowerInvariant());
+
+                x.TrainingInfo = x.TrainingInfo ?? new WordTrainingInfoEntity();
+                x.TrainingInfo.Trainings = x.TrainingInfo.Trainings ?? new List<WordTrainingInfoEntity.WordTrainingProgressItemEntity>();
+
+                var training = x.TrainingInfo.Trainings.FirstOrDefault(y => y.TrainingType == TrainingType.ListenWords);
+                if (training == null)
+                {
+                    training = new WordTrainingInfoEntity.WordTrainingProgressItemEntity()
+                    {
+                        TrainingType = TrainingType.ListenWords,
                     };
                     x.TrainingInfo.Trainings.Add(training);
                 }

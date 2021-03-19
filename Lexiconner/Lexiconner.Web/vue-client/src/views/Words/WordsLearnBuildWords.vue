@@ -2,7 +2,7 @@
     <div class="">
         <div class="row">
             <div class="col-12">
-                <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.WORD_TRAINING_BUILDWORD_START]" class="mb-2"></row-loader>
+                <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.WORD_TRAINING_BUILDWORDS_START]" class="mb-2"></row-loader>
 
                 <!-- Listen to keyboard events -->
                 <keyboard-event-listener
@@ -13,7 +13,7 @@
                     <div v-bind:id="`trainingTopAnchor`"></div>
 
                     <h5 class="mb-3 d-flex">
-                        Build word
+                        Build words
 
                         <!-- Tooltip -->
                         <VTooltip class="ml-2">
@@ -202,31 +202,25 @@ export default {
     computed: {
         // local computed go here
         isAllTrained: function() { 
-            return this.trainingBuildWord !== null && this.trainingBuildWord.items.length === 0;
+            return this.trainingBuildWords !== null && this.trainingBuildWords.items.length === 0;
         },
         currentItem: function() { 
-            if(this.trainingBuildWord === null || this.trainingBuildWord.items.length === 0) {
+            if(this.trainingBuildWords === null || this.trainingBuildWords.items.length === 0) {
                 return null;
             }
-            return this.trainingBuildWord.items[this.privateState.currentItemIndex];
+            return this.trainingBuildWords.items[this.privateState.currentItemIndex];
         },
         totalItemsCount: function() { 
-            if(this.trainingBuildWord === null) {
+            if(this.trainingBuildWords === null) {
                 return this.privateState.itemsLimit;
             }
-            return this.trainingBuildWord.items.length;
-        },
-        currentItemAnswerOptionIdOrNotSet: function() {
-            if(this.privateState.itemResults.length === this.privateState.currentItemIndex + 1) {
-                return this.privateState.itemResults[this.privateState.currentItemIndex].optionId;
-            }
-            return null;
+            return this.trainingBuildWords.items.length;
         },
 
         // store state computed go here
         ...mapState({
             sharedState: state => state,
-            trainingBuildWord: state => state.trainingBuildWord,
+            trainingBuildWords: state => state.trainingBuildWords,
         }),
     },
     created: async function() {
@@ -241,7 +235,7 @@ export default {
 
     methods: {
         loadTraining: function() {
-            return this.$store.dispatch(storeTypes.WORD_TRAINING_BUILDWORD_START, {
+            return this.$store.dispatch(storeTypes.WORD_TRAINING_BUILDWORDS_START, {
                 collectionId: this.$store.getters.currentCustomCollectionId,
                 limit: this.privateState.itemsLimit, 
             }).then().catch(err => {
@@ -268,10 +262,10 @@ export default {
             this.$scrollTo(elSelector);
         },
         goToCard: function(index = 0) {
-            if(this.trainingBuildWord === null) {
+            if(this.trainingBuildWords === null) {
                 return;
             }
-            let count = this.trainingBuildWord.items.length;
+            let count = this.trainingBuildWords.items.length;
             
             // last card was shown - save training
             if(index === count) {
@@ -407,9 +401,9 @@ export default {
         },
         saveTraining: function() {
             this.privateState.isTrainingFinished = true;
-            return this.$store.dispatch(storeTypes.WORD_TRAINING_BUILDWORD_SAVE, {
+            return this.$store.dispatch(storeTypes.WORD_TRAINING_BUILDWORDS_SAVE, {
                 data: {
-                    trainingType: this.trainingBuildWord.trainingType,
+                    trainingType: this.trainingBuildWords.trainingType,
                     itemsResults: [
                         ...this.privateState.itemResults,
                     ],

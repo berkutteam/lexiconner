@@ -126,5 +126,17 @@ namespace Lexiconner.Api.Controllers.V2
             var result = await _wordsService.GetWordExamplesAsync(dto.LanguageCode, dto.Word);
             return BaseResponse(result);
         }
+
+        [HttpGet("pronunciation/audio")]
+        [ProducesResponseType(typeof(BaseApiResponseDto<WordPronunciationAudioDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetWordPronunciationAudio([FromQuery] WordPronunciationAudioRequestDto dto)
+        {
+            var result = await _wordsService.GetWordPronunciationAudioAsync(dto.LanguageCode, dto.Word);
+            return BaseResponse(result);
+        }
     }
 }

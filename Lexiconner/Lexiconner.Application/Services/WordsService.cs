@@ -33,6 +33,7 @@ namespace Lexiconner.Application.Services
         private readonly IImageService _imageService;
         private readonly ITwinwordWordDictionaryApiClient _twinwordWordDictionaryApiClient;
         private readonly IReversoContextScraper _reversoContextScraper;
+        private readonly IOxfordLearnersDictionariesScrapper _oxfordLearnersDictionariesScrapper;
         
         public WordsService(
             IMapper mapper,
@@ -40,7 +41,8 @@ namespace Lexiconner.Application.Services
             IHttpClientFactory httpClientFactory,
             IImageService imageService,
             ITwinwordWordDictionaryApiClient twinwordWordDictionaryApiClient,
-            IReversoContextScraper reversoContextScraper
+            IReversoContextScraper reversoContextScraper,
+            IOxfordLearnersDictionariesScrapper oxfordLearnersDictionariesScrapper
         )
         {
             _mapper = mapper;
@@ -49,6 +51,7 @@ namespace Lexiconner.Application.Services
             _imageService = imageService;
             _twinwordWordDictionaryApiClient = twinwordWordDictionaryApiClient;
             _reversoContextScraper = reversoContextScraper;
+            _oxfordLearnersDictionariesScrapper = oxfordLearnersDictionariesScrapper;
         }
 
         #region Words
@@ -285,6 +288,24 @@ namespace Lexiconner.Application.Services
                 {
                     Example = x.SourceLanguageSentence,
                 }),
+            };
+            return result;
+        }
+
+        public async Task<WordPronunciationAudioDto> GetWordPronunciationAudioAsync(string languageCode, string word)
+        {
+            var pronunciationResult = await _oxfordLearnersDictionariesScrapper.GetWordPronunciationAudioAsync(
+                sourceLanguageCode: languageCode,
+                targetLanguageCode: LanguageConfig.GetLanguageByCode("ru").Iso639_1_Code, // any language as we need examples and don't translations actually
+                word: word
+            );
+
+            var result = new WordPronunciationAudioDto()
+            {
+                LanguageCode = languageCode,
+                Word = word,
+                AudioMp3Url = pronunciationResult.Results.FirstOrDefault()?.USAudioMp3Url ?? pronunciationResult.Results.FirstOrDefault()?.UKAudioMp3Url,
+                AudioOggUrl = pronunciationResult.Results.FirstOrDefault()?.USAudioOggUrl ?? pronunciationResult.Results.FirstOrDefault()?.UKAudioOggUrl,
             };
             return result;
         }

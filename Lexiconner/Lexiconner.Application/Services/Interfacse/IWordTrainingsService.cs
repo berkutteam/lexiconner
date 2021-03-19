@@ -23,7 +23,9 @@ namespace Lexiconner.Application.Services.Interfacse
         Task SaveTrainingResultsForMeaningWordAsync(string userId, MeaningWordTrainingResultDto results);
         Task<MatchWordsTrainingDto> GetTrainingItemsForMatchWordsAsync(string userId, string collectionId);
         Task SaveTrainingResultsForMatchWordsAsync(string userId, MatchWordsTrainingResultDto results);
-        Task<BuildWordTrainingDto> GetTrainingItemsForBuildWordAsync(string userId, string collectionId, int limit);
-        Task SaveTrainingResultsForBuildWordAsync(string userId, BuildWordTrainingResultDto results);
+        Task<BuildWordsTrainingDto> GetTrainingItemsForBuildWordsAsync(string userId, string collectionId, int limit);
+        Task SaveTrainingResultsForBuildWordsAsync(string userId, BuildWordsTrainingResultDto results);
+        Task<ListenWordsTrainingDto> GetTrainingItemsForListenWordsAsync(string userId, string collectionId, int limit);
+        Task SaveTrainingResultsForListenWordsAsync(string userId, ListenWordsTrainingResultDto results);
     }
 }

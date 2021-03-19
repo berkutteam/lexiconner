@@ -300,6 +300,9 @@ class API {
             getWordExamples({ languageCode, word }) {
                 return axiosAuthRequest({ url: buildUrl(url, `words/examples`, { languageCode, word }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
+            getWordPronunciationAudio({ languageCode, word }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/pronunciation/audio`, { languageCode, word }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
 
             // trainings
             getTrainingStatistics() {
@@ -335,11 +338,17 @@ class API {
             matchwordsTrainingSave({ data }) {
                 return axiosAuthRequest({ url: buildUrl(url, `words/trainings/matchwords/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
-            buildwordTrainingStart({ collectionId, limit }) {
-                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/buildword`, { collectionId, limit }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            buildwordsTrainingStart({ collectionId, limit }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/buildwords`, { collectionId, limit }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
-            buildwordTrainingSave({ data }) {
-                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/buildword/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            buildwordsTrainingSave({ data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/buildwords/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            listenwordsTrainingStart({ collectionId, limit }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/listenwords`, { collectionId, limit }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            listenwordsTrainingSave({ data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/listenwords/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
 
             // custom collections

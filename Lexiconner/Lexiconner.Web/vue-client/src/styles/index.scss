@@ -1003,7 +1003,8 @@ a {
     }
 }
 
-.words-learn-buildwords-wrapper {
+.words-learn-buildwords-wrapper,
+.words-learn-listenwords-wrapper {
     .training-card {
         width: 80%;
         max-width: 800px;
@@ -1012,6 +1013,20 @@ a {
     .training-image {
         width: 300px;
         margin: 1rem auto 0 auto;
+    }
+
+    .trainig-word-pronunciation-audio {
+        $color: $main-color3;
+
+        .pronunciation-audio-icon {
+            color: $color;
+            font-size: 2rem;
+            cursor: pointer;
+
+               &:hover {
+                color: darken($color, 5%);
+            }
+        }
     }
 
     .trainig-word-part-input {
@@ -1037,6 +1052,10 @@ a {
                 content: 'X';
             }
         }
+    }
+
+    .trainig-word-input {
+        
     }
 
     @media(max-width: 768px) {

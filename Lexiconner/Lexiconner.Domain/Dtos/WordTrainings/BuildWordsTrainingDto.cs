@@ -5,18 +5,19 @@ using Lexiconner.Domain.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
+
 namespace Lexiconner.Domain.Dtos.WordTrainings
 {
-    public class BuildWordTrainingDto
+    public class BuildWordsTrainingDto
     {
-        public BuildWordTrainingDto()
+        public BuildWordsTrainingDto()
         {
             Items = new List<BuildWordTrainingItemDto>();
         }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public TrainingType TrainingType => TrainingType.BuildWord;
-        public string TrainingTypeFormatted => EnumHelper<TrainingType>.GetDisplayValue(TrainingType.BuildWord);
+        public TrainingType TrainingType => TrainingType.BuildWords;
+        public string TrainingTypeFormatted => EnumHelper<TrainingType>.GetDisplayValue(TrainingType.BuildWords);
         public IEnumerable<BuildWordTrainingItemDto> Items { get; set; }
     }
 

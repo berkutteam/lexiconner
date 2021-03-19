@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace Lexiconner.Domain.Dtos.WordTrainings
 {
-    public class BuildWordTrainingResultDto
+    public class BuildWordsTrainingResultDto
     {
+        public BuildWordsTrainingResultDto()
+        {
+            ItemsResults = new List<BuildWordTrainingResultForItemDto>();
+        }
+
         public TrainingType TrainingType { get; set; }
         public List<BuildWordTrainingResultForItemDto> ItemsResults { get; set; }
     }
