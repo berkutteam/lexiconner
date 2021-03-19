@@ -39,9 +39,15 @@
                 </router-link>
             </div>
             <div class="app-card-nav-item">
-                <router-link v-bind:to="{ name: 'words-learn-buildword', params: {}}" class="app-card-nav-link">
+                <router-link v-bind:to="{ name: 'words-learn-buildwords', params: {}}" class="app-card-nav-link">
                     <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-brick-wall-64.png" alt="">
                     <span class="app-card-nav-text">Build word</span>
+                </router-link>
+            </div>
+            <div class="app-card-nav-item">
+                <router-link v-bind:to="{ name: 'words-learn-listenwords', params: {}}" class="app-card-nav-link">
+                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-foreign-language-sound-64.png" alt="">
+                    <span class="app-card-nav-text">Listen word</span>
                 </router-link>
             </div>
         </div>

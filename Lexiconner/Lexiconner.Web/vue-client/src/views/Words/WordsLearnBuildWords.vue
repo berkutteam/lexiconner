@@ -9,7 +9,7 @@
                     v-on:keyup="handleKeyboardEvent"
                 ></keyboard-event-listener>
 
-                <div class="words-tarining-wrapper words-learn-buildword-wrapper">
+                <div class="words-tarining-wrapper words-learn-buildwords-wrapper">
                     <div v-bind:id="`trainingTopAnchor`"></div>
 
                     <h5 class="mb-3 d-flex">
@@ -174,7 +174,7 @@ import PaginationWrapper from '@/components/PaginationWrapper';
 import KeyboardEventListener from '@/components/KeyboardEventListener';
 
 export default {
-    name: 'words-learn-buildword',
+    name: 'words-learn-buildwords',
     components: {
         RowLoader,
         KeyboardEventListener,

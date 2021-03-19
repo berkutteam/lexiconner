@@ -48,14 +48,23 @@ namespace Lexiconner.Domain.Enums
         )]
         MatchWords = 4,
 
-        [Display(Name = "Build word")]
+        [Display(Name = "Build words")]
         [TrainingTypeInfo(
            trainIntervalMs: 24 * 60 * 60 * 1000 /* 24 hours */,
            trainIntervalForRepeatMs: 5 * 24 * 60 * 60 * 1000 /* 5 days */,
            correctAnswerProgressRate: 0.35,
            wrongAnswerProgressRate: -0.75
         )]
-        BuildWord = 5,
+        BuildWords = 5,
+
+        [Display(Name = "Listen words")]
+        [TrainingTypeInfo(
+          trainIntervalMs: 24 * 60 * 60 * 1000 /* 24 hours */,
+          trainIntervalForRepeatMs: 5 * 24 * 60 * 60 * 1000 /* 5 days */,
+          correctAnswerProgressRate: 0.35,
+          wrongAnswerProgressRate: -0.75
+        )]
+        ListenWords = 6,
     }
 
     public static class TrainingTypeHelper

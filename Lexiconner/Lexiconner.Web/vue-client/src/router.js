@@ -15,7 +15,7 @@ import WordsLearnFlashCards from './views/Words/WordsLearnFlashCards.vue';
 import WordsLearnWordMeaning from './views/Words/WordsLearnWordMeaning.vue';
 import WordsLearnMeaningWord from './views/Words/WordsLearnMeaningWord.vue';
 import WordsLearnMatchWords from './views/Words/WordsLearnMatchWords.vue';
-import WordsLearnBuildWord from './views/Words/WordsLearnBuildWord.vue';
+import WordsLearnBuildWords from './views/Words/WordsLearnBuildWords.vue';
 
 import UserFilmsBrowse from './views/UserFilms/UserFilmsBrowse.vue';
 
@@ -214,8 +214,8 @@ export default new Router({
         },
         {
             path: '/words/learn/buildword',
-            name: 'words-learn-buildword',
-            component: WordsLearnBuildWord,
+            name: 'words-learn-buildwords',
+            component: WordsLearnBuildWords,
             props: true,
             meta: { layout: 'default' },
             beforeEnter: async (to, from, next) => {
