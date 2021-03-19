@@ -48,21 +48,19 @@
                             <!-- Pronunciation audio -->
                             <div class="trainig-word-pronunciation-audio d-flex flex-row justify-content-center align-items-start mt-2">
                                 <i 
-                                    v-if="currentWordPronunciationAudio && !privateState.isPronunciationAudioPlaying" 
+                                    v-if="!privateState.isPronunciationAudioPlaying" 
                                     v-on:click="onWordPronunciationAudioClick()" 
                                     class="fas fa-volume-off pronunciation-audio-icon"
-                                    v-bind:class="{'disabled': !currentWordPronunciationAudio}"
+                                    v-bind:class="{}"
                                 ></i>
                                 <i 
-                                    v-if="currentWordPronunciationAudio && privateState.isPronunciationAudioPlaying" 
+                                    v-if="privateState.isPronunciationAudioPlaying" 
                                     class="fas fa-volume-up pronunciation-audio-icon"
                                 ></i>
 
-                                <i v-if="!currentWordPronunciationAudio" class="fas fa-volume-mute pronunciation-audio-icon disabled"></i>
-
-                                <audio ref="pronunciationAudioEl" v-if="currentWordPronunciationAudio" controls class="hidden">
-                                    <source v-if="currentWordPronunciationAudio.audioMp3Url" v-bind:src="currentWordPronunciationAudio.audioMp3Url" type="audio/mpeg">
-                                    <source v-if="currentWordPronunciationAudio.audioOggUrl" v-bind:src="currentWordPronunciationAudio.audioOggUrl" type="audio/ogg">
+                                <audio v-bind:ref="`pronunciationAudioEl_${currentItem.word.id}`" v-if="getCurrentWordPronunciationAudio()" controls class="hidden">
+                                    <source v-if="getCurrentWordPronunciationAudio().audioMp3Url" v-bind:src="getCurrentWordPronunciationAudio().audioMp3Url" type="audio/mpeg">
+                                    <source v-if="getCurrentWordPronunciationAudio().audioOggUrl" v-bind:src="getCurrentWordPronunciationAudio().audioOggUrl" type="audio/ogg">
                                     Your browser does not support the audio element.
                                 </audio>
                             </div>
@@ -224,11 +222,6 @@ export default {
         ...mapState({
             sharedState: state => state,
             trainingListenWords: state => state.trainingListenWords,
-            currentWordPronunciationAudio: (state) => {
-                return state.wordPronunciationAudio && 
-                       (state.wordPronunciationAudio.audioMp3Url ||
-                        state.wordPronunciationAudio.audioOggUrl) ? state.wordPronunciationAudio : null;
-            },
         }),
     },
     created: async function() {
@@ -294,18 +287,33 @@ export default {
             this.privateState.isCurrentItemAnsweredCorrectly = null;
             this.privateState.currentWordEntered = '';
         },
-        onWordPronunciationAudioClick: function() {
-            console.log(`onWordPronunciationAudioClick.`);
+        checkCurrentWordPronunciationAudioExists: function() {
+            return this.sharedState.wordsPronunciationAudio && 
+                   this.sharedState.wordsPronunciationAudio[this.currentItem.word];
+        },
+        getCurrentWordPronunciationAudio: function() {
+            if(!this.currentItem) {
+                return null;
+            }
 
+            let currentWordPronunciationAudio = this.sharedState.wordsPronunciationAudio && 
+                       this.sharedState.wordsPronunciationAudio[this.currentItem.word.word] &&
+                       (this.sharedState.wordsPronunciationAudio[this.currentItem.word.word].audioMp3Url ||
+                        this.sharedState.wordsPronunciationAudio[this.currentItem.word.word].audioOggUrl) ? this.sharedState.wordsPronunciationAudio[this.currentItem.word.word]  : null;
+            
+            return currentWordPronunciationAudio;
+        },
+        onWordPronunciationAudioClick: function() {
             this.loadWordPronunciationAudio({
                 languageCode: this.currentItem.word.wordLanguageCode,
                 word: this.currentItem.word.word
             }).then(() => {
                 // hack to ensure audio element is rendered before playing
-                if(this.currentWordPronunciationAudio != null && this.$refs.pronunciationAudioEl) {
+                const refKey = `pronunciationAudioEl_${this.currentItem.word.id}`;
+                if(this.getCurrentWordPronunciationAudio() != null && this.$refs[refKey]) {
                     setTimeout(() => {
                         this.privateState.isPronunciationAudioPlaying = true;
-                        this.$refs.pronunciationAudioEl.play();
+                        this.$refs[refKey].play();
 
                         setTimeout(() => {
                             this.privateState.isPronunciationAudioPlaying = false;

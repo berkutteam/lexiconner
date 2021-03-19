@@ -101,7 +101,9 @@ export default new Vuex.Store({
         word: null, // object
 
         wordExamples: null, // object
-        wordPronunciationAudio: null, // object
+        wordsPronunciationAudio: {
+            // key: value
+        },
 
          // paginationResult (store only current page)
         // {items: [], pagination: {}}
@@ -328,7 +330,7 @@ export default new Vuex.Store({
         },
         [storeTypes.WORD_PRONUNCIATION_AUDIO_SET](state, payload) {
             let { wordPronunciationAudio } = payload;
-            state.wordPronunciationAudio = wordPronunciationAudio;
+            state.wordsPronunciationAudio[wordPronunciationAudio.word] = wordPronunciationAudio;
         },
 
         //#region Words
@@ -940,11 +942,10 @@ export default new Vuex.Store({
 
             // don't load already loaded word
             if (
-                state.wordPronunciationAudio != null &&
-                state.wordPronunciationAudio.languageCode === languageCode &&
-                state.wordPronunciationAudio.word === word
+                state.wordsPronunciationAudio != null &&
+                state.wordsPronunciationAudio[word]
             ) {
-                return Promise.resolve(state.wordPronunciationAudio);
+                return Promise.resolve(state.wordsPronunciationAudio[word]);
             }
 
             commit(storeTypes.LOADING_SET, {
