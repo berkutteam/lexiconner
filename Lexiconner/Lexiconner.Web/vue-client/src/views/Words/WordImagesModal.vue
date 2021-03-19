@@ -1,5 +1,5 @@
 <template>
-    <div class="my-permissions-wrapper">
+    <div class="">
        <!-- Word create/edit -->
         <modal 
             name="word-images" 

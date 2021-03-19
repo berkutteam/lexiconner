@@ -2,6 +2,7 @@
 using Lexiconner.Api.DTOs.WordsTrainings;
 using Lexiconner.Application.Services.Interfacse;
 using Lexiconner.Domain.Dtos;
+using Lexiconner.Domain.Dtos.WordTrainings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -148,7 +149,7 @@ namespace Lexiconner.Api.Controllers.V2
 
         #endregion
 
-        #region Meaning-Word
+        #region Match words
 
         [HttpGet("matchwords")]
         [ProducesResponseType(typeof(BaseApiResponseDto<MatchWordsTrainingDto>), (int)HttpStatusCode.OK)]
@@ -171,6 +172,34 @@ namespace Lexiconner.Api.Controllers.V2
         public async Task<IActionResult> MatchWordsTrainingSave([FromBody] MatchWordsTrainingResultDto dto)
         {
             await _wordTrainingsService.SaveTrainingResultsForMatchWordsAsync(GetUserId(), dto);
+            return StatusCodeBaseResponse();
+        }
+
+        #endregion
+
+        #region Build word
+
+        [HttpGet("buildword")]
+        [ProducesResponseType(typeof(BaseApiResponseDto<BuildWordTrainingDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> BuildWordTrainingStart([FromQuery] string collectionId, [FromQuery] int limit)
+        {
+            var result = await _wordTrainingsService.GetTrainingItemsForBuildWordAsync(GetUserId(), collectionId, limit);
+            return BaseResponse(result);
+        }
+
+        [HttpPost("buildword/save")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> BuildWordTrainingSave([FromBody] BuildWordTrainingResultDto dto)
+        {
+            await _wordTrainingsService.SaveTrainingResultsForBuildWordAsync(GetUserId(), dto);
             return StatusCodeBaseResponse();
         }
 

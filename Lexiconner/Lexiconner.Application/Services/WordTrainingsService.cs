@@ -9,6 +9,7 @@ using Lexiconner.Application.Services.Interfacse;
 using Lexiconner.Application.Validation;
 using Lexiconner.Domain.Dtos;
 using Lexiconner.Domain.Dtos.Words;
+using Lexiconner.Domain.Dtos.WordTrainings;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Enums;
 using Lexiconner.Domain.Helpers;
@@ -140,6 +141,11 @@ namespace Lexiconner.Application.Services
 
         public async Task SaveTrainingResultsForFlashCardsAsync(string userId, FlashCardsTrainingResultDto results)
         {
+            if (results.TrainingType != TrainingType.FlashCards)
+            {
+                throw new BadRequestException("Incorrect training type passed!");
+            }
+
             var ids = results.ItemsResults.Select(x => x.ItemId);
             var entities = (await _dataRepository.GetManyAsync<WordEntity>(
                 x => x.UserId == userId && ids.Contains(x.Id)
@@ -192,6 +198,7 @@ namespace Lexiconner.Application.Services
                 return x;
             }).ToList();
 
+            CustomValidationHelper.Validate(entities);
             await _dataRepository.UpdateManyAsync(entities);
         }
 
@@ -276,6 +283,11 @@ namespace Lexiconner.Application.Services
 
         public async Task SaveTrainingResultsForWordMeaningAsync(string userId, WordMeaningTrainingResultDto results)
         {
+            if (results.TrainingType != TrainingType.WordMeaning)
+            {
+                throw new BadRequestException("Incorrect training type passed!");
+            }
+
             var ids = results.ItemsResults.Select(x => x.ItemId);
             var entities = (await _dataRepository.GetManyAsync<WordEntity>(
                 x => x.UserId == userId && ids.Contains(x.Id)
@@ -328,6 +340,7 @@ namespace Lexiconner.Application.Services
                 return x;
             }).ToList();
 
+            CustomValidationHelper.Validate(entities);
             await _dataRepository.UpdateManyAsync(entities);
         }
 
@@ -412,6 +425,11 @@ namespace Lexiconner.Application.Services
 
         public async Task SaveTrainingResultsForMeaningWordAsync(string userId, MeaningWordTrainingResultDto results)
         {
+            if (results.TrainingType != TrainingType.MeaningWord)
+            {
+                throw new BadRequestException("Incorrect training type passed!");
+            }
+
             var ids = results.ItemsResults.Select(x => x.ItemId);
             var entities = (await _dataRepository.GetManyAsync<WordEntity>(
                 x => x.UserId == userId && ids.Contains(x.Id)
@@ -464,6 +482,7 @@ namespace Lexiconner.Application.Services
                 return x;
             }).ToList();
 
+            CustomValidationHelper.Validate(entities);
             await _dataRepository.UpdateManyAsync(entities);
         }
 
@@ -549,6 +568,11 @@ namespace Lexiconner.Application.Services
 
         public async Task SaveTrainingResultsForMatchWordsAsync(string userId, MatchWordsTrainingResultDto results)
         {
+            if (results.TrainingType != TrainingType.MatchWords)
+            {
+                throw new BadRequestException("Incorrect training type passed!");
+            }
+
             var ids = results.ItemsResults.Select(x => x.ItemId);
             var entities = (await _dataRepository.GetManyAsync<WordEntity>(
                 x => x.UserId == userId && ids.Contains(x.Id)
@@ -601,6 +625,111 @@ namespace Lexiconner.Application.Services
                 return x;
             }).ToList();
 
+            CustomValidationHelper.Validate(entities);
+            await _dataRepository.UpdateManyAsync(entities);
+        }
+
+        public async Task<BuildWordTrainingDto> GetTrainingItemsForBuildWordAsync(string userId, string collectionId, int limit)
+        {
+            const int meaningsPerWord = 5;
+            var random = new Random();
+
+            var predicate = PredicateBuilder.New<WordEntity>(x =>
+                x.UserId == userId &&
+                x.Word != null &&
+                x.Meaning != null &&
+                (
+                    x.TrainingInfo == null ||
+                    !x.TrainingInfo.Trainings.Any() ||
+                    (
+                        x.TrainingInfo != null &&
+                        !x.TrainingInfo.IsTrained &&
+                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.BuildWord && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
+                    )
+                )
+            );
+
+            if (collectionId != null)
+            {
+                predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+
+            var entities = await _dataRepository.GetManyAsync<WordEntity>(predicate, 0, limit);
+
+
+            var result = new BuildWordTrainingDto
+            {
+               Items = entities.Select(x => new BuildWordTrainingItemDto()
+               {
+                   Word = _mapper.Map<WordDto>(x),
+                   WordParts = x.Word.ToLowerInvariant().ToCharArray().Shuffle(),
+                   CorrectWordParts = x.Word.ToLowerInvariant().ToCharArray(),
+                   CorrectAnswer = x.Word.ToLowerInvariant(),
+               }),
+            };
+            return result;
+        }
+
+        public async Task SaveTrainingResultsForBuildWordAsync(string userId, BuildWordTrainingResultDto results)
+        {
+            if(results.TrainingType != TrainingType.BuildWord)
+            {
+                throw new BadRequestException("Incorrect training type passed!");
+            }
+
+            var ids = results.ItemsResults.Select(x => x.WordId);
+            var entities = (await _dataRepository.GetManyAsync<WordEntity>(
+                x => x.UserId == userId && ids.Contains(x.Id)
+            )).ToList();
+
+            var infoAttribute = TrainingTypeHelper.GetAttribute(TrainingType.BuildWord);
+
+            entities = entities.Select(x =>
+            {
+                bool isCorrect = results.ItemsResults.Any(y => y.WordId == x.Id && y.Answer?.ToLowerInvariant() == x.Word.ToLowerInvariant());
+
+                x.TrainingInfo = x.TrainingInfo ?? new WordTrainingInfoEntity();
+                x.TrainingInfo.Trainings = x.TrainingInfo.Trainings ?? new List<WordTrainingInfoEntity.WordTrainingProgressItemEntity>();
+
+                var training = x.TrainingInfo.Trainings.FirstOrDefault(y => y.TrainingType == TrainingType.BuildWord);
+                if (training == null)
+                {
+                    training = new WordTrainingInfoEntity.WordTrainingProgressItemEntity()
+                    {
+                        TrainingType = TrainingType.BuildWord,
+                    };
+                    x.TrainingInfo.Trainings.Add(training);
+                }
+
+                if (isCorrect)
+                {
+                    training.Progress = training.Progress + infoAttribute.CorrectAnswerProgressRate;
+                    training.Progress = Math.Min(training.Progress, 1);
+                }
+                else
+                {
+                    training.Progress = training.Progress + infoAttribute.WrongAnswerProgressRate;
+                    training.Progress = Math.Max(training.Progress, 0);
+                }
+                training.Progress = Math.Round(training.Progress, 2);
+
+                training.LastTrainingdAt = DateTimeOffset.UtcNow;
+
+                if (training.Progress < 1)
+                {
+                    training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalTimespan);
+                }
+                else
+                {
+                    training.NextTrainingdAt = DateTimeOffset.UtcNow.Add(infoAttribute.TrainIntervalForRepeatTimespan);
+                }
+
+                x.RecalculateTotalTrainingProgress();
+
+                return x;
+            }).ToList();
+
+            CustomValidationHelper.Validate(entities);
             await _dataRepository.UpdateManyAsync(entities);
         }
 

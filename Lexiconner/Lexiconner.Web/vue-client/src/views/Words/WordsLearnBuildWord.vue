@@ -2,18 +2,18 @@
     <div class="">
         <div class="row">
             <div class="col-12">
-                <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.WORD_TRAINING_MEANINGWORD_START]" class="mb-2"></row-loader>
+                <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.WORD_TRAINING_BUILDWORD_START]" class="mb-2"></row-loader>
 
                 <!-- Listen to keyboard events -->
                 <keyboard-event-listener
                     v-on:keyup="handleKeyboardEvent"
                 ></keyboard-event-listener>
 
-                <div class="words-learn-meaningword-wrapper">
+                <div class="words-tarining-wrapper words-learn-buildword-wrapper">
                     <div v-bind:id="`trainingTopAnchor`"></div>
 
                     <h5 class="mb-3 d-flex">
-                        Meaning-Word
+                        Build word
 
                         <!-- Tooltip -->
                         <VTooltip class="ml-2">
@@ -36,36 +36,50 @@
                     <div v-if="!isAllTrained && currentItem" class="card bg-light training-card">
                         <!-- Image -->
                         <img v-if="currentItem.word.images && currentItem.word.images.length !== 0" class="card-img-top training-image" v-bind:src="currentItem.word.images[0].url" v-bind:alt="currentItem.word.word">
-                        <img v-else class="card-img-top" src="/img/empty-image.png">
-                        
+                        <img v-else class="card-img-top training-image" src="/img/empty-image.png">
+
                         <div class="card-body">
                             <div class="d-flex w-100 justify-content-between align-items-center mb-2">
-                                <h6 class="card-title training-title mb-0">
+                                <h6 class="card-title training-title mb-0 text-center">
                                     <span>{{currentItem.word.meaning}}</span>
                                 </h6>
                             </div>
 
-                            <!-- Options -->
-                            <div class="d-flex flex-column justify-content-center align-items-start">
-                                <div
-                                    v-for="(possibleOption, index) in currentItem.possibleOptions"
-                                    v-bind:key="possibleOption.randomId"
-                                    class="w-100"
+                            <!-- Word parts inputs -->
+                            <div class="d-flex flex-row flex-wrap justify-content-center align-items-start mt-4">
+                                <div 
+                                    v-for="(wordPart, partIndex) in currentItem.wordParts"
+                                    v-bind:key="partIndex"
+                                    v-bind:class="{'ml-1': partIndex !== 0}"
+                                    class="mt-1"
+                                >
+                                    <input 
+                                        v-model="privateState.currentWordEnteredParts[partIndex]" 
+                                        type="email" 
+                                        class="form-control trainig-word-part-input"
+                                        v-bind:class="{'trainig-word-part-input--current': false}"
+                                        disabled
+                                    >
+                                </div>
+                            </div>
+
+                            <!-- Word parts -->
+                            <div class="d-flex flex-row flex-wrap justify-content-center align-items-start mt-4">
+                                <div 
+                                    v-for="(wordPart, partIndex) in currentItem.wordParts"
+                                    v-bind:key="partIndex"
+                                    v-bind:class="{'ml-1': partIndex !== 0}"
+                                    class="mt-1"
                                 >
                                     <button 
-                                        v-on:click="onPossibleMeaningClick(possibleOption)"
+                                        v-on:click="onWordPartClick(partIndex)"
+                                        class="btn btn-outline-secondary trainig-word-part"
+                                        v-bind:class="{'btn-outline-danger': privateState.currentWordInvalidPartsIndexes.includes(partIndex)}"
+                                        v-bind:disabled="privateState.currentWordEnteredPartsIndexes.includes(partIndex)"
                                         type="button" 
-                                        class="btn btn-block mb-1 text-left"
-                                        v-bind:class="{
-                                            'btn-outline-secondary': !privateState.isCurrentItemAnswered || (privateState.isCurrentItemAnswered && !possibleOption.isCorrect && currentItemAnswerOptionIdOrNotSet !== possibleOption.randomId),
-                                            'btn-success': privateState.isCurrentItemAnswered && possibleOption.isCorrect,
-                                            'btn-danger': privateState.isCurrentItemAnswered && !possibleOption.isCorrect && currentItemAnswerOptionIdOrNotSet === possibleOption.randomId,
-                                        }"
-                                        v-bind:disabled="privateState.isCurrentItemAnswered"
                                     >
-                                        <span class="training-option-text">
-                                            {{ index + 1 }}. {{possibleOption.value}}
-                                        </span>
+                                        <span v-if="wordPart && wordPart.trim()">{{wordPart}}</span>
+                                        <span v-else class="trainig-word-part-placeholder"></span>
                                     </button>
                                 </div>
                             </div>
@@ -160,7 +174,7 @@ import PaginationWrapper from '@/components/PaginationWrapper';
 import KeyboardEventListener from '@/components/KeyboardEventListener';
 
 export default {
-    name: 'words-learn-meaningword',
+    name: 'words-learn-buildword',
     components: {
         RowLoader,
         KeyboardEventListener,
@@ -169,8 +183,12 @@ export default {
         return {
             privateState: {
                 storeTypes: storeTypes,
-                itemsLimit: 10,
+                itemsLimit: 5,
                 currentItemIndex: 0,
+                currentWordEnteredParts: [],
+                currentWordEnteredPartsIndexes: [],
+                currentWordInvalidPartsIndexes: [],
+
                 isShowCurrentItemDetails: false,
                 itemResults: [],
                 isTrainingFinished: false,
@@ -184,19 +202,19 @@ export default {
     computed: {
         // local computed go here
         isAllTrained: function() { 
-            return this.trainingMeaningWord !== null && this.trainingMeaningWord.items.length === 0;
+            return this.trainingBuildWord !== null && this.trainingBuildWord.items.length === 0;
         },
         currentItem: function() { 
-            if(this.trainingMeaningWord === null || this.trainingMeaningWord.items.length === 0) {
+            if(this.trainingBuildWord === null || this.trainingBuildWord.items.length === 0) {
                 return null;
             }
-            return this.trainingMeaningWord.items[this.privateState.currentItemIndex];
+            return this.trainingBuildWord.items[this.privateState.currentItemIndex];
         },
         totalItemsCount: function() { 
-            if(this.trainingMeaningWord === null) {
+            if(this.trainingBuildWord === null) {
                 return this.privateState.itemsLimit;
             }
-            return this.trainingMeaningWord.items.length;
+            return this.trainingBuildWord.items.length;
         },
         currentItemAnswerOptionIdOrNotSet: function() {
             if(this.privateState.itemResults.length === this.privateState.currentItemIndex + 1) {
@@ -208,7 +226,7 @@ export default {
         // store state computed go here
         ...mapState({
             sharedState: state => state,
-            trainingMeaningWord: state => state.trainingMeaningWord,
+            trainingBuildWord: state => state.trainingBuildWord,
         }),
     },
     created: async function() {
@@ -223,7 +241,7 @@ export default {
 
     methods: {
         loadTraining: function() {
-            return this.$store.dispatch(storeTypes.WORD_TRAINING_MEANINGWORD_START, {
+            return this.$store.dispatch(storeTypes.WORD_TRAINING_BUILDWORD_START, {
                 collectionId: this.$store.getters.currentCustomCollectionId,
                 limit: this.privateState.itemsLimit, 
             }).then().catch(err => {
@@ -239,6 +257,9 @@ export default {
             this.privateState.isTrainingFinished = false;
             this.privateState.summary.correctItemsCount = 0;
             this.privateState.summary.incorrectItemsCount = 0;
+             this.privateState.currentWordEnteredParts = [];
+            this.privateState.currentWordEnteredPartsIndexes = [];
+            this.privateState.currentWordInvalidPartsIndexes = [];
 
             this.loadTraining();
         },
@@ -247,10 +268,10 @@ export default {
             this.$scrollTo(elSelector);
         },
         goToCard: function(index = 0) {
-            if(this.trainingMeaningWord === null) {
+            if(this.trainingBuildWord === null) {
                 return;
             }
-            let count = this.trainingMeaningWord.items.length;
+            let count = this.trainingBuildWord.items.length;
             
             // last card was shown - save training
             if(index === count) {
@@ -263,15 +284,48 @@ export default {
             this.privateState.currentItemIndex = index;
             this.privateState.isShowCurrentItemDetails = false;
             this.privateState.isCurrentItemAnswered = false;
+            this.privateState.currentWordEnteredParts = [];
+            this.privateState.currentWordEnteredPartsIndexes = [];
+            this.privateState.currentWordInvalidPartsIndexes = [];
         },
-        onPossibleMeaningClick: function(possibleOption) {
-            this.handleItemResponse({
-                itemId: this.currentItem.word.id, 
-                isCorrect: possibleOption.isCorrect === true,
-                optionId: possibleOption.randomId,
-            });
-            this.privateState.isShowCurrentItemDetails = true;
-            this.privateState.isCurrentItemAnswered = true;
+        onWordPartClick: function(wordPartIndex) {
+            const enteredWordPart = this.currentItem.wordParts[wordPartIndex];
+            this.onWordPartEntered(enteredWordPart);
+        },
+        onWordPartEntered: function(enteredWordPart) {
+            console.log(`onWordPartEntered.`, enteredWordPart);
+            const enteredWordPartIndex = this.currentItem.wordParts
+                .map((x, i) => ({part: x, index: i}))
+                .find(x => x.part === enteredWordPart && !this.privateState.currentWordEnteredPartsIndexes.includes(x.index))
+                .index;
+            if(enteredWordPartIndex === -1) {
+                return;
+            }
+            const nextPartIndex = this.privateState.currentWordEnteredPartsIndexes.length;
+            const isCorrectPart = enteredWordPart ===  this.currentItem.correctWordParts[nextPartIndex];
+
+            if(isCorrectPart) {
+                this.privateState.currentWordInvalidPartsIndexes = [];
+                this.privateState.currentWordEnteredParts.push(enteredWordPart);
+                this.privateState.currentWordEnteredPartsIndexes.push(enteredWordPartIndex);
+            } else {
+                this.privateState.currentWordInvalidPartsIndexes.push(enteredWordPartIndex);
+            }
+
+            const isAllPartsEntered = this.privateState.currentWordEnteredParts.length === this.currentItem.wordParts.length;
+
+            if(isAllPartsEntered) {
+                const resultAnswerWord = this.privateState.currentWordEnteredParts.join('');
+                const isCorrect = resultAnswerWord == this.currentItem.correctAnswer;
+
+                this.handleItemResponse({
+                    wordId: this.currentItem.word.id, 
+                    isCorrect: isCorrect,
+                    answer: resultAnswerWord,
+                });
+                this.privateState.isShowCurrentItemDetails = true;
+                this.privateState.isCurrentItemAnswered = true;
+            }
         },
         onPrevClick: function() {
             if(this.privateState.currentItemIndex === 0) {
@@ -281,11 +335,21 @@ export default {
         },
         onShowClick: function() {
             this.handleItemResponse({
-                itemId: this.currentItem.word.id, 
-                isCorrect: false
+                wordId: this.currentItem.word.id, 
+                isCorrect: false,
+                answer: null,
             });
             this.privateState.isShowCurrentItemDetails = true;
             this.privateState.isCurrentItemAnswered = true;
+
+            // mark all parts as invalid
+            this.privateState.currentWordInvalidPartsIndexes = this.currentItem.wordParts.map((x, i) => i);
+
+            // enter all the parts
+            this.currentItem.correctWordParts.forEach((part, index) => {
+                this.privateState.currentWordEnteredParts.push(part);
+                this.privateState.currentWordEnteredPartsIndexes.push(index);
+            });
         },
         onNextClick: function() {
             if(!this.privateState.isCurrentItemAnswered) {
@@ -297,15 +361,15 @@ export default {
         onWordMarkAsLearnedClick: function(wordId) {
             this.markWordAsLearned(wordId);
         },
-        handleItemResponse: function({itemId, isCorrect, optionId}) {
-            let isHandled = this.privateState.itemResults.some(x => x.itemId === itemId);
+        handleItemResponse: function({wordId, isCorrect, answer}) {
+            let isHandled = this.privateState.itemResults.some(x => x.wordId === wordId);
             if(isHandled) {
                 return;
             }
             this.privateState.itemResults.push({
-                itemId, 
+                wordId, 
                 isCorrect,
-                optionId,
+                answer,
             });
             this.privateState.summary = {
                 correctItemsCount: isCorrect ? this.privateState.summary.correctItemsCount + 1 : this.privateState.summary.correctItemsCount,
@@ -313,9 +377,11 @@ export default {
             }
         },
         handleKeyboardEvent: function(e) {
+            // http://gcctech.org/csc/javascript/javascript_keycodes.htm
             switch(e.which) {
-                // Space
-                case 32:
+                // Space (conflicts with entering space character)
+                // case 32:
+                case 13:
                     if(this.privateState.isCurrentItemAnswered) {
                         this.onNextClick();
                     } else {
@@ -330,13 +396,20 @@ export default {
                 case 39:
                     this.onNextClick();
                     break;
+
+                // any other characters (suppose it's word parts)
+                default:
+                    if(this.currentItem.correctWordParts.includes(e.key)) {
+                        this.onWordPartEntered(e.key);
+                    }
+                    break;
             }
         },
         saveTraining: function() {
             this.privateState.isTrainingFinished = true;
-            return this.$store.dispatch(storeTypes.WORD_TRAINING_MEANINGWORD_SAVE, {
+            return this.$store.dispatch(storeTypes.WORD_TRAINING_BUILDWORD_SAVE, {
                 data: {
-                    trainingType: this.trainingMeaningWord.trainingType,
+                    trainingType: this.trainingBuildWord.trainingType,
                     itemsResults: [
                         ...this.privateState.itemResults,
                     ],
@@ -361,11 +434,10 @@ export default {
                 });
 
                 // treat as answered correctly and go to the next
-                const possibleOption = this.currentItem.possibleOptions.find(x => x.isCorrect);
                 this.handleItemResponse({
-                    itemId: wordId, 
+                    wordId: wordId, 
                     isCorrect: true,
-                    optionId: possibleOption.randomId,
+                    answer: this.currentItem.correctAnswer,
                 });
                 this.privateState.isCurrentItemAnswered = true;
                 this.onNextClick();

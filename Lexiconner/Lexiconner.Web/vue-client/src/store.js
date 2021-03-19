@@ -111,6 +111,7 @@ export default new Vuex.Store({
         trainingWordMeaning: null, // object
         trainingMeaningWord: null, // object
         trainingMatchWords: null, // object
+        trainingBuildWord: null, // object
         
         customCollectionsResult: null, // object
         currentCustomCollection: null, // object
@@ -358,6 +359,10 @@ export default new Vuex.Store({
         [storeTypes.WORD_TRAINING_MATCHWORDS_START_SET](state, payload) {
             let { data } = payload;
             state.trainingMatchWords = data;
+        },
+        [storeTypes.WORD_TRAINING_BUILDWORD_START_SET](state, payload) {
+            let { data } = payload;
+            state.trainingBuildWord = data;
         },
 
 
@@ -1178,6 +1183,53 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.WORD_TRAINING_MATCHWORDS_SAVE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.WORD_TRAINING_BUILDWORD_START](context, params) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORD_TRAINING_BUILDWORD_START,
+                loading: true,
+            });
+            return api.webApi().buildwordTrainingStart({ ...params }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_TRAINING_BUILDWORD_START,
+                    loading: false,
+                });
+                commit(storeTypes.WORD_TRAINING_BUILDWORD_START_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_TRAINING_BUILDWORD_START,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.WORD_TRAINING_BUILDWORD_SAVE](context, { data }) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORD_TRAINING_BUILDWORD_SAVE,
+                loading: true,
+            });
+            return api.webApi().buildwordTrainingSave({ data }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_TRAINING_BUILDWORD_SAVE,
+                    loading: false,
+                });
+                // reset
+                commit(storeTypes.WORD_TRAINING_BUILDWORD_START_SET, {
+                    data: null
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_TRAINING_BUILDWORD_SAVE,
                     loading: false,
                 });
                 throw err;

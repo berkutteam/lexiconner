@@ -2,6 +2,7 @@
 using Lexiconner.Api.DTOs.WordsTrainings;
 using Lexiconner.Domain.Dtos;
 using Lexiconner.Domain.Dtos.Words;
+using Lexiconner.Domain.Dtos.WordTrainings;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,5 +23,7 @@ namespace Lexiconner.Application.Services.Interfacse
         Task SaveTrainingResultsForMeaningWordAsync(string userId, MeaningWordTrainingResultDto results);
         Task<MatchWordsTrainingDto> GetTrainingItemsForMatchWordsAsync(string userId, string collectionId);
         Task SaveTrainingResultsForMatchWordsAsync(string userId, MatchWordsTrainingResultDto results);
+        Task<BuildWordTrainingDto> GetTrainingItemsForBuildWordAsync(string userId, string collectionId, int limit);
+        Task SaveTrainingResultsForBuildWordAsync(string userId, BuildWordTrainingResultDto results);
     }
 }

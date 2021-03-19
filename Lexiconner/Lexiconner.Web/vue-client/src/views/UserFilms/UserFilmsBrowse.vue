@@ -1,5 +1,5 @@
 <template>
-    <div class="my-permissions-wrapper">
+    <div class="">
         <div class="row">
             <div class="col-12">
                 <div v-if="userFilms" class="user-films-wrapper">

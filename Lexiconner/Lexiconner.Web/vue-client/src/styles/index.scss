@@ -907,6 +907,7 @@ a {
     }
 }
 
+.words-tarining-wrapper,
 .words-learn-flash-cards-wrapper,
 .words-learn-wordmeaning-wrapper,
 .words-learn-meaningword-wrapper,
@@ -990,6 +991,50 @@ a {
                     justify-content: center;
                     align-items: center;
                 }
+            }
+        }
+    }
+
+    @media(max-width: 768px) {
+        .training-card {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+}
+
+.words-learn-buildword-wrapper {
+    .training-card {
+        width: 80%;
+        max-width: 800px;
+    }
+
+    .training-image {
+        width: 300px;
+        margin: 1rem auto 0 auto;
+    }
+
+    .trainig-word-part-input {
+        width: 40px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+
+        &.trainig-word-part-input--current {
+            box-shadow: 0px 0px 0px 1px $color-blue;
+        }
+    }
+
+    .trainig-word-part {
+        width: 40px;
+        text-align: center;
+
+        // Holds place of 1 symbol
+        .trainig-word-part-placeholder {
+            visibility: hidden;
+            
+            &::before {
+                content: 'X';
             }
         }
     }

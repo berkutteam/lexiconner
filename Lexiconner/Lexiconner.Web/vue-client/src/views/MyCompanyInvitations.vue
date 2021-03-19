@@ -1,5 +1,5 @@
 <template>
-    <div class="my-permissions-wrapper">
+    <div class="">
         <div class="row">
             <div class="col-12">
                 <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.MY_COMPANY_INVITATIONS_LOAD]"></row-loader>

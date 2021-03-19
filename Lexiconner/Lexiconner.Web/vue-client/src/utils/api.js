@@ -335,6 +335,12 @@ class API {
             matchwordsTrainingSave({ data }) {
                 return axiosAuthRequest({ url: buildUrl(url, `words/trainings/matchwords/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
+            buildwordTrainingStart({ collectionId, limit }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/buildword`, { collectionId, limit }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            buildwordTrainingSave({ data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words/trainings/buildword/save`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
 
             // custom collections
             getCustomCollections() {

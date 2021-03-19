@@ -1,5 +1,5 @@
 <template>
-    <div class="my-permissions-wrapper">
+    <div class="">
         <div class="row">
             <div class="col-12">
                 <div>
@@ -146,7 +146,7 @@
                                         </button>
                                     </div>
                                     <!-- <div class="card-header"></div> -->
-                                    <img v-if="item.images && item.images.length !== 0" class="card-img-top item-card-image" v-bind:src="item.images[0].url" v-bind:alt="item.word">
+                                    <img v-if="item.images && item.images.length !== 0 && item.images[0]" class="card-img-top item-card-image" v-bind:src="item.images[0].url" v-bind:alt="item.word">
                                     <img v-else class="card-img-top item-card-image" src="/img/empty-image.png">
                                     <div class="card-body">
                                         <div class="d-flex w-100 justify-content-between align-items-center mb-1">
@@ -346,6 +346,7 @@ export default {
             this.markWordAsNotTrained(wordId);
         },
         onFindNextWordImagesClick: function(wordId) {
+            // console.log(1, this.words.filter(item => item.images && item.images.length !== 0 && !item.images[0]))
             this.$refs.wordImagesModal.show({ wordId });
         },
         deleteWord: function(wordId) {

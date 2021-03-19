@@ -1,5 +1,5 @@
 <template>
-    <div class="my-permissions-wrapper">
+    <div class="">
         <div class="row">
             <div class="col-12">
                 <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.AUTH_MY_PERMISSIONS_LOAD]"></row-loader>

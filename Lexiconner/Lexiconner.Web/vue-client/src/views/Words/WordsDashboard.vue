@@ -8,29 +8,40 @@
 
         <!-- Nav -->
         <div class="app-card-nav mb-2">
-            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-browse-folder-96.png)`}">
+            <div class="app-card-nav-item">
                 <router-link v-bind:to="{ name: 'words-browse', params: {}}" class="app-card-nav-link">
-                    <span>Browse items</span>
+                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-browse-folder-2-64.png" alt="">
+                    <span class="app-card-nav-text">Browse items</span>
                 </router-link>
             </div>
-            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-red-card-80.png)`}">
+            <div class="app-card-nav-item">
                 <router-link v-bind:to="{ name: 'words-learn-falshcards', params: {}}" class="app-card-nav-link">
-                    <span>Flash cards</span>
+                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-red-card-80.png" alt="">
+                    <span class="app-card-nav-text">Flash cards</span>
                 </router-link>
             </div>
-            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-rich-text-converter-96.png)`}">
+            <div class="app-card-nav-item">
                 <router-link v-bind:to="{ name: 'words-learn-wordmeaning', params: {}}" class="app-card-nav-link">
-                    <span>Word-Meaning</span>
+                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-rich-text-converter-96.png" alt="">
+                    <span class="app-card-nav-text">Word-Meaning</span>
                 </router-link>
             </div>
-            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-dictionary-64.png)`}">
+            <div class="app-card-nav-item">
                 <router-link v-bind:to="{ name: 'words-learn-meaningword', params: {}}" class="app-card-nav-link">
-                    <span>Meaning-Word</span>
+                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-dictionary-64.png" alt="">
+                    <span class="app-card-nav-text">Meaning-Word</span>
                 </router-link>
             </div>
-            <div class="app-card-nav-item" v-bind:style="{'background-image': `url(img/app-card-nav/icons8-compare-64.png)`}">
+            <div class="app-card-nav-item">
                 <router-link v-bind:to="{ name: 'words-learn-matchwords', params: {}}" class="app-card-nav-link">
-                    <span>Match words</span>
+                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-compare-64.png" alt="">
+                    <span class="app-card-nav-text">Match words</span>
+                </router-link>
+            </div>
+            <div class="app-card-nav-item">
+                <router-link v-bind:to="{ name: 'words-learn-buildword', params: {}}" class="app-card-nav-link">
+                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-brick-wall-64.png" alt="">
+                    <span class="app-card-nav-text">Build word</span>
                 </router-link>
             </div>
         </div>
