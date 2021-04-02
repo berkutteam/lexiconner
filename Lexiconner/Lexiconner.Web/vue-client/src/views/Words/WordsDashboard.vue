@@ -2,6 +2,36 @@
     <div class="dashboard-wrapper">
         <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.WORD_TRAINING_STATS_LOAD]" class="mb-2"></row-loader>
 
+        <!-- Learning language setting -->
+        <div class="mb-2">
+            <!-- <multiselect 
+                v-model="privateState.learningLanguageCode" 
+                v-bind:class="{
+                    'multiselect--disableSelectLabel': true,
+                    'multiselect--fixSmallWidthOptions': true,
+                }"
+                v-bind:placeholder="'Select learning language'"
+                v-bind:selectLabel="''" 
+                v-bind:showLabels="false" 
+                v-bind:label="'value'"
+                v-bind:track-by="'randomId'" 
+                v-bind:options="leftOptions" 
+                v-bind:multiple="false" 
+                v-bind:searchable="false" 
+                v-bind:taggable="false" 
+                v-bind:disabled="privateState.isShowAnswers"
+                v-on:input="(possibleOption) => onOptionSelect(item.word.id, possibleOption)"
+            >
+            </multiselect> -->
+            <language-code-select
+                v-model="privateState.learningLanguageCode"
+                placeholder="Select learning language"
+                v-bind:onChange="onLearningLanguageCodeChange"
+                v-on:change="(code) => onLearningLanguageCodeChange(code)"
+            />
+        </div>
+
+
         <!-- Collections -->
         <custom-collections>
         </custom-collections>
@@ -117,17 +147,20 @@ import notificationUtil from '@/utils/notification';
 import RowLoader from '@/components/loaders/RowLoader';
 import LoadingButton from '@/components/LoadingButton';
 import CustomCollections from '@/components/CustomCollections';
+import LanguageCodeSelect from '@/components/LanguageCodeSelect';
 
 export default {
     name: 'words-dashboard',
     components: {
         RowLoader,
         CustomCollections,
+        LanguageCodeSelect,
     },
     data: function() {
         return {
             privateState: {
                 storeTypes: storeTypes,
+                learningLanguageCode: null,
             },
         };
     },
@@ -158,6 +191,9 @@ export default {
                     console.error(err);
                     notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
                 });
+        },
+        onLearningLanguageCodeChange: function(code) {
+            
         },
     },
 }

@@ -12,7 +12,7 @@
         v-bind:preselect-first="false"
         v-bind:custom-label="languageLabel"
         track-by="iso639_1_Code" 
-        placeholder="Select language" 
+        v-bind:placeholder="placeholder"
         v-bind:loading="isLoading"
         v-bind:disabled="false"
         v-on:input="onInput"
@@ -44,6 +44,14 @@ export default {
             required: true,
             default: null,
         },
+
+        placeholder: {
+            type: String,
+            required: false,
+            default: 'Select language',
+        },
+        
+        // events: change
     },
     components: {
         // RowLoader,
@@ -108,6 +116,9 @@ export default {
             // value is user
             let {isoLanguageName, iso639_1_Code} = value;
             this.$emit('input', iso639_1_Code);
+
+            // emit change event with ISO language code
+            this.$emit('change', iso639_1_Code);
         },
     },
 }

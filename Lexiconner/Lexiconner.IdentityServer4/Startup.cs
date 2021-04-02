@@ -5,6 +5,7 @@
 using Lexiconner.IdentityServer4;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -86,16 +87,6 @@ namespace Lexiconner.IdentityServer4
             });
 
             // Fix IdentityServe4 and new SameSite Cookie policy
-            //identityServerBuilder.Services.ConfigureExternalCookie(options =>
-            //{
-            //    options.Cookie.IsEssential = true;
-            //    options.Cookie.SameSite = SameSiteMode.Lax; //SameSiteMode.Unspecified in .NET Core 3.1
-            //});
-            //identityServerBuilder.Services.ConfigureApplicationCookie(options =>
-            //{
-            //    options.Cookie.IsEssential = true;
-            //    options.Cookie.SameSite = SameSiteMode.Lax; //SameSiteMode.Unspecified in .NET Core 3.1
-            //});
             services.ConfigureNonBreakingSameSiteCookies();
 
             identityServerBuilder.AddSigningCredentialCustom(Environment, config);
@@ -108,15 +99,16 @@ namespace Lexiconner.IdentityServer4
             .AddAspNetIdentity<ApplicationUserEntity>()
             .AddProfileService<ProfileService>();
 
-            services.AddAuthentication();
-            //.AddGoogle(options =>
-            //{
-            //    // register your IdentityServer with Google at https://console.developers.google.com
-            //    // enable the Google+ API
-            //    // set the redirect URI to http://localhost:5000/signin-google
-            //    options.ClientId = "copy client ID from Google here";
-            //    options.ClientSecret = "copy client secret from Google here";
-            //});
+            services
+                .AddAuthentication();
+                //.AddGoogle(options =>
+                //{
+                //    // register your IdentityServer with Google at https://console.developers.google.com
+                //    // enable the Google+ API
+                //    // set the redirect URI to http://localhost:5000/signin-google
+                //    options.ClientId = "copy client ID from Google here";
+                //    options.ClientSecret = "copy client secret from Google here";
+                //});
 
             if (Environment.IsDevelopmentAny())
             {

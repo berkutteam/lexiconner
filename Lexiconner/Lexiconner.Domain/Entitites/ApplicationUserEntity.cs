@@ -57,5 +57,10 @@ namespace Lexiconner.Domain.Entitites
         [JsonIgnore]
         [BsonIgnore]
         public bool IsUpdateExistingDataOnSeed { get; set; }
+
+        /// <summary>
+        /// ISO language code for language that user selected as learning
+        /// </summary>
+        // public string LearningLanguageCode { get; set; }
     }
 }
