@@ -4,6 +4,7 @@ using IdentityServer4.Events;
 using IdentityServer4.Quickstart.UI;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
+using Lexiconner.Domain.Config;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authentication;
@@ -100,12 +101,45 @@ namespace Host.Quickstart.Account
 
             // lookup our user and external provider info
             var (user, provider, providerUserId, claims) = await FindUserFromExternalProviderAsync(result);
+
+            var email = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Email)?.Value ??
+                        claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            if(string.IsNullOrEmpty(email))
+            {
+                throw new Exception($"Can't find email claim in external provider result. Provider: {provider}.");
+            }
+
             if (user == null)
             {
                 // this might be where you might initiate a custom workflow for user registration
                 // in this sample we don't show how that would be done, as our sample implementation
                 // simply auto-provisions new external user
-                user = await AutoProvisionUserAsync(provider, providerUserId, claims);
+
+                // check existing user that already registered but tries to login with external provider
+                // where emails match, we don't create a new user, but just connect it to external provider by adding a new login
+                var existingUserByEmail = await _userManager.FindByEmailAsync(email);
+                if(existingUserByEmail != null)
+                {
+                    user = existingUserByEmail;
+
+                    // add login to existing
+                    var existingLogins = await _userManager.GetLoginsAsync(user);
+                    if(!existingLogins.Any(x => x.LoginProvider == provider))
+                    {
+                        var identityResult = await _userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerUserId, provider));
+                        if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
+                    }
+                }
+                else
+                {
+                    // create new user
+                    user = await AutoProvisionUserAsync(provider, providerUserId, claims);
+                }
+            }
+            else
+            {
+                // for existing user ensure external provider login is added
+
             }
 
             // this allows us to collect any additional claims or properties
@@ -219,9 +253,17 @@ namespace Host.Quickstart.Account
                 filtered.Add(new Claim(JwtClaimTypes.Email, email));
             }
 
+            // generate username from email with random suffix to avoid collisions
+            string userName = $"{email.Split('@').First()}_{Guid.NewGuid().ToString().Substring(0, 4)}";
             var user = new ApplicationUserEntity
             {
-                UserName = Guid.NewGuid().ToString(),
+                UserName = userName,
+                Email = email,
+                Name = name,
+                Roles = new List<string>()
+                {
+                    RoleConfig.UserRole,
+                }
             };
             var identityResult = await _userManager.CreateAsync(user);
             if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);

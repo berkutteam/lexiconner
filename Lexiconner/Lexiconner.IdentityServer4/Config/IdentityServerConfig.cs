@@ -7,6 +7,7 @@ using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 using Lexiconner.Application.Helpers;
+using Lexiconner.Domain.Config;
 using Lexiconner.Domain.Entitites;
 using System;
 using System.Collections.Generic;
@@ -253,15 +254,15 @@ namespace Lexiconner.IdentityServer4.Config
             {
                 new ApplicationRoleEntity
                 {
-                    Name = "RootAdmin"
+                    Name = RoleConfig.RootAdminRole
                 },
                 new ApplicationRoleEntity
                 {
-                    Name = "Admin"
+                    Name = RoleConfig.AdminRole
                 },
                  new ApplicationRoleEntity
                 {
-                    Name = "User"
+                    Name = RoleConfig.UserRole
                 }
             };
         }
@@ -282,9 +283,9 @@ namespace Lexiconner.IdentityServer4.Config
         //            Email = "johndoe1@test.com",
         //            Roles = new List<string>
         //            {
-        //                "RootAdmin",
-        //                "Admin",
-        //                "User",
+        //                RoleConfig.RootAdminRole,
+        //                RoleConfig.AdminRole,
+        //                RoleConfig.UserRole,
         //            },
         //            Claims = new List<IdentityUserClaim>
         //            {
@@ -303,9 +304,9 @@ namespace Lexiconner.IdentityServer4.Config
         //            Email = "vadimberkut8@gmail.com",
         //            Roles = new List<string>
         //            {
-        //                "RootAdmin",
-        //                "Admin",
-        //                "User",
+        //                RoleConfig.RootAdminRole,
+        //                RoleConfig.AdminRole,
+        //                RoleConfig.UserRole,
         //            },
         //            Claims = new List<IdentityUserClaim>
         //            {
@@ -324,9 +325,9 @@ namespace Lexiconner.IdentityServer4.Config
         //            Email = "bogdanberkut9@gmail.com",
         //            Roles = new List<string>
         //            {
-        //                "RootAdmin",
-        //                "Admin",
-        //                "User",
+        //                RoleConfig.RootAdminRole,
+        //                RoleConfig.AdminRole,
+        //                RoleConfig.UserRole,
         //            },
         //            Claims = new List<IdentityUserClaim>
         //            {
@@ -357,7 +358,7 @@ namespace Lexiconner.IdentityServer4.Config
                     Email = "johndoe@test.com",
                     Roles = new List<string>
                     {
-                        "User",
+                        RoleConfig.UserRole,
                     },
                     Claims = new List<MongoClaim>
                     {
@@ -391,7 +392,7 @@ namespace Lexiconner.IdentityServer4.Config
                     Email = "bobmarley@test.com",
                     Roles = new List<string>
                     {
-                        "User",
+                        RoleConfig.UserRole,
                     },
                     Claims = new List<MongoClaim>
                     {
@@ -425,9 +426,9 @@ namespace Lexiconner.IdentityServer4.Config
                     Email = "vadimberkut8@gmail.com",
                     Roles = new List<string>
                     {
-                        "RootAdmin",
-                        "Admin",
-                        "User",
+                        RoleConfig.RootAdminRole,
+                        RoleConfig.AdminRole,
+                        RoleConfig.UserRole,
                     },
                     Claims = new List<MongoClaim>
                     {
@@ -461,9 +462,9 @@ namespace Lexiconner.IdentityServer4.Config
                     Email = "bogdanberkut9@gmail.com",
                     Roles = new List<string>
                     {
-                        "RootAdmin",
-                        "Admin",
-                        "User",
+                        RoleConfig.RootAdminRole,
+                        RoleConfig.AdminRole,
+                        RoleConfig.UserRole,
                     },
                     Claims = new List<MongoClaim>
                     {

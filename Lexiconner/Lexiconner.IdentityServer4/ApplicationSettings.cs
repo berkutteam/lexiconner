@@ -12,6 +12,7 @@ namespace Lexiconner.IdentityServer4
         public MongoDbSettings MongoDb { get; set; }
         public UrlsSettings Urls { get; set; }
         public IdenitytServer4Settings IdenitytServer4 { get; set; }
+        public GoogleAuthenticationSettings GoogleAuthentication { get; set; }
     }
 
     public class UrlsSettings

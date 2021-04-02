@@ -12,6 +12,7 @@ namespace Lexiconner.IdentityServer4
             RuleFor(x => x.MongoDb).SetValidator(new MongoDbSettingsValidator());
             RuleFor(x => x.Urls).SetValidator(new UrlsSettingsValidator());
             RuleFor(x => x.IdenitytServer4).SetValidator(new IdenitytServer4SettingsValidator());
+            RuleFor(x => x.GoogleAuthentication).SetValidator(new GoogleAuthenticationSettingsValidator());
         }
     }
 

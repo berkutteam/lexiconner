@@ -38,6 +38,7 @@ using Serilog;
 using Autofac;
 using Lexiconner.Persistence;
 using Lexiconner.Application.Middlewares;
+using IdentityServer4;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -100,15 +101,16 @@ namespace Lexiconner.IdentityServer4
             .AddProfileService<ProfileService>();
 
             services
-                .AddAuthentication();
-                //.AddGoogle(options =>
-                //{
-                //    // register your IdentityServer with Google at https://console.developers.google.com
-                //    // enable the Google+ API
-                //    // set the redirect URI to http://localhost:5000/signin-google
-                //    options.ClientId = "copy client ID from Google here";
-                //    options.ClientSecret = "copy client secret from Google here";
-                //});
+                .AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    // register your IdentityServer with Google at https://console.developers.google.com
+                    // enable the Google+ API
+                    // set the redirect URI to http://localhost:5004/signin-google
+                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                    options.ClientId = config.GoogleAuthentication.ClientId;
+                    options.ClientSecret = config.GoogleAuthentication.ClientSecret;
+                });
 
             if (Environment.IsDevelopmentAny())
             {
