@@ -11,8 +11,10 @@ using Lexiconner.Application.Services.Interfacse;
 using Lexiconner.Application.Validation;
 using Lexiconner.Domain.Config;
 using Lexiconner.Domain.Dtos;
+using Lexiconner.Domain.Dtos.General;
 using Lexiconner.Domain.Dtos.Words;
 using Lexiconner.Domain.Entitites;
+using Lexiconner.Domain.Entitites.General;
 using Lexiconner.Domain.Enums;
 using Lexiconner.Persistence.Repositories;
 using LinqKit;
@@ -141,7 +143,7 @@ namespace Lexiconner.Application.Services
                 var image = imagesResults.FirstOrDefault();
                 if (image != null)
                 {
-                    entity.Images.Add(new WordImageEntity
+                    entity.Images.Add(new GeneralImageEntity
                     {
                         Url = image.Url,
                         Height = int.Parse(image.Height),
@@ -180,7 +182,7 @@ namespace Lexiconner.Application.Services
                     var image = imagesResults.FirstOrDefault();
                     if (image != null)
                     {
-                        entity.Images.Add(new WordImageEntity
+                        entity.Images.Add(new GeneralImageEntity
                         {
                             Url = image.Url,
                             Height = int.Parse(image.Height),
@@ -208,7 +210,7 @@ namespace Lexiconner.Application.Services
             await _dataRepository.DeleteAsync<WordEntity>(x => x.Id == existing.Id);
         }
 
-        public async Task<PaginationResponseDto<WordImageDto>> FindWordImagesAsync(string userId, string wordId)
+        public async Task<PaginationResponseDto<GeneralImageDto>> FindWordImagesAsync(string userId, string wordId)
         {
             var entity = await _dataRepository.GetOneAsync<WordEntity>(x => x.Id == wordId && x.UserId == userId);
             if (entity == null)
@@ -220,9 +222,9 @@ namespace Lexiconner.Application.Services
             imagesResults = _imageService.GetSuitableImages(imagesResults);
             imagesResults = imagesResults.Take(10).ToList();
 
-            var result = new PaginationResponseDto<WordImageDto>()
+            var result = new PaginationResponseDto<GeneralImageDto>()
             {
-                Items = imagesResults.Select(x => _mapper.Map<WordImageDto>(x)),
+                Items = imagesResults.Select(x => _mapper.Map<GeneralImageDto>(x)),
                 Pagination = new PaginationInfoDto()
                 {
                     Offset = 0,
@@ -268,7 +270,7 @@ namespace Lexiconner.Application.Services
                 return image;
             }))).Where(x => x != null).ToList();
 
-            entity.Images = _mapper.Map<List<WordImageEntity>>(dto.Images);
+            entity.Images = _mapper.Map<List<GeneralImageEntity>>(dto.Images);
 
             await _dataRepository.UpdateAsync(entity);
             return _mapper.Map<WordDto>(entity);

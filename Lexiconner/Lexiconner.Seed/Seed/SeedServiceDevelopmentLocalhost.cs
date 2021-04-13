@@ -8,6 +8,7 @@ using Lexiconner.Application.Services;
 using Lexiconner.Domain.Config;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Domain.Entitites.Cache;
+using Lexiconner.Domain.Entitites.General;
 using Lexiconner.Domain.Entitites.IdentityModel;
 using Lexiconner.Domain.Models;
 using Lexiconner.IdentityServer4.Config;
@@ -651,7 +652,7 @@ namespace Lexiconner.Seed.Seed
                     WordLanguageCode = sourceLanguageCode,
                     MeaningLanguageCode = meaningLanguageCode, // TODO for EN words where RU and EN meanings
                     Tags = x.Tags,
-                    Images = x.ImageUrls.Select(imageUrl => new WordImageEntity()
+                    Images = x.ImageUrls.Select(imageUrl => new GeneralImageEntity()
                     {
                         IsAddedByUrl = true,
                         Url = imageUrl,
@@ -755,7 +756,7 @@ namespace Lexiconner.Seed.Seed
 
                         if (image != null)
                         {
-                            entity.Images.Add(new WordImageEntity
+                            entity.Images.Add(new GeneralImageEntity
                             {
                                 Url = image.Url,
                                 Height = int.Parse(image.Height),

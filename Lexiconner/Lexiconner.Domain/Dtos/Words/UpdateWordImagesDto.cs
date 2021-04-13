@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lexiconner.Domain.Dtos.General;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,7 +15,7 @@ namespace Lexiconner.Domain.Dtos.Words
         public IEnumerable<WordImageUpdateDto> Images { get; set; }
     }
 
-    public class WordImageUpdateDto : WordImageDto
+    public class WordImageUpdateDto : GeneralImageDto
     {
         public bool IsAddedByUrl { get; set; }
     }

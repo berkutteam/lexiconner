@@ -1,4 +1,5 @@
-﻿using Lexiconner.Domain.Dtos.Words;
+﻿using Lexiconner.Domain.Dtos.General;
+using Lexiconner.Domain.Dtos.Words;
 using Lexiconner.Domain.Entitites;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Lexiconner.Domain.Dtos.Words
             CustomCollectionIds = new List<string>();
             Examples = new List<string>();
             Tags = new List<string>();
-            Images = new List<WordImageDto>();
+            Images = new List<GeneralImageDto>();
         }
 
         public string Id { get; set; }
@@ -27,7 +28,7 @@ namespace Lexiconner.Domain.Dtos.Words
         public string MeaningLanguageCode { get; set; }
         public List<string> Tags { get; set; }
 
-        public List<WordImageDto> Images { get; set; }
+        public List<GeneralImageDto> Images { get; set; }
         public WordTrainingInfoDto TrainingInfo { get; set; }
     }
 

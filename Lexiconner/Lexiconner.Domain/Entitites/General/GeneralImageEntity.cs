@@ -1,17 +1,15 @@
-﻿using System;
+﻿using Lexiconner.Domain.Entitites.Base;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Lexiconner.Domain.Dtos.Words
+namespace Lexiconner.Domain.Entitites.General
 {
-    public class WordImageDto
+    public class GeneralImageEntity : BaseEntity
     {
-        public WordImageDto()
-        {
-            RandomId = Guid.NewGuid().ToString();
-        }
-
-        public string RandomId { get; set; }
+        public bool IsAddedByUrl { get; set; }
         public string Url { get; set; }
         public int Height { get; set; }
         public int Width { get; set; }

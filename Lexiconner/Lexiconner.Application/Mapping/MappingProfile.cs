@@ -8,6 +8,8 @@ using System.Text;
 using static Lexiconner.Application.ApiClients.Dtos.ImageSearchResponseDto;
 using Lexiconner.Domain.Dtos.UserFilms;
 using Lexiconner.Domain.Dtos.Users;
+using Lexiconner.Domain.Entitites.General;
+using Lexiconner.Domain.Dtos.General;
 
 namespace Lexiconner.Application.Mapping
 {
@@ -15,15 +17,17 @@ namespace Lexiconner.Application.Mapping
     {
         public MappingProfile()
         {
+            // General
+            CreateMap<GeneralImageDto, GeneralImageEntity>();
+            CreateMap<GeneralImageEntity, GeneralImageDto>();
+
             // User
             CreateMap<ApplicationUserEntity, UserDto>();
 
             // Word
             CreateMap<WordEntity, WordDto>();
-            CreateMap<WordImageEntity, WordImageDto>();
             CreateMap<WordCreateDto, WordEntity>();
-            CreateMap<ImageSearchResponseItemDto, WordImageDto>();
-            CreateMap<WordImageDto, WordImageEntity>();
+            CreateMap<ImageSearchResponseItemDto, GeneralImageDto>();
             CreateMap<WordTrainingInfoEntity, WordTrainingInfoDto>();
 
             // CustomCollection

@@ -1,6 +1,7 @@
 ﻿using Lexiconner.Application.Services;
 using Lexiconner.Application.Services.Interfacse;
 using Lexiconner.Domain.Dtos;
+using Lexiconner.Domain.Dtos.General;
 using Lexiconner.Domain.Dtos.Words;
 using Lexiconner.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -86,7 +87,7 @@ namespace Lexiconner.Api.Controllers.V2
         }
 
         [HttpPost("{wordId}/images/find")]
-        [ProducesResponseType(typeof(BaseApiResponseDto<PaginationResponseDto<WordImageDto>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<PaginationResponseDto<GeneralImageDto>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
@@ -98,7 +99,7 @@ namespace Lexiconner.Api.Controllers.V2
         }
 
         [HttpPut("{wordId}/images")]
-        [ProducesResponseType(typeof(BaseApiResponseDto<PaginationResponseDto<WordImageDto>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseApiResponseDto<PaginationResponseDto<GeneralImageDto>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]

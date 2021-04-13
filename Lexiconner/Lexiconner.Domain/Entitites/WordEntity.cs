@@ -1,5 +1,6 @@
 ﻿using Lexiconner.Domain.Dtos.Words;
 using Lexiconner.Domain.Entitites.Base;
+using Lexiconner.Domain.Entitites.General;
 using Lexiconner.Domain.Enums;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -18,7 +19,7 @@ namespace Lexiconner.Domain.Entitites
         {
             CustomCollectionIds = new List<string>();
             Examples = new List<string>();
-            Images = new List<WordImageEntity>();
+            Images = new List<GeneralImageEntity>();
             Tags = new List<string>();
             TrainingInfo = new WordTrainingInfoEntity();
         }
@@ -44,7 +45,7 @@ namespace Lexiconner.Domain.Entitites
 
         public List<string> Tags { get; set; }
 
-        public List<WordImageEntity> Images { get; set; }
+        public List<GeneralImageEntity> Images { get; set; }
         public WordTrainingInfoEntity TrainingInfo { get; set; }
 
 
@@ -55,7 +56,7 @@ namespace Lexiconner.Domain.Entitites
             this.CustomCollectionIds = dto.CustomCollectionIds;
             if (this.Word != dto.Word)
             {
-                this.Images = new List<WordImageEntity>();
+                this.Images = new List<GeneralImageEntity>();
             }
             this.Word = dto.Word;
             this.Meaning = dto.Meaning;

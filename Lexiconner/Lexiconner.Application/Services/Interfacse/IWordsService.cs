@@ -1,6 +1,7 @@
 ﻿using Lexiconner.Api.Dtos.WordsTrainings;
 using Lexiconner.Api.DTOs.WordsTrainings;
 using Lexiconner.Domain.Dtos;
+using Lexiconner.Domain.Dtos.General;
 using Lexiconner.Domain.Dtos.Words;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace Lexiconner.Application.Services.Interfacse
         Task<WordDto> CreateWordAsync(string userId, WordCreateDto createDto);
         Task<WordDto> UpdateWordAsync(string userId, string wordId, WordUpdateDto updateDto);
         Task DeleteWord(string userId, string sutyItemId);
-        Task<PaginationResponseDto<WordImageDto>> FindWordImagesAsync(string userId, string wordId);
+        Task<PaginationResponseDto<GeneralImageDto>> FindWordImagesAsync(string userId, string wordId);
         Task<WordDto> UpdateWordImagesAsync(string userId, string wordId, UpdateWordImagesDto dto);
         Task<WordExamplesDto> GetWordExamplesAsync(string languageCode, string word);
         Task<WordPronunciationAudioDto> GetWordPronunciationAudioAsync(string languageCode, string word);
