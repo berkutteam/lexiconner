@@ -12,7 +12,8 @@ namespace Lexiconner.Application.Services.Interfacse
     public interface IWordsService
     {
         Task<PaginationResponseDto<WordDto>> GetAllWordsAsync(
-            string userId, 
+            string userId,
+            string languageCode,
             int offset, 
             int limit, 
             string collectionId = null,

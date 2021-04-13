@@ -41,10 +41,7 @@ export default {
     computed: {
         selectedLearningLanguageCode: {
             get() {
-                if(!this.profile) {
-                    return null;
-                }
-                return (this.profile.learningLanguages.find(x => x.isSelected) || {}).languageCode || null;
+                return this.$store.getters.selectedLearningLanguageCode;
             },
             set(value) {
                 // ignore (set by v-model)
@@ -72,8 +69,6 @@ export default {
 
     methods: {
         onLanguageChange(languageCode) {
-            console.log(languageCode)
-
             this.$store.dispatch(storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE, {
                 languageCode: languageCode,
             }).then(() => {
@@ -81,6 +76,9 @@ export default {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
+
+            // reload related data
+            this.$store.dispatch(storeTypes.WORDS_LOAD, {});
         }
     },
 }

@@ -275,6 +275,7 @@ namespace Lexiconner.Seed.Seed
                     new
                     {
                         WordLanguageCode = "ru",
+                        MeaningLanguageCode = "ru",
                         ImportFilePath = _config.Import.RuWordsFilePath,
                         ImportFormat = ".txt",
                         ParentCollectionId = ruWordsCollection.Id,
@@ -282,6 +283,7 @@ namespace Lexiconner.Seed.Seed
                     new
                     {
                         WordLanguageCode = "en",
+                        MeaningLanguageCode = default(string),
                         ImportFilePath = _config.Import.EnWordsFilePath,
                         ImportFormat = ".md",
                         ParentCollectionId = enWordsCollection.Id,
@@ -298,6 +300,7 @@ namespace Lexiconner.Seed.Seed
                             user,
                             rootCollection,
                             import.WordLanguageCode,
+                            import.MeaningLanguageCode,
                             import.ImportFilePath,
                             import.ImportFormat,
                             import.ParentCollectionId
@@ -573,12 +576,13 @@ namespace Lexiconner.Seed.Seed
             ApplicationUserEntity user,
             CustomCollectionEntity rootCollection,
             string sourceLanguageCode, 
+            string meaningLanguageCode,
             string importFilePath, 
             string importFormat, 
             string parentCollectionId
         )
         {
-            _logger.LogInformation($"Importing Words {sourceLanguageCode}, {importFilePath}, {importFormat}...");
+            _logger.LogInformation($"Importing Words {sourceLanguageCode}, {meaningLanguageCode}, {importFilePath}, {importFormat}...");
 
             // import from file
             WordImportResultModel importResult = null;
@@ -645,7 +649,7 @@ namespace Lexiconner.Seed.Seed
                     Meaning = x.Description,
                     Examples = x.ExampleTexts,
                     WordLanguageCode = sourceLanguageCode,
-                    MeaningLanguageCode = null, // TODO
+                    MeaningLanguageCode = meaningLanguageCode, // TODO for EN words where RU and EN meanings
                     Tags = x.Tags,
                     Images = x.ImageUrls.Select(imageUrl => new WordImageEntity()
                     {

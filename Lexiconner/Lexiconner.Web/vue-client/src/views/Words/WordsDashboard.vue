@@ -2,137 +2,111 @@
     <div class="dashboard-wrapper">
         <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.WORD_TRAINING_STATS_LOAD]" class="mb-2"></row-loader>
 
-        <!-- Learning language setting -->
-        <div class="mb-2">
-            <!-- <multiselect 
-                v-model="privateState.learningLanguageCode" 
-                v-bind:class="{
-                    'multiselect--disableSelectLabel': true,
-                    'multiselect--fixSmallWidthOptions': true,
-                }"
-                v-bind:placeholder="'Select learning language'"
-                v-bind:selectLabel="''" 
-                v-bind:showLabels="false" 
-                v-bind:label="'value'"
-                v-bind:track-by="'randomId'" 
-                v-bind:options="leftOptions" 
-                v-bind:multiple="false" 
-                v-bind:searchable="false" 
-                v-bind:taggable="false" 
-                v-bind:disabled="privateState.isShowAnswers"
-                v-on:input="(possibleOption) => onOptionSelect(item.word.id, possibleOption)"
-            >
-            </multiselect> -->
-            <language-code-select
-                v-model="privateState.learningLanguageCode"
-                placeholder="Select learning language"
-                v-bind:onChange="onLearningLanguageCodeChange"
-                v-on:change="(code) => onLearningLanguageCodeChange(code)"
-            />
-        </div>
+        <learning-language-not-selected-alert />
 
+        <div v-if="isLearningLanguageCodeSelected === true">
+            <!-- Collections -->
+            <custom-collections>
+            </custom-collections>
 
-        <!-- Collections -->
-        <custom-collections>
-        </custom-collections>
+            <!-- Nav -->
+            <div class="app-card-nav mb-2">
+                <div class="app-card-nav-item">
+                    <router-link v-bind:to="{ name: 'words-browse', params: {}}" class="app-card-nav-link">
+                        <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-browse-folder-2-64.png" alt="">
+                        <span class="app-card-nav-text">Browse items</span>
+                    </router-link>
+                </div>
+                <div class="app-card-nav-item">
+                    <router-link v-bind:to="{ name: 'words-learn-falshcards', params: {}}" class="app-card-nav-link">
+                        <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-red-card-80.png" alt="">
+                        <span class="app-card-nav-text">Flash cards</span>
+                    </router-link>
+                </div>
+                <div class="app-card-nav-item">
+                    <router-link v-bind:to="{ name: 'words-learn-wordmeaning', params: {}}" class="app-card-nav-link">
+                        <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-rich-text-converter-96.png" alt="">
+                        <span class="app-card-nav-text">Word-Meaning</span>
+                    </router-link>
+                </div>
+                <div class="app-card-nav-item">
+                    <router-link v-bind:to="{ name: 'words-learn-meaningword', params: {}}" class="app-card-nav-link">
+                        <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-dictionary-64.png" alt="">
+                        <span class="app-card-nav-text">Meaning-Word</span>
+                    </router-link>
+                </div>
+                <div class="app-card-nav-item">
+                    <router-link v-bind:to="{ name: 'words-learn-matchwords', params: {}}" class="app-card-nav-link">
+                        <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-compare-64.png" alt="">
+                        <span class="app-card-nav-text">Match words</span>
+                    </router-link>
+                </div>
+                <div class="app-card-nav-item">
+                    <router-link v-bind:to="{ name: 'words-learn-buildwords', params: {}}" class="app-card-nav-link">
+                        <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-brick-wall-64.png" alt="">
+                        <span class="app-card-nav-text">Build word</span>
+                    </router-link>
+                </div>
+                <div class="app-card-nav-item">
+                    <router-link v-bind:to="{ name: 'words-learn-listenwords', params: {}}" class="app-card-nav-link">
+                        <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-foreign-language-sound-64.png" alt="">
+                        <span class="app-card-nav-text">Listen word</span>
+                    </router-link>
+                </div>
+            </div>
 
-        <!-- Nav -->
-        <div class="app-card-nav mb-2">
-            <div class="app-card-nav-item">
-                <router-link v-bind:to="{ name: 'words-browse', params: {}}" class="app-card-nav-link">
-                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-browse-folder-2-64.png" alt="">
-                    <span class="app-card-nav-text">Browse items</span>
-                </router-link>
-            </div>
-            <div class="app-card-nav-item">
-                <router-link v-bind:to="{ name: 'words-learn-falshcards', params: {}}" class="app-card-nav-link">
-                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-red-card-80.png" alt="">
-                    <span class="app-card-nav-text">Flash cards</span>
-                </router-link>
-            </div>
-            <div class="app-card-nav-item">
-                <router-link v-bind:to="{ name: 'words-learn-wordmeaning', params: {}}" class="app-card-nav-link">
-                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-rich-text-converter-96.png" alt="">
-                    <span class="app-card-nav-text">Word-Meaning</span>
-                </router-link>
-            </div>
-            <div class="app-card-nav-item">
-                <router-link v-bind:to="{ name: 'words-learn-meaningword', params: {}}" class="app-card-nav-link">
-                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-dictionary-64.png" alt="">
-                    <span class="app-card-nav-text">Meaning-Word</span>
-                </router-link>
-            </div>
-            <div class="app-card-nav-item">
-                <router-link v-bind:to="{ name: 'words-learn-matchwords', params: {}}" class="app-card-nav-link">
-                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-compare-64.png" alt="">
-                    <span class="app-card-nav-text">Match words</span>
-                </router-link>
-            </div>
-            <div class="app-card-nav-item">
-                <router-link v-bind:to="{ name: 'words-learn-buildwords', params: {}}" class="app-card-nav-link">
-                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-brick-wall-64.png" alt="">
-                    <span class="app-card-nav-text">Build word</span>
-                </router-link>
-            </div>
-            <div class="app-card-nav-item">
-                <router-link v-bind:to="{ name: 'words-learn-listenwords', params: {}}" class="app-card-nav-link">
-                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-foreign-language-sound-64.png" alt="">
-                    <span class="app-card-nav-text">Listen word</span>
-                </router-link>
-            </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="mb-2">
-            <div v-if="trainingStats">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h4>Training stats</h4>
-                        <hr/>
-                        <div class="mb-3">
-                            <div class="h5">
-                                <span>Total</span>
-                                <span class="badge badge-secondary ml-1">{{trainingStats.totalItemCount}}</span>
+            <!-- Stats -->
+            <div class="mb-2">
+                <div v-if="trainingStats">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h4>Training stats</h4>
+                            <hr/>
+                            <div class="mb-3">
+                                <div class="h5">
+                                    <span>Total</span>
+                                    <span class="badge badge-secondary ml-1">{{trainingStats.totalItemCount}}</span>
+                                </div>
+                                <div class="h5">
+                                    <span>Trained</span>
+                                    <span class="badge badge-success ml-1">{{trainingStats.trainedItemCount}}</span>
+                                </div>     
+                                <div class="h5">
+                                    <span>On training</span>
+                                    <span class="badge badge-info ml-1">{{trainingStats.onTrainingItemCount}}</span>
+                                </div>               
                             </div>
-                            <div class="h5">
-                                <span>Trained</span>
-                                <span class="badge badge-success ml-1">{{trainingStats.trainedItemCount}}</span>
-                            </div>     
-                            <div class="h5">
-                                <span>On training</span>
-                                <span class="badge badge-info ml-1">{{trainingStats.onTrainingItemCount}}</span>
-                            </div>               
-                        </div>
-                        <div>
-                            <ul>
-                                <li
-                                    v-for="(item) in trainingStats.trainingStats"
-                                    v-bind:key="`key-training-${item.trainingType}`"
-                                >
-                                    <span class="badge badge-secondary">{{item.trainingTypeFormatted}}</span>
-                                    <!-- <span class="ml-1">
-                                        <span>Trained</span>
-                                        <span class="badge badge-success ml-1">{{item.trainedItemCount}}</span>
-                                    </span>
-                                     <span class="ml-1">
-                                        <span>On training</span>
-                                        <span class="badge badge-info ml-1">{{item.onTrainingItemCount}}</span>
-                                    </span> -->
-                                    <ul>
-                                        <li>
+                            <div>
+                                <ul>
+                                    <li
+                                        v-for="(item) in trainingStats.trainingStats"
+                                        v-bind:key="`key-training-${item.trainingType}`"
+                                    >
+                                        <span class="badge badge-secondary">{{item.trainingTypeFormatted}}</span>
+                                        <!-- <span class="ml-1">
                                             <span>Trained</span>
                                             <span class="badge badge-success ml-1">{{item.trainedItemCount}}</span>
-                                        </li>
-                                        <li>
-                                            <span>Training</span>
+                                        </span>
+                                        <span class="ml-1">
+                                            <span>On training</span>
                                             <span class="badge badge-info ml-1">{{item.onTrainingItemCount}}</span>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
+                                        </span> -->
+                                        <ul>
+                                            <li>
+                                                <span>Trained</span>
+                                                <span class="badge badge-success ml-1">{{item.trainedItemCount}}</span>
+                                            </li>
+                                            <li>
+                                                <span>Training</span>
+                                                <span class="badge badge-info ml-1">{{item.onTrainingItemCount}}</span>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                </div>             
+                    </div>             
+                </div>
             </div>
         </div>
     </div>
@@ -148,13 +122,14 @@ import RowLoader from '@/components/loaders/RowLoader';
 import LoadingButton from '@/components/LoadingButton';
 import CustomCollections from '@/components/CustomCollections';
 import LanguageCodeSelect from '@/components/LanguageCodeSelect';
+import LearningLanguageNotSelectedAlert from '@/components/LearningLanguageNotSelectedAlert';
 
 export default {
     name: 'words-dashboard',
     components: {
         RowLoader,
         CustomCollections,
-        LanguageCodeSelect,
+        LearningLanguageNotSelectedAlert,
     },
     data: function() {
         return {
@@ -172,6 +147,12 @@ export default {
             sharedState: state => state,
             trainingStats: state => state.trainingStats,
         }),
+
+        // store getter
+        ...mapGetters([
+            'selectedLearningLanguageCode',
+            'isLearningLanguageCodeSelected',
+        ]),
     },
     created: function() {
        this.loadTrainingsStats();

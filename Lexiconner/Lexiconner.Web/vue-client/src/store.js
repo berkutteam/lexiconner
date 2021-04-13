@@ -173,6 +173,19 @@ export default new Vuex.Store({
             }
             return state.currentCustomCollection.id;
         },
+        selectedLearningLanguageCode(state, getters) {
+            if(!state.profile) {
+                return null;
+            }
+            return (state.profile.learningLanguages.find(x => x.isSelected) || {}).languageCode || null;
+        },
+        // null - value not calculated properly yet
+        isLearningLanguageCodeSelected(state, getters) {
+            if(!state.profile) {
+                return null;
+            }
+            return state.profile.learningLanguages.some(x => x.isSelected);
+        },
     },
     mutations: {
         [storeTypes.LOADING_SET](state, payload) {
@@ -748,12 +761,18 @@ export default new Vuex.Store({
 
         [storeTypes.WORDS_LOAD](context, params) {
             let { commit, dispatch, state, getters } = context;
+
+            if(getters.isLearningLanguageCodeSelected !== true) {
+                throw new Error(`Learning language code is not selected.`);
+            }
+
             commit(storeTypes.LOADING_SET, {
                 target: storeTypes.WORDS_LOAD,
                 loading: true,
             });
             return api.webApi().getWords({
-                collectionId: getters.currentCustomCollectionId,
+                languageCode: getters.selectedLearningLanguageCode,
+                // collectionId: getters.currentCustomCollectionId,
                 ...params,
                 ...state.wordsRequestParams, // apply params from state
             }).then(({ data, ok }) => {

@@ -105,14 +105,16 @@ function runApp() {
                     });
                 } else {
                     console.log(`User logged in and completed registration.`);
-
-                    // load userinfo
-                    // store.dispatch(storeTypes.USER_INFO_LOAD, {});
                 }
             }
 
             return user;
         });
+
+        if(await authService.isAuthenticated()) {
+            // load profile before rendering the app
+            await store.dispatch(storeTypes.PROFILE_LOAD, {});
+        }
 
         if (router.history.current.name === 'error') {
             router.push({

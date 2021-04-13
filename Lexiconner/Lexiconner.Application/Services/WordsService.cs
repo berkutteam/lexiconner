@@ -58,6 +58,7 @@ namespace Lexiconner.Application.Services
 
         public async Task<PaginationResponseDto<WordDto>> GetAllWordsAsync(
             string userId,
+            string languageCode,
             int offset,
             int limit,
             string collectionId = null,
@@ -69,7 +70,8 @@ namespace Lexiconner.Application.Services
         {
             var predicate = PredicateBuilder.New<WordEntity>(x => x.UserId == userId);
 
-            if (!String.IsNullOrEmpty(search))
+            predicate.And(x => x.WordLanguageCode == languageCode);
+            if (!string.IsNullOrEmpty(search))
             {
                 search = search.Trim().ToLower();
                 predicate.And(x => x.Word.ToLower().Contains(search) || x.Meaning.ToLower().Contains(search));

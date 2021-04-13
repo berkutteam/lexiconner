@@ -7,6 +7,7 @@ namespace Lexiconner.Domain.Dtos.Words
 {
     public class WordsRequestDto : PaginationRequestDto
     {
+        public string LanguageCode { get; set; }
         public string Search { get; set; }
         public bool? IsFavourite { get; set; }
         public bool IsShuffle { get; set; }

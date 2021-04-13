@@ -274,9 +274,9 @@ class API {
                 return axiosAuthRequest({ url: buildUrl(url, `profile/learning_languages/${languageCode}`, {}), method: "post", data: { } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
 
-            // study items
-            getWords({ offset, limit, search, isFavourite, isShuffle, isTrained, collectionId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `words`, { offset, limit, search, isFavourite, isShuffle, isTrained, collectionId}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            // words
+            getWords({ languageCode, offset, limit, search, isFavourite, isShuffle, isTrained, collectionId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words`, { languageCode, offset, limit, search, isFavourite, isShuffle, isTrained, collectionId}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             getWord({ wordId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `words/${wordId}`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
