@@ -10,6 +10,7 @@ using Lexiconner.Domain.Dtos.UserFilms;
 using Lexiconner.Domain.Dtos.Users;
 using Lexiconner.Domain.Entitites.General;
 using Lexiconner.Domain.Dtos.General;
+using Lexiconner.Domain.Dtos.WordSets;
 
 namespace Lexiconner.Application.Mapping
 {
@@ -29,6 +30,9 @@ namespace Lexiconner.Application.Mapping
             CreateMap<WordCreateDto, WordEntity>();
             CreateMap<ImageSearchResponseItemDto, GeneralImageDto>();
             CreateMap<WordTrainingInfoEntity, WordTrainingInfoDto>();
+
+            // WordSet
+            CreateMap<WordSetEntity, WordSetDto>();
 
             // CustomCollection
             CreateMap<CustomCollectionEntity, CustomCollectionDto>();

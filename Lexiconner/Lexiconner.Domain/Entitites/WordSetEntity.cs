@@ -1,5 +1,6 @@
 ﻿using Lexiconner.Domain.Dtos.Words;
 using Lexiconner.Domain.Entitites.Base;
+using Lexiconner.Domain.Entitites.General;
 using Lexiconner.Domain.Enums;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -16,24 +17,29 @@ namespace Lexiconner.Domain.Entitites
     {
         public WordSetEntity()
         {
-            Images = new List<WordImageEntity>();
+            Images = new List<GeneralImageEntity>();
             Words = new List<WordSetWordEntity>();
         }
 
         public string Name { get; set; }
         public string WordsLanguageCode { get; set; }
         public string MeaningsLanguageCode { get; set; }
-        public List<WordImageEntity> Images { get; set; }
+        public List<GeneralImageEntity> Images { get; set; }
         public List<WordSetWordEntity> Words { get; set; }
     }
 
     public class WordSetWordEntity : BaseEntity
     {
+        public WordSetWordEntity()
+        {
+            Images = new List<GeneralImageEntity>();
+        }
+
         public string Word { get; set; }
         public string Meaning { get; set; }
         public List<string> Examples { get; set; }
         public string WordLanguageCode { get; set; }
         public string MeaningLanguageCode { get; set; }
-        public List<WordImageEntity> Images { get; set; }
+        public List<GeneralImageEntity> Images { get; set; }
     }
 }

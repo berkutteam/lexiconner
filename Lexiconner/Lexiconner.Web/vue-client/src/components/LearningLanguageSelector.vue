@@ -78,7 +78,9 @@ export default {
             });
 
             // reload related data
-            this.$store.dispatch(storeTypes.WORDS_LOAD, {});
+            // this.$store.dispatch(storeTypes.WORDS_LOAD, {
+            //     languageCode: languageCode,
+            // });
         }
     },
 }

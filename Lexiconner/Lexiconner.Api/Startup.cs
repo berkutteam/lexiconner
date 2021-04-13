@@ -103,6 +103,7 @@ namespace Lexiconner.Api
 
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IWordsService, WordsService>();
+            services.AddTransient<IWordSetsService, WordSetsService>();
             services.AddTransient<IWordTrainingsService, WordTrainingsService>();
             services.AddTransient<ICustomCollectionsService, CustomCollectionsService>();
             services.AddTransient<IFilmsService, FilmsService>();
