@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using static Lexiconner.Application.ApiClients.Dtos.ImageSearchResponseDto;
 using Lexiconner.Domain.Dtos.UserFilms;
+using Lexiconner.Domain.Dtos.Users;
 
 namespace Lexiconner.Application.Mapping
 {
@@ -14,6 +15,9 @@ namespace Lexiconner.Application.Mapping
     {
         public MappingProfile()
         {
+            // User
+            CreateMap<ApplicationUserEntity, UserDto>();
+
             // Word
             CreateMap<WordEntity, WordDto>();
             CreateMap<WordImageEntity, WordImageDto>();

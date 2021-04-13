@@ -83,6 +83,8 @@ export default new Vuex.Store({
         },
         myCompanyInvitations: null,
 
+        profile: null,
+
         wordsRequestParamsDefault: {
             search: null,
             isFavourite: null,
@@ -260,21 +262,31 @@ export default new Vuex.Store({
         //#endregion
 
 
+        //#region Profile
+
+        [storeTypes.PROFILE_SET](state, payload) {
+            let { data } = payload;
+            state.profile = data;
+        },
+
+        //#endregion
+
+
         //#region Words
 
-        [storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET](state, payload) {
+        [storeTypes.WORDS_REQUEST_PARAMS_SET](state, payload) {
             let params= payload;
             state.wordsRequestParams = {
                 ...state.wordsRequestParams,
                 ...params,
             };
         },
-        [storeTypes.STUDY_ITEMS_REQUEST_PARAMS_RESET](state, payload) {
+        [storeTypes.WORDS_ITEMS_REQUEST_PARAMS_RESET](state, payload) {
             state.wordsRequestParams = {
                 ...state.wordsRequestParamsDefault,
             };
         },
-        [storeTypes.STUDY_ITEMS_LOAD_SET](state, payload) {
+        [storeTypes.WORDS_LOAD_SET](state, payload) {
             let { data } = payload;
             state.wordsPaginationResult = data;
         },
@@ -677,12 +689,67 @@ export default new Vuex.Store({
         //#endregion
 
 
-        //#region Words
+        //#region Profile
 
-        [storeTypes.STUDY_ITEMS_LOAD](context, params) {
+        [storeTypes.PROFILE_LOAD](context, { languageCode }) {
             let { commit, dispatch, state, getters } = context;
             commit(storeTypes.LOADING_SET, {
-                target: storeTypes.STUDY_ITEMS_LOAD,
+                target: storeTypes.PROFILE_LOAD,
+                loading: true,
+            });
+            return api.webApi().getProfile({
+                languageCode,
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.PROFILE_LOAD,
+                    loading: false,
+                });
+                commit(storeTypes.PROFILE_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.PROFILE_LOAD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE](context, { languageCode }) {
+            let { commit, dispatch, state, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE,
+                loading: true,
+            });
+            return api.webApi().selectProfileLearningLanguage({
+                languageCode,
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE,
+                    loading: false,
+                });
+                commit(storeTypes.PROFILE_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        //#endregion
+
+        //#region Words
+
+        [storeTypes.WORDS_LOAD](context, params) {
+            let { commit, dispatch, state, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORDS_LOAD,
                 loading: true,
             });
             return api.webApi().getWords({
@@ -691,16 +758,16 @@ export default new Vuex.Store({
                 ...state.wordsRequestParams, // apply params from state
             }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEMS_LOAD,
+                    target: storeTypes.WORDS_LOAD,
                     loading: false,
                 });
-                commit(storeTypes.STUDY_ITEMS_LOAD_SET, {
+                commit(storeTypes.WORDS_LOAD_SET, {
                     data: data
                 });
                 return data;
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
-                    target: storeTypes.STUDY_ITEMS_LOAD,
+                    target: storeTypes.WORDS_LOAD,
                     loading: false,
                 });
                 throw err;

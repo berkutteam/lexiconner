@@ -49,7 +49,7 @@
                     >
                     </words-filters>
                     
-                    <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.STUDY_ITEMS_LOAD]"></row-loader>
+                    <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.WORDS_LOAD]"></row-loader>
 
                     <div>
                         <pagination-wrapper
@@ -301,7 +301,7 @@ export default {
 
     methods: {
         loadWords: function({offset = 0, limit = 50} = {}) {
-            return this.$store.dispatch(storeTypes.STUDY_ITEMS_LOAD, {
+            return this.$store.dispatch(storeTypes.WORDS_LOAD, {
                 offset: offset, 
                 limit: limit, 
             }).then().catch(err => {

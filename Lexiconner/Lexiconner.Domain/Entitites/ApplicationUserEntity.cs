@@ -30,6 +30,8 @@ namespace Lexiconner.Domain.Entitites
             // uses IdGenerator to generate Id of type TKEY. Supported types: Guid, Int16, Int32, Int64, String (Guid), ObjectId
             // we can rewrite Id in constructor as it is intialised in base constructor
             Id = ObjectId.GenerateNewId().ToString();
+
+            LearningLanguages = new List<ApplicationUserEntityLearningLanguage>();
         }
 
         //[BsonId]
@@ -58,9 +60,35 @@ namespace Lexiconner.Domain.Entitites
         [BsonIgnore]
         public bool IsUpdateExistingDataOnSeed { get; set; }
 
-        /// <summary>
-        /// ISO language code for language that user selected as learning
-        /// </summary>
-        // public string LearningLanguageCode { get; set; }
+        public List<ApplicationUserEntityLearningLanguage> LearningLanguages { get; set; }
+
+        #region Herlpers
+
+        public void AddOrUpdateLearningLanguage(string languageCode, bool isSelected)
+        {
+            foreach (var item in LearningLanguages)
+            {
+                item.IsSelected = false;
+            }
+            var existing = LearningLanguages.FirstOrDefault(x => x.LanguageCode == languageCode);
+            if(existing == null)
+            {
+                existing = new ApplicationUserEntityLearningLanguage()
+                {
+                    LanguageCode = languageCode,
+                };
+                LearningLanguages.Add(existing);
+            }
+            existing.IsSelected = isSelected;
+
+        }
+
+        #endregion
+    }
+
+    public class ApplicationUserEntityLearningLanguage
+    {
+        public string LanguageCode { get; set; }
+        public bool IsSelected { get; set; }
     }
 }

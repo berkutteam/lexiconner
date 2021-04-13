@@ -266,6 +266,14 @@ class API {
             //     return axiosAuthRequest({ url: buildUrl(url, `userinfo/current-company`, {}), method: "put", data: { companyId } }).then(handleApiResponse).catch(handleApiErrorResponse);
             // },
 
+            // profile
+            getProfile() {
+                return axiosAuthRequest({ url: buildUrl(url, `profile`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            selectProfileLearningLanguage({ languageCode }) {
+                return axiosAuthRequest({ url: buildUrl(url, `profile/learning_languages/${languageCode}`, {}), method: "post", data: { } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+
             // study items
             getWords({ offset, limit, search, isFavourite, isShuffle, isTrained, collectionId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `words`, { offset, limit, search, isFavourite, isShuffle, isTrained, collectionId}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);

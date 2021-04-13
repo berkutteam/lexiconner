@@ -24,8 +24,8 @@ namespace Lexiconner.Persistence.Repositories
         Task<T> GetOneAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
         Task AddAsync<T>(T entity) where T : class;
         Task AddManyAsync<T>(IEnumerable<T> entities) where T : class;
-        Task UpdateAsync<T>(T entity) where T : BaseEntity;
-        Task UpdateManyAsync<T>(IEnumerable<T> entities) where T : BaseEntity;
+        Task UpdateAsync<T>(T entity) where T : IIdentifiableEntity;
+        Task UpdateManyAsync<T>(IEnumerable<T> entities) where T : IIdentifiableEntity;
         Task DeleteAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
         Task DeleteAllAsync<T>() where T : class;
 

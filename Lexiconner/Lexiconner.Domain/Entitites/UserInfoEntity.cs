@@ -12,5 +12,10 @@ namespace Lexiconner.Domain.Entitites
     public class UserInfoEntity : BaseEntity
     {
         public string IdentityUserId { get; set; }
+
+        /// <summary>
+        /// ISO language code for language that user selected as learning
+        /// </summary>
+        public string LearningLanguageCode { get; set; }
     }
 }

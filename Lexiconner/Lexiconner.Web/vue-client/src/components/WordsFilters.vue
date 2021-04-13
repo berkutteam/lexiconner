@@ -157,31 +157,31 @@ export default {
             }
         }, 500),
         onSearchChange: function(e) {
-            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
+            this.$store.commit(storeTypes.WORDS_REQUEST_PARAMS_SET, {
                 search: e.target.value,
             });
             this.callOnChangeDebounce();
         },
         onIsFavoriteChange: function({value, tag, srcEvent}) {
-            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
+            this.$store.commit(storeTypes.WORDS_REQUEST_PARAMS_SET, {
                 isFavourite: value,
             });
              this.callOnChange();
         },
         setIsFavorite: function(value) {
-            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
+            this.$store.commit(storeTypes.WORDS_REQUEST_PARAMS_SET, {
                 isFavourite: value,
             });
             this.callOnChange();
         },
         setIsShuffle: function(value) {
-            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
+            this.$store.commit(storeTypes.WORDS_REQUEST_PARAMS_SET, {
                 isShuffle: value,
             });
             this.callOnChange();
         },
         setIsTrained: function(value) {
-            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_SET, {
+            this.$store.commit(storeTypes.WORDS_REQUEST_PARAMS_SET, {
                 isTrained: value,
             });
             this.callOnChange();
@@ -190,7 +190,7 @@ export default {
             this.callOnChange();
         },
         resetRequestParams: function() {
-            this.$store.commit(storeTypes.STUDY_ITEMS_REQUEST_PARAMS_RESET, {});
+            this.$store.commit(storeTypes.WORDS_ITEMS_REQUEST_PARAMS_RESET, {});
             this.callOnChange();
         },
     },

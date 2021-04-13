@@ -24,6 +24,7 @@ namespace Lexiconner.Api.Controllers.V2
                 IsoLanguageName = x.IsoLanguageName,
                 NativeName = x.NativeName,
                 Iso639_1_Code = x.Iso639_1_Code,
+                CountryIsoAlpha2Code = x.CountryIsoAlpha2Code,
             }).ToList());
         }
     }

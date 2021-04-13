@@ -21,7 +21,7 @@
                 </div>
                 
                 <div class="app-modal-content">
-                    <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.STUDY_ITEMS_LOAD]"></row-loader>
+                    <row-loader v-bind:visible="sharedState.loading[privateState.storeTypes.WORDS_LOAD]"></row-loader>
 
                     <form v-on:submit.prevent="createEditWord()">
                         <div class="form-group">
@@ -243,10 +243,10 @@ export default {
             wordExamples: state => state.wordExamples,
         }),
     },
-    watch:  {
+    watch: {
     },
     created: function() {
-        // watch when edited tem loaded
+        // watch when edited word loaded
         this.unwatch = this.$store.watch(
             (state, getters) => state.word,
             (newValue, oldValue) => {

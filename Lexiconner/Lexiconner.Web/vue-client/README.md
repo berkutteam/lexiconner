@@ -159,6 +159,11 @@ https://github.com/dzwillia/vue-simple-progress
 ### Tooltip - v-tooltip
 https://v-tooltip.netlify.app/
 
+### Flags
+https://www.npmjs.com/package/country-flag-icons
+
+
+
 # Used components
 
 

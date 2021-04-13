@@ -195,7 +195,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
             await _database.GetCollection<T>(MongoConfig.GetCollectionName<T>(_applicationDb)).InsertManyAsync(entities);
         }
 
-        public async Task UpdateAsync<T>(T entity) where T : BaseEntity
+        public async Task UpdateAsync<T>(T entity) where T : IIdentifiableEntity
         {
             CheckCollectionConfig<T>();
 
@@ -214,7 +214,7 @@ namespace Lexiconner.Persistence.Repositories.MongoDb
         }
 
         // TODO - check works properly
-        public async Task UpdateManyAsync<T>(IEnumerable<T> entities) where T : BaseEntity
+        public async Task UpdateManyAsync<T>(IEnumerable<T> entities) where T : IIdentifiableEntity
         {
             CheckCollectionConfig<T>();
 

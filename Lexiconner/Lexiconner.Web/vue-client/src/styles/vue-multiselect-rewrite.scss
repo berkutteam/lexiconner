@@ -139,3 +139,17 @@ $multiselect-color: $main-color-light;
         }
     }
 }
+
+.multiselect--languageCodeSelect {
+    .multiselect__tags {
+        background: #ebeced;
+
+        .multiselect__input {
+            background: #ebeced;
+        }
+
+        .multiselect__single {
+            background: #ebeced;
+        }
+    }
+}

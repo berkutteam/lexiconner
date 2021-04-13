@@ -7,12 +7,22 @@
 
         <!-- Page Content -->
         <div class="col app-page-content">
-          <!-- Sidebar toggle button -->
+         
+         <!-- Top navbar -->
           <nav class="navbar navbar-expand-lg navbar-light bg-light app-navbar no-print">
-            <div class>
-              <button v-on:click="toggleSidebar" type="button" class="btn custom-btn-normal">
-                <i class="fas fa-align-left"></i>
-              </button>
+            <div class="w-100 d-flex justify-content-start">
+              <div class>
+                <!-- Sidebar toggle button -->
+                <button v-on:click="toggleSidebar" type="button" class="btn custom-btn-normal">
+                  <i class="fas fa-align-left"></i>
+                </button>
+              </div>
+              
+              <!-- Learning language selector -->
+              <div class="ml-auto">
+                <learning-language-selector>
+                </learning-language-selector>
+              </div>
             </div>
           </nav>
 
@@ -29,11 +39,13 @@
 "use strict";
 
 import Sidebar from "@/components/Sidebar";
+import LearningLanguageSelector from '@/components/LearningLanguageSelector';
 
 export default {
   name: "default-layout",
   components: {
-    Sidebar
+    Sidebar,
+    LearningLanguageSelector
   },
   methods: {
     toggleSidebar() {

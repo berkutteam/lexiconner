@@ -16,7 +16,34 @@
         v-bind:loading="isLoading"
         v-bind:disabled="false"
         v-on:input="onInput"
+        class="multiselect--languageCodeSelect"
     >
+        <!-- Custom selected option (when select closed) -->
+        <template slot="singleLabel" slot-scope="props">
+            <div class="d-flex align-items-center">
+                <img 
+                    style="width: 24px;" 
+                    class="mr-2" 
+                    v-bind:src="`http://purecatamphetamine.github.io/country-flag-icons/3x2/${props.option.countryIsoAlpha2Code.toUpperCase()}.svg`"
+                />
+                <span class="option__desc">
+                    <span class="option__title">{{ languageLabel(props.option) }}</span>
+                </span>
+            </div>
+        </template>
+        <!-- Custom options -->
+        <template v-if="withFlags" slot="option" slot-scope="props">
+            <div class="d-flex align-items-center">
+                <img 
+                    style="width: 24px;" 
+                    class="mr-2" 
+                    v-bind:src="`http://purecatamphetamine.github.io/country-flag-icons/3x2/${props.option.countryIsoAlpha2Code.toUpperCase()}.svg`"
+                />
+                <div class="">
+                    <span class="option__title">{{ languageLabel(props.option) }}</span>
+                </div>
+            </div>
+        </template>
     </multiselect>
 </template>
 
@@ -50,8 +77,21 @@ export default {
             required: false,
             default: 'Select language',
         },
+
+        // ({iso639_1_Code, isoLanguageName, nativeName}) => {}: string
+        languageLabelGetter: {
+            type: Function,
+            required: false,
+            default: null,
+        },
+
+        withFlags: {
+            type: Boolean,
+            required: false,
+            default: true,
+        },
         
-        // events: change
+        // events: change -> languageCode
     },
     components: {
         // RowLoader,
@@ -76,6 +116,12 @@ export default {
                 return state.languages || [];
             },
         }),
+    },
+    watch: {
+        // watch lang code changed outside (value prop changed)
+        value: function(newValue, oldValue) {
+            this.preselectLanguage();
+        }
     },
     created: async function() {
         let self = this;
@@ -109,6 +155,9 @@ export default {
             }
         },
         languageLabel(option) {
+            if(this.languageLabelGetter) {
+                return this.languageLabelGetter(option);
+            }
             return `${option.iso639_1_Code} - ${option.isoLanguageName} (${option.nativeName})`;
         },
         onInput: function(value, id) {

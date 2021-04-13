@@ -16,19 +16,13 @@ namespace Lexiconner.Api.Controllers.V2
     [Route("api/v{version:apiVersion}/[controller]")]
     public class WordsController : ApiControllerBase
     {
-        private readonly IDataRepository _dataRepository;
         private readonly IWordsService _wordsService;
-        private readonly IImageService _imageService;
 
         public WordsController(
-            IDataRepository dataRepository,
-            IWordsService wordsService,
-            IImageService imageService
+            IWordsService wordsService
         )
         {
-            _dataRepository = dataRepository;
             _wordsService = wordsService;
-            _imageService = imageService;
         }
 
         [HttpGet]
