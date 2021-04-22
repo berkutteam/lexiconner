@@ -25,10 +25,15 @@ namespace Lexiconner.Domain.Dtos.UserDictionaries
             Images = new List<GeneralImageDto>();
         }
 
+        public string Id { get; set; }
         public string SourceWordSetId { get; set; }
+        public bool IsDefault { get; set; }
         public string Name { get; set; }
         public string WordsLanguageCode { get; set; }
         public string MeaningsLanguageCode { get; set; }
         public List<GeneralImageDto> Images { get; set; }
+
+        // Computed
+        public long WordCount { get; set; }
     }
 }

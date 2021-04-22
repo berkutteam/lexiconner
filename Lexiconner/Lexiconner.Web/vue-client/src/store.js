@@ -121,8 +121,9 @@ export default new Vuex.Store({
         
         customCollectionsResult: null, // object
         currentCustomCollection: null, // object
-
+        
         userDictionary: null, // object
+        currentUserDictionaryWordSetId: null, // string
 
         wordSetsRequestParamsDefault: {
             search: null,
@@ -436,6 +437,10 @@ export default new Vuex.Store({
         [storeTypes.USER_DICTIONARY_LOAD_SET](state, payload) {
             let { data } = payload;
             state.userDictionary = data;
+        },
+        [storeTypes.USER_DICTIONARY_WORD_SET_CURRENT_SET](state, payload) {
+            let { currentUserDictionaryWordSetId } = payload;
+            state.currentUserDictionaryWordSetId = currentUserDictionaryWordSetId;
         },
 
         //#endregion
@@ -1515,6 +1520,37 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.USER_DICTIONARY_WORD_SET_ADD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.USER_DICTIONARY_WORD_SET_DELETE](context, { wordSetId }) {
+            let { commit, dispatch, state, getters } = context;
+
+            if(getters.isLearningLanguageCodeSelected !== true) {
+                throw new Error(`Learning language code is not selected.`);
+            }
+
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.USER_DICTIONARY_WORD_SET_DELETE,
+                loading: true,
+            });
+            return api.webApi().deleteWordSetToUserDictionary({
+                languageCode: getters.selectedLearningLanguageCode,
+                wordSetId,
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_DICTIONARY_WORD_SET_DELETE,
+                    loading: false,
+                });
+                commit(storeTypes.USER_DICTIONARY_LOAD_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_DICTIONARY_WORD_SET_DELETE,
                     loading: false,
                 });
                 throw err;

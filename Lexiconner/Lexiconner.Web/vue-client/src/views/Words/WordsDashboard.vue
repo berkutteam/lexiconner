@@ -9,6 +9,9 @@
             <custom-collections>
             </custom-collections>
 
+            <!-- WordSet selector -->
+            <user-word-set-selector class="mb-4" />
+
             <!-- Nav -->
             <div class="app-card-nav mb-2">
                 <div class="app-card-nav-item">
@@ -123,6 +126,7 @@ import LoadingButton from '@/components/LoadingButton';
 import CustomCollections from '@/components/CustomCollections';
 import LanguageCodeSelect from '@/components/LanguageCodeSelect';
 import LearningLanguageNotSelectedAlert from '@/components/LearningLanguageNotSelectedAlert';
+import UserWordSetSelector from '@/components/UserWordSetSelector';
 
 export default {
     name: 'words-dashboard',
@@ -130,6 +134,7 @@ export default {
         RowLoader,
         CustomCollections,
         LearningLanguageNotSelectedAlert,
+        UserWordSetSelector,
     },
     data: function() {
         return {

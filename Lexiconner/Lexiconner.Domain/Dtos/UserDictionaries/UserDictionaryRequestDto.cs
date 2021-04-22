@@ -8,6 +8,5 @@ namespace Lexiconner.Domain.Dtos.UserDictionaries
 {
     public class UserDictionaryRequestDto
     {
-        public string LanguageCode { get; set; }
     }
 }

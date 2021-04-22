@@ -45,7 +45,17 @@ namespace Lexiconner.Application.Services
         public async Task<UserDictionaryDto> GetUserDictionaryAsync(string userId, string languageCode)
         {
             var dictionary = await GetOrCreateUserDictionaryAsync(userId, languageCode);
-            return _mapper.Map<UserDictionaryDto>(dictionary);
+            var wordCountTasks = dictionary.WordSets.Select(x => _dataRepository.CountAllAsync<WordEntity>(y => y.UserWordSetId == x.Id)).ToList();
+            var wordCount = await Task.WhenAll(wordCountTasks);
+
+            var dto = _mapper.Map<UserDictionaryDetailedDto>(dictionary);
+
+            for (int i = 0; i < dto.WordSets.Count; i++)
+            {
+                dto.WordSets[i].WordCount = wordCount[i];
+            }
+
+            return dto;
         }
 
         public async Task<UserDictionaryDto> AddWordSetToUserDictionaryAsync(string userId, string languageCode, string wordSetId)
@@ -61,7 +71,7 @@ namespace Lexiconner.Application.Services
             }
 
             // add word set to dictionary
-            var dictionary = await GetOrCreateUserDictionaryAsync(userId, wordSet.WordsLanguageCode);
+            var dictionary = await GetOrCreateUserDictionaryAsync(userId, languageCode);
             var userWordSet = dictionary.AddWordSet(wordSet);
             CustomValidationHelper.Validate(dictionary);
             await _dataRepository.UpdateAsync(dictionary);
@@ -82,7 +92,21 @@ namespace Lexiconner.Application.Services
             }
             await _dataRepository.AddManyAsync(newWords);
 
-            return await GetUserDictionaryAsync(userId, wordSet.WordsLanguageCode);
+            return await GetUserDictionaryAsync(userId, languageCode);
+        }
+
+        public async Task<UserDictionaryDto> DeleteWordSetFromUserDictionaryAsync(string userId, string languageCode, string wordSetId)
+        {
+            // delete word set from dictionary
+            var dictionary = await GetOrCreateUserDictionaryAsync(userId, languageCode);
+            dictionary.DeleteWordSet(wordSetId);
+            CustomValidationHelper.Validate(dictionary);
+            await _dataRepository.UpdateAsync(dictionary);
+
+            // delete words from word set
+            await _dataRepository.DeleteAsync<WordEntity>(x => x.UserWordSetId == wordSetId);
+
+            return await GetUserDictionaryAsync(userId, languageCode);
         }
 
         #region Private
@@ -97,9 +121,18 @@ namespace Lexiconner.Application.Services
                     UserId = userId,
                     WordsLanguageCode = languageCode,
                 };
+                dictionary.AddDefaultWordSet();
                 CustomValidationHelper.Validate(dictionary);
                 await _dataRepository.AddAsync(dictionary);
             }
+
+            if(!dictionary.WordSets.Any(x => x.IsDefault))
+            {
+                dictionary.AddDefaultWordSet();
+                CustomValidationHelper.Validate(dictionary);
+                await _dataRepository.UpdateAsync(dictionary);
+            }
+
             return dictionary;
         }
 

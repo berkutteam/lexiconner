@@ -46,6 +46,7 @@ namespace Lexiconner.Application.Mapping
 
             // UserDictionary
             CreateMap<UserDictionaryEntity, UserDictionaryDto>();
+            CreateMap<UserDictionaryEntity, UserDictionaryDetailedDto>();
             CreateMap<UserDictionaryWordSetEntity, UserDictionaryWordSetDto>();
 
             // Film

@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lexiconner.Domain.Dtos.UserDictionaries
 {
-    public class AddWordSetToUserDictionaryRequestDto
+    public class UserDictionaryDetailedDto : UserDictionaryDto
     {
-        public string WordSetId { get; set; }
     }
 }

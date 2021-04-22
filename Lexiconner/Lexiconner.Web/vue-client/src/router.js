@@ -9,6 +9,8 @@ import Login from './views/Login.vue';
 import Register from './views/Register.vue';
 import Logout from './views/Logout.vue';
 
+import UserDictionaryDashboard from './views/UserDictionary/UserDictionaryDashboard.vue';
+
 import WordsDashboard from './views/Words/WordsDashboard.vue';
 import WordsBrowse from './views/Words/WordsBrowse.vue';
 import WordsLearnFlashCards from './views/Words/WordsLearnFlashCards.vue';
@@ -148,6 +150,17 @@ export default new Router({
             component: TermsOfUse,
             props: true,
             meta: { layout: 'no-sidebar' },
+        },
+        {
+            path: '/user-dictionary',
+            name: 'user-dictionary',
+            component: UserDictionaryDashboard,
+            props: true,
+            meta: { layout: 'default' },
+            beforeEnter: async (to, from, next) => {
+                await waitAppInitialization({ to, from, next });
+                checkAuthenticated({ to, from, next });
+            },
         },
         {
             path: '/words-dashboard',

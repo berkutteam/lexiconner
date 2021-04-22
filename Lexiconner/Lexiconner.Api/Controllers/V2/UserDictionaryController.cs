@@ -28,27 +28,39 @@ namespace Lexiconner.Api.Controllers.V2
             _userDictionaryService = userDictionaryService;
         }
 
-        [HttpGet]
+        [HttpGet("{languageCode}")]
         [ProducesResponseType(typeof(BaseApiResponseDto<UserDictionaryDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetUserDictionary([FromQuery] UserDictionaryRequestDto dto)
+        public async Task<IActionResult> GetUserDictionary([FromRoute] string languageCode, [FromQuery] UserDictionaryRequestDto dto)
         {
-            var result = await _userDictionaryService.GetUserDictionaryAsync(GetUserId(), dto.LanguageCode);
+            var result = await _userDictionaryService.GetUserDictionaryAsync(GetUserId(), languageCode);
             return BaseResponse(result);
         }
 
-        [HttpPost]
+        [HttpPost("{languageCode}/wordsets")]
         [ProducesResponseType(typeof(BaseApiResponseDto<UserDictionaryDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> AddWordSetToUserDictionary([FromBody] AddWordSetToUserDictionaryRequestDto data)
+        public async Task<IActionResult> AddWordSetToUserDictionary([FromRoute] string languageCode, [FromBody] AddWordSetToUserDictionaryRequestDto data)
         {
-            var result = await _userDictionaryService.AddWordSetToUserDictionaryAsync(GetUserId(), data.LanguageCode, data.WordSetId);
+            var result = await _userDictionaryService.AddWordSetToUserDictionaryAsync(GetUserId(), languageCode, data.WordSetId);
+            return BaseResponse(result);
+        }
+
+        [HttpDelete("{languageCode}/wordsets/{wordSetId}")]
+        [ProducesResponseType(typeof(BaseApiResponseDto<UserDictionaryDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> DeleteWordSetFromUserDictionary([FromRoute] string languageCode, [FromRoute] string wordSetId)
+        {
+            var result = await _userDictionaryService.DeleteWordSetFromUserDictionaryAsync(GetUserId(), languageCode, wordSetId);
             return BaseResponse(result);
         }
     }

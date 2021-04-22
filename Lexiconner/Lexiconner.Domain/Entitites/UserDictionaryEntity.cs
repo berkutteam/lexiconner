@@ -35,6 +35,25 @@ namespace Lexiconner.Domain.Entitites
 
         #region Helpers
 
+        public UserDictionaryWordSetEntity AddDefaultWordSet()
+        {
+            var existing = this.WordSets.FirstOrDefault(x => x.IsDefault);
+            if (existing == null)
+            {
+                existing = new UserDictionaryWordSetEntity()
+                {
+                    SourceWordSetId = null,
+                    IsDefault = true,
+                    Name = "Default",
+                    WordsLanguageCode = this.WordsLanguageCode,
+                    MeaningsLanguageCode = null,
+                    Images = new List<GeneralImageEntity>(),
+                };
+                this.WordSets.Add(existing);
+            }
+            return existing;
+        }
+
         public UserDictionaryWordSetEntity AddWordSet(WordSetEntity wordSet)
         {
             var existing = this.WordSets.FirstOrDefault(x => x.SourceWordSetId == wordSet.Id);
@@ -53,6 +72,15 @@ namespace Lexiconner.Domain.Entitites
             return existing;
         }
 
+        public void DeleteWordSet(string wordSetId)
+        {
+            var existing = this.WordSets.FirstOrDefault(x => x.Id == wordSetId);
+            if (existing != null)
+            {
+                this.WordSets.Remove(existing);
+            }
+        }
+
         #endregion
     }
 
@@ -69,6 +97,7 @@ namespace Lexiconner.Domain.Entitites
         [BsonRepresentation(BsonType.ObjectId)]
         public string SourceWordSetId { get; set; }
 
+        public bool IsDefault { get; set; }
         public string Name { get; set; }
         public string WordsLanguageCode { get; set; }
         public string MeaningsLanguageCode { get; set; }

@@ -1,0 +1,119 @@
+<template>
+    <div class="d-flex align-items-center">
+        <multiselect 
+            v-model="privateState.selectedWordSetOption" 
+            v-bind:options="wordSetList" 
+            v-bind:multiple="false" 
+            v-bind:searchable="true" 
+            v-bind:close-on-select="true" 
+            v-bind:clear-on-select="false" 
+            v-bind:preserve-search="true" 
+            v-bind:show-labels="true" 
+            v-bind:allow-empty="true" 
+            v-bind:preselect-first="false"
+            v-bind:custom-label="wordSetLabel"
+            track-by="id" 
+            v-bind:placeholder="'Select word set'"
+            v-bind:loading="isLoading"
+            v-bind:disabled="false"
+            v-on:input="onInput"
+            class=""
+        >
+        </multiselect>
+    </div>
+</template>
+
+<script>
+// @ is an alias to /src
+import { mapState, mapGetters } from 'vuex';
+import _ from 'lodash';
+import { storeTypes } from '@/constants/index';
+import authService from '@/services/authService';
+import notificationUtil from '@/utils/notification';
+import RowLoader from '@/components/loaders/RowLoader';
+import LoadingButton from '@/components/LoadingButton';
+
+export default {
+    name: 'user-word-set-selector',
+    props: {
+    },
+    components: {
+        // RowLoader,
+        // LoadingButton,
+    },
+    data: function() {
+        return {
+            privateState: {
+                storeTypes: storeTypes,
+                selectedWordSetOption: null,
+            },
+        };
+    },
+    computed: {
+        // store state computed go here
+        ...mapState({
+            sharedState: state => state,
+            isLoading: state => state.loading[storeTypes.USER_DICTIONARY_LOAD_SET],
+            userDictionary: state => state.userDictionary,
+            wordSetList: function(state) {
+                return state.userDictionary ? state.userDictionary.wordSets : [];
+            },
+            currentUserDictionaryWordSetId: state => state.currentUserDictionaryWordSetId,
+        }),
+    },
+    watch: {
+    },
+    created: async function() {
+        if(!this.userDictionary) {
+            this.$store.dispatch(storeTypes.USER_DICTIONARY_LOAD_SET, {}).then(() => {
+                this.preselectWordSet();
+            }).catch(err => {
+                console.error(err);
+                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+            });
+        } else {
+            this.preselectWordSet();
+        }
+    },
+    mounted: function() {
+    },
+    updated: function() {
+    },
+    destroyed: function() {
+    },
+
+    methods: {
+        preselectWordSet() {
+            if(this.wordSetList) {
+                this.privateState.selectedWordSetOption = this.wordSetList.find(x => 
+                    this.currentUserDictionaryWordSetId !== null ? x.id === this.currentUserDictionaryWordSetId : x.isDefault
+                ) || null;
+            }
+        },
+        wordSetLabel(option) {
+            return `${option.name}`;
+        },
+        onInput: function(value, id) {
+            // tell parent that value was changed and it can update its v-model property
+            // value is user
+            let {id: wordSetId} = value;
+            this.$emit('input', wordSetId);
+
+            // emit change event
+            this.$emit('change', wordSetId);
+
+            this.onWordSetChange(wordSetId);
+        },
+        onWordSetChange(wordSetId) {
+            this.$store.commit(storeTypes.USER_DICTIONARY_WORD_SET_CURRENT_SET, {
+                currentUserDictionaryWordSetId: wordSetId,
+            });
+        },
+    },
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+
+</style>
