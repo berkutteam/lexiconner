@@ -2,16 +2,14 @@
     <div class="">
         <div class="row">
             <div class="col-12">
-                <div>
+                <!-- <div>
                     <custom-collections
                         v-bind:onSelectedCollectionChange="onSelectedCollectionChange"
                     >
                     </custom-collections>
-                </div>
+                </div> -->
 
                 <div v-if="words" class="words-wrapper">
-                    <h5 class="mb-3">Words:</h5>
-
                     <!-- Toolbar -->
                     <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group mr-2" role="group" aria-label="View toggle">
@@ -195,10 +193,10 @@
                                             <i v-if="item.isFavourite" class="fas fa-star text-warning"></i>
                                             <i v-else class="far fa-star text-warning"></i>
                                         </span>
-                                        <span v-on:click="onMarkWordAsTrained(item.id)" class="card-bottom-control-item">
+                                        <span v-if="!item.trainingInfo.isTrained" v-on:click="onMarkWordAsTrained(item.id)" class="card-bottom-control-item">
                                             <i class="fas fa-check"></i>
                                         </span>
-                                        <span v-on:click="onMarkWordAsNotTrained(item.id)" class="card-bottom-control-item">
+                                        <span v-if="item.trainingInfo.isTrained" v-on:click="onMarkWordAsNotTrained(item.id)" class="card-bottom-control-item">
                                             <i class="fas fa-redo"></i>
                                         </span>
                                         <span v-on:click="onUpdateWord(item.id)" class="card-bottom-control-item">
@@ -256,7 +254,7 @@ export default {
     components: {
         RowLoader,
         PaginationWrapper,
-        CustomCollections,
+        // CustomCollections,
         WordsFilters,
         WordCreateUpdateModal,
         WordImagesModal,

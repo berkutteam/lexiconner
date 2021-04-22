@@ -34,9 +34,9 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetTrainingStatistics()
+        public async Task<IActionResult> GetTrainingStatistics([FromQuery] string userWordSetId)
         {
-            var result = await _wordTrainingsService.GetTrainingStatisticsAsync(GetUserId());
+            var result = await _wordTrainingsService.GetTrainingStatisticsAsync(GetUserId(), userWordSetId);
             return BaseResponse(result);
         }
 
@@ -73,9 +73,9 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> FlashcardsTrainingStart([FromQuery]string collectionId, [FromQuery]int limit)
+        public async Task<IActionResult> FlashcardsTrainingStart([FromQuery]string collectionId, [FromQuery] string userWordSetId, [FromQuery]int limit)
         {
-            var result = await _wordTrainingsService.GetTrainingItemsForFlashCardsAsync(GetUserId(), collectionId, limit);
+            var result = await _wordTrainingsService.GetTrainingItemsForFlashCardsAsync(GetUserId(), collectionId, userWordSetId, limit);
             return BaseResponse(result);
         }
 
@@ -101,9 +101,9 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> WordMeaningTrainingStart([FromQuery] string collectionId, [FromQuery] int limit)
+        public async Task<IActionResult> WordMeaningTrainingStart([FromQuery] string collectionId, [FromQuery] string userWordSetId, [FromQuery] int limit)
         {
-            var result = await _wordTrainingsService.GetTrainingItemsForWordMeaningAsync(GetUserId(), collectionId, limit);
+            var result = await _wordTrainingsService.GetTrainingItemsForWordMeaningAsync(GetUserId(), collectionId, userWordSetId, limit);
             return BaseResponse(result);
         }
 
@@ -129,9 +129,9 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> MeaningWordTrainingStart([FromQuery] string collectionId, [FromQuery] int limit)
+        public async Task<IActionResult> MeaningWordTrainingStart([FromQuery] string collectionId, [FromQuery] string userWordSetId, [FromQuery] int limit)
         {
-            var result = await _wordTrainingsService.GetTrainingItemsForMeaningWordAsync(GetUserId(), collectionId, limit);
+            var result = await _wordTrainingsService.GetTrainingItemsForMeaningWordAsync(GetUserId(), collectionId, userWordSetId, limit);
             return BaseResponse(result);
         }
 
@@ -157,9 +157,9 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> MatchWordsTrainingStart([FromQuery] string collectionId)
+        public async Task<IActionResult> MatchWordsTrainingStart([FromQuery] string collectionId, [FromQuery] string userWordSetId)
         {
-            var result = await _wordTrainingsService.GetTrainingItemsForMatchWordsAsync(GetUserId(), collectionId);
+            var result = await _wordTrainingsService.GetTrainingItemsForMatchWordsAsync(GetUserId(), collectionId, userWordSetId);
             return BaseResponse(result);
         }
 
@@ -185,9 +185,9 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> BuildWordsTrainingStart([FromQuery] string collectionId, [FromQuery] int limit)
+        public async Task<IActionResult> BuildWordsTrainingStart([FromQuery] string collectionId, [FromQuery] string userWordSetId, [FromQuery] int limit)
         {
-            var result = await _wordTrainingsService.GetTrainingItemsForBuildWordsAsync(GetUserId(), collectionId, limit);
+            var result = await _wordTrainingsService.GetTrainingItemsForBuildWordsAsync(GetUserId(), collectionId, userWordSetId, limit);
             return BaseResponse(result);
         }
 
@@ -213,9 +213,9 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> ListenWordsTrainingStart([FromQuery] string collectionId, [FromQuery] int limit)
+        public async Task<IActionResult> ListenWordsTrainingStart([FromQuery] string collectionId, [FromQuery] string userWordSetId, [FromQuery] int limit)
         {
-            var result = await _wordTrainingsService.GetTrainingItemsForListenWordsAsync(GetUserId(), collectionId, limit);
+            var result = await _wordTrainingsService.GetTrainingItemsForListenWordsAsync(GetUserId(), collectionId, userWordSetId, limit);
             return BaseResponse(result);
         }
 

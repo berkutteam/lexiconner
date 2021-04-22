@@ -48,7 +48,7 @@ namespace Lexiconner.Application.Services
 
         #region Trainings
 
-        public async Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId)
+        public async Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId, string userWordSetId)
         {
             long totalItemCount = await _dataRepository.CountAllAsync<WordEntity>(x => x.UserId == userId);
             long onTrainingItemCount = await _dataRepository.CountAllAsync<WordEntity>(x =>
@@ -111,7 +111,7 @@ namespace Lexiconner.Application.Services
             await _dataRepository.UpdateAsync(entity);
         }
 
-        public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, string collectionId, int limit)
+        public async Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, string collectionId, string userWordSetId, int limit)
         {
             var predicate = PredicateBuilder.New<WordEntity>(x =>
                 x.UserId == userId &&
@@ -129,6 +129,10 @@ namespace Lexiconner.Application.Services
             if (collectionId != null)
             {
                 predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+            if (userWordSetId != null)
+            {
+                predicate.And(x => x.UserWordSetId == userWordSetId);
             }
 
             var entities = await _dataRepository.GetManyAsync<WordEntity>(predicate, 0, limit);
@@ -202,7 +206,7 @@ namespace Lexiconner.Application.Services
             await _dataRepository.UpdateManyAsync(entities);
         }
 
-        public async Task<WordMeaningTrainingDto> GetTrainingItemsForWordMeaningAsync(string userId, string collectionId, int limit)
+        public async Task<WordMeaningTrainingDto> GetTrainingItemsForWordMeaningAsync(string userId, string collectionId, string userWordSetId, int limit)
         {
             const int meaningsPerWord = 5;
             var random = new Random();
@@ -225,6 +229,10 @@ namespace Lexiconner.Application.Services
             if (collectionId != null)
             {
                 predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+            if (userWordSetId != null)
+            {
+                predicate.And(x => x.UserWordSetId == userWordSetId);
             }
 
             var entities = await _dataRepository.GetManyAsync<WordEntity>(predicate, 0, limit);
@@ -344,7 +352,7 @@ namespace Lexiconner.Application.Services
             await _dataRepository.UpdateManyAsync(entities);
         }
 
-        public async Task<MeaningWordTrainingDto> GetTrainingItemsForMeaningWordAsync(string userId, string collectionId, int limit)
+        public async Task<MeaningWordTrainingDto> GetTrainingItemsForMeaningWordAsync(string userId, string collectionId, string userWordSetId, int limit)
         {
             const int meaningsPerWord = 5;
             var random = new Random();
@@ -367,6 +375,10 @@ namespace Lexiconner.Application.Services
             if (collectionId != null)
             {
                 predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+            if (userWordSetId != null)
+            {
+                predicate.And(x => x.UserWordSetId == userWordSetId);
             }
 
             var entities = await _dataRepository.GetManyAsync<WordEntity>(predicate, 0, limit);
@@ -486,7 +498,7 @@ namespace Lexiconner.Application.Services
             await _dataRepository.UpdateManyAsync(entities);
         }
 
-        public async Task<MatchWordsTrainingDto> GetTrainingItemsForMatchWordsAsync(string userId, string collectionId)
+        public async Task<MatchWordsTrainingDto> GetTrainingItemsForMatchWordsAsync(string userId, string collectionId, string userWordSetId)
         {
             const int matchWordsCount = 5;
             const int additionalOptionsCount = 3;
@@ -510,6 +522,10 @@ namespace Lexiconner.Application.Services
             if (collectionId != null)
             {
                 predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+            if (userWordSetId != null)
+            {
+                predicate.And(x => x.UserWordSetId == userWordSetId);
             }
 
             var entities = await _dataRepository.GetManyAsync<WordEntity>(predicate, 0, matchWordsCount);
@@ -629,7 +645,7 @@ namespace Lexiconner.Application.Services
             await _dataRepository.UpdateManyAsync(entities);
         }
 
-        public async Task<BuildWordsTrainingDto> GetTrainingItemsForBuildWordsAsync(string userId, string collectionId, int limit)
+        public async Task<BuildWordsTrainingDto> GetTrainingItemsForBuildWordsAsync(string userId, string collectionId, string userWordSetId, int limit)
         {
             var predicate = PredicateBuilder.New<WordEntity>(x =>
                 x.UserId == userId &&
@@ -649,6 +665,10 @@ namespace Lexiconner.Application.Services
             if (collectionId != null)
             {
                 predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+            if (userWordSetId != null)
+            {
+                predicate.And(x => x.UserWordSetId == userWordSetId);
             }
 
             var entities = await _dataRepository.GetManyAsync<WordEntity>(predicate, 0, limit);
@@ -730,7 +750,7 @@ namespace Lexiconner.Application.Services
             await _dataRepository.UpdateManyAsync(entities);
         }
 
-        public async Task<ListenWordsTrainingDto> GetTrainingItemsForListenWordsAsync(string userId, string collectionId, int limit)
+        public async Task<ListenWordsTrainingDto> GetTrainingItemsForListenWordsAsync(string userId, string collectionId, string userWordSetId, int limit)
         {
             var predicate = PredicateBuilder.New<WordEntity>(x =>
                 x.UserId == userId &&
@@ -750,6 +770,10 @@ namespace Lexiconner.Application.Services
             if (collectionId != null)
             {
                 predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+            if (userWordSetId != null)
+            {
+                predicate.And(x => x.UserWordSetId == userWordSetId);
             }
 
             var entities = await _dataRepository.GetManyAsync<WordEntity>(predicate, 0, limit);

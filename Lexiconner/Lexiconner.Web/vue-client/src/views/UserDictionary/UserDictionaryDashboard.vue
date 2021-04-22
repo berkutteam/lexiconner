@@ -16,6 +16,12 @@
                     <span class="app-card-nav-text">Add word</span>
                 </router-link>
             </div>
+            <div class="app-card-nav-item">
+                <router-link v-bind:to="{ name: '', params: {}}" v-on:click.native="onCreateWordSetClick" class="app-card-nav-link">
+                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-add-folder-64.png" alt="">
+                    <span class="app-card-nav-text">Add word set</span>
+                </router-link>
+            </div>
         </div>
 
         <!-- Word create/edit -->
@@ -23,6 +29,8 @@
             ref="wordCreateUpdateModal"
         >
         </word-create-update-modal>
+        
+        <word-set-create-update-modal ref="wordSetCreateUpdateModal" />
 
         <!-- Word sets -->
         <h4>Added word sets:</h4>
@@ -46,15 +54,27 @@
                 </router-link>
                     
                 <!-- Overlay controls -->
-                <div  class="item-card-overlay-controls">
+                <div class="item-card-overlay-controls">
                     <div class="w-100 d-flex justify-content-center">
                         <loading-button 
                             type="button"
+                            v-if="!item.isDefault"
+                            v-bind:disabled="item.isDefault"
                             v-bind:loading="sharedState.loading[privateState.storeTypes.USER_DICTIONARY_WORD_SET_DELETE]"
                             v-on:click.native="onDeleteWordSetClick(item.id)"
+                            class="btn btn-sm custom-btn-normal mr-1"
+                        >
+                            <i class="fas fa-times mr-1"></i> Delete
+                        </loading-button>
+                        <loading-button 
+                            type="button"
+                            v-if="!item.isDefault"
+                            v-bind:disabled="item.isDefault"
+                            v-bind:loading="sharedState.loading[privateState.storeTypes.USER_DICTIONARY_WORD_SET_DELETE]"
+                            v-on:click.native="(e) => onUpdateWordSetClick(e, item.id)"
                             class="btn btn-sm custom-btn-normal"
                         >
-                            <i class="fas fa-plus mr-2"></i> Delete from my dictionary
+                            <i class="fas fa-pencil-alt mr-1"></i> Edit
                         </loading-button>
                     </div>
                 </div>
@@ -74,6 +94,7 @@ import RowLoader from '@/components/loaders/RowLoader';
 import LoadingButton from '@/components/LoadingButton';
 import LanguageCodeSelect from '@/components/LanguageCodeSelect';
 import WordCreateUpdateModal from '@/views/Words/WordCreateUpdateModal';
+import WordSetCreateUpdateModal from './WordSetCreateUpdateModal';
 
 export default {
     name: 'user-dictionary',
@@ -83,6 +104,7 @@ export default {
         RowLoader,
         LoadingButton,
         WordCreateUpdateModal,
+        WordSetCreateUpdateModal,
     },
     data: function() {
         return {
@@ -118,6 +140,18 @@ export default {
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
         },
+        onCreateWordClick: function(e) {
+            e.preventDefault();
+            this.$refs.wordCreateUpdateModal.show({wordId: null});
+        },
+        onCreateWordSetClick: function(e) {
+            e.preventDefault();
+            this.$refs.wordSetCreateUpdateModal.show({wordSetId: null});
+        },
+        onUpdateWordSetClick: function(e, wordSetId) {
+            e.preventDefault();
+            this.$refs.wordSetCreateUpdateModal.show({wordSetId: wordSetId});
+        },
         onDeleteWordSetClick: function(wordSetId) {
             if(confirm(`You will lost words in word set and its' training status. Are you sure?`)) {
                 return this.$store.dispatch(storeTypes.USER_DICTIONARY_WORD_SET_DELETE, {
@@ -127,10 +161,6 @@ export default {
                     notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
                 });
             }
-        },
-        onCreateWordClick: function(e) {
-            e.preventDefault();
-            this.$refs.wordCreateUpdateModal.show({wordId: null});
         },
     },
 }

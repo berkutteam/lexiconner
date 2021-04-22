@@ -12,20 +12,20 @@ namespace Lexiconner.Application.Services.Interfacse
 {
     public interface IWordTrainingsService
     {
-        Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId);
+        Task<TrainingsStatisticsDto> GetTrainingStatisticsAsync(string userId, string userWordSetId);
         Task MarkWordAsTrainedAsync(string userId, string wordId);
         Task MarkWordAsNotTrainedAsync(string userId, string wordId);
-        Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, string collectionId, int limit);
+        Task<FlashCardsTrainingDto> GetTrainingItemsForFlashCardsAsync(string userId, string collectionId, string userWordSetId, int limit);
         Task SaveTrainingResultsForFlashCardsAsync(string userId, FlashCardsTrainingResultDto results);
-        Task<WordMeaningTrainingDto> GetTrainingItemsForWordMeaningAsync(string userId, string collectionId, int limit);
+        Task<WordMeaningTrainingDto> GetTrainingItemsForWordMeaningAsync(string userId, string collectionId, string userWordSetId, int limit);
         Task SaveTrainingResultsForWordMeaningAsync(string userId, WordMeaningTrainingResultDto results);
-        Task<MeaningWordTrainingDto> GetTrainingItemsForMeaningWordAsync(string userId, string collectionId, int limit);
+        Task<MeaningWordTrainingDto> GetTrainingItemsForMeaningWordAsync(string userId, string collectionId, string userWordSetId, int limit);
         Task SaveTrainingResultsForMeaningWordAsync(string userId, MeaningWordTrainingResultDto results);
-        Task<MatchWordsTrainingDto> GetTrainingItemsForMatchWordsAsync(string userId, string collectionId);
+        Task<MatchWordsTrainingDto> GetTrainingItemsForMatchWordsAsync(string userId, string collectionId, string userWordSetId);
         Task SaveTrainingResultsForMatchWordsAsync(string userId, MatchWordsTrainingResultDto results);
-        Task<BuildWordsTrainingDto> GetTrainingItemsForBuildWordsAsync(string userId, string collectionId, int limit);
+        Task<BuildWordsTrainingDto> GetTrainingItemsForBuildWordsAsync(string userId, string collectionId, string userWordSetId, int limit);
         Task SaveTrainingResultsForBuildWordsAsync(string userId, BuildWordsTrainingResultDto results);
-        Task<ListenWordsTrainingDto> GetTrainingItemsForListenWordsAsync(string userId, string collectionId, int limit);
+        Task<ListenWordsTrainingDto> GetTrainingItemsForListenWordsAsync(string userId, string collectionId, string userWordSetId, int limit);
         Task SaveTrainingResultsForListenWordsAsync(string userId, ListenWordsTrainingResultDto results);
     }
 }

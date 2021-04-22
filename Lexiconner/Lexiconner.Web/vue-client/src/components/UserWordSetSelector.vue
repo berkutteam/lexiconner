@@ -71,7 +71,17 @@ export default {
             isLoading: state => state.loading[storeTypes.USER_DICTIONARY_LOAD],
             userDictionary: state => state.userDictionary,
             wordSetList: function(state) {
-                return state.userDictionary ? state.userDictionary.wordSets : [];
+                if(state.userDictionary) {
+                    return [
+                        ...(this.useAsInputOnly ? [] : [{
+                            id: null,
+                            name: 'All'
+                        }]),
+                        ...state.userDictionary.wordSets,
+                    ];
+                } else {
+                    return [];
+                }
             },
             currentUserDictionaryWordSetId: state => state.currentUserDictionaryWordSetId,
         }),
@@ -115,13 +125,17 @@ export default {
                     }
                 } else {
                     this.privateState.selectedWordSetOption = this.wordSetList.find(x => 
-                        this.currentUserDictionaryWordSetId !== null ? x.id === this.currentUserDictionaryWordSetId : x.isDefault
+                        x.id === this.currentUserDictionaryWordSetId
                     ) || null;
+
+                    if(this.privateState.selectedWordSetOption) {
+                        this.onWordSetChange(this.privateState.selectedWordSetOption.id);
+                    }
                 }
             }
         },
         wordSetLabel(option) {
-            return `${option.name}`;
+            return `${option.name} ${option.id ? `(${option.wordCount || 0})` : ''}`;
         },
         onInput: function(value, id) {
             // tell parent that value was changed and it can update its v-model property

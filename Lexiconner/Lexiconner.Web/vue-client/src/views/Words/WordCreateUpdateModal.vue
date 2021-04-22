@@ -12,8 +12,8 @@
             <div class="app-modal">
                 <div class="app-modal-header">
                     <div class="app-modal-title">
-                        <span v-if="privateState.modalMode === 'create'">Create item</span>
-                        <span v-if="privateState.modalMode === 'edit'">Edit item</span>
+                        <span v-if="privateState.modalMode === 'create'">Create word</span>
+                        <span v-if="privateState.modalMode === 'edit'">Edit word</span>
                     </div>
                     <div v-on:click="$modal.hide('word-create-edit')" class="app-modal-close">
                         <i class="fas fa-times"></i>

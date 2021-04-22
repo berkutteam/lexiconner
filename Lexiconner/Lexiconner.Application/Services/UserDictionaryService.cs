@@ -48,7 +48,7 @@ namespace Lexiconner.Application.Services
             var wordCountTasks = dictionary.WordSets.Select(x => _dataRepository.CountAllAsync<WordEntity>(y => y.UserWordSetId == x.Id)).ToList();
             var wordCount = await Task.WhenAll(wordCountTasks);
 
-            var dto = _mapper.Map<UserDictionaryDetailedDto>(dictionary);
+            var dto = _mapper.Map<UserDictionaryDto>(dictionary);
 
             for (int i = 0; i < dto.WordSets.Count; i++)
             {
@@ -91,6 +91,26 @@ namespace Lexiconner.Application.Services
                 CustomValidationHelper.Validate(item);
             }
             await _dataRepository.AddManyAsync(newWords);
+
+            return await GetUserDictionaryAsync(userId, languageCode);
+        }
+
+        public async Task<UserDictionaryDto> CreateUserDictionaryWordSetAsync(string userId, string languageCode, UserWordSetCreateDto dto)
+        {
+            var dictionary = await GetOrCreateUserDictionaryAsync(userId, languageCode);
+            dictionary.AddWordSet(dto);
+            CustomValidationHelper.Validate(dictionary);
+            await _dataRepository.UpdateAsync(dictionary);
+
+            return await GetUserDictionaryAsync(userId, languageCode);
+        }
+
+        public async Task<UserDictionaryDto> UpdateUserDictionaryWordSetAsync(string userId, string languageCode, string userWordSetId, UserWordSetUpdateDto dto)
+        {
+            var dictionary = await GetOrCreateUserDictionaryAsync(userId, languageCode);
+            dictionary.UpdateWordSet(userWordSetId, dto);
+            CustomValidationHelper.Validate(dictionary);
+            await _dataRepository.UpdateAsync(dictionary);
 
             return await GetUserDictionaryAsync(userId, languageCode);
         }

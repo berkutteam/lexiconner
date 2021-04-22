@@ -1109,12 +1109,14 @@ export default new Vuex.Store({
         //#region Trainings
 
         [storeTypes.WORD_TRAINING_STATS_LOAD](context, params) {
-            let { commit, dispatch, getters } = context;
+            let { commit, dispatch, state, getters } = context;
             commit(storeTypes.LOADING_SET, {
                 target: storeTypes.WORD_TRAINING_STATS_LOAD,
                 loading: true,
             });
-            return api.webApi().getTrainingStatistics().then(({ data, ok }) => {
+            return api.webApi().getTrainingStatistics({
+                userWordSetId: state.currentUserDictionaryWordSetId,
+            }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.WORD_TRAINING_STATS_LOAD,
                     loading: false,
@@ -1178,12 +1180,15 @@ export default new Vuex.Store({
             });
         },
         [storeTypes.WORD_TRAINING_FLASHCARDS_START](context, params) {
-            let { commit, dispatch, getters } = context;
+            let { commit, dispatch, state, getters } = context;
             commit(storeTypes.LOADING_SET, {
                 target: storeTypes.WORD_TRAINING_FLASHCARDS_START,
                 loading: true,
             });
-            return api.webApi().flashcardsTrainingStart({...params}).then(({ data, ok }) => {
+            return api.webApi().flashcardsTrainingStart({
+                userWordSetId: state.currentUserDictionaryWordSetId,
+                ...params
+            }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.WORD_TRAINING_FLASHCARDS_START,
                     loading: false,
@@ -1225,12 +1230,15 @@ export default new Vuex.Store({
             });
         },
         [storeTypes.WORD_TRAINING_WORDMEANING_START](context, params) {
-            let { commit, dispatch, getters } = context;
+            let { commit, dispatch, state, getters } = context;
             commit(storeTypes.LOADING_SET, {
                 target: storeTypes.WORD_TRAINING_WORDMEANING_START,
                 loading: true,
             });
-            return api.webApi().wordmeaningTrainingStart({ ...params }).then(({ data, ok }) => {
+            return api.webApi().wordmeaningTrainingStart({ 
+                userWordSetId: state.currentUserDictionaryWordSetId,
+                ...params
+             }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.WORD_TRAINING_WORDMEANING_START,
                     loading: false,
@@ -1272,12 +1280,15 @@ export default new Vuex.Store({
             });
         },
         [storeTypes.WORD_TRAINING_MEANINGWORD_START](context, params) {
-            let { commit, dispatch, getters } = context;
+            let { commit, dispatch, state, getters } = context;
             commit(storeTypes.LOADING_SET, {
                 target: storeTypes.WORD_TRAINING_MEANINGWORD_START,
                 loading: true,
             });
-            return api.webApi().meaningwordTrainingStart({ ...params }).then(({ data, ok }) => {
+            return api.webApi().meaningwordTrainingStart({ 
+                userWordSetId: state.currentUserDictionaryWordSetId,
+                ...params 
+            }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.WORD_TRAINING_MEANINGWORD_START,
                     loading: false,
@@ -1319,12 +1330,15 @@ export default new Vuex.Store({
             });
         },
         [storeTypes.WORD_TRAINING_MATCHWORDS_START](context, params) {
-            let { commit, dispatch, getters } = context;
+            let { commit, dispatch, state, getters } = context;
             commit(storeTypes.LOADING_SET, {
                 target: storeTypes.WORD_TRAINING_MATCHWORDS_START,
                 loading: true,
             });
-            return api.webApi().matchwordsTrainingStart({ ...params }).then(({ data, ok }) => {
+            return api.webApi().matchwordsTrainingStart({ 
+                userWordSetId: state.currentUserDictionaryWordSetId,
+                ...params 
+            }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.WORD_TRAINING_MATCHWORDS_START,
                     loading: false,
@@ -1366,12 +1380,15 @@ export default new Vuex.Store({
             });
         },
         [storeTypes.WORD_TRAINING_BUILDWORDS_START](context, params) {
-            let { commit, dispatch, getters } = context;
+            let { commit, dispatch, state, getters } = context;
             commit(storeTypes.LOADING_SET, {
                 target: storeTypes.WORD_TRAINING_BUILDWORDS_START,
                 loading: true,
             });
-            return api.webApi().buildwordsTrainingStart({ ...params }).then(({ data, ok }) => {
+            return api.webApi().buildwordsTrainingStart({ 
+                userWordSetId: state.currentUserDictionaryWordSetId,
+                ...params 
+            }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.WORD_TRAINING_BUILDWORDS_START,
                     loading: false,
@@ -1413,12 +1430,15 @@ export default new Vuex.Store({
             });
         },
         [storeTypes.WORD_TRAINING_LISTENWORDS_START](context, params) {
-            let { commit, dispatch, getters } = context;
+            let { commit, dispatch, state, getters } = context;
             commit(storeTypes.LOADING_SET, {
                 target: storeTypes.WORD_TRAINING_LISTENWORDS_START,
                 loading: true,
             });
-            return api.webApi().listenwordsTrainingStart({ ...params }).then(({ data, ok }) => {
+            return api.webApi().listenwordsTrainingStart({ 
+                userWordSetId: state.currentUserDictionaryWordSetId,
+                ...params 
+            }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.WORD_TRAINING_LISTENWORDS_START,
                     loading: false,
@@ -1526,12 +1546,63 @@ export default new Vuex.Store({
                 throw err;
             });
         },
-        [storeTypes.USER_DICTIONARY_WORD_SET_DELETE](context, { wordSetId }) {
+        [storeTypes.USER_DICTIONARY_WORD_SET_CREATE](context, { data }) {
             let { commit, dispatch, state, getters } = context;
 
-            if(getters.isLearningLanguageCodeSelected !== true) {
-                throw new Error(`Learning language code is not selected.`);
-            }
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.USER_DICTIONARY_WORD_SET_CREATE,
+                loading: true,
+            });
+            return api.webApi().createUserDictionaryWordSet({
+                languageCode: getters.selectedLearningLanguageCode,
+                data,
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_DICTIONARY_WORD_SET_CREATE,
+                    loading: false,
+                });
+                commit(storeTypes.USER_DICTIONARY_LOAD_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_DICTIONARY_WORD_SET_CREATE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.USER_DICTIONARY_WORD_SET_UPDATE](context, { wordSetId, data }) {
+            let { commit, dispatch, state, getters } = context;
+
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.USER_DICTIONARY_WORD_SET_UPDATE,
+                loading: true,
+            });
+            return api.webApi().updateUserDictionaryWordSet({
+                languageCode: getters.selectedLearningLanguageCode,
+                wordSetId,
+                data,
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_DICTIONARY_WORD_SET_UPDATE,
+                    loading: false,
+                });
+                commit(storeTypes.USER_DICTIONARY_LOAD_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_DICTIONARY_WORD_SET_UPDATE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.USER_DICTIONARY_WORD_SET_DELETE](context, { wordSetId }) {
+            let { commit, dispatch, state, getters } = context;
 
             commit(storeTypes.LOADING_SET, {
                 target: storeTypes.USER_DICTIONARY_WORD_SET_DELETE,

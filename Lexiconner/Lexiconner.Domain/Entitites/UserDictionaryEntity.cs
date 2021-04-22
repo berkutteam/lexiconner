@@ -1,4 +1,5 @@
-﻿using Lexiconner.Domain.Dtos.Words;
+﻿using Lexiconner.Domain.Dtos.UserDictionaries;
+using Lexiconner.Domain.Dtos.Words;
 using Lexiconner.Domain.Entitites.Base;
 using Lexiconner.Domain.Entitites.General;
 using Lexiconner.Domain.Enums;
@@ -70,6 +71,25 @@ namespace Lexiconner.Domain.Entitites
                 this.WordSets.Add(existing);
             }
             return existing;
+        }
+
+        public void AddWordSet(UserWordSetCreateDto dto)
+        {
+            this.WordSets.Add(new UserDictionaryWordSetEntity()
+            {
+                Name = dto.Name,
+                WordsLanguageCode = this.WordsLanguageCode,
+                MeaningsLanguageCode = null,
+            });
+        }
+
+        public void UpdateWordSet(string wordSetId, UserWordSetUpdateDto dto)
+        {
+            var existing = this.WordSets.FirstOrDefault(x => x.Id == wordSetId);
+            if(existing != null)
+            {
+                existing.Name = dto.Name;
+            }
         }
 
         public void DeleteWordSet(string wordSetId)
