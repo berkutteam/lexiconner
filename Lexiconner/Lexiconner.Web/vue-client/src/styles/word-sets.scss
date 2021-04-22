@@ -42,6 +42,13 @@
             &:hover {
                 background-color: rgba(0, 0, 0, 0.45);
             }
+
+            &.card-body--link {
+                text-decoration: none;
+                &:hover {
+                    text-decoration: none;
+                }
+            }
         }
 
         .card-title {

@@ -34,7 +34,7 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetAll([FromQuery] WordsRequestDto dto)
         {
-            var result = await _wordsService.GetAllWordsAsync(GetUserId(), dto.LanguageCode, dto.Offset, dto.Limit, dto.CollectionId, dto.Search, dto.IsFavourite, dto.IsShuffle, dto.IsTrained);
+            var result = await _wordsService.GetAllWordsAsync(GetUserId(), dto.LanguageCode, dto.Offset, dto.Limit, dto.CollectionId, dto.Search, dto.IsFavourite, dto.IsShuffle, dto.IsTrained, dto.UserWordSetId);
             return BaseResponse(result);
         }
 

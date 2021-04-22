@@ -262,6 +262,13 @@ export default {
         WordImagesModal,
         ProgressBar,
     },
+    props: {
+        // route props
+        userWordSetId: {
+            required: false,
+            default: null,
+        }
+    },
     data: function() {
         return {
             privateState: {
@@ -309,6 +316,7 @@ export default {
     methods: {
         loadWords: function({offset = 0, limit = 50} = {}) {
             return this.$store.dispatch(storeTypes.WORDS_LOAD, {
+                userWordSetId: this.userWordSetId,
                 offset: offset, 
                 limit: limit, 
             }).then().catch(err => {

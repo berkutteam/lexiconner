@@ -36,6 +36,21 @@ import LoadingButton from '@/components/LoadingButton';
 export default {
     name: 'user-word-set-selector',
     props: {
+        /**
+         * Value is wordSetId that is passed as v-model="<>"
+         * v-model does this:
+         *      v-bind:value="<>"
+         *      v-on:input="<> = $event"
+         */
+        value: {
+            // type: [String],
+            required: false,
+            default: null,
+        },
+        useAsInputOnly: {
+            required: false,
+            default: false,
+        }
     },
     components: {
         // RowLoader,
@@ -62,6 +77,10 @@ export default {
         }),
     },
     watch: {
+        // watch value changed outside (value prop changed)
+        value: function(newValue, oldValue) {
+            this.preselectWordSet();
+        }
     },
     created: async function() {
         if(!this.userDictionary) {
@@ -85,9 +104,20 @@ export default {
     methods: {
         preselectWordSet() {
             if(this.wordSetList) {
-                this.privateState.selectedWordSetOption = this.wordSetList.find(x => 
-                    this.currentUserDictionaryWordSetId !== null ? x.id === this.currentUserDictionaryWordSetId : x.isDefault
-                ) || null;
+                if(this.useAsInputOnly) {
+                    this.privateState.selectedWordSetOption = this.wordSetList.find(x => 
+                        this.value ? x.id === this.value : x.isDefault
+                    ) || null;
+
+                    // autoselect default
+                    if(this.privateState.selectedWordSetOption && !this.value) {
+                        this.onInput(this.privateState.selectedWordSetOption);
+                    }
+                } else {
+                    this.privateState.selectedWordSetOption = this.wordSetList.find(x => 
+                        this.currentUserDictionaryWordSetId !== null ? x.id === this.currentUserDictionaryWordSetId : x.isDefault
+                    ) || null;
+                }
             }
         },
         wordSetLabel(option) {
@@ -102,7 +132,9 @@ export default {
             // emit change event
             this.$emit('change', wordSetId);
 
-            this.onWordSetChange(wordSetId);
+            if(!this.useAsInputOnly) {
+                this.onWordSetChange(wordSetId);
+            }
         },
         onWordSetChange(wordSetId) {
             this.$store.commit(storeTypes.USER_DICTIONARY_WORD_SET_CURRENT_SET, {

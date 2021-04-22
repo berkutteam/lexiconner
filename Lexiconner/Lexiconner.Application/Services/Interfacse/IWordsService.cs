@@ -21,7 +21,8 @@ namespace Lexiconner.Application.Services.Interfacse
             string search = null,
             bool? isFavourite = null,
             bool isShuffle = false,
-            bool? isTrained = null
+            bool? isTrained = null,
+            string userWordSetId = null
         );
         Task<WordDto> GetWordAsync(string userId, string wordId);
         Task<WordDto> CreateWordAsync(string userId, WordCreateDto createDto);

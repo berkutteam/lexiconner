@@ -163,6 +163,17 @@ export default new Router({
             },
         },
         {
+            path: '/user-dictionary/wordset/:userWordSetId/words',
+            name: 'user-dictionary-wordset-words',
+            component: WordsBrowse,
+            props: true,
+            meta: { layout: 'default' },
+            beforeEnter: async (to, from, next) => {
+                await waitAppInitialization({ to, from, next });
+                checkAuthenticated({ to, from, next });
+            },
+        },
+        {
             path: '/words-dashboard',
             name: 'words-dashboard',
             component: WordsDashboard,

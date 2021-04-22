@@ -94,17 +94,24 @@
                                 v-model="privateState.wordModel.meaningLanguageCode"
                             />
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="">Tags</label>
                             <tags-multiselect 
                                 v-model="privateState.wordModel.tags" 
                             ></tags-multiselect>
-                        </div>
-                        <div class="form-group">
+                        </div> -->
+                        <!-- <div class="form-group">
                             <label for="">Collections (aka folders)</label>
                             <custom-collections-multiselect
                                 v-model="privateState.wordModel.customCollectionIds" 
                             ></custom-collections-multiselect>
+                        </div> -->
+                        <div class="form-group">
+                            <label for="">Word set</label>
+                            <user-word-set-selector
+                                v-model="privateState.wordModel.userWordSetId"
+                                v-bind:useAsInputOnly="true"
+                            />
                         </div>
                         <loading-button 
                             type="submit"
@@ -189,6 +196,7 @@ import TagsMultiselect from '@/components/TagsMultiselect';
 import CustomCollectionsMultiselect from '@/components/CustomCollectionsMultiselect';
 import CustomCollections from '@/components/CustomCollections';
 import WordsFilters from '@/components/WordsFilters';
+import UserWordSetSelector from '@/components/UserWordSetSelector';
 
 import ProgressBar from 'vue-simple-progress'
 
@@ -201,6 +209,7 @@ const wordModelDefault = {
     meaningLanguageCode: "ru",
     tags: [],
     customCollectionIds: [],
+    userWordSetId: null,
 };
 
 export default {
@@ -211,8 +220,9 @@ export default {
         RowLoader,
         LoadingButton,
         LanguageCodeSelect,
-        TagsMultiselect,
-        CustomCollectionsMultiselect,
+        // TagsMultiselect,
+        // CustomCollectionsMultiselect,
+        UserWordSetSelector,
     },
     data: function() {
         return {

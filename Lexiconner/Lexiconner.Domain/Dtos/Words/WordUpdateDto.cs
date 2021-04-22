@@ -22,5 +22,6 @@ namespace Lexiconner.Domain.Dtos.Words
         public string WordLanguageCode { get; set; }
         public string MeaningLanguageCode { get; set; }
         public List<string> Tags { get; set; }
+        public string UserWordSetId { get; set; }
     }
 }

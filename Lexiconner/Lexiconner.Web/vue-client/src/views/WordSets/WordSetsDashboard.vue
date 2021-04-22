@@ -148,7 +148,15 @@ export default {
         onAddWordSetClick: function(wordSetId) {
             return this.$store.dispatch(storeTypes.USER_DICTIONARY_WORD_SET_ADD, {
                 wordSetId, 
-            }).then().catch(err => {
+            }).then(() => {
+                this.$notify({
+                    group: 'app',
+                    type: 'success',
+                    title: `Word set added to your dictionary.`,
+                    text: '',
+                    duration: 5000,
+                });
+            }).catch(err => {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });

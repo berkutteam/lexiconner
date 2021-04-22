@@ -821,6 +821,7 @@ export default new Vuex.Store({
             return api.webApi().getWords({
                 languageCode: getters.selectedLearningLanguageCode,
                 // collectionId: getters.currentCustomCollectionId,
+                userWordSetId: params.userWordSetId,
                 ...params,
                 ...state.wordsRequestParams, // apply params from state
             }).then(({ data, ok }) => {

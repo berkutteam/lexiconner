@@ -275,8 +275,8 @@ class API {
             },
 
             // Words
-            getWords({ languageCode, offset, limit, search, isFavourite, isShuffle, isTrained, collectionId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `words`, { languageCode, offset, limit, search, isFavourite, isShuffle, isTrained, collectionId}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            getWords({ languageCode, offset, limit, search, isFavourite, isShuffle, isTrained, collectionId, userWordSetId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `words`, { languageCode, userWordSetId, offset, limit, search, isFavourite, isShuffle, isTrained, collectionId}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             getWord({ wordId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `words/${wordId}`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);

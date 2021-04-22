@@ -67,7 +67,8 @@ namespace Lexiconner.Application.Services
             string search = null,
             bool? isFavourite = null,
             bool isShuffle = false,
-            bool? isTrained = null
+            bool? isTrained = null,
+            string userWordSetId = null
         )
         {
             var predicate = PredicateBuilder.New<WordEntity>(x => x.UserId == userId);
@@ -90,6 +91,10 @@ namespace Lexiconner.Application.Services
             if(collectionId != null)
             {
                 predicate.And(x => x.CustomCollectionIds.Contains(collectionId));
+            }
+            if (userWordSetId != null)
+            {
+                predicate.And(x => x.UserWordSetId == userWordSetId);
             }
 
             var totalTask = _dataRepository.CountAllAsync<WordEntity>(predicate);
@@ -131,8 +136,15 @@ namespace Lexiconner.Application.Services
 
         public async Task<WordDto> CreateWordAsync(string userId, WordCreateDto createDto)
         {
+            var dictionary = await _dataRepository.GetOneAsync<UserDictionaryEntity>(x => x.UserId == userId && x.WordsLanguageCode == createDto.WordLanguageCode);
+            if(dictionary == null)
+            {
+                throw new NotFoundException($"Dictionary for {createDto.WordLanguageCode} not found.");
+            }
+
             var entity = _mapper.Map<WordEntity>(createDto);
             entity.UserId = userId;
+            entity.UserDictionaryId = dictionary.Id;
             CustomValidationHelper.Validate(entity);
 
             // set image
@@ -163,11 +175,18 @@ namespace Lexiconner.Application.Services
 
         public async Task<WordDto> UpdateWordAsync(string userId, string wordId, WordUpdateDto updateDto)
         {
+            var dictionary = await _dataRepository.GetOneAsync<UserDictionaryEntity>(x => x.UserId == userId && x.WordsLanguageCode == updateDto.WordLanguageCode);
+            if (dictionary == null)
+            {
+                throw new NotFoundException($"Dictionary for {updateDto.WordLanguageCode} not found.");
+            }
+
             var entity = await _dataRepository.GetOneAsync<WordEntity>(x => x.Id == wordId);
             if (entity.UserId != userId)
             {
                 throw new AccessDeniedException("Can't edit the item that you don't own!");
             }
+            entity.UserDictionaryId = dictionary.Id;
 
             // update
             entity.UpdateSelf(updateDto);

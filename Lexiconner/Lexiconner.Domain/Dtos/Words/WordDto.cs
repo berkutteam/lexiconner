@@ -20,6 +20,8 @@ namespace Lexiconner.Domain.Dtos.Words
 
         public string Id { get; set; }
         public List<string> CustomCollectionIds { get; set; }
+        public string UserDictionaryId { get; set; }
+        public string UserWordSetId { get; set; }
         public string Word { get; set; }
         public string Meaning { get; set; }
         public List<string> Examples { get; set; }

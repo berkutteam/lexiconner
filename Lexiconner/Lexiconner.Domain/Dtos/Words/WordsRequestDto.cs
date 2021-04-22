@@ -13,5 +13,6 @@ namespace Lexiconner.Domain.Dtos.Words
         public bool IsShuffle { get; set; }
         public bool? IsTrained { get; set; }
         public string CollectionId { get; set; }
+        public string UserWordSetId { get; set; }
     }
 }
