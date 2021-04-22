@@ -68,7 +68,7 @@ export default {
         // store state computed go here
         ...mapState({
             sharedState: state => state,
-            isLoading: state => state.loading[storeTypes.USER_DICTIONARY_LOAD_SET],
+            isLoading: state => state.loading[storeTypes.USER_DICTIONARY_LOAD],
             userDictionary: state => state.userDictionary,
             wordSetList: function(state) {
                 return state.userDictionary ? state.userDictionary.wordSets : [];
@@ -84,7 +84,7 @@ export default {
     },
     created: async function() {
         if(!this.userDictionary) {
-            this.$store.dispatch(storeTypes.USER_DICTIONARY_LOAD_SET, {}).then(() => {
+            this.$store.dispatch(storeTypes.USER_DICTIONARY_LOAD, {}).then(() => {
                 this.preselectWordSet();
             }).catch(err => {
                 console.error(err);

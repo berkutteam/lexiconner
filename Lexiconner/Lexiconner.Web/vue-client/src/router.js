@@ -11,7 +11,7 @@ import Logout from './views/Logout.vue';
 
 import UserDictionaryDashboard from './views/UserDictionary/UserDictionaryDashboard.vue';
 
-import WordsDashboard from './views/Words/WordsDashboard.vue';
+import WordsTrainingDashboard from './views/Words/WordsTrainingDashboard.vue';
 import WordsBrowse from './views/Words/WordsBrowse.vue';
 import WordsLearnFlashCards from './views/Words/WordsLearnFlashCards.vue';
 import WordsLearnWordMeaning from './views/Words/WordsLearnWordMeaning.vue';
@@ -174,9 +174,9 @@ export default new Router({
             },
         },
         {
-            path: '/words-dashboard',
-            name: 'words-dashboard',
-            component: WordsDashboard,
+            path: '/trainings-dashboard',
+            name: 'trainings-dashboard',
+            component: WordsTrainingDashboard,
             props: true,
             meta: { layout: 'default' },
             beforeEnter: async (to, from, next) => {

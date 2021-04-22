@@ -6,8 +6,8 @@
 
         <div v-if="isLearningLanguageCodeSelected === true">
             <!-- Collections -->
-            <custom-collections>
-            </custom-collections>
+            <!-- <custom-collections>
+            </custom-collections> -->
 
             <!-- WordSet selector -->
             <user-word-set-selector class="mb-4" />
@@ -123,10 +123,10 @@ import LearningLanguageNotSelectedAlert from '@/components/LearningLanguageNotSe
 import UserWordSetSelector from '@/components/UserWordSetSelector';
 
 export default {
-    name: 'words-dashboard',
+    name: 'words-training-dashboard',
     components: {
         RowLoader,
-        CustomCollections,
+        // CustomCollections,
         LearningLanguageNotSelectedAlert,
         UserWordSetSelector,
     },

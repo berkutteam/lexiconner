@@ -144,7 +144,7 @@
                             </div>
                             <div v-if="privateState.isTrainingFinished" class="mt-2">
                                 <div>
-                                    <router-link v-bind:to="{ name: 'words-dashboard', params: {}}" class="btn custom-btn-normal btn-sm text-white">
+                                    <router-link v-bind:to="{ name: 'trainings-dashboard', params: {}}" class="btn custom-btn-normal btn-sm text-white">
                                         <i class="fas fa-chevron-left mr-1"></i>
                                         <span>Back</span>
                                     </router-link>
