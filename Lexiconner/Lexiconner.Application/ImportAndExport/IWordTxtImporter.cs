@@ -10,5 +10,6 @@ namespace Lexiconner.Application.ImportAndExport
     {
         Task<WordImportResultModel> ImportTxtFormatWords(string filePath);
         Task<WordImportResultModel> ImportMdFormatWords(string filePath);
+        Task<WordImportResultModel> ImportMdFormatWordSets(string filePath);
     }
 }

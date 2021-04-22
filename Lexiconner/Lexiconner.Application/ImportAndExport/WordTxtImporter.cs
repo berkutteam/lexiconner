@@ -232,6 +232,16 @@ namespace Lexiconner.Application.ImportAndExport
                         continue;
                     }
 
+                    // collection URL (after header)
+                    else if (!isWordEntered && Uri.IsWellFormedUriString(line, UriKind.Absolute))
+                    {
+                        if(lastAddedCollection != null)
+                        {
+                            lastAddedCollection.ImageUrls.Add(line);
+                        }
+                        continue;
+                    }
+
                     // start of word
                     else if (wordStartRegex.IsMatch(line))
                     {
@@ -293,6 +303,12 @@ namespace Lexiconner.Application.ImportAndExport
             }
 
             return result;
+        }
+
+        public async Task<WordImportResultModel> ImportMdFormatWordSets(string filePath)
+        {
+            // it's actually the same except custom collections are word sets
+            return await ImportMdFormatWords(filePath);
         }
     }
 }

@@ -13,9 +13,9 @@ using System.Text;
 
 namespace Lexiconner.Domain.Entitites
 {
-    public class WordEntity : BaseEntity
+    public class WordEntity : WordGeneralEntity
     {
-        public WordEntity()
+        public WordEntity() : base()
         {
             CustomCollectionIds = new List<string>();
             Examples = new List<string>();
@@ -30,22 +30,20 @@ namespace Lexiconner.Domain.Entitites
         [BsonRepresentation(BsonType.ObjectId)]
         public List<string> CustomCollectionIds { get; set; }
 
-        public string Word { get; set; }
-        public string Meaning { get; set; }
-        public List<string> Examples { get; set; }
-        public bool IsFavourite { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string UserDictionaryId { get; set; }
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string UserWordSetId { get; set; }
 
         /// <summary>
-        /// ISO 639-1 two-letter code.
-        /// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-        /// https://developers.google.com/admin-sdk/directory/v1/languages
+        /// Wordset word which was the source of this user word. Can be null if this word is't added from word set.
         /// </summary>
-        public string WordLanguageCode { get; set; }
-        public string MeaningLanguageCode { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string SourceWordSetWordId { get; set; }
 
+        public bool IsFavourite { get; set; }
         public List<string> Tags { get; set; }
-
-        public List<GeneralImageEntity> Images { get; set; }
         public WordTrainingInfoEntity TrainingInfo { get; set; }
 
 

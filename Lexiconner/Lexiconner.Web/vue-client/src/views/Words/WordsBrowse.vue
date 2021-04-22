@@ -288,6 +288,12 @@ export default {
                 this.loadWords({});
             }
         );
+        this.unwatch2 = this.$store.watch(
+            (state, getters) => getters.selectedLearningLanguageCode,
+            (newValue, oldValue) => {
+                this.loadWords({});
+            }
+        );
     },
     mounted: function() {
     },
@@ -295,6 +301,7 @@ export default {
     },
     beforeDestroy: function() {
         this.unwatch();
+        this.unwatch2();
     },
     destroyed: function() {
     },

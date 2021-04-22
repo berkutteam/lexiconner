@@ -209,6 +209,76 @@ namespace Lexiconner.Seed.Seed
             // seed imported data for marked users
             var usersWithImport = _identityServerConfig.GetInitialdentityUsers().Where(x => x.IsImportInitialData);
 
+            #region WordSets
+            _logger.LogInformation("WordSets...");
+
+            var wordSetsImports = new[]
+            {
+                new
+                {
+                    WordLanguageCode = "en",
+                    MeaningLanguageCode = "en",
+                    ImportFilePath = _config.Import.EnWordSetsFilePath,
+                    ImportFormat = ".md",
+                }
+            };
+
+            foreach (var import in wordSetsImports)
+            {
+                // import from file
+                WordImportResultModel importResult = await _wordTxtImporter.ImportMdFormatWordSets(import.ImportFilePath);
+
+                // build wordsets
+                var wordSetEntities = importResult.Collections.Select(x =>
+                {
+                    var words = importResult.Words.Where(y => y.CollectionTempId == x.TempId).ToList();
+
+                    return new WordSetEntity
+                    {
+                        Name = x.Name,
+                        WordsLanguageCode = import.WordLanguageCode,
+                        MeaningsLanguageCode = import.MeaningLanguageCode,
+                        Images = x.ImageUrls.Select(imageUrl => new GeneralImageEntity()
+                        {
+                            IsAddedByUrl = true,
+                            Url = imageUrl,
+                            // set other fields later
+                        }).ToList(),
+                        Words = words.Select(y => new WordSetWordEntity
+                        {
+                            Word = y.Title,
+                            Meaning = y.Description,
+                            Examples = y.ExampleTexts,
+                            WordLanguageCode = import.WordLanguageCode,
+                            MeaningLanguageCode = import.MeaningLanguageCode,
+                            Images = y.ImageUrls.Select(imageUrl => new GeneralImageEntity()
+                            {
+                                IsAddedByUrl = true,
+                                Url = imageUrl,
+                                // set other fields later
+                            }).ToList(),
+                        }).ToList(),
+                    };
+                }).ToList();
+
+                // get only unexisting word sets
+                var existingWordSets = await _dataRepository.GetAllAsync<WordSetEntity>();
+                wordSetEntities = wordSetEntities.Where(x => !existingWordSets.Any(y => y.Name == x.Name)).ToList();
+
+                // set images for wordssets and words
+                foreach (var entity in wordSetEntities)
+                {
+                    entity.Images = await SearchImagesAsync(entity.Name, entity.WordsLanguageCode, entity.Images, 1);
+                }
+                await SetWordsImagesAsync(wordSetEntities.SelectMany(x => x.Words).ToList(), 1);
+
+                // save
+                await _dataRepository.AddManyAsync(wordSetEntities);
+            }
+
+            _logger.LogInformation("WordSets Done.");
+            #endregion
+
             #region Words
             _logger.LogInformation("Words...");
             foreach (var user in usersWithImport)
@@ -271,7 +341,7 @@ namespace Lexiconner.Seed.Seed
                     }
                 }
 
-                var imports = new[] 
+                var imports2 = new[]
                 {
                     new
                     {
@@ -295,7 +365,7 @@ namespace Lexiconner.Seed.Seed
                 var hasSomeWords = await _dataRepository.ExistsAsync<WordEntity>(x => x.UserId == user.Id);
                 if (!hasSomeWords || user.IsUpdateExistingDataOnSeed)
                 {
-                    foreach (var import in imports)
+                    foreach (var import in imports2)
                     {
                         await SeedWordsForCollection(
                             user,
@@ -632,7 +702,7 @@ namespace Lexiconner.Seed.Seed
             // build words
             var wordEntities = importResult.Words.Select(x => 
             {
-                List<string> customCollectionIds;
+                List<string> customCollectionIds = new List<string>();
                 if(x.CollectionTempId != null && collectionMap.ContainsKey(x.CollectionTempId))
                 {
                     customCollectionIds = rootCollection.GetCollectionChainIds(collectionMap[x.CollectionTempId].Id);
@@ -662,7 +732,7 @@ namespace Lexiconner.Seed.Seed
             }).ToList();
 
             // set images
-            await SetWordsImages(wordEntities);
+            await SetWordsImagesAsync(wordEntities, 1);
 
             // fix same ids for different users
             wordEntities.ToList().ForEach(x =>
@@ -707,44 +777,52 @@ namespace Lexiconner.Seed.Seed
         }
 
         private static Dictionary<Tuple<string, string>, IEnumerable<ImageSearchResponseItemDto>> ImagesCache = new Dictionary<Tuple<string, string>, IEnumerable<ImageSearchResponseItemDto>>();
-        private async Task SetWordsImages(IEnumerable<WordEntity> wordEntities)
+        private async Task SetWordsImagesAsync(IEnumerable<WordGeneralEntity> wordEntities, int imageLimit)
         {
-            foreach (WordEntity entity in wordEntities)
+            foreach (var entity in wordEntities)
             {
-                try
-                {
-                    // handle with images added by URLs
-                    if(entity.Images.Any(x => x.IsAddedByUrl))
-                    {
-                        entity.Images = (await Task.WhenAll(entity.Images.Select(async image =>
-                        {
-                            if (!image.IsAddedByUrl)
-                            {
-                                return image;
-                            }
-                            var imageInfo = await _imageService.GetImageInfoByUrlAsync(image.Url);
-                            if (imageInfo == null)
-                            {
-                                return null;
-                            }
+                entity.Images = await SearchImagesAsync(entity.Word, entity.WordLanguageCode, entity.Images, imageLimit);
+            }
 
-                            image.Width = imageInfo.Width;
-                            image.Height = imageInfo.Height;
-                            return image;
-                        }))).Where(x => x != null).ToList();
-                        continue;
+        }
+        private async Task<List<GeneralImageEntity>> SearchImagesAsync(string imageSearchTerm, string searchLanguageCode, IEnumerable<GeneralImageEntity> existingImages, int imageLimit)
+        {
+            try
+            {
+                List<GeneralImageEntity> result = new List<GeneralImageEntity>();
+
+                // handle images added by URLs
+                var byUrlImages = (await Task.WhenAll(existingImages.Select(async image =>
+                {
+                    if (!image.IsAddedByUrl)
+                    {
+                        return image;
+                    }
+                    var imageInfo = await _imageService.GetImageInfoByUrlAsync(image.Url);
+                    if (imageInfo == null)
+                    {
+                        return null;
                     }
 
-                    // search for images
+                    image.Width = imageInfo.Width;
+                    image.Height = imageInfo.Height;
+                    return image;
+                }))).Where(x => x != null).ToList();
+                result.AddRange(byUrlImages);
+
+                // search for images
+                int imagesLeftToAdd = imageLimit - result.Count();
+                if (imagesLeftToAdd > 0)
+                {
                     IEnumerable<ImageSearchResponseItemDto> imagesResults = null;
-                    var cacheKey = new Tuple<string, string>(entity.WordLanguageCode, entity.Word);
+                    var cacheKey = new Tuple<string, string>(searchLanguageCode, imageSearchTerm);
                     if (ImagesCache.ContainsKey(cacheKey))
                     {
                         imagesResults = ImagesCache[cacheKey];
                     }
                     else
                     {
-                        imagesResults = await _imageService.FindImagesAsync(entity.WordLanguageCode, entity.Word);
+                        imagesResults = await _imageService.FindImagesAsync(searchLanguageCode, imageSearchTerm);
                         imagesResults = _imageService.GetSuitableImages(imagesResults);
                         ImagesCache.Add(cacheKey, imagesResults);
                     }
@@ -752,11 +830,10 @@ namespace Lexiconner.Seed.Seed
                     if (imagesResults.Any())
                     {
                         // try to find suitable image
-                        var image = imagesResults.FirstOrDefault();
-
-                        if (image != null)
+                        var images = imagesResults.Take(imagesLeftToAdd);
+                        foreach (var image in images)
                         {
-                            entity.Images.Add(new GeneralImageEntity
+                            result.Add(new GeneralImageEntity
                             {
                                 Url = image.Url,
                                 Height = int.Parse(image.Height),
@@ -769,24 +846,26 @@ namespace Lexiconner.Seed.Seed
                         }
                     }
                 }
-                catch (ApiRateLimitExceededException ex)
-                {
-                    _logger.LogWarning($"Api rate limited. {ex.Message}.");
-                }
-                catch (ApiErrorException ex)
-                {
-                    // break
-                    _logger.LogWarning($"Api error. {ex.Message}.");
-                }
-                catch (Exception ex)
-                {
-                    // rethrow
-                    _logger.LogError($"Error. {ex.Message}.");
-                    throw;
-                }
-            }
 
+                return result;
+            }
+            catch (ApiRateLimitExceededException ex)
+            {
+                _logger.LogWarning($"Api rate limited. {ex.Message}.");
+                throw;
+            }
+            catch (ApiErrorException ex)
+            {
+                // break
+                _logger.LogWarning($"Api error. {ex.Message}.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                // rethrow
+                _logger.LogError($"Error. {ex.Message}.");
+                throw;
+            }
         }
-        
     }
 }

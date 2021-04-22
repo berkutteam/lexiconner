@@ -54,6 +54,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="ImportData\en-en-wordSets.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ImportData\en-words.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

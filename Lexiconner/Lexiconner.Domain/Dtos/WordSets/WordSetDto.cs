@@ -15,6 +15,7 @@ namespace Lexiconner.Domain.Dtos.WordSets
             Words = new List<WordSetWordDto>();
         }
 
+        public string Id { get; set; }
         public string Name { get; set; }
         public string WordsLanguageCode { get; set; }
         public string MeaningsLanguageCode { get; set; }

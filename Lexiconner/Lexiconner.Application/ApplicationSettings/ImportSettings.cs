@@ -8,6 +8,7 @@ namespace Lexiconner.Application.ApplicationSettings
     {
         public string RuWordsFilePath { get; set; }
         public string EnWordsFilePath { get; set; }
+        public string EnWordSetsFilePath { get; set; }
         public string FilmsFilePath { get; set; }
     }
 }

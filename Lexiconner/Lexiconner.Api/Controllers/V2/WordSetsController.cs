@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
 
-
 namespace Lexiconner.Api.Controllers.V2
 {
     [ApiController]

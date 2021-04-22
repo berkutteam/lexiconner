@@ -274,7 +274,7 @@ class API {
                 return axiosAuthRequest({ url: buildUrl(url, `profile/learning_languages/${languageCode}`, {}), method: "post", data: { } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
 
-            // words
+            // Words
             getWords({ languageCode, offset, limit, search, isFavourite, isShuffle, isTrained, collectionId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `words`, { languageCode, offset, limit, search, isFavourite, isShuffle, isTrained, collectionId}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
@@ -304,7 +304,6 @@ class API {
                 return axiosAuthRequest({ url: buildUrl(url, `words/${wordId}/favourites`, {}), method: "delete", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
 
-            // Words
             getWordExamples({ languageCode, word }) {
                 return axiosAuthRequest({ url: buildUrl(url, `words/examples`, { languageCode, word }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
@@ -377,6 +376,19 @@ class API {
             },
             duplicateCustomCollection({ customCollectionId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `customcollections/${customCollectionId}/duplicate`, {}), method: "post", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+
+            // word sets
+            getWordSets({ languageCode, offset, limit, search }) {
+                return axiosAuthRequest({ url: buildUrl(url, `wordsets`, { languageCode, offset, limit, search}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+
+            // user dictionary
+            getUserDictionary({ languageCode }) {
+                return axiosAuthRequest({ url: buildUrl(url, `userdictionary`, { languageCode }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            addWordSetToUserDictionary({ languageCode, wordSetId }) {
+                return axiosAuthRequest({ url: buildUrl(url, `userdictionary`, {}), method: "post", data: { languageCode, wordSetId } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
 
             // user films

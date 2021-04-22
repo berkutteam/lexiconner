@@ -107,6 +107,7 @@ namespace Lexiconner.Api
             services.AddTransient<IWordTrainingsService, WordTrainingsService>();
             services.AddTransient<ICustomCollectionsService, CustomCollectionsService>();
             services.AddTransient<IFilmsService, FilmsService>();
+            services.AddTransient<IUserDictionaryService, UserDictionaryService>();
             services.AddTransient<IUsersService, UsersService>();
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();

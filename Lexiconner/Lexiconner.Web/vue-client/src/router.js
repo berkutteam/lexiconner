@@ -18,6 +18,8 @@ import WordsLearnMatchWords from './views/Words/WordsLearnMatchWords.vue';
 import WordsLearnBuildWords from './views/Words/WordsLearnBuildWords.vue';
 import WordsLearnListenWords from './views/Words/WordsLearnListenWords.vue';
 
+import WordSetsDashboard from './views/WordSets/WordSetsDashboard.vue';
+
 import UserFilmsBrowse from './views/UserFilms/UserFilmsBrowse.vue';
 
 import Dashboard from './views/Dashboard.vue';
@@ -228,6 +230,17 @@ export default new Router({
             path: '/words/learn/listenwords',
             name: 'words-learn-listenwords',
             component: WordsLearnListenWords,
+            props: true,
+            meta: { layout: 'default' },
+            beforeEnter: async (to, from, next) => {
+                await waitAppInitialization({ to, from, next });
+                checkAuthenticated({ to, from, next });
+            },
+        },
+        {
+            path: '/wordsets',
+            name: 'wordsets',
+            component: WordSetsDashboard,
             props: true,
             meta: { layout: 'default' },
             beforeEnter: async (to, from, next) => {

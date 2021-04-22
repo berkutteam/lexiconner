@@ -11,6 +11,7 @@ using Lexiconner.Domain.Dtos.Users;
 using Lexiconner.Domain.Entitites.General;
 using Lexiconner.Domain.Dtos.General;
 using Lexiconner.Domain.Dtos.WordSets;
+using Lexiconner.Domain.Dtos.UserDictionaries;
 
 namespace Lexiconner.Application.Mapping
 {
@@ -21,6 +22,10 @@ namespace Lexiconner.Application.Mapping
             // General
             CreateMap<GeneralImageDto, GeneralImageEntity>();
             CreateMap<GeneralImageEntity, GeneralImageDto>();
+            CreateMap<WordGeneralEntity, WordEntity>();
+            CreateMap<WordEntity, WordGeneralEntity>();
+            CreateMap<WordGeneralEntity, WordSetWordEntity>();
+            CreateMap<WordSetWordEntity, WordGeneralEntity>();
 
             // User
             CreateMap<ApplicationUserEntity, UserDto>();
@@ -33,9 +38,15 @@ namespace Lexiconner.Application.Mapping
 
             // WordSet
             CreateMap<WordSetEntity, WordSetDto>();
+            CreateMap<WordSetWordEntity, WordSetWordDto>();
+            CreateMap<WordSetWordEntity, WordEntity>();
 
             // CustomCollection
             CreateMap<CustomCollectionEntity, CustomCollectionDto>();
+
+            // UserDictionary
+            CreateMap<UserDictionaryEntity, UserDictionaryDto>();
+            CreateMap<UserDictionaryWordSetEntity, UserDictionaryWordSetDto>();
 
             // Film
             CreateMap<UserFilmEntity, UserFilmDto>();

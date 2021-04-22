@@ -122,6 +122,23 @@ export default new Vuex.Store({
         customCollectionsResult: null, // object
         currentCustomCollection: null, // object
 
+        userDictionary: null, // object
+
+        wordSetsRequestParamsDefault: {
+            search: null,
+            isFavourite: null,
+        },
+        wordSetsRequestParams: {
+            search: null,
+            isFavourite: null,
+            isShuffle: false,
+            isTrained: null,
+        },
+
+        // paginationResult (store only current page)
+        // {items: [], pagination: {}}
+        wordSetsPaginationResult: null, // object
+
         userFilmsRequestParamsDefault: {
             search: null,
         },
@@ -347,8 +364,6 @@ export default new Vuex.Store({
             }
         },
 
-        //#endregion
-
         [storeTypes.WORD_EXAMPLES_SET](state, payload) {
             let { wordExamples } = payload;
             state.wordExamples = wordExamples;
@@ -357,10 +372,6 @@ export default new Vuex.Store({
             let { wordPronunciationAudio } = payload;
             state.wordsPronunciationAudio[wordPronunciationAudio.word] = wordPronunciationAudio;
         },
-
-        //#region Words
-
-
 
         //#endregion Words
 
@@ -415,6 +426,38 @@ export default new Vuex.Store({
         [storeTypes.CUSTOM_COLLECTION_CURRENT_SET](state, payload) {
             let { customCollection } = payload;
             state.currentCustomCollection = {...customCollection};
+        },
+
+        //#endregion
+
+
+        //#regionUser dictionaries
+
+        [storeTypes.USER_DICTIONARY_LOAD_SET](state, payload) {
+            let { data } = payload;
+            state.userDictionary = data;
+        },
+
+        //#endregion
+
+
+        //#region Word sets
+
+        [storeTypes.WORD_SETS_REQUEST_PARAMS_SET](state, payload) {
+            let params = payload;
+            state.wordSetsRequestParams = {
+                ...state.wordSetsRequestParams,
+                ...params,
+            };
+        },
+        [storeTypes.WORD_SETS_ITEMS_REQUEST_PARAMS_RESET](state, payload) {
+            state.wordSetsRequestParams = {
+                ...state.wordSetsRequestParamsDefault,
+            };
+        },
+        [storeTypes.WORD_SETS_LOAD_SET](state, payload) {
+            let { data } = payload;
+            state.wordSetsPaginationResult = data;
         },
 
         //#endregion
@@ -982,11 +1025,6 @@ export default new Vuex.Store({
             });
         },
 
-        //#endregion
-
-
-        //#region Words
-
         [storeTypes.WORD_EXAMPLES_LOAD](context, { languageCode, word }) {
             let { commit, dispatch, state, getters } = context;
 
@@ -1418,6 +1456,111 @@ export default new Vuex.Store({
 
         //#endregion
         
+
+        //#region User dictionary
+
+        [storeTypes.USER_DICTIONARY_LOAD](context, params) {
+            let { commit, dispatch, state, getters } = context;
+
+            if(getters.isLearningLanguageCodeSelected !== true) {
+                throw new Error(`Learning language code is not selected.`);
+            }
+
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.USER_DICTIONARY_LOAD,
+                loading: true,
+            });
+            return api.webApi().getUserDictionary({
+                languageCode: getters.selectedLearningLanguageCode,
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_DICTIONARY_LOAD,
+                    loading: false,
+                });
+                commit(storeTypes.USER_DICTIONARY_LOAD_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_DICTIONARY_LOAD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.USER_DICTIONARY_WORD_SET_ADD](context, { wordSetId }) {
+            let { commit, dispatch, state, getters } = context;
+
+            if(getters.isLearningLanguageCodeSelected !== true) {
+                throw new Error(`Learning language code is not selected.`);
+            }
+
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.USER_DICTIONARY_WORD_SET_ADD,
+                loading: true,
+            });
+            return api.webApi().addWordSetToUserDictionary({
+                languageCode: getters.selectedLearningLanguageCode,
+                wordSetId,
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_DICTIONARY_WORD_SET_ADD,
+                    loading: false,
+                });
+                commit(storeTypes.USER_DICTIONARY_LOAD_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.USER_DICTIONARY_WORD_SET_ADD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        //#endregion
+
+
+        //#region Word sets
+
+        [storeTypes.WORD_SETS_LOAD](context, params) {
+            let { commit, dispatch, state, getters } = context;
+
+            if(getters.isLearningLanguageCodeSelected !== true) {
+                throw new Error(`Learning language code is not selected.`);
+            }
+
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORD_SETS_LOAD,
+                loading: true,
+            });
+            return api.webApi().getWordSets({
+                languageCode: getters.selectedLearningLanguageCode,
+                ...params,
+                ...state.wordSetsRequestParams, // apply params from state
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_SETS_LOAD,
+                    loading: false,
+                });
+                commit(storeTypes.WORD_SETS_LOAD_SET, {
+                    data: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_SETS_LOAD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        //#endregion
+
 
         //#region Custom collections
 

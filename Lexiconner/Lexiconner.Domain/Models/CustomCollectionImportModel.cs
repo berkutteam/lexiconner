@@ -13,6 +13,7 @@ namespace Lexiconner.Domain.Models
         {
             TempId = ObjectId.GenerateNewId().ToString();
             Children = new List<CustomCollectionImportModel>();
+            ImageUrls = new List<string>();
         }
 
         public string TempId { get; set; }
@@ -20,5 +21,7 @@ namespace Lexiconner.Domain.Models
 
         public CustomCollectionImportModel Current { get { return this; } }
         public List<CustomCollectionImportModel> Children { get; set; }
+
+        public List<string> ImageUrls { get; set; }
     }
 }

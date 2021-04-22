@@ -28,18 +28,7 @@ namespace Lexiconner.Domain.Entitites
         public List<WordSetWordEntity> Words { get; set; }
     }
 
-    public class WordSetWordEntity : BaseEntity
+    public class WordSetWordEntity : WordGeneralEntity
     {
-        public WordSetWordEntity()
-        {
-            Images = new List<GeneralImageEntity>();
-        }
-
-        public string Word { get; set; }
-        public string Meaning { get; set; }
-        public List<string> Examples { get; set; }
-        public string WordLanguageCode { get; set; }
-        public string MeaningLanguageCode { get; set; }
-        public List<GeneralImageEntity> Images { get; set; }
     }
 }

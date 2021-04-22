@@ -32,6 +32,12 @@
         </router-link>
       </div>
       <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
+        <router-link v-bind:to="{ name: 'wordsets'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">
+          <i class="fas fa-book mr-2"></i>
+          <span>Word sets</span>
+        </router-link>
+      </div>
+      <div v-if="sharedState.auth.isAuthenticated" class="sidebar-item">
         <router-link v-bind:to="{ name: 'user-films-browse'}" v-on:click.native="handleNavLinkClick()" class="sidebar-link">
           <i class="fas fa-film mr-2"></i>
           <span>My films</span>
