@@ -129,7 +129,10 @@ function checkPermissions({ to, from, next, permisions, scopeId }) {
 }
 
 export default new Router({
-    mode: 'history',
+    // on local serve browser urls work bad
+    ...(process.env.VUE_APP_ASPNETCORE_ENVIRONMENT === 'DevelopmentLocalhost' ? {} : {
+        mode: 'history',
+    }),
     routes: [
         {
             path: '/',

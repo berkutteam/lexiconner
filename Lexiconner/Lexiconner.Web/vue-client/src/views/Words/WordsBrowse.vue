@@ -10,37 +10,6 @@
                 </div> -->
 
                 <div v-if="words" class="words-wrapper">
-                    <!-- Toolbar -->
-                    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
-                        <div class="btn-group mr-2" role="group" aria-label="View toggle">
-                            <button 
-                                v-on:click="toggleView" 
-                                v-bind:class="{'btn-primary': privateState.currentView === 'list', 'btn-secondary' : privateState.currentView !== 'list'}"
-                                type="button" 
-                                class="btn"
-                            >
-                                <i class="fas fa-list"></i>
-                            </button>
-                            <button 
-                                v-on:click="toggleView" 
-                                v-bind:class="{'btn-primary': privateState.currentView === 'cards', 'btn-secondary' : privateState.currentView !== 'cards'}"
-                                type="button" 
-                                class="btn"
-                            >
-                                <i class="fas fa-th"></i>
-                            </button>
-                        </div>
-                        <div class="btn-group mr-2" role="group" aria-label="Create a new item">
-                            <button 
-                                v-on:click="onCreateWord" 
-                                type="button" 
-                                class="btn custom-btn-normal"
-                            >
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-
                     <!-- Filters -->
                     <words-filters
                         v-bind:onChange="loadWords"
@@ -55,82 +24,6 @@
                             v-bind:loadItemsF="loadWords"
                             v-bind:showGoToButtons="true"
                         >
-                            <!-- List view -->
-                            <div v-if="privateState.currentView === 'list'" class="list-group words-list">
-                                <a 
-                                    v-for="(item) in words"
-                                    v-bind:key="`list-${item.id}`"
-                                    href="javascript:void(0)" 
-                                    class="list-group-item list-group-item-action flex-column align-items-start word"
-                                >
-                                    <div class="d-flex w-100 justify-content-between mb-1">
-                                        <h6 class="mb-0">{{item.word}}</h6>
-
-                                        <!-- Controls -->
-                                        <div class="d-flex justify-content-end flex-grow-1">
-                                            <div class="d-flex align-items-center">
-                                                <!-- Progress -->
-                                                <div class="mr-2" style="width: 60px">
-                                                    <progress-bar 
-                                                        size="small" 
-                                                        bar-color="#67c23a" 
-                                                        v-bind:max="100"
-                                                        v-bind:val="item.trainingInfo.totalProgress * 100" 
-                                                        text=""
-                                                    ></progress-bar>
-                                                </div>
-                                                <span class="badge badge-info mr-1">{{ item.sourceLanguageCode }}</span>
-
-                                                <!-- Tags -->
-                                                <span
-                                                    v-for="(tag) in item.tags"
-                                                    v-bind:key="tag"
-                                                    class="badge badge-secondary mr-1"
-                                                >
-                                                    {{tag}}
-                                                </span>
-
-                                                <!-- Favorite -->
-                                                <span v-on:click="onWordFavoriteClick(item)" class="cursor-pointer">
-                                                    <i v-if="item.isFavourite" class="fas fa-star text-warning"></i>
-                                                    <i v-else class="far fa-star text-warning"></i>
-                                                </span>
-                                                <span class="ml-2 mr-2">|</span>
-                                            </div>
-
-                                            <!-- Buttons -->
-                                            <span>
-                                                <span v-on:click="onMarkWordAsTrained(item.id)" class="badge badge-secondary mr-1 cursor-pointer">
-                                                    <i class="fas fa-check"></i>
-                                                </span>
-                                                <span v-on:click="onMarkWordAsNotTrained(item.id)" class="badge badge-secondary mr-1 cursor-pointer">
-                                                    <i class="fas fa-redo"></i>
-                                                </span>
-                                                <span v-on:click="onUpdateWord(item.id)" class="badge badge-secondary mr-1 cursor-pointer">
-                                                    <i class="fas fa-pencil-alt"></i>
-                                                </span>
-                                                <span v-on:click="onDeleteWord(item.id)" class="badge badge-secondary cursor-pointer">
-                                                    <i class="fas fa-trash"></i>
-                                                </span>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="mb-1">
-                                        <small>{{ item.meaning }}</small>
-                                    </div>
-                                    <div class="text-secondary">
-                                        <div
-                                            v-for="(exampleText, index2) in item.examples"
-                                            v-bind:key="`card-${item.id}-exampleText-${index2}`"
-                                            class="word-example-text mb-1"
-                                        >
-                                            <i class="fas fa-circle example-text-dot-icon"></i>
-                                            <span>{{ exampleText }}</span>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-
                             <!-- Card view -->
                             <div v-if="privateState.currentView === 'cards'" class="items-card-list">
                                 <div
@@ -271,7 +164,7 @@ export default {
         return {
             privateState: {
                 storeTypes: storeTypes,
-                currentView: localStorage.getItem(`wordsBrowse_currentView`) || 'list', // ['list', 'cards']
+                currentView: 'cards', // ['list', 'cards']
             },
         };
     },
@@ -323,10 +216,6 @@ export default {
             });
         },
         onSelectedCollectionChange: function(nextCollectionId) {
-        },
-        toggleView: function() {
-            this.privateState.currentView = this.privateState.currentView === 'list' ? 'cards' : 'list';
-            localStorage.setItem(`wordsBrowse_currentView`, this.privateState.currentView);
         },
         onCreateWord: function() {
             this.$refs.wordCreateUpdateModal.show({wordId: null});
