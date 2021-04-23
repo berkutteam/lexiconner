@@ -11,6 +11,7 @@ using NUlid.Rng;
 using Lexiconner.Domain.Entitites;
 using Lexiconner.Persistence.Repositories.MongoDb;
 using Lexiconner.Persistence.Repositories;
+using Lexiconner.Domain.Entitites.General;
 
 namespace Lexiconner.Api.IntegrationTests.Utils
 {
@@ -148,7 +149,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
                         _faker.Lorem.Word(),
                         _faker.Lorem.Word(),
                     },
-                    Images = new List<WordImageEntity>(),
+                    Images = new List<GeneralImageEntity>(),
                 };
             }).ToList();
 
@@ -172,7 +173,7 @@ namespace Lexiconner.Api.IntegrationTests.Utils
                         _faker.Lorem.Word(),
                         _faker.Lorem.Word(),
                     },
-                Images = new List<WordImageEntity>(),
+                Images = new List<GeneralImageEntity>(),
             };
 
             await _dataRepository.AddAsync<WordEntity>(entity);

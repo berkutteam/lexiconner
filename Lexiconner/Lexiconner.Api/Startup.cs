@@ -27,6 +27,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -354,7 +355,25 @@ namespace Lexiconner.Api
            */
             services.AddTransient<MongoClient>(sp => {
                 ApplicationSettings config = sp.GetRequiredService<IOptions<ApplicationSettings>>().Value;
-                return new MongoClient(config.MongoDb.ConnectionString);
+                bool logMongoEvents = false;
+                MongoClient client;
+                if (logMongoEvents)
+                {
+                    var logger = sp.GetRequiredService<ILogger<Startup>>();
+                    var settigs = MongoClientSettings.FromConnectionString(config.MongoDb.ConnectionString);
+                    settigs.ClusterConfigurator = cb => {
+                        cb.Subscribe<MongoDB.Driver.Core.Events.CommandStartedEvent>(e => {
+                            logger.LogInformation($"Mongo: {e.CommandName} - {e.Command.ToJson()}");
+                            System.Diagnostics.Trace.WriteLine($"Mongo: {e.CommandName} - {e.Command.ToJson()}"); // to be displayed in tests logs
+                        });
+                    };
+                    client = new MongoClient(settigs);
+                }
+                else
+                {
+                    client = new MongoClient(config.MongoDb.ConnectionString);
+                }
+                return client;
             });
 
             // main repository

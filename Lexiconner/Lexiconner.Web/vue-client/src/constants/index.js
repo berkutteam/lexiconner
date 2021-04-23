@@ -123,6 +123,16 @@ const storeTypes = {
     'ERROR_PAGE_DATA_RESET': 'ERROR_PAGE_DATA_RESET',
 }
 
+const traingTypes = {
+    FlashCards: 'FlashCards',
+    WordMeaning: 'WordMeaning',
+    MeaningWord: 'MeaningWord',
+    MatchWords: 'MatchWords',
+    BuildWords: 'BuildWords',
+    ListenWords: 'ListenWords',
+};
+
 export {
     storeTypes,
+    traingTypes,
 }

@@ -36,23 +36,43 @@ namespace Lexiconner.Domain.Entitites
 
         #region Helpers
 
-        public UserDictionaryWordSetEntity AddDefaultWordSet()
+        public bool AddDefaultWordSets()
         {
-            var existing = this.WordSets.FirstOrDefault(x => x.IsDefault);
-            if (existing == null)
+            const string allSet = "All";
+            const string defaultSet = "Default";
+
+            bool isChanged = false;
+
+            //if(!this.WordSets.Any(x => x.Name == allSet))
+            //{
+            //    // logic wordset for All words
+            //    this.WordSets.Add(new UserDictionaryWordSetEntity()
+            //    {
+            //        Id = null,
+            //        SourceWordSetId = null,
+            //        IsDefault = true,
+            //        Name = allSet,
+            //        WordsLanguageCode = this.WordsLanguageCode,
+            //        MeaningsLanguageCode = null,
+            //        Images = new List<GeneralImageEntity>(),
+            //    });
+            //    isChanged = true;
+            //}
+            if(!this.WordSets.Any(x => x.Name == defaultSet))
             {
-                existing = new UserDictionaryWordSetEntity()
+                this.WordSets.Add(new UserDictionaryWordSetEntity()
                 {
                     SourceWordSetId = null,
                     IsDefault = true,
-                    Name = "Default",
+                    Name = defaultSet,
                     WordsLanguageCode = this.WordsLanguageCode,
                     MeaningsLanguageCode = null,
                     Images = new List<GeneralImageEntity>(),
-                };
-                this.WordSets.Add(existing);
+                });
+                isChanged = true;
             }
-            return existing;
+
+            return isChanged;
         }
 
         public UserDictionaryWordSetEntity AddWordSet(WordSetEntity wordSet)

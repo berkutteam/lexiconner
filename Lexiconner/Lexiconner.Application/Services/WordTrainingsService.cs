@@ -69,11 +69,19 @@ namespace Lexiconner.Application.Services
                     TrainingType = trainingType,
                     TrainingTypeFormatted = EnumHelper<TrainingType>.GetDisplayValue(trainingType),
                     OnTrainingItemCount = await _dataRepository.CountAllAsync<WordEntity>(
-                            x => x.UserId == _userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == trainingType && y.Progress != 1)
-                        ),
+                        x => x.UserId == _userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == trainingType && y.Progress != 1)
+                    ),
                     TrainedItemCount = await _dataRepository.CountAllAsync<WordEntity>(
-                            x => x.UserId == _userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == trainingType && y.Progress == 1)
-                        ),
+                        x => x.UserId == _userId && x.TrainingInfo != null && x.TrainingInfo.Trainings.Any(y => y.TrainingType == trainingType && y.Progress == 1)
+                    ),
+                    AvailableForTrainingCount = await _dataRepository.CountAllAsync<WordEntity>(
+                        x => x.UserId == _userId && 
+                        x.TrainingInfo != null && 
+                        (
+                            !x.TrainingInfo.Trainings.Any(y => y.TrainingType == trainingType) ||
+                            x.TrainingInfo.Trainings.Any(y => y.TrainingType == trainingType && y.NextTrainingdAt < DateTimeOffset.UtcNow.AddHours(1))
+                        )
+                    ),
                 };
             };
 
@@ -89,6 +97,8 @@ namespace Lexiconner.Application.Services
                     await getTrainingStatisticsItem(userId, TrainingType.WordMeaning),
                     await getTrainingStatisticsItem(userId, TrainingType.MeaningWord),
                     await getTrainingStatisticsItem(userId, TrainingType.MatchWords),
+                    await getTrainingStatisticsItem(userId, TrainingType.BuildWords),
+                    await getTrainingStatisticsItem(userId, TrainingType.ListenWords),
                 }
             };
 
@@ -121,7 +131,7 @@ namespace Lexiconner.Application.Services
                     (
                         x.TrainingInfo != null &&
                         !x.TrainingInfo.IsTrained &&
-                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
+                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.FlashCards && y.Progress < 1 && y.NextTrainingdAt <= DateTimeOffset.UtcNow)
                     )
                 )
             );
@@ -221,7 +231,7 @@ namespace Lexiconner.Application.Services
                     (
                         x.TrainingInfo != null &&
                         !x.TrainingInfo.IsTrained &&
-                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.WordMeaning && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
+                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.WordMeaning && y.Progress < 1 && y.NextTrainingdAt <= DateTimeOffset.UtcNow)
                     )
                 )
             );
@@ -367,7 +377,7 @@ namespace Lexiconner.Application.Services
                     (
                         x.TrainingInfo != null &&
                         !x.TrainingInfo.IsTrained &&
-                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.MeaningWord && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
+                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.MeaningWord && y.Progress < 1 && y.NextTrainingdAt <= DateTimeOffset.UtcNow)
                     )
                 )
             );
@@ -514,7 +524,7 @@ namespace Lexiconner.Application.Services
                     (
                         x.TrainingInfo != null &&
                         !x.TrainingInfo.IsTrained &&
-                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.MatchWords && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
+                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.MatchWords && y.Progress < 1 && y.NextTrainingdAt <= DateTimeOffset.UtcNow)
                     )
                 )
             );
@@ -657,7 +667,7 @@ namespace Lexiconner.Application.Services
                     (
                         x.TrainingInfo != null &&
                         !x.TrainingInfo.IsTrained &&
-                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.BuildWords && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
+                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.BuildWords && y.Progress < 1 && y.NextTrainingdAt <= DateTimeOffset.UtcNow)
                     )
                 )
             );
@@ -762,7 +772,7 @@ namespace Lexiconner.Application.Services
                     (
                         x.TrainingInfo != null &&
                         !x.TrainingInfo.IsTrained &&
-                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.ListenWords && y.Progress < 1 && y.NextTrainingdAt <= DateTime.UtcNow)
+                        x.TrainingInfo.Trainings.Any(y => y.TrainingType == TrainingType.ListenWords && y.Progress < 1 && y.NextTrainingdAt <= DateTimeOffset.UtcNow)
                     )
                 )
             );

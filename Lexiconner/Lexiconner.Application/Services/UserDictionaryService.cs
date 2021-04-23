@@ -141,14 +141,13 @@ namespace Lexiconner.Application.Services
                     UserId = userId,
                     WordsLanguageCode = languageCode,
                 };
-                dictionary.AddDefaultWordSet();
+                dictionary.AddDefaultWordSets();
                 CustomValidationHelper.Validate(dictionary);
                 await _dataRepository.AddAsync(dictionary);
             }
 
-            if(!dictionary.WordSets.Any(x => x.IsDefault))
+            if(dictionary.AddDefaultWordSets())
             {
-                dictionary.AddDefaultWordSet();
                 CustomValidationHelper.Validate(dictionary);
                 await _dataRepository.UpdateAsync(dictionary);
             }

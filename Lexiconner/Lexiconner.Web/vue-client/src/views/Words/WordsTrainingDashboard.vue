@@ -18,36 +18,42 @@
                     <router-link v-bind:to="{ name: 'words-learn-falshcards', params: {}}" class="app-card-nav-link">
                         <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-red-card-80.png" alt="">
                         <span class="app-card-nav-text">Flash cards</span>
+                        <span class="app-card-nav-secondary-text">{{ getAvailableForTrainingWordCount(privateState.traingTypes.FlashCards) }}</span>
                     </router-link>
                 </div>
                 <div class="app-card-nav-item">
                     <router-link v-bind:to="{ name: 'words-learn-wordmeaning', params: {}}" class="app-card-nav-link">
                         <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-rich-text-converter-96.png" alt="">
                         <span class="app-card-nav-text">Word-Meaning</span>
+                        <span class="app-card-nav-secondary-text">{{ getAvailableForTrainingWordCount(privateState.traingTypes.WordMeaning) }}</span>
                     </router-link>
                 </div>
                 <div class="app-card-nav-item">
                     <router-link v-bind:to="{ name: 'words-learn-meaningword', params: {}}" class="app-card-nav-link">
                         <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-dictionary-64.png" alt="">
                         <span class="app-card-nav-text">Meaning-Word</span>
+                        <span class="app-card-nav-secondary-text">{{ getAvailableForTrainingWordCount(privateState.traingTypes.MeaningWord) }}</span>
                     </router-link>
                 </div>
                 <div class="app-card-nav-item">
                     <router-link v-bind:to="{ name: 'words-learn-matchwords', params: {}}" class="app-card-nav-link">
                         <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-compare-64.png" alt="">
                         <span class="app-card-nav-text">Match words</span>
+                        <span class="app-card-nav-secondary-text">{{ getAvailableForTrainingWordCount(privateState.traingTypes.MatchWords) }}</span>
                     </router-link>
                 </div>
                 <div class="app-card-nav-item">
                     <router-link v-bind:to="{ name: 'words-learn-buildwords', params: {}}" class="app-card-nav-link">
                         <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-brick-wall-64.png" alt="">
                         <span class="app-card-nav-text">Build word</span>
+                        <span class="app-card-nav-secondary-text">{{ getAvailableForTrainingWordCount(privateState.traingTypes.BuildWords) }}</span>
                     </router-link>
                 </div>
                 <div class="app-card-nav-item">
                     <router-link v-bind:to="{ name: 'words-learn-listenwords', params: {}}" class="app-card-nav-link">
                         <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-foreign-language-sound-64.png" alt="">
                         <span class="app-card-nav-text">Listen word</span>
+                        <span class="app-card-nav-secondary-text">{{ getAvailableForTrainingWordCount(privateState.traingTypes.ListenWords) }}</span>
                     </router-link>
                 </div>
             </div>
@@ -112,7 +118,7 @@
 <script>
 // @ is an alias to /src
 import { mapState, mapGetters } from 'vuex';
-import { storeTypes } from '@/constants/index';
+import { storeTypes, traingTypes } from '@/constants/index';
 import authService from '@/services/authService';
 import notificationUtil from '@/utils/notification';
 import RowLoader from '@/components/loaders/RowLoader';
@@ -134,6 +140,7 @@ export default {
         return {
             privateState: {
                 storeTypes: storeTypes,
+                traingTypes: traingTypes,
                 learningLanguageCode: null,
             },
         };
@@ -174,6 +181,12 @@ export default {
         },
         onLearningLanguageCodeChange: function(code) {
             
+        },
+        getAvailableForTrainingWordCount: function(trainingType) {
+            if(!this.trainingStats) {
+                return 0;
+            }
+            return (this.trainingStats.trainingStats.find(x => x.trainingType === trainingType) || {}).availableForTrainingCount || 0;
         },
     },
 }

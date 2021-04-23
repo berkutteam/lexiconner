@@ -28,6 +28,7 @@ namespace Lexiconner.Api.DTOs.WordsTrainings
             public string TrainingTypeFormatted { get; set; }
             public long TrainedItemCount { get; set; }
             public long OnTrainingItemCount { get; set; }
+            public long AvailableForTrainingCount { get; set; }
         }
     }
 }
