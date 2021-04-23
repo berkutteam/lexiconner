@@ -58,7 +58,7 @@ namespace Lexiconner.Application.Services
             return dto;
         }
 
-        public async Task<UserDictionaryDto> AddWordSetToUserDictionaryAsync(string userId, string languageCode, string wordSetId)
+        public async Task<UserDictionaryDto> AddWordSetToUserDictionaryAsync(string userId, string languageCode, string wordSetId, IEnumerable<string> selectedWordIds)
         {
             var wordSet = await _dataRepository.GetOneAsync<WordSetEntity>(x => x.Id == wordSetId);
             if(wordSet == null)
@@ -69,15 +69,23 @@ namespace Lexiconner.Application.Services
             {
                 throw new NotFoundException($"Word set language is {wordSet.WordsLanguageCode} but you currently learning {languageCode}.");
             }
+            if (selectedWordIds == null || !selectedWordIds.Any())
+            {
+                throw new NotFoundException($"No words selected to add.");
+            }
 
             // add word set to dictionary
             var dictionary = await GetOrCreateUserDictionaryAsync(userId, languageCode);
+            if(dictionary.WordSets.Any(x => x.SourceWordSetId == wordSetId))
+            {
+                throw new BadRequestException("Word set is already added t oyour dictionary.");
+            }
             var userWordSet = dictionary.AddWordSet(wordSet);
             CustomValidationHelper.Validate(dictionary);
             await _dataRepository.UpdateAsync(dictionary);
 
             // copy words from word set to user
-            var newWords = wordSet.Words.Select(x =>
+            var newWords = wordSet.Words.Where(x => selectedWordIds.Contains(x.Id)).Select(x =>
             {
                 var result = _mapper.Map<WordEntity>(x);
                 result.UserId = userId;

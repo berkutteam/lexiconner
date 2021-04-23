@@ -23,32 +23,25 @@
                                 <img v-else class="card-img-top item-card-image" src="/img/empty-image.png">
                                 
                                 <div class="card-body">
-                                    <div class="">
-                                        <h6 class="card-title mb-0">
-                                            <span>{{item.name}}</span>
-                                        </h6>
-                                    </div>
-                                    
-                                    <div class="card-word-count">
-                                        <span class="badge badge-secondary">{{item.words.length}}</span>
-                                    </div>
+                                    <h6 class="card-title mb-0">
+                                        <span>{{item.name}}</span>
+                                    </h6>
+                                    <span class="badge badge-secondary">{{item.words.length}}</span>
                                 </div>
 
-                                <!-- Overlay controls -->
-                                <div 
-                                    v-if="!checkWordSetIsAlreadyAdded(item.id)"
-                                    class="item-card-overlay-controls"
-                                >
-                                    <div class="w-100 d-flex justify-content-center">
-                                        <loading-button 
-                                            type="button"
-                                            v-bind:loading="sharedState.loading[privateState.storeTypes.USER_DICTIONARY_WORD_SET_ADD]"
-                                            v-on:click.native="onAddWordSetClick(item.id)"
-                                            class="btn btn-sm custom-btn-normal"
-                                        >
-                                            <i class="fas fa-plus mr-2"></i> Add to my dictionary
-                                        </loading-button>
-                                    </div>
+                                <div class="card-controls">
+
+                                    <loading-button 
+                                        type="button"
+                                        v-if="!checkWordSetIsAlreadyAdded(item.id)"
+                                        v-bind:disabled="checkWordSetIsAlreadyAdded(item.id)"
+                                        v-bind:loading="false"
+                                        v-on:click.native="onAddWordSetClick(item.id)"
+                                        class="btn btn-sm custom-btn-normal mr-1"
+                                    >
+                                        <i class="fas fa-plus"></i>
+                                    </loading-button>
+
                                 </div>
 
                                 <!-- Already added message -->
@@ -61,6 +54,67 @@
                 </div>
             </div>
         </div>
+
+        <!-- Word create/edit -->
+        <modal 
+            name="word-set-add-to-dictionary" 
+            height="auto"
+            width="450px"
+            v-bind:classes="['v--modal', 'v--modal-box', 'v--modal-box--overflow-visible', 'v--modal-box--sm-fullwidth']"
+            v-bind:clickToClose="false"
+            v-bind:scrollable="true"
+        >
+            <div class="app-modal">
+                <div class="app-modal-header">
+                    <div class="app-modal-title">
+                        <span>Add word set to dictionary</span>
+                    </div>
+                    <div v-on:click="$modal.hide('word-set-add-to-dictionary')" class="app-modal-close">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                
+                <div class="app-modal-content">
+                    <form v-on:submit.prevent="addWordSetToDictionaryClick()">
+                        <!-- <div class="form-group">
+                            <label for="wordSetModel__title">Name</label>
+                            <input v-model="privateState.wordSetModel.name" type="text" class="form-control" id="wordSetModel__title" placeholder="Name" />
+                        </div> -->
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" v-on:change="(e) => onSelectAllWordsChange(e, privateState.addWordSetToDictionaryModel.wordSetId)">
+                            <label class="form-check-label" for="defaultCheck1">
+                                Select all
+                            </label>
+                        </div>
+                        <hr />
+                        <div class="mb-2">
+                            <div
+                                v-for="(word) in getWordSetWords(privateState.addWordSetToDictionaryModel.wordSetId)"
+                                v-bind:key="word.id"
+                                class="form-check mb-1"
+                            >
+                                <input 
+                                    class="form-check-input" 
+                                    type="checkbox" 
+                                    value="" 
+                                    v-bind:id="`${word.id}-check`" 
+                                    v-on:change="(e) => onSelectWordChange(e, word.id)"
+                                    v-bind:checked="privateState.addWordSetToDictionaryModel.selectedWordsIds.includes(word.id)"
+                                >
+                                <label class="form-check-label" v-bind:for="`${word.id}-check`">
+                                    {{ word.word }}
+                                </label>
+                            </div>
+                        </div>
+                        <loading-button 
+                            type="submit"
+                            v-bind:loading="sharedState.loading[privateState.storeTypes.USER_DICTIONARY_WORD_SET_ADD]"
+                            class="btn custom-btn-normal btn-block"
+                        >Save</loading-button>
+                    </form>
+                </div>
+            </div>
+        </modal>
     </div>
 </template>
 
@@ -89,6 +143,10 @@ export default {
             privateState: {
                 storeTypes: storeTypes,
                 currentView: localStorage.getItem(`wordSetsBrowse_currentView`) || 'cards', // ['cards']
+                addWordSetToDictionaryModel: {
+                    wordSetId: null,
+                    selectedWordsIds: [],
+                },
             },
         };
     },
@@ -145,9 +203,26 @@ export default {
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
         },
+        checkWordSetIsAlreadyAdded: function(wordSetId) {
+            if(this.userDictionary) {
+                return this.userDictionary.wordSets.some(x => x.sourceWordSetId === wordSetId);
+            }
+            return false;
+        },
+        getWordSetWords: function(wordSetId) {
+            if(this.wordSets) {
+                return (this.wordSets.find(x => x.id === wordSetId) || {}).words || [];
+            }
+            return [];
+        },
         onAddWordSetClick: function(wordSetId) {
+            this.privateState.addWordSetToDictionaryModel.wordSetId = wordSetId;
+            this.$modal.show('word-set-add-to-dictionary');
+        },
+        addWordSetToDictionaryClick: function() {
             return this.$store.dispatch(storeTypes.USER_DICTIONARY_WORD_SET_ADD, {
-                wordSetId, 
+                wordSetId: this.privateState.addWordSetToDictionaryModel.wordSetId, 
+                selectedWordIds: this.privateState.addWordSetToDictionaryModel.selectedWordsIds,
             }).then(() => {
                 this.$notify({
                     group: 'app',
@@ -156,17 +231,31 @@ export default {
                     text: '',
                     duration: 5000,
                 });
+
+                this.$modal.hide('word-set-add-to-dictionary');
             }).catch(err => {
                 console.error(err);
                 notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
             });
         },
-        checkWordSetIsAlreadyAdded: function(wordSetId) {
-            if(this.userDictionary) {
-                return this.userDictionary.wordSets.some(x => x.sourceWordSetId === wordSetId);
+        onSelectAllWordsChange: function(e, wordSetId) {
+            if(e.target.checked) {
+                this.privateState.addWordSetToDictionaryModel.selectedWordsIds = [
+                    ...this.getWordSetWords(wordSetId).map(x => x.id),
+                ];
+            } else {
+                this.privateState.addWordSetToDictionaryModel.selectedWordsIds = [];
             }
-            return false;
-        }
+            
+        },
+        onSelectWordChange: function(e, wordId) {
+            const isAlreadySelected = this.privateState.addWordSetToDictionaryModel.selectedWordsIds.includes(wordId);
+            if(isAlreadySelected) {
+                this.privateState.addWordSetToDictionaryModel.selectedWordsIds = this.privateState.addWordSetToDictionaryModel.selectedWordsIds.filter(x => x !== wordId);
+            } else {
+                this.privateState.addWordSetToDictionaryModel.selectedWordsIds.push(wordId);
+            }
+        },
     },
 }
 </script>

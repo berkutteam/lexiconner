@@ -387,8 +387,8 @@ class API {
             getUserDictionary({ languageCode }) {
                 return axiosAuthRequest({ url: buildUrl(url, `userdictionary/${languageCode}`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
-            addWordSetToUserDictionary({ languageCode, wordSetId }) {
-                return axiosAuthRequest({ url: buildUrl(url, `userdictionary/${languageCode}/wordsets/add-from-wordset`, {}), method: "post", data: { wordSetId } }).then(handleApiResponse).catch(handleApiErrorResponse);
+            addWordSetToUserDictionary({ languageCode, wordSetId, selectedWordIds }) {
+                return axiosAuthRequest({ url: buildUrl(url, `userdictionary/${languageCode}/wordsets/add-from-wordset`, {}), method: "post", data: { wordSetId, selectedWordIds } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
             createUserDictionaryWordSet({ languageCode, data }) {
                 return axiosAuthRequest({ url: buildUrl(url, `userdictionary/${languageCode}/wordsets`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);

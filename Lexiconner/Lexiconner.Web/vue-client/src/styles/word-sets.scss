@@ -51,26 +51,18 @@
             }
         }
 
-        .card-title {
-            color: $color-white;
-            text-align: center;
-            font-size: 1.2rem;
-        }
-
-        .card-word-count {
+        .card-controls {
             position: absolute;
-            top: 1%;
+            z-index: 2;
+            top: 2%;
             right: 2%;
             color: $color-white;
         }
 
-        .item-card-overlay-controls {
-            display: none;
-            position: absolute;
-            z-index: 2;
-            bottom: 1%;
-            left: 1%;
-            right: 1%;
+        .card-title {
+            color: $color-white;
+            text-align: center;
+            font-size: 1.2rem;
         }
 
         .item-card-image {

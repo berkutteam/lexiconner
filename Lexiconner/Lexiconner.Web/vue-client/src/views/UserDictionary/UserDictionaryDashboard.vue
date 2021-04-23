@@ -52,31 +52,29 @@
                         <span class="badge badge-secondary">{{item.wordCount}}</span>
                     </div>
                 </router-link>
-                    
-                <!-- Overlay controls -->
-                <div class="item-card-overlay-controls">
-                    <div class="w-100 d-flex justify-content-center">
-                        <loading-button 
-                            type="button"
-                            v-if="!item.isDefault"
-                            v-bind:disabled="item.isDefault"
-                            v-bind:loading="sharedState.loading[privateState.storeTypes.USER_DICTIONARY_WORD_SET_DELETE]"
-                            v-on:click.native="onDeleteWordSetClick(item.id)"
-                            class="btn btn-sm custom-btn-normal mr-1"
-                        >
-                            <i class="fas fa-times mr-1"></i> Delete
-                        </loading-button>
-                        <loading-button 
-                            type="button"
-                            v-if="!item.isDefault"
-                            v-bind:disabled="item.isDefault"
-                            v-bind:loading="sharedState.loading[privateState.storeTypes.USER_DICTIONARY_WORD_SET_DELETE]"
-                            v-on:click.native="(e) => onUpdateWordSetClick(e, item.id)"
-                            class="btn btn-sm custom-btn-normal"
-                        >
-                            <i class="fas fa-pencil-alt mr-1"></i> Edit
-                        </loading-button>
-                    </div>
+
+                <div class="card-controls">
+                   <loading-button 
+                        type="button"
+                        v-if="!item.isDefault"
+                        v-bind:disabled="item.isDefault"
+                        v-bind:loading="false"
+                        v-on:click.native="onDeleteWordSetClick(item.id)"
+                        class="btn btn-sm custom-btn-normal mr-1"
+                    >
+                        <i class="fas fa-times"></i>
+                    </loading-button>
+                    <loading-button 
+                        type="button"
+                        v-if="!item.isDefault"
+                        v-bind:disabled="item.isDefault"
+                        v-bind:loading="false"
+                        v-on:click.native="(e) => onUpdateWordSetClick(e, item.id)"
+                        class="btn btn-sm custom-btn-normal"
+                    >
+                        <i class="fas fa-pencil-alt"></i>
+                    </loading-button>
+
                 </div>
             </div>
         </div>

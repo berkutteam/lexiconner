@@ -30,6 +30,7 @@ namespace Lexiconner.Domain.Dtos.WordSets
             Images = new List<GeneralImageDto>();
         }
 
+        public string Id { get; set; }
         public string Word { get; set; }
         public string Meaning { get; set; }
         public List<string> Examples { get; set; }

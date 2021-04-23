@@ -1,6 +1,6 @@
 <template>
     <div class="">
-       <!-- Word create/edit -->
+        <!-- Word create/edit -->
         <modal 
             name="word-set-create-edit" 
             height="auto"

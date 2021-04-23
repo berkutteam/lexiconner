@@ -48,7 +48,7 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> AddWordSetToUserDictionary([FromRoute] string languageCode, [FromBody] AddWordSetToUserDictionaryRequestDto data)
         {
-            var result = await _userDictionaryService.AddWordSetToUserDictionaryAsync(GetUserId(), languageCode, data.WordSetId);
+            var result = await _userDictionaryService.AddWordSetToUserDictionaryAsync(GetUserId(), languageCode, data.WordSetId, data.SelectedWordIds);
             return BaseResponse(result);
         }
 

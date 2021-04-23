@@ -1515,7 +1515,7 @@ export default new Vuex.Store({
                 throw err;
             });
         },
-        [storeTypes.USER_DICTIONARY_WORD_SET_ADD](context, { wordSetId }) {
+        [storeTypes.USER_DICTIONARY_WORD_SET_ADD](context, { wordSetId, selectedWordIds }) {
             let { commit, dispatch, state, getters } = context;
 
             if(getters.isLearningLanguageCodeSelected !== true) {
@@ -1529,6 +1529,7 @@ export default new Vuex.Store({
             return api.webApi().addWordSetToUserDictionary({
                 languageCode: getters.selectedLearningLanguageCode,
                 wordSetId,
+                selectedWordIds,
             }).then(({ data, ok }) => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.USER_DICTIONARY_WORD_SET_ADD,
