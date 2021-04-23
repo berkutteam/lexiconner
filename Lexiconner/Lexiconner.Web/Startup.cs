@@ -97,21 +97,6 @@ namespace Lexiconner.Web
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Use(async (context, next) =>
-            {
-                await next();
-
-                // If there's no available file and the request doesn't contain an extension, we're probably trying to access a page.
-                // Rewrite request to use app root
-                if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) && !context.Request.Path.Value.StartsWith("/api"))
-                {
-                    //context.Request.Path = "/index.html";
-                    context.Request.Path = "/";
-                    context.Response.StatusCode = 200; // Make sure we update the status code, otherwise it returns 404
-                    await next();
-                }
-            });
-
             // app.UseHttpsRedirection();
             app.UseDefaultFiles();
             app.UseStaticFiles();
@@ -127,8 +112,23 @@ namespace Lexiconner.Web
             {
                 endpoints.MapControllers();
             });
-        }
 
+            // Handle client side HTML5 routes
+            // for SPA apps should fallback to index.html
+            // https://weblog.west-wind.com/posts/2017/aug/07/handling-html5-client-route-fallbacks-in-aspnet-core
+            // https://weblog.west-wind.com/posts/2020/Jul/12/Handling-SPA-Fallback-Paths-in-a-Generic-ASPNET-Core-Server
+            app.Run(async (context) =>
+            {
+                if (!context.Response.HasStarted)
+                {
+                    context.Response.ContentType = "text/html";
+                    context.Response.StatusCode = 200;
+                }
+
+                await context.Response.SendFileAsync(Path.Combine(env.WebRootPath, "index.html"));
+                await context.Response.CompleteAsync();
+            });
+        }
 
         private void ConfigureLogger(IServiceCollection services)
         {

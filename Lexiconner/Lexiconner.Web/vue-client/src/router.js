@@ -129,6 +129,7 @@ function checkPermissions({ to, from, next, permisions, scopeId }) {
 }
 
 export default new Router({
+    mode: 'history',
     routes: [
         {
             path: '/',
