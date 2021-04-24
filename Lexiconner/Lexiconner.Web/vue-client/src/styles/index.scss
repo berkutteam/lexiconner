@@ -807,9 +807,6 @@ a {
         position: relative;
 
         &:hover {
-            .item-card-overlay-controls {
-                display: block;
-            }
         }
 
         &:not(:nth-child(5n)) {
@@ -821,7 +818,6 @@ a {
         }
 
         .item-card-overlay-controls {
-            display: none;
             position: absolute;
             top: 1%;
             right: 1%;
@@ -998,8 +994,8 @@ a {
 .words-learn-buildwords-wrapper,
 .words-learn-listenwords-wrapper {
     .training-card {
-        width: 80%;
-        max-width: 800px;
+        width: 400px;
+        max-width: 400px;
     }
 
     .training-image {

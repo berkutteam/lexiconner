@@ -340,7 +340,11 @@ export default {
             this.privateState.currentWordInvalidPartsIndexes = this.currentItem.wordParts.map((x, i) => i);
 
             // enter all the parts
+            const startIndex = this.privateState.currentWordEnteredParts.length;
             this.currentItem.correctWordParts.forEach((part, index) => {
+                if(index < startIndex) {
+                    return;
+                }
                 this.privateState.currentWordEnteredParts.push(part);
                 this.privateState.currentWordEnteredPartsIndexes.push(index);
             });
@@ -375,6 +379,8 @@ export default {
             switch(e.which) {
                 // Space (conflicts with entering space character)
                 // case 32:
+
+                // Enter
                 case 13:
                     if(this.privateState.isCurrentItemAnswered) {
                         this.onNextClick();
