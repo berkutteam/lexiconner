@@ -57,6 +57,11 @@ export default {
         }),
     },
     created: async function() {
+        if(!this.sharedState.auth.isAuthenticated) {
+            console.error(`Not authenticated.`);
+            return;
+        }
+
         if(!this.profile) {
             this.$store.dispatch(storeTypes.PROFILE_LOAD, {});
         }

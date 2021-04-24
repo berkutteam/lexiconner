@@ -20,8 +20,9 @@ import {
 
 import FullscreenLoader from '@/plugins/fullscreen-loader';
 
-import Default from '@/layouts/Default';
-import NoSidebar from '@/layouts/NoSidebar';
+import DefaultLayout from '@/layouts/Default';
+import NoSidebarLayout from '@/layouts/NoSidebar';
+import HomeLayout from '@/layouts/Home';
 
 import App from './App.vue';
 import router from './router';
@@ -74,8 +75,9 @@ Vue.component('VMenu', Menu)
 Vue.use(FullscreenLoader);
 
 // layouts
-Vue.component('default-layout', Default);
-Vue.component('no-sidebar-layout', NoSidebar);
+Vue.component('default-layout', DefaultLayout);
+Vue.component('no-sidebar-layout', NoSidebarLayout);
+Vue.component('home-layout', HomeLayout);
 
 runApp();
 

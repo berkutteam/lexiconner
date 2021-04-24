@@ -26,7 +26,7 @@
             position="top right" 
         />
 
-         <!-- important information -->
+        <!-- important information -->
         <notifications 
             group="app-important" 
             position="top center"
