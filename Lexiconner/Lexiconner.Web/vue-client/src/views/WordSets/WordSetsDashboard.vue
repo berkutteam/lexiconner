@@ -81,7 +81,13 @@
                             <input v-model="privateState.wordSetModel.name" type="text" class="form-control" id="wordSetModel__title" placeholder="Name" />
                         </div> -->
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" v-on:change="(e) => onSelectAllWordsChange(e, privateState.addWordSetToDictionaryModel.wordSetId)">
+                            <input 
+                                class="form-check-input" 
+                                type="checkbox" 
+                                checked="checked" 
+                                id="defaultCheck1" 
+                                v-on:change="(e) => onSelectAllWordsChange(e, privateState.addWordSetToDictionaryModel.wordSetId)"
+                            >
                             <label class="form-check-label" for="defaultCheck1">
                                 Select all
                             </label>
@@ -217,6 +223,9 @@ export default {
         },
         onAddWordSetClick: function(wordSetId) {
             this.privateState.addWordSetToDictionaryModel.wordSetId = wordSetId;
+            this.privateState.addWordSetToDictionaryModel.selectedWordsIds = [
+                ...this.getWordSetWords(wordSetId).map(x => x.id),
+            ];
             this.$modal.show('word-set-add-to-dictionary');
         },
         addWordSetToDictionaryClick: function() {

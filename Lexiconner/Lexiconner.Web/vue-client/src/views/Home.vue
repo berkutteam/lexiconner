@@ -1,4 +1,6 @@
 <template>
+    <!-- Basedon Bootstrap example template -->
+    <!-- https://getbootstrap.com/docs/4.0/examples/ -->
     <div class="home-page-wrapper">
         <div class="text-center">
             <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
