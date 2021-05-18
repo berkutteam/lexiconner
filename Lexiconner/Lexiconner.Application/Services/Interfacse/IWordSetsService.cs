@@ -19,5 +19,6 @@ namespace Lexiconner.Application.Services.Interfacse
            int limit,
            string search = null
         );
+        Task<WordSetDto> CreateWordSetAsync(string userId, WordSetCreateDto dto);
     }
 }

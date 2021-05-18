@@ -4,6 +4,16 @@
 
         <learning-language-not-selected-alert />
 
+        <!-- Nav -->
+        <div class="app-card-nav mb-2">
+            <div class="app-card-nav-item">
+                <router-link v-bind:to="{ name: 'wordset-create-create', params: {}}" class="app-card-nav-link">
+                    <img class="app-card-nav-image app-card-nav-image--64x64" src="img/app-card-nav/icons8-add-folder-64.png" alt="">
+                    <span class="app-card-nav-text">Create a new word set</span>
+                </router-link>
+            </div>
+        </div>
+
         <div v-if="isLearningLanguageCodeSelected === true">
             <div v-if="wordSets">
                 <div>
@@ -55,7 +65,7 @@
             </div>
         </div>
 
-        <!-- Word create/edit -->
+        <!-- Modal-->
         <modal 
             name="word-set-add-to-dictionary" 
             height="auto"

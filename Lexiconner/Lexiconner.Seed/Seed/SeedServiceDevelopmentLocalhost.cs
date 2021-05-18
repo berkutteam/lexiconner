@@ -238,6 +238,7 @@ namespace Lexiconner.Seed.Seed
                         Name = x.Name,
                         WordsLanguageCode = import.WordLanguageCode,
                         MeaningsLanguageCode = import.MeaningLanguageCode,
+                        IsPublished = true,
                         Images = x.ImageUrls.Select(imageUrl => new GeneralImageEntity()
                         {
                             IsAddedByUrl = true,

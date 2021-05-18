@@ -38,5 +38,17 @@ namespace Lexiconner.Api.Controllers.V2
             var result = await _wordSetsService.GetAllWordSetsAsync(dto.LanguageCode, dto.Offset, dto.Limit, dto.Search);
             return BaseResponse(result);
         }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(BaseApiResponseDto<WordSetDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> Create([FromBody] WordSetCreateDto dto)
+        {
+            var result = await _wordSetsService.CreateWordSetAsync(GetUserId(), dto);
+            return BaseResponse(result);
+        }
     }
 }

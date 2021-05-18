@@ -106,13 +106,13 @@
                 </div>
 
 
-                <!-- Word create/edit -->
+                <!-- Word create/edit modal -->
                 <word-create-update-modal
                     ref="wordCreateUpdateModal"
                 >
                 </word-create-update-modal>
 
-                <!-- Word images -->
+                <!-- Word images modal -->
                 <word-images-modal
                     ref="wordImagesModal"
                 >

@@ -21,9 +21,11 @@ namespace Lexiconner.Domain.Entitites
             Words = new List<WordSetWordEntity>();
         }
 
+        public string CreatedByUserId { get; set; }
         public string Name { get; set; }
         public string WordsLanguageCode { get; set; }
         public string MeaningsLanguageCode { get; set; }
+        public bool IsPublished { get; set; }
         public List<GeneralImageEntity> Images { get; set; }
         public List<WordSetWordEntity> Words { get; set; }
     }

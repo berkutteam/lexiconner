@@ -311,6 +311,11 @@ class API {
                 return axiosAuthRequest({ url: buildUrl(url, `words/pronunciation/audio`, { languageCode, word }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
 
+            // images
+            findImagesByLanguage({ languageCode, search, limit }) {
+                return axiosAuthRequest({ url: buildUrl(url, `images/find/by-language`, { languageCode, search, limit }), method: "post", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+
             // trainings
             getTrainingStatistics({ userWordSetId }) {
                 return axiosAuthRequest({ url: buildUrl(url, `words/trainings/stats`, { userWordSetId }), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
@@ -381,6 +386,9 @@ class API {
             // word sets
             getWordSets({ languageCode, offset, limit, search }) {
                 return axiosAuthRequest({ url: buildUrl(url, `wordsets`, { languageCode, offset, limit, search}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
+            },
+            createWordSet({ data }) {
+                return axiosAuthRequest({ url: buildUrl(url, `wordsets`, {}), method: "post", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
             },
 
             // user dictionary

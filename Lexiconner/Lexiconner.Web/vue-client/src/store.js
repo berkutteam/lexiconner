@@ -55,34 +55,6 @@ export default new Vuex.Store({
         userAccount: null,
         userInfo: null,
 
-        // currently viewed company
-        company: null,
-        companyDepartments: {
-            // <companyId>: array<object>
-        },
-        // currently viewed department
-        companyDepartment: {
-            // <companyId>: {
-            // <departmentId>: object
-            // }
-        },
-        companyUsers: {
-            // <companyId>: paginationResult (store only current page)
-        },
-        departmentUsers: {
-            // <departmentId>: paginationResult (store only current page)
-        },
-        // currently viewed user
-        companyUser: {
-            // <companyId>: {
-            // <userId>: object
-            // }
-        },
-        companyUserInvitation: {
-            // <invitationId>: object
-        },
-        myCompanyInvitations: null,
-
         profile: null,
 
         wordsRequestParamsDefault: {
@@ -107,9 +79,13 @@ export default new Vuex.Store({
             // key: value
         },
 
-         // paginationResult (store only current page)
+        // paginationResult (store only current page)
         // {items: [], pagination: {}}
         wordImagesPaginationResult: null,
+
+        // paginationResult (store only current page)
+        // {items: [], pagination: {}}
+        imagesPaginationResult: null,
 
         trainingStats: null, // object
         trainingFlashcards: null, // object
@@ -375,6 +351,16 @@ export default new Vuex.Store({
         },
 
         //#endregion Words
+
+
+        //#region Images
+
+        [storeTypes.IMAGES_FIND_SET](state, payload) {
+            let { imagesPaginationResult } = payload;
+            state.imagesPaginationResult = imagesPaginationResult;
+        },
+
+        //#endregion
 
 
         //#region Trainings
@@ -1106,6 +1092,39 @@ export default new Vuex.Store({
         //#endregion
 
 
+        //#region Images
+
+        [storeTypes.IMAGES_FIND_BY_LANGUAGE](context, { languageCode, search, limit }) {
+            let { commit, dispatch, getters } = context;
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.IMAGES_FIND_BY_LANGUAGE,
+                loading: true,
+            });
+            return api.webApi().findImagesByLanguage({ 
+                languageCode, 
+                search,
+                limit,
+             }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.IMAGES_FIND_BY_LANGUAGE,
+                    loading: false,
+                });
+                commit(storeTypes.IMAGES_FIND_SET, {
+                    imagesPaginationResult: data
+                });
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.IMAGES_FIND_BY_LANGUAGE,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+
+        //#endregion
+
+
         //#region Trainings
 
         [storeTypes.WORD_TRAINING_STATS_LOAD](context, params) {
@@ -1662,6 +1681,42 @@ export default new Vuex.Store({
             }).catch(err => {
                 commit(storeTypes.LOADING_SET, {
                     target: storeTypes.WORD_SETS_LOAD,
+                    loading: false,
+                });
+                throw err;
+            });
+        },
+        [storeTypes.WORD_SET_CREATE](context, { data }) {
+            let { commit, dispatch, state, getters } = context;
+
+            commit(storeTypes.LOADING_SET, {
+                target: storeTypes.WORD_SET_CREATE,
+                loading: true,
+            });
+            return api.webApi().createWordSet({
+                data,
+            }).then(({ data, ok }) => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_SET_CREATE,
+                    loading: false,
+                });
+
+                if(state.wordSetsPaginationResult !== null) {
+                    commit(storeTypes.WORD_SETS_LOAD_SET, {
+                        data: {
+                            ...state.wordSetsPaginationResult,
+                            items: [
+                                data,
+                                ...state.wordSetsPaginationResult.items,
+                            ]
+                        }
+                    });
+                }
+                
+                return data;
+            }).catch(err => {
+                commit(storeTypes.LOADING_SET, {
+                    target: storeTypes.WORD_SET_CREATE,
                     loading: false,
                 });
                 throw err;

@@ -21,6 +21,7 @@ import WordsLearnBuildWords from './views/Words/WordsLearnBuildWords.vue';
 import WordsLearnListenWords from './views/Words/WordsLearnListenWords.vue';
 
 import WordSetsDashboard from './views/WordSets/WordSetsDashboard.vue';
+import WordSetCreate from './views/WordSets/WordSetCreate.vue';
 
 import UserFilmsBrowse from './views/UserFilms/UserFilmsBrowse.vue';
 
@@ -290,6 +291,28 @@ export default new Router({
             path: '/wordsets',
             name: 'wordsets',
             component: WordSetsDashboard,
+            props: true,
+            meta: { layout: 'default' },
+            beforeEnter: async (to, from, next) => {
+                await waitAppInitialization({ to, from, next });
+                checkAuthenticated({ to, from, next });
+            },
+        },
+        {
+            path: '/wordsets/create',
+            name: 'wordset-create-create',
+            component: WordSetCreate,
+            props: true,
+            meta: { layout: 'default' },
+            beforeEnter: async (to, from, next) => {
+                await waitAppInitialization({ to, from, next });
+                checkAuthenticated({ to, from, next });
+            },
+        },
+        {
+            path: '/wordsets/:wordSetId/edit',
+            name: 'wordset-create-update',
+            component: WordSetCreate,
             props: true,
             meta: { layout: 'default' },
             beforeEnter: async (to, from, next) => {

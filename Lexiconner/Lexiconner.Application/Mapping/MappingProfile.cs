@@ -40,6 +40,8 @@ namespace Lexiconner.Application.Mapping
             CreateMap<WordSetEntity, WordSetDto>();
             CreateMap<WordSetWordEntity, WordSetWordDto>();
             CreateMap<WordSetWordEntity, WordEntity>();
+            CreateMap<WordSetCreateDto, WordSetEntity>();
+            CreateMap<WordSetCreateWordDto, WordSetWordEntity>();
 
             // CustomCollection
             CreateMap<CustomCollectionEntity, CustomCollectionDto>();

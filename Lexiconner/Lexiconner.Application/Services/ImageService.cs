@@ -1,6 +1,9 @@
-﻿using Lexiconner.Application.ApiClients;
+﻿using AutoMapper;
+using Lexiconner.Application.ApiClients;
 using Lexiconner.Application.ApiClients.Dtos;
 using Lexiconner.Application.Exceptions;
+using Lexiconner.Domain.Dtos;
+using Lexiconner.Domain.Dtos.General;
 using Lexiconner.Domain.Entitites.Cache;
 using Lexiconner.Domain.Models;
 using Lexiconner.Persistence.Cache;
@@ -32,11 +35,13 @@ namespace Lexiconner.Application.Services
 
         Task<IEnumerable<ImageSearchResponseItemDto>> ExcludeUnavailableImagesAsync(IEnumerable<ImageSearchResponseItemDto> imageResult);
         Task<GeneralImageModel> GetImageInfoByUrlAsync(string imageUrl);
+        Task<PaginationResponseDto<GeneralImageDto>> FindImagesByLanguageCodeAsync(string sourceLanguageCode, string imageQuery, int limit = 10, bool returnOnlyAvailable = true);
     }
 
     public class ImageService : IImageService
     {
         private readonly ILogger<IImageService> _logger;
+        private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IDataCache _dataCache;
         private readonly IGoogleTranslateApiClient _googleTranslateApiClient;
@@ -44,6 +49,7 @@ namespace Lexiconner.Application.Services
 
         public ImageService(
             ILogger<IImageService> logger,
+            IMapper mapper,
             IHttpClientFactory httpClientFactory,
             IDataCache dataCache,
             IGoogleTranslateApiClient googleTranslateApiClient,
@@ -51,6 +57,7 @@ namespace Lexiconner.Application.Services
         )
         {
             _logger = logger;
+            _mapper = mapper;
             _httpClientFactory = httpClientFactory;
             _dataCache = dataCache;
             _googleTranslateApiClient = googleTranslateApiClient;
@@ -59,13 +66,19 @@ namespace Lexiconner.Application.Services
 
         public async Task<IEnumerable<ImageSearchResponseItemDto>> FindImagesAsync(string sourceLanguageCode, string imageQuery, int limit = 10, bool returnOnlyAvailable = true)
         {
+            var result = new List<ImageSearchResponseItemDto>();
+
+            if (string.IsNullOrEmpty(imageQuery))
+            {
+                return result;
+            }
+
             imageQuery = imageQuery.ToLowerInvariant();
 
             // get translation ru -> en (images can be searched only using en)
             // https://cloud.google.com/translate/docs/languages
             string targetLanguageCode = "en";
             string imageQueryEn = null;
-            var result = new List<ImageSearchResponseItemDto>();
 
             try
             {
@@ -372,6 +385,27 @@ namespace Lexiconner.Application.Services
                 _logger.LogError(ex, $"Can't get image info for URL: {imageUrl}");
                 return null;
             }
+        }
+
+        public async Task<PaginationResponseDto<GeneralImageDto>> FindImagesByLanguageCodeAsync(string sourceLanguageCode, string imageQuery, int limit = 10, bool returnOnlyAvailable = true)
+        {
+            var imagesResults = await FindImagesAsync(sourceLanguageCode, imageQuery, limit: limit + 10, returnOnlyAvailable);
+            imagesResults = GetSuitableImages(imagesResults);
+            imagesResults = imagesResults.Take(limit).ToList();
+
+            var result = new PaginationResponseDto<GeneralImageDto>()
+            {
+                Items = imagesResults.Select(x => _mapper.Map<GeneralImageDto>(x)),
+                Pagination = new PaginationInfoDto()
+                {
+                    Offset = 0,
+                    Limit = limit,
+                    ReturnedCount = imagesResults.Count(),
+                    TotalCount = imagesResults.Count(),
+                },
+            };
+
+            return result;
         }
     }
 }

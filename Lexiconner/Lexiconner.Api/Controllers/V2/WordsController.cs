@@ -6,6 +6,7 @@ using Lexiconner.Domain.Dtos.Words;
 using Lexiconner.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -86,6 +87,7 @@ namespace Lexiconner.Api.Controllers.V2
             return StatusCodeBaseResponse();
         }
 
+        [Obsolete]
         [HttpPost("{wordId}/images/find")]
         [ProducesResponseType(typeof(BaseApiResponseDto<PaginationResponseDto<GeneralImageDto>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]

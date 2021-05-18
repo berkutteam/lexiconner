@@ -92,5 +92,22 @@ namespace Lexiconner.Application.Services
 
             return result;
         }
+
+        public async Task<WordSetDto> CreateWordSetAsync(string userId, WordSetCreateDto dto)
+        {
+            var existingCount = await _dataRepository.CountAllAsync<WordSetEntity>(x => x.Name == dto.Name && x.WordsLanguageCode == dto.WordsLanguageCode);
+            if (existingCount != 0)
+            {
+                throw new BadRequestException($"Word set '{dto.Name}' already exists.");
+            }
+
+            var entity = _mapper.Map<WordSetEntity>(dto);
+            entity.CreatedByUserId = userId;
+
+            CustomValidationHelper.Validate(entity);
+            await _dataRepository.AddAsync(entity);
+
+            return _mapper.Map<WordSetDto>(entity); ;
+        }
     }
 }
