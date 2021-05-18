@@ -1,27 +1,38 @@
-let changeColor = document.getElementById('changeColor');
+// This file is executed when extension is activated via browser action
 
-chrome.storage.sync.get('color', function (data) {
-    changeColor.style.backgroundColor = data.color;
-    changeColor.setAttribute('value', data.color);
+// Initialize button with user's preferred color
+let changeColor = document.getElementById("changeColor");
+
+chrome.storage.sync.get("color", ({ color }) => {
+  changeColor.style.backgroundColor = color;
 });
 
-changeColor.onclick = function (element) {
-    let color = element.target.value;
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.executeScript(
-            tabs[0].id,
-            { code: 'document.body.style.backgroundColor = "' + color + '";' });
-    });
-};
+// When the button is clicked, inject setPageBackgroundColor into current page
+changeColor.addEventListener("click", async () => {
+    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-window.addEventListener('DOMContentLoaded', function() {
-    console.log('DOMContentLoaded.');
-
-    var app = new Vue({
-        el: '#app',
-        data: {
-            message: 'Hello Vue!'
-        }
+    chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: setPageBackgroundColor,
     });
 });
+
+// The body of this function will be executed as a content script inside the
+// current page
+function setPageBackgroundColor() {
+    chrome.storage.sync.get("color", ({ color }) => {
+        document.body.style.backgroundColor = color;
+    });
+}
+
+// window.addEventListener('DOMContentLoaded', function() {
+//     console.log('DOMContentLoaded.');
+
+//     var app = new Vue({
+//         el: '#app',
+//         data: {
+//             message: 'Hello Vue!'
+//         }
+//     });
+// });
 
