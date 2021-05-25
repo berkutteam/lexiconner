@@ -25,14 +25,14 @@ function setPageBackgroundColor() {
     });
 }
 
-// window.addEventListener('DOMContentLoaded', function() {
-//     console.log('DOMContentLoaded.');
+window.addEventListener('DOMContentLoaded', function() {
+    console.log('DOMContentLoaded.');
 
-//     var app = new Vue({
-//         el: '#app',
-//         data: {
-//             message: 'Hello Vue!'
-//         }
-//     });
-// });
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!'
+        }
+    });
+});
 

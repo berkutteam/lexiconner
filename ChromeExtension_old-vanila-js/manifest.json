@@ -1,5 +1,5 @@
 {
-    "name": "Lexiconner",
+    "name": "Lexiconner v0",
     "description": "Lexiconner Chrome Extension",
     "version": "1.0",
     "manifest_version": 3,
@@ -26,5 +26,8 @@
         "48": "images/get_started48.png",
         "128": "images/get_started128.png"
     },
-    "options_page": "options.html"
+    "options_page": "options.html",
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' ; object-src 'self'"
+    }
 }
