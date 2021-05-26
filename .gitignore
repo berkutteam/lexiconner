@@ -333,7 +333,7 @@ ASALocalRun/
 .env_*
 .env__*
 
-# local env files
+# local env files (usually for vue.js)
 .env.local
 .env.*.local
 
