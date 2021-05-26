@@ -41,5 +41,20 @@ namespace Lexiconner.IdentityServer4.Controllers.V1.BrowserExtensionApi
             var result = await _accountService.BrowserExtensionLoginAsync(dto);
             return BaseResponse(result);
         }
+
+        // Anonymous because you might have expired accessToken but valid refreshToken
+        [AllowAnonymous]
+        [Route("refresh-tokens")]
+        [HttpPost]
+        [ProducesResponseType(typeof(BaseApiResponseDto<BrowserExtensionLoginResponseDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> RefreshTokens([FromBody] BrowserExtensionRefreshTokensRequestDto dto)
+        {
+            var result = await _accountService.BrowserExtensionLoginAsync(dto);
+            return BaseResponse(result);
+        }
     }
 }

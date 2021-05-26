@@ -5,8 +5,38 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title><%= htmlWebpackPlugin.options.title %></title>
+
+  <!-- FontAwesome5 -->
+  <link href="<%= BASE_URL %>lib/fontawesome-free-5.10.2-web/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <!-- Intial loader -->
+    <!-- Will be dropped when app rendered. -->
+    <!-- Put styles here to be displayed quickly (css files load takes time) -->
+    <style>
+      .app-loader-initial {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .app-loader-initial .loader-icon {
+        font-size: 140px;
+        color: #3b749e;
+        margin: 20px 0 0 0;
+      }
+    </style>
+    <div class="app-loader-initial">
+      <i class="far fa-clock fa-spin loader-icon"></i>
+    </div>
+  </div>
 </body>
 </html>

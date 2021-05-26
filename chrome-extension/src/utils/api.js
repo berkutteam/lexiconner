@@ -169,11 +169,23 @@ class API {
     let url = `${this.config.identityUrl}/api/v1/browser-extension/<endpoint>`;
 
     return {
+      // default IdentityServe OAuth2 endpoints
+
+      // custom endpoints
       login({ email, password, extensionVersion }) {
         return axiosRequest({
           url: buildUrl(url, `account/login`, {}),
           method: "post",
           data: { email, password, extensionVersion },
+        })
+          .then(handleApiResponse)
+          .catch(handleApiErrorResponse);
+      },
+      refreshTokens({ identityToken, accessToken, refreshToken, clientId }) {
+        return axiosRequest({
+          url: buildUrl(url, `account/refresh-tokens`, {}),
+          method: "post",
+          data: { identityToken, accessToken, refreshToken, clientId },
         })
           .then(handleApiResponse)
           .catch(handleApiErrorResponse);

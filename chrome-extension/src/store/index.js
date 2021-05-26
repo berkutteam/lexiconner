@@ -15,7 +15,11 @@ export default new Vuex.Store({
       // <storeType>: bool
     },
 
-    loginResult: null,
+    auth: {
+      isAuthenticated: false,
+      user: null,
+      loginResult: null,
+    },
   },
   getters: {
     /**
@@ -38,36 +42,49 @@ export default new Vuex.Store({
       };
     },
 
-    [storeTypes.LOGIN_SET](state, payload) {
-      let { data } = payload;
-      state.loginResult = data;
+    //#region Auth
+
+    [storeTypes.AUTH_USER_SET](state, payload) {
+      let { user } = payload;
+      state.auth.isAuthenticated = !!user;
+      state.auth.user = { ...user };
     },
+    [storeTypes.AUTH_USER_RESET](state) {
+      state.auth.isAuthenticated = false;
+      state.auth.user = null;
+    },
+    [storeTypes.AUTH_LOGIN_SET](state, payload) {
+      let { data } = payload;
+      state.auth.loginResult = data;
+    },
+
+    //#endregion
   },
   actions: {
-    //#region Login
+    //#region Auth
 
-    [storeTypes.LOGIN_REQUEST](context, { data }) {
+    [storeTypes.AUTH_AUTH_LOGIN_REQUEST](context, { data }) {
       let { commit, dispatch, getters, state } = context;
       commit(storeTypes.LOADING_SET, {
-        target: storeTypes.LOGIN_REQUEST,
+        target: storeTypes.AUTH_LOGIN_REQUEST,
         loading: true,
       });
       return api
         .identity()
-        .login({ data })
+        .login({ ...data })
         .then(({ data, ok }) => {
           commit(storeTypes.LOADING_SET, {
-            target: storeTypes.LOGIN_REQUEST,
+            target: storeTypes.AUTH_LOGIN_REQUEST,
             loading: false,
           });
-          commit(storeTypes.LOGIN_SET, {
+          commit(storeTypes.AUTH_LOGIN_SET, {
             data: data,
           });
           return data;
         })
         .catch((err) => {
           commit(storeTypes.LOADING_SET, {
-            target: storeTypes.LOGIN_REQUEST,
+            target: storeTypes.AUTH_LOGIN_REQUEST,
             loading: false,
           });
           throw err;

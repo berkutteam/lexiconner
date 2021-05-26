@@ -37,7 +37,7 @@
         type="submit"
         class="btn btn-primary"
         v-bind:disabled="
-          sharedState.loading[privateState.storeTypes.LOGIN_REQUEST]
+          sharedState.loading[privateState.storeTypes.AUTH_LOGIN_REQUEST]
         "
       >
         Login
@@ -50,6 +50,7 @@
 import { mapState, mapGetters } from "vuex";
 import _ from "lodash";
 import { storeTypes } from "@/constants/index";
+import authService from "@/services/authService";
 
 const loginModelDefault = {
   email: "johndoe@test.com",
@@ -87,15 +88,17 @@ export default {
   destroyed: function () {},
   methods: {
     onLoginSubmit: function () {
-      this.$store
-        .dispatch(storeTypes.LOGIN_REQUEST, {
-          data: {
-            ...this.privateState.loginModel,
-          },
+      authService
+        .loginAsync({
+          ...this.privateState.loginModel,
         })
         .then(() => {
           // reset
           this.privateState.loginModel = _.cloneDeep(loginModelDefault);
+
+          this.$router.push({
+            name: "home",
+          });
         })
         .catch((err) => {
           console.error(err);
