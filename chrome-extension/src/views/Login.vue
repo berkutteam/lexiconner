@@ -4,11 +4,11 @@
    <form v-on:submit.prevent="onLoginSubmit()">
     <div class="form-group">
         <label for="exampleInputEmail1">Email</label>
-        <input v-model="privateState.loginModel.email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Email">
+        <input v-model="privateState.loginModel.email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Email" required />
     </div>
     <div class="form-group">
         <label for="exampleInputPassword1">Password</label>
-        <input v-model="privateState.loginModel.password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+        <input v-model="privateState.loginModel.password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" required />
     </div>
     <div class="form-group">
         <small class="form-text text-muted">
@@ -26,7 +26,14 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex';
+import _ from 'lodash';
 import { storeTypes } from '@/constants/index';
+
+const loginModelDefault = {
+  email: 'johndoe@test.com',
+  password: 'Password_1',
+  extensionVersion: '0.1.0',
+}
 
 export default {
   name: "login",
@@ -37,9 +44,7 @@ export default {
           privateState: {
               storeTypes: storeTypes,
               loginModel: {
-                email: '',
-                password: '',
-                extensionVersion: '',
+                ...loginModelDefault,
               },
           },
       };
@@ -66,7 +71,17 @@ export default {
   },
   methods: {
     onLoginSubmit: function() {
-
+      this.$store.dispatch(storeTypes.LOGIN_REQUEST, {
+          data: {
+              ...this.privateState.loginModel,
+          },
+      }).then(() => {
+          // reset
+          this.privateState.loginModel = _.cloneDeep(loginModelDefault);
+      }).catch(err => {
+          console.error(err);
+          // notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+      });
     },
   },
 };

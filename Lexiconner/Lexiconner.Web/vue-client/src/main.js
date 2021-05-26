@@ -37,6 +37,7 @@ Vue.config.productionTip = false;
 
 console.log('BASE_URL: ', process.env.BASE_URL);
 
+// log envs
 document.addEventListener("DOMContentLoaded", function () {
     console.log('DOMContentLoaded');
     console.log('process.env: ', process.env);
@@ -90,7 +91,10 @@ function runApp() {
 
         // init
         authService.init(clientAuth);
-        api.init(urls);
+        api.init({
+            identityUrl: urls.identityExternalUrl,
+            apiUrl: urls.apiExternalUrl,
+        });
 
         await authService.getUser().then(user => {
             if (user) {

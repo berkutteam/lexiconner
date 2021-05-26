@@ -46,13 +46,13 @@ export default new Vuex.Store({
   actions: {
      //#region Login
 
-     [storeTypes.LOGIN_REQUEST](context, params) {
+     [storeTypes.LOGIN_REQUEST](context, { data }) {
       let { commit, dispatch, getters, state } = context;
       commit(storeTypes.LOADING_SET, {
           target: storeTypes.LOGIN_REQUEST,
           loading: true,
       });
-      return api.identityApi().login(params).then(({data, ok}) => {
+      return api.identity().login({ data }).then(({data, ok}) => {
           commit(storeTypes.LOADING_SET, {
               target: storeTypes.LOGIN_REQUEST,
               loading: false,

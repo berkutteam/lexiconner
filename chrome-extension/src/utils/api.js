@@ -9,7 +9,7 @@ import ServerUnknownErrorModel from '../models/ServerUnknownErrorModel.js';
 import ServerNotFoundErrorModel from '../models/ServerNotFoundErrorModel.js';
 
 
-import authService from '@/services/authService';
+// import authService from '@/services/authService';
 
 function buildUrl(urlTemplate, endpoint, queryStringParams = {}, doEncodeURI = true, doEncodeURIComponents = true) {
     if (!endpoint)
@@ -50,29 +50,29 @@ function buildUrl(urlTemplate, endpoint, queryStringParams = {}, doEncodeURI = t
 
 let authenticationScheme = "Bearer";
 
-/**
- * Adds auth header to request before send
- * @param {object} axiosConfig
- * @return {Promise<object>} response
- */
-function axiosAuthRequest(axiosConfig) {
-    return new Promise((resolve, reject) => {
-        authService.getUser().then((user) => {
-            let { access_token, id_token, refresh_token } = user;
-            axiosConfig.headers = axiosConfig.headers || {};
-            axiosConfig.headers["Authorization"] = `${authenticationScheme} ${access_token}`;
-            Http.axios(axiosConfig).then(response => {
-                let { config, data, headers, request, status, statusText } = response;
-                resolve(response);
-            }).catch(err => {
-                let { config, isAxiosError, request, response, message, stack } = err;
-                reject(err); // reject with error response from server (if present)
-            });
-        }, (err) => {
-            reject(err);
-        });
-    });
-}
+// /**
+//  * Adds auth header to request before send
+//  * @param {object} axiosConfig
+//  * @return {Promise<object>} response
+//  */
+// function axiosAuthRequest(axiosConfig) {
+//     return new Promise((resolve, reject) => {
+//         authService.getUser().then((user) => {
+//             let { access_token, id_token, refresh_token } = user;
+//             axiosConfig.headers = axiosConfig.headers || {};
+//             axiosConfig.headers["Authorization"] = `${authenticationScheme} ${access_token}`;
+//             Http.axios(axiosConfig).then(response => {
+//                 let { config, data, headers, request, status, statusText } = response;
+//                 resolve(response);
+//             }).catch(err => {
+//                 let { config, isAxiosError, request, response, message, stack } = err;
+//                 reject(err); // reject with error response from server (if present)
+//             });
+//         }, (err) => {
+//             reject(err);
+//         });
+//     });
+// }
 
 /**
  * Meddleware before send
@@ -161,7 +161,7 @@ class API {
 
 
     identity() {
-        let url = `${this.config.identityExternalUrl}/api/v1/browser-extension/<endpoint>`;
+        let url = `${this.config.identityUrl}/api/v1/browser-extension/<endpoint>`;
 
         return {
             login({ email, password, extensionVersion }) {
@@ -171,7 +171,7 @@ class API {
     }
 
     webApi() {
-        let url = `${this.config.apiExternalUrl}/api/v1/browser-extension/<endpoint>`;
+        let url = `${this.config.apiUrl}/api/v1/browser-extension/<endpoint>`;
 
         return {
         };

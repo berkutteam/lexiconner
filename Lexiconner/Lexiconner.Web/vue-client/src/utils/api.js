@@ -172,7 +172,7 @@ class API {
     }
 
     identity() {
-        let url = `${this.config.identityExternalUrl}/api/v1/<endpoint>`;
+        let url = `${this.config.identityUrl}/api/v1/<endpoint>`;
 
         return {
             // getRegistrationInfo() {
@@ -221,7 +221,7 @@ class API {
     }
 
     webApi() {
-        let url = `${this.config.apiExternalUrl}/api/v2/<endpoint>`;
+        let url = `${this.config.apiUrl}/api/v2/<endpoint>`;
 
         return {
             // // values (test)
