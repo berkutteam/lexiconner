@@ -5,31 +5,30 @@
 </template>
 
 <script>
-'use strict';
+"use strict";
 
-import authService from '@/services/authService';
-import MainLoader from '@/components/loaders/MainLoader';
+import authService from "@/services/authService";
+import MainLoader from "@/components/loaders/MainLoader";
 
 export default {
-    name: 'logout',
-    components: {
-        MainLoader,
-    },
-    created: async function() {
-        console.log('Logout.vue created');
-        authService.logout();
-    },
-    mounted: function() {
-        console.log('Logout.vue mounted');
-    },
-    updated: function() {
-        console.log('Logout.vue updated');
-    },
-    destroyed: function() {
-        console.log('Logout.vue destroyed');
-    },
-}
+  name: "logout",
+  components: {
+    MainLoader,
+  },
+  created: async function () {
+    console.log("Logout.vue created");
+    authService.logout();
+  },
+  mounted: function () {
+    console.log("Logout.vue mounted");
+  },
+  updated: function () {
+    console.log("Logout.vue updated");
+  },
+  destroyed: function () {
+    console.log("Logout.vue destroyed");
+  },
+};
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

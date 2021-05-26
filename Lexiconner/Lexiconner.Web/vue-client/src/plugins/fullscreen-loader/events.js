@@ -1,6 +1,4 @@
-import Vue from 'vue';
+import Vue from "vue";
 const events = new Vue();
 
-export {
-    events
-};
+export { events };

@@ -1,19 +1,15 @@
 <template>
-   <div>
-        <!-- route component is rendered here -->
-        <slot>
-        </slot>
-   </div>
+  <div>
+    <!-- route component is rendered here -->
+    <slot> </slot>
+  </div>
 </template>
 
-
 <script>
-'use strict';
+"use strict";
 
 export default {
-    name: 'home-layout',
-    components: {
-
-    },
-}
+  name: "home-layout",
+  components: {},
+};
 </script>

@@ -1,16 +1,13 @@
-
 class Utils {
-    constructor() {
+  constructor() {}
 
-    }
-
-    waitAsync(timeout = 100) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve();
-            }, timeout);
-        });
-    }
+  waitAsync(timeout = 100) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, timeout);
+    });
+  }
 }
 
 export default new Utils();

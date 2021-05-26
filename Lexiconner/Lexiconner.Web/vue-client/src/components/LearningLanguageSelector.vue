@@ -1,103 +1,103 @@
 <template>
-    <div class="d-flex align-items-center">
-        <language-code-select
-            v-model="selectedLearningLanguageCode"
-            placeholder="Learning language"
-            v-bind:languageLabelGetter="(option) => `${option.isoLanguageName}`"
-            v-bind:withFlags="true"
-            v-on:change="onLanguageChange"
-        />
-    </div>
+  <div class="d-flex align-items-center">
+    <language-code-select
+      v-model="selectedLearningLanguageCode"
+      placeholder="Learning language"
+      v-bind:languageLabelGetter="(option) => `${option.isoLanguageName}`"
+      v-bind:withFlags="true"
+      v-on:change="onLanguageChange"
+    />
+  </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import { mapState, mapGetters } from 'vuex';
-import _ from 'lodash';
-import { storeTypes } from '@/constants/index';
-import authService from '@/services/authService';
-import notificationUtil from '@/utils/notification';
-import RowLoader from '@/components/loaders/RowLoader';
-import LoadingButton from '@/components/LoadingButton';
-import LanguageCodeSelect from '@/components/LanguageCodeSelect';
+import { mapState, mapGetters } from "vuex";
+import _ from "lodash";
+import { storeTypes } from "@/constants/index";
+import authService from "@/services/authService";
+import notificationUtil from "@/utils/notification";
+import RowLoader from "@/components/loaders/RowLoader";
+import LoadingButton from "@/components/LoadingButton";
+import LanguageCodeSelect from "@/components/LanguageCodeSelect";
 
 export default {
-    name: 'learning-language-select',
-    props: {
-    },
-    components: {
-        // RowLoader,
-        // LoadingButton,
-        LanguageCodeSelect,
-    },
-    data: function() {
-        return {
-            privateState: {
-                storeTypes: storeTypes,
-                languageCode: null,
-            },
-        };
-    },
-    computed: {
-        selectedLearningLanguageCode: {
-            get() {
-                return this.$store.getters.selectedLearningLanguageCode;
-            },
-            set(value) {
-                // ignore (set by v-model)
-            }
-        },
-
-        // store state computed go here
-        ...mapState({
-            sharedState: state => state,
-            isLoading: state => state.loading[storeTypes.LANGUAGES_LOAD],
-            profile: state => state.profile,
-            userDictionary: state => state.userDictionary,
-        }),
-    },
-    created: async function() {
-        if(!this.sharedState.auth.isAuthenticated) {
-            console.error(`Not authenticated.`);
-            return;
-        }
-
-        if(!this.profile) {
-            this.$store.dispatch(storeTypes.PROFILE_LOAD, {});
-        }
-        if(!this.userDictionary) {
-            this.loadUserDictionary();
-        }
-    },
-    mounted: function() {
-    },
-    updated: function() {
-    },
-    destroyed: function() {
+  name: "learning-language-select",
+  props: {},
+  components: {
+    // RowLoader,
+    // LoadingButton,
+    LanguageCodeSelect,
+  },
+  data: function () {
+    return {
+      privateState: {
+        storeTypes: storeTypes,
+        languageCode: null,
+      },
+    };
+  },
+  computed: {
+    selectedLearningLanguageCode: {
+      get() {
+        return this.$store.getters.selectedLearningLanguageCode;
+      },
+      set(value) {
+        // ignore (set by v-model)
+      },
     },
 
-    methods: {
-        onLanguageChange(languageCode) {
-            this.$store.dispatch(storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE, {
-                languageCode: languageCode,
-            }).then(() => {
-                this.loadUserDictionary();
-            }).catch(err => {
-                console.error(err);
-                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
-            });
-        },
-        loadUserDictionary: function() {
-            return this.$store.dispatch(storeTypes.USER_DICTIONARY_LOAD, {}).then().catch(err => {
-                console.error(err);
-                notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
-            });
-        },
+    // store state computed go here
+    ...mapState({
+      sharedState: (state) => state,
+      isLoading: (state) => state.loading[storeTypes.LANGUAGES_LOAD],
+      profile: (state) => state.profile,
+      userDictionary: (state) => state.userDictionary,
+    }),
+  },
+  created: async function () {
+    if (!this.sharedState.auth.isAuthenticated) {
+      console.error(`Not authenticated.`);
+      return;
+    }
+
+    if (!this.profile) {
+      this.$store.dispatch(storeTypes.PROFILE_LOAD, {});
+    }
+    if (!this.userDictionary) {
+      this.loadUserDictionary();
+    }
+  },
+  mounted: function () {},
+  updated: function () {},
+  destroyed: function () {},
+
+  methods: {
+    onLanguageChange(languageCode) {
+      this.$store
+        .dispatch(storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE, {
+          languageCode: languageCode,
+        })
+        .then(() => {
+          this.loadUserDictionary();
+        })
+        .catch((err) => {
+          console.error(err);
+          notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+        });
     },
-}
+    loadUserDictionary: function () {
+      return this.$store
+        .dispatch(storeTypes.USER_DICTIONARY_LOAD, {})
+        .then()
+        .catch((err) => {
+          console.error(err);
+          notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+        });
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

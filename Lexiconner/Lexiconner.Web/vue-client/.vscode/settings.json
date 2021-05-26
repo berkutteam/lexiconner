@@ -1,0 +1,42 @@
+{
+    "editor.formatOnSave": false,
+
+    // ESLint
+    "eslint.autoFixOnSave": true, 
+    "eslint.validate": [    
+        {     
+            "language": "vue",     
+            "autoFix": true   
+        },    
+        {     
+            "language": "javascript",   
+            "autoFix": true    
+        },   
+        // {    
+        //     "language": "javascriptreact",      
+        //     "autoFix": true    
+        // }  
+    ],  
+
+    // Enable Prettier formatting per-language
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+    },
+    // "[typescriptreact]": {
+    //     "editor.defaultFormatter": "esbenp.prettier-vscode",
+    //     "editor.formatOnSave": true,
+    //     "editor.formatOnPaste": true,
+    // }
+}

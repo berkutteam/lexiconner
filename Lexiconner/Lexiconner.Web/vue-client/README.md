@@ -54,6 +54,51 @@ npm run test:unit
 vue ui
 ```
 
+
+
+# Enforce coding styles
+
+## ESLINT
+
+`eslint` is used to validate and fix coding styles.
+
+```bash
+npm run lint
+npm run lint:fix
+```
+
+## EditorConfig
+
+EditorConfig extension is used to maintain consistent coding styles for multiple developers working on the same project across various editors and IDEs.
+
+VS Code extension:
+https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig
+
+Check `.editorconfig` file for more info.
+
+
+## Prettier
+Prettier is code formatter.
+
+VS Code extension:
+https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
+
+Configured in `/.vscode/settings.json`. Allows auto run for Prettier on save or paste. For instance, instead of manually running `npm run format`.
+
+
+## Fix Git and CRLF line endings on Windows
+
+By default Git uses `core.autocrlf = true` which leads to auto replacement to CRLF on commit and branch checkout.
+
+Check current config by running `git config --list` or accessing `/.git/config` file.
+
+Disable by running `git config core.autocrlf false`
+
+Note: this setting can be change globally for Git, but do so if you need it.
+
+
+
+
 ## Tips:
 
 Use nvm for Node.Js version management - https://github.com/coreybutler/nvm-windows
