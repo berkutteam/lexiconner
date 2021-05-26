@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
 import Vue from "vue";
 import Vuex from "vuex";
-import _ from 'lodash';
-import { storeTypes } from '@/constants/index';
-import api from '@/utils/api';
+import _ from "lodash";
+import { storeTypes } from "@/constants/index";
+import api from "@/utils/api";
 
 Vue.use(Vuex);
 
@@ -17,13 +17,13 @@ export default new Vuex.Store({
 
     loginResult: null,
   },
-  getters:  {
+  getters: {
     /**
      * Checks if there are any resources are loading
      */
     isAnyLoading(state, getters) {
       let isAnyLoading = Object.keys(state.loading).reduce((accum, key, i) => {
-          return accum || state.loading[key];
+        return accum || state.loading[key];
       }, false);
       // console.log('isAnyLoading', isAnyLoading)
       return isAnyLoading;
@@ -33,8 +33,8 @@ export default new Vuex.Store({
     [storeTypes.LOADING_SET](state, payload) {
       let { target, loading } = payload;
       state.loading = {
-          ...loading,
-          [target]: loading,
+        ...loading,
+        [target]: loading,
       };
     },
 
@@ -44,30 +44,34 @@ export default new Vuex.Store({
     },
   },
   actions: {
-     //#region Login
+    //#region Login
 
-     [storeTypes.LOGIN_REQUEST](context, { data }) {
+    [storeTypes.LOGIN_REQUEST](context, { data }) {
       let { commit, dispatch, getters, state } = context;
       commit(storeTypes.LOADING_SET, {
-          target: storeTypes.LOGIN_REQUEST,
-          loading: true,
+        target: storeTypes.LOGIN_REQUEST,
+        loading: true,
       });
-      return api.identity().login({ data }).then(({data, ok}) => {
+      return api
+        .identity()
+        .login({ data })
+        .then(({ data, ok }) => {
           commit(storeTypes.LOADING_SET, {
-              target: storeTypes.LOGIN_REQUEST,
-              loading: false,
+            target: storeTypes.LOGIN_REQUEST,
+            loading: false,
           });
           commit(storeTypes.LOGIN_SET, {
-            data: data
+            data: data,
           });
           return data;
-      }).catch(err => {
+        })
+        .catch((err) => {
           commit(storeTypes.LOADING_SET, {
-              target: storeTypes.LOGIN_REQUEST,
-              loading: false,
+            target: storeTypes.LOGIN_REQUEST,
+            loading: false,
           });
           throw err;
-      });
+        });
     },
 
     //#endregion

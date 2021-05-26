@@ -1,51 +1,57 @@
-'use strict';
+"use strict";
 
-import Http from './http.js';
+import Http from "./http.js";
 
-import ServerValidationErrorModel from '../models/ServerValidationErrorModel.js';
-import NetworkErrorModel from '../models/NetworkErrorModel';
-import ServerErrorModel from '../models/ServerErrorModel';
-import ServerUnknownErrorModel from '../models/ServerUnknownErrorModel.js';
-import ServerNotFoundErrorModel from '../models/ServerNotFoundErrorModel.js';
-
+import ServerValidationErrorModel from "../models/ServerValidationErrorModel.js";
+import NetworkErrorModel from "../models/NetworkErrorModel";
+import ServerErrorModel from "../models/ServerErrorModel";
+import ServerUnknownErrorModel from "../models/ServerUnknownErrorModel.js";
+import ServerNotFoundErrorModel from "../models/ServerNotFoundErrorModel.js";
 
 // import authService from '@/services/authService';
 
-function buildUrl(urlTemplate, endpoint, queryStringParams = {}, doEncodeURI = true, doEncodeURIComponents = true) {
-    if (!endpoint)
-        throw new Error('endpoint can\'t be empty');
-    let url = urlTemplate.replace("<endpoint>", endpoint);
-    if (doEncodeURI) {
-        url = encodeURI(url);
-    }
+function buildUrl(
+  urlTemplate,
+  endpoint,
+  queryStringParams = {},
+  doEncodeURI = true,
+  doEncodeURIComponents = true
+) {
+  if (!endpoint) throw new Error("endpoint can't be empty");
+  let url = urlTemplate.replace("<endpoint>", endpoint);
+  if (doEncodeURI) {
+    url = encodeURI(url);
+  }
 
-    // build query string
-    if (queryStringParams && typeof queryStringParams === 'object') {
-        let processedParamCount = 0;
-        let queryString = Object.keys(queryStringParams).reduce((res, key, i) => {
-            if (queryStringParams[key] === null || queryStringParams[key] === undefined) {
-                return res;
-            }
+  // build query string
+  if (queryStringParams && typeof queryStringParams === "object") {
+    let processedParamCount = 0;
+    let queryString = Object.keys(queryStringParams).reduce((res, key, i) => {
+      if (
+        queryStringParams[key] === null ||
+        queryStringParams[key] === undefined
+      ) {
+        return res;
+      }
 
-            if (processedParamCount === 0)
-                res += '?';
-            else
-                res += '&';
+      if (processedParamCount === 0) res += "?";
+      else res += "&";
 
-            if (doEncodeURIComponents) {
-                res += `${encodeURIComponent(key)}=${encodeURIComponent(queryStringParams[key])}`;
-            }
-            else {
-                res += `${key}=${queryStringParams[key]}`;
-            }
+      if (doEncodeURIComponents) {
+        res += `${encodeURIComponent(key)}=${encodeURIComponent(
+          queryStringParams[key]
+        )}`;
+      } else {
+        res += `${key}=${queryStringParams[key]}`;
+      }
 
-            processedParamCount += 1;
-            return res;
-        }, "");
+      processedParamCount += 1;
+      return res;
+    }, "");
 
-        url = `${url}${queryString}`;
-    }
-    return url;
+    url = `${url}${queryString}`;
+  }
+  return url;
 }
 
 let authenticationScheme = "Bearer";
@@ -80,102 +86,106 @@ let authenticationScheme = "Bearer";
  * @return {Promise<object>} response
  */
 function axiosRequest(axiosConfig) {
-    return new Promise((resolve, reject) => {
-        Http.axios({
-            // headers: {
-            //     'Content-Type': 'application/json'
-            // },
-            ...axiosConfig,
-        }).then(response => {
-            let { config, data, headers, request, status, statusText } = response;
-            resolve(response);
-        }).catch(err => {
-            let { config, isAxiosError, request, response, message, stack } = err;
-            reject(err);
-        });
-    });
+  return new Promise((resolve, reject) => {
+    Http.axios({
+      // headers: {
+      //     'Content-Type': 'application/json'
+      // },
+      ...axiosConfig,
+    })
+      .then((response) => {
+        let { config, data, headers, request, status, statusText } = response;
+        resolve(response);
+      })
+      .catch((err) => {
+        let { config, isAxiosError, request, response, message, stack } = err;
+        reject(err);
+      });
+  });
 }
-
 
 /**
  * Handles base response from API.
- * 
- * @param {any} response 
+ *
+ * @param {any} response
  */
 function handleApiResponse(response) {
+  if (response.status !== 200 && response.status !== 201) {
+    handleApiErrorResponse(response);
+  }
 
-    if (response.status !== 200 && response.status !== 201) {
-        handleApiErrorResponse(response);
-    }
-
-    return response.data;
+  return response.data;
 }
-
 
 /**
  * Handles base error response from API.
- * 
- * @param {any} response 
+ *
+ * @param {any} response
  */
 function handleApiErrorResponse(err) {
-    // TODO - add new models if needed
-    let { config, isAxiosError, request, response, message, stack } = err;
+  // TODO - add new models if needed
+  let { config, isAxiosError, request, response, message, stack } = err;
 
-    // Network erorr or something else
-    if(response === null || message === 'Network Error') {
-        throw new NetworkErrorModel(err);
-    }
+  // Network erorr or something else
+  if (response === null || message === "Network Error") {
+    throw new NetworkErrorModel(err);
+  }
 
-    // log auth errors in headers
-    // www-authenticate can contain message or object with errors
-    if (response.headers['www-authenticate']) {
-        console.error(`www-authenticate error: ${response.headers['www-authenticate']}`);
-    }
+  // log auth errors in headers
+  // www-authenticate can contain message or object with errors
+  if (response.headers["www-authenticate"]) {
+    console.error(
+      `www-authenticate error: ${response.headers["www-authenticate"]}`
+    );
+  }
 
-    // throw if not success status code
-    if (response.status === 400) { // Validation error
-        throw new ServerValidationErrorModel(response);
-    }
-    else if (response.status === 404) {
-        throw new ServerNotFoundErrorModel(response);
-    }
-    else if (response.status === 500) { // Server error
-        throw new ServerErrorModel(response);
-    }
-    else {
-        // if unknown error, just rethrow and do not wrap
-        // throw new ServerUnknownErrorModel(response);
-        throw err;
-    }
+  // throw if not success status code
+  if (response.status === 400) {
+    // Validation error
+    throw new ServerValidationErrorModel(response);
+  } else if (response.status === 404) {
+    throw new ServerNotFoundErrorModel(response);
+  } else if (response.status === 500) {
+    // Server error
+    throw new ServerErrorModel(response);
+  } else {
+    // if unknown error, just rethrow and do not wrap
+    // throw new ServerUnknownErrorModel(response);
+    throw err;
+  }
 }
 
 class API {
-    constructor() {
-        this.config = null;
-    }
+  constructor() {
+    this.config = null;
+  }
 
-    init(urlsConfig) {
-        // contains urls
-        this.config = urlsConfig;
-    }
+  init(urlsConfig) {
+    // contains urls
+    this.config = urlsConfig;
+  }
 
+  identity() {
+    let url = `${this.config.identityUrl}/api/v1/browser-extension/<endpoint>`;
 
-    identity() {
-        let url = `${this.config.identityUrl}/api/v1/browser-extension/<endpoint>`;
+    return {
+      login({ email, password, extensionVersion }) {
+        return axiosRequest({
+          url: buildUrl(url, `account/login`, {}),
+          method: "post",
+          data: { email, password, extensionVersion },
+        })
+          .then(handleApiResponse)
+          .catch(handleApiErrorResponse);
+      },
+    };
+  }
 
-        return {
-            login({ email, password, extensionVersion }) {
-                return axiosRequest({ url: buildUrl(url, `account/login`, {}), method: "post", data: { email, password, extensionVersion } }).then(handleApiResponse).catch(handleApiErrorResponse);
-            },
-        };
-    }
+  webApi() {
+    let url = `${this.config.apiUrl}/api/v1/browser-extension/<endpoint>`;
 
-    webApi() {
-        let url = `${this.config.apiUrl}/api/v1/browser-extension/<endpoint>`;
-
-        return {
-        };
-    }
+    return {};
+  }
 }
 
 export default new API();

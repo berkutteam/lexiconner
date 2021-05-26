@@ -2,13 +2,19 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "../router";
 import store from "../store";
-import api from '@/utils/api';
+import api from "@/utils/api";
 
 // log envs
-console.log('process.env: ', process.env);
-console.log('process.env.VUE_APP_ASPNETCORE_ENVIRONMENT: ', process.env.VUE_APP_ASPNETCORE_ENVIRONMENT);
-console.log('process.env.VUE_APP_IDENTITY_URL: ', process.env.VUE_APP_IDENTITY_URL);
-console.log('process.env.VUE_APP_API_URL: ', process.env.VUE_APP_API_URL);
+console.log("process.env: ", process.env);
+console.log(
+  "process.env.VUE_APP_ASPNETCORE_ENVIRONMENT: ",
+  process.env.VUE_APP_ASPNETCORE_ENVIRONMENT
+);
+console.log(
+  "process.env.VUE_APP_IDENTITY_URL: ",
+  process.env.VUE_APP_IDENTITY_URL
+);
+console.log("process.env.VUE_APP_API_URL: ", process.env.VUE_APP_API_URL);
 
 // init
 // authService.init(clientAuth);

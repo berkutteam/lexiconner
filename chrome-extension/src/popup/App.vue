@@ -6,18 +6,16 @@
 </template>
 
 <script>
-'use strict';
+"use strict";
 
-import '@/styles/popup.scss';
+import "@/styles/popup.scss";
 
 import HelloWorld from "@/components/HelloWorld.vue";
 
 export default {
   name: "App",
-  components: { HelloWorld },
+  components: {},
 };
 </script>
 
-<style>
-
-</style>
+<style></style>

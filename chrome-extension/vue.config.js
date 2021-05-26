@@ -1,4 +1,6 @@
 module.exports = {
+  lintOnSave: true,
+
   pages: {
     popup: {
       template: "public/browser-extension.html",
@@ -11,7 +13,7 @@ module.exports = {
       title: "Options",
     },
   },
-  
+
   pluginOptions: {
     // https://github.com/adambullmer/vue-cli-plugin-browser-extension
     browserExtension: {
@@ -38,8 +40,8 @@ module.exports = {
       // Directory where the zipped browser extension should get created.
       // (artificats created only for NODE_ENV=production)
       artifactsDir: "./artifacts",
-      artifactFilename: ({name, version, mode}) => {
-        if (mode === 'production') {
+      artifactFilename: ({ name, version, mode }) => {
+        if (mode === "production") {
           return `${name}-v${version}.zip`;
         }
         return `${name}-v${version}-${mode}.zip`;
@@ -49,8 +51,8 @@ module.exports = {
 
   // tweak the webpack config
   // https://cli.vuejs.org/guide/webpack.html
-  configureWebpack: config => {
-    if (process.env.NODE_ENV === 'production') {
+  configureWebpack: (config) => {
+    if (process.env.NODE_ENV === "production") {
       // mutate config for production...
       return {};
     } else {
@@ -59,8 +61,8 @@ module.exports = {
         // WebPack can generate a lot of eval which is forbidden by Chrome Extensions CSP
         // https://stackoverflow.com/a/49100966/5168794
         // https://webpack.js.org/configuration/devtool/
-        devtool: 'cheap-module-source-map',
+        devtool: "cheap-module-source-map",
       };
     }
-  }
+  },
 };

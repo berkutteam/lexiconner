@@ -28,7 +28,6 @@ module.exports = {
     'no-unused-vars': 'off',
     'no-empty-pattern': 'off',
     "linebreak-style": ["error", "unix"], // Expect linebreaks to be Unix 'LF' instead of Windows 'CRLF'
-
   },
   parserOptions: {
     parser: 'babel-eslint'
