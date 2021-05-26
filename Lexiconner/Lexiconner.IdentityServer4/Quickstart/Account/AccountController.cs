@@ -225,7 +225,8 @@ namespace IdentityServer4.Quickstart.UI
 
 
             ////
-            var userEmail = "alice@test.com";
+            //// contains info about user
+            var userEmail = "johndoe@test.com";
             var userPassword = "Password_1";
 
             var user = await userManager.FindByEmailAsync(userEmail);
@@ -252,6 +253,7 @@ namespace IdentityServer4.Quickstart.UI
             //tokenCreationRequest.Resources = new Resources(identityServerConfig.GetIdentityResources(), identityServerConfig.GetApiResources());
             tokenCreationRequest.ValidatedRequest.Options = options;
             tokenCreationRequest.ValidatedRequest.ClientClaims = identityUser.AdditionalClaims;
+            tokenCreationRequest.ValidatedResources = new ResourceValidationResult();
 
             var token3Access = await tokenService.CreateAccessTokenAsync(tokenCreationRequest);
             var token3Identity = await tokenService.CreateIdentityTokenAsync(tokenCreationRequest);

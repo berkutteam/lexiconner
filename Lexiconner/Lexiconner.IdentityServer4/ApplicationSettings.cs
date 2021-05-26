@@ -22,6 +22,7 @@ namespace Lexiconner.IdentityServer4
         public string WebSpaExternalUrl { get; set; }
         public string WebSpaLocalUrl { get; set; }
         public string WebTestSpaExternalUrl { get; set; }
+        public string ChromeExtensionUrl { get; set; }
     }
 
     public class IdenitytServer4Settings
@@ -49,6 +50,12 @@ namespace Lexiconner.IdentityServer4
             /// path to developer .pfx X509 certificate
             /// </summary>
             public string KeyFilePathDeveloper { get; set; }
+        }
+
+        public class BrowserExtensionSettings
+        {
+            public int AccessTokenLifetimeMinutes { get; set; }
+            public int RefreshTokenLifetimeMinutes { get; set; }
         }
     }
 }

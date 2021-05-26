@@ -1,8 +1,15 @@
 <template>
-  <hello-world />
+  <div class="container-fluid app-router-view-wrapper">
+    <router-view></router-view>
+    <!-- <hello-world /> -->
+  </div>
 </template>
 
 <script>
+'use strict';
+
+import '@/styles/popup.scss';
+
 import HelloWorld from "@/components/HelloWorld.vue";
 
 export default {
@@ -12,8 +19,5 @@ export default {
 </script>
 
 <style>
-html {
-  width: 400px;
-  height: 400px;
-}
+
 </style>

@@ -1,7 +1,7 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+  <div class="home-page-wrapper">
+    <p>Welcome to Lexiconner browser extension!</p>
+    <p>Start by <router-link to="/login">loggin in</router-link> into your account. Or <router-link to="/register">create</router-link> a new account.</p>
   </div>
 </template>
 
@@ -12,7 +12,10 @@ import HelloWorld from "@/components/HelloWorld.vue";
 export default {
   name: "Home",
   components: {
-    HelloWorld,
+    // HelloWorld,
   },
+  mounted: function() {
+    console.log(1, window.location)
+  }
 };
 </script>

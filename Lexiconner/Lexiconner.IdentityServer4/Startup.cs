@@ -39,6 +39,7 @@ using Autofac;
 using Lexiconner.Persistence;
 using Lexiconner.Application.Middlewares;
 using IdentityServer4;
+using Lexiconner.IdentityServer4.Services.Interfaces;
 
 namespace Lexiconner.IdentityServer4
 {
@@ -116,6 +117,8 @@ namespace Lexiconner.IdentityServer4
             {
                 IdentityModelEventSource.ShowPII = true; // show detail of error and see the problem
             }
+
+            services.AddTransient<IAccountService, AccountService>();
 
             services.AddSwaggerGen(options =>
             {

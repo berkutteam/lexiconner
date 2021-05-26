@@ -1,6 +1,8 @@
-﻿using Lexiconner.Application.ApiClients;
+﻿using AutoMapper;
+using Lexiconner.Application.ApiClients;
 using Lexiconner.Application.Helpers;
 using Lexiconner.Application.ImportAndExport;
+using Lexiconner.Application.Mapping;
 using Lexiconner.Application.Services;
 using Lexiconner.Domain.Config;
 using Lexiconner.Domain.Entitites;
@@ -164,6 +166,14 @@ namespace Lexiconner.Seed
             });
 
             services.AddTransient<IIdentityServerConfig, IdentityServerConfig>();
+
+            // Auto Mapper Configurations
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton<IMapper>(mapper);
 
             services.AddTransient<SeedServiceDevelopmentLocalhost>();
             services.AddTransient<SeedServiceDevelopmentHeroku>();

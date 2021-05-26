@@ -93,7 +93,7 @@ namespace Lexiconner.IdentityServer4.Config
             var spaClient = new Client
             {
                 ClientId = "webspa",
-                ClientName = "Lexiconner Web SPA Client",
+                ClientName = "Lexiconner web SPA client",
 
                 AllowedGrantTypes = GrantTypes.Code,
                 RequirePkce = true, // Proof Key for Code Exchange (PKCE)
@@ -117,11 +117,14 @@ namespace Lexiconner.IdentityServer4.Config
                 },
 
                 AllowedScopes = {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.OfflineAccess, // refresh token
-                        "webapi"
-                    },
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    IdentityServerConstants.StandardScopes.OfflineAccess, // refresh token
+                    "webapi"
+                },
+
+                // identity token settigs
+                IdentityTokenLifetime = Convert.ToInt32((new TimeSpan(0, 24, 0, 0)).TotalSeconds), // same as acess
 
                 // access_token settings
                 AccessTokenType = AccessTokenType.Jwt,
@@ -161,13 +164,69 @@ namespace Lexiconner.IdentityServer4.Config
 
             clients.Add(spaClient);
 
+            // Browser extension SPA client using code flow
+            var broswerExtensionSpaClient = new Client
+            {
+                ClientId = "browserExtension",
+                ClientName = "Lexiconner browser extension client",
+
+                AllowedGrantTypes = GrantTypes.Code,
+                RequirePkce = true, // Proof Key for Code Exchange (PKCE)
+                RequireClientSecret = false,
+                RequireConsent = false,
+
+                RedirectUris =
+                    {
+                        $"{config.Urls.ChromeExtensionUrl}",
+                        $"{config.Urls.ChromeExtensionUrl}/index.html",
+                        $"{config.Urls.ChromeExtensionUrl}/popup.html",
+                        $"{config.Urls.ChromeExtensionUrl}/options.html",
+                    },
+
+                PostLogoutRedirectUris = {
+                   $"{config.Urls.ChromeExtensionUrl}"
+                },
+                AllowedCorsOrigins = {
+                   $"{config.Urls.ChromeExtensionUrl}"
+                },
+
+                AllowedScopes = {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OfflineAccess, // refresh token
+                        "webapi"
+                    },
+
+                // identity token settigs
+                IdentityTokenLifetime = Convert.ToInt32((new TimeSpan(0, 24, 0, 0)).TotalSeconds), // same as acess
+
+                // access_token settings
+                AccessTokenType = AccessTokenType.Jwt,
+                AccessTokenLifetime = Convert.ToInt32((new TimeSpan(0, 24, 0, 0)).TotalSeconds),
+                UpdateAccessTokenClaimsOnRefresh = true,
+
+                // refresh token settings
+                // refresh tokens are supported for the following flows: authorization code, hybrid and resource owner password credential flow.
+                AllowOfflineAccess = true,
+                RefreshTokenUsage = TokenUsage.ReUse,
+                RefreshTokenExpiration = TokenExpiration.Absolute,
+                AbsoluteRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(30, 0, 0, 0)).TotalSeconds),
+                SlidingRefreshTokenLifetime = Convert.ToInt32((new TimeSpan(15, 0, 0, 0)).TotalSeconds),
+
+                // send all claims in identity and access tokens
+                AlwaysIncludeUserClaimsInIdToken = true,
+                AlwaysSendClientClaims = true,
+                ClientClaimsPrefix = "client_",
+            };
+            clients.Add(broswerExtensionSpaClient);
+
             if (HostingEnvironmentHelper.IsDevelopmentAny())
             {
                 // SPA client using code flow
                 clients.Add(new Client
                 {
                     ClientId = "webtestspa",
-                    ClientName = "Lexiconner Web Test SPA Client",
+                    ClientName = "Lexiconner web test SPA client",
                     ClientUri = config.Urls.WebTestSpaExternalUrl,
 
                     AllowedGrantTypes = GrantTypes.Code,
@@ -369,7 +428,7 @@ namespace Lexiconner.IdentityServer4.Config
                         },
                         new MongoClaim() {
                             Type = JwtClaimTypes.Email,
-                            Value = "johndoe@gmail.com",
+                            Value = "johndoe@test.com",
                             Issuer = null,
                         },
                         new MongoClaim() {
@@ -403,7 +462,7 @@ namespace Lexiconner.IdentityServer4.Config
                         },
                         new MongoClaim() {
                             Type = JwtClaimTypes.Email,
-                            Value = "bobmarley@gmail.com",
+                            Value = "bobmarley@test.com",
                             Issuer = null,
                         },
                         new MongoClaim() {
