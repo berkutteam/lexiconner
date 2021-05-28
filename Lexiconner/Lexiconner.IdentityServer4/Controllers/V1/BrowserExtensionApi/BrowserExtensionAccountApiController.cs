@@ -53,7 +53,7 @@ namespace Lexiconner.IdentityServer4.Controllers.V1.BrowserExtensionApi
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> RefreshTokens([FromBody] BrowserExtensionRefreshTokensRequestDto dto)
         {
-            var result = await _accountService.BrowserExtensionLoginAsync(dto);
+            var result = await _accountService.BrowserExtensionRefreshTokensAsync(dto);
             return BaseResponse(result);
         }
     }

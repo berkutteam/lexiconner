@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -65,19 +66,22 @@ namespace Lexiconner.IdentityServer4.Services
             _refreshTokenService = refreshTokenService;
         }
 
+        #region BrowserExtension
+
+        /// <summary>
+        /// Custom login for browser extensions
+        /// </summary>
         public async Task<BrowserExtensionLoginResponseDto> BrowserExtensionLoginAsync(BrowserExtensionLoginRequestDto dto)
         {
             const string clientId = "browserExtension";
             var client = _identityServerConfig.GetClients(_config).FirstOrDefault(x => x.ClientId == clientId);
-            if(client == null)
+            if (client == null)
             {
                 throw new InternalErrorException($"Can't find client with id {clientId}.");
             }
-
-            // check extension verion is supported
-            if(!BrowserExtensionConfig.Versions.Any(x => x.Version == dto.ExtensionVersion && x.IsSupported))
+            if (client.ClientId != dto.ClientId)
             {
-                throw new AccessDeniedException($"Browser extension version {dto.ExtensionVersion} is not found or not supported.");
+                throw new BadRequestException($"Client id {dto.ClientId} is invalid.");
             }
 
             var user = await _userManager.FindByEmailAsync(dto.Email);
@@ -87,12 +91,66 @@ namespace Lexiconner.IdentityServer4.Services
                 throw new UnauthorizedException("Login failed. Email or password is invalid.");
             }
 
+            return await BrowserExtensionGenerateTokensAsync(user.Id, dto.ExtensionVersion);
+        }
+
+        /// <summary>
+        /// Custom tokens refresh for browser extensions
+        /// </summary>
+        public async Task<BrowserExtensionLoginResponseDto> BrowserExtensionRefreshTokensAsync(BrowserExtensionRefreshTokensRequestDto dto)
+        {
+            const string clientId = "browserExtension";
+            var client = _identityServerConfig.GetClients(_config).FirstOrDefault(x => x.ClientId == clientId);
+            if (client == null)
+            {
+                throw new InternalErrorException($"Can't find client with id {clientId}.");
+            }
+            if (client.ClientId != dto.ClientId)
+            {
+                throw new BadRequestException($"Client id {dto.ClientId} is invalid.");
+            }
+
+            var isRefreshTokenValid = await _refreshTokenService.ValidateRefreshTokenAsync(dto.RefreshToken, client);
+            if (isRefreshTokenValid.IsError)
+            {
+                throw new BadRequestException($"Refresh token is invalid: {isRefreshTokenValid.Error}. {isRefreshTokenValid.ErrorDescription}.");
+            }
+
+            // decode JWT token
+            var handler = new JwtSecurityTokenHandler();
+            var accessToken = handler.ReadJwtToken(dto.AccessToken);
+            string userId = accessToken.Subject;
+
+            return await BrowserExtensionGenerateTokensAsync(userId, dto.ExtensionVersion);
+        }
+
+        private async Task<BrowserExtensionLoginResponseDto> BrowserExtensionGenerateTokensAsync(string userId, string extensionVersion)
+        {
+            const string clientId = "browserExtension";
+            var client = _identityServerConfig.GetClients(_config).FirstOrDefault(x => x.ClientId == clientId);
+            if (client == null)
+            {
+                throw new InternalErrorException($"Can't find client with id {clientId}.");
+            }
+
+            // check extension version is supported
+            if (!BrowserExtensionConfig.Versions.Any(x => x.Version == extensionVersion && x.IsSupported))
+            {
+                throw new AccessDeniedException($"Browser extension version {extensionVersion} is not found or not supported.");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new NotFoundException($"User not found.");
+            }
+
             // create tokens with user claims and additional info or managing extensions access
             // NB: additional claims are prefixed with "client_" which is configured in client settings
             var tokenCreationRequest = new TokenCreationRequest();
             var identityPricipal = await _principalFactory.CreateAsync(user);
             var identityUser = new IdentityServerUser(user.Id.ToString());
-            
+
             identityUser.AdditionalClaims = identityPricipal.Claims.ToList();
             identityUser.DisplayName = user.UserName;
             identityUser.AuthenticationTime = DateTime.UtcNow;
@@ -100,7 +158,7 @@ namespace Lexiconner.IdentityServer4.Services
 
             // store extension version in token to be able to forbid access for old versions
             const string browserExtensionVersionClaim = "browser_extension_version";
-            identityUser.AdditionalClaims.Add(new Claim(browserExtensionVersionClaim, dto.ExtensionVersion));
+            identityUser.AdditionalClaims.Add(new Claim(browserExtensionVersionClaim, extensionVersion));
 
             tokenCreationRequest.Subject = identityUser.CreatePrincipal();
             tokenCreationRequest.IncludeAllIdentityClaims = true;
@@ -117,18 +175,18 @@ namespace Lexiconner.IdentityServer4.Services
                     apiResources: (new List<ApiResource>()).Concat(_identityServerConfig.GetApiResources().ToList()),
                     apiScopes: (new List<ApiScope>()).Concat(client.AllowedScopes.Select(scope => new ApiScope(scope)))
                 )
-                { 
+                {
                     OfflineAccess = true,
                 }
             );
-            
+
             var tokenAccess = await _tokenService.CreateAccessTokenAsync(tokenCreationRequest);
             var tokenIdentity = await _tokenService.CreateIdentityTokenAsync(tokenCreationRequest);
-            
+
             var tokenValueAccess = await _tokenService.CreateSecurityTokenAsync(tokenAccess);
             var tokenValueIdentity = await _tokenService.CreateSecurityTokenAsync(tokenIdentity);
             var tokenValueRefresh = await _refreshTokenService.CreateRefreshTokenAsync(
-                tokenCreationRequest.Subject, 
+                tokenCreationRequest.Subject,
                 tokenAccess,
                 client
             );
@@ -141,9 +199,6 @@ namespace Lexiconner.IdentityServer4.Services
             };
         }
 
-        public async Task<BrowserExtensionLoginResponseDto> BrowserExtensionRefreshTokensAsync(BrowserExtensionLoginRequestDto dto)
-        {
-            return null;
-        }
+        #endregion
     }
 }

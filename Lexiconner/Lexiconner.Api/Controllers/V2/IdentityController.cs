@@ -2,6 +2,7 @@
 using Lexiconner.Domain.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Security.Claims;
 
 namespace Lexiconner.Api.Controllers.V2
@@ -13,7 +14,7 @@ namespace Lexiconner.Api.Controllers.V2
     public class IdentityController : ApiControllerBase
     {
         [HttpGet]
-        public BaseApiResponseDto<string> Get()
+        public IActionResult Get()
         {
             ClaimsPrincipal currentUser = this.User;
             string currentUserId = null;
@@ -26,7 +27,7 @@ namespace Lexiconner.Api.Controllers.V2
             {
                 currentUserId = currentUser.FindFirst(JwtClaimTypes.Subject).Value;
             }
-            return BaseJsonResponse(currentUserId);
+            return BaseResponse(new { Id = currentUserId, Claims = currentUser.Claims.Select(x => new { Type = x.Type, Value = x.Value }) });
         }
     }
 }

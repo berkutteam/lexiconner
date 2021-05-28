@@ -9,5 +9,6 @@ namespace Lexiconner.IdentityServer4.Services.Interfaces
     public interface IAccountService
     {
         Task<BrowserExtensionLoginResponseDto> BrowserExtensionLoginAsync(BrowserExtensionLoginRequestDto dto);
+        Task<BrowserExtensionLoginResponseDto> BrowserExtensionRefreshTokensAsync(BrowserExtensionRefreshTokensRequestDto dto);
     }
 }
