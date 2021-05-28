@@ -62,13 +62,20 @@ namespace Lexiconner.Domain.Entitites
 
         public List<ApplicationUserEntityLearningLanguage> LearningLanguages { get; set; }
 
-        #region Herlpers
+        #region Helpers
 
-        public void AddOrUpdateLearningLanguage(string languageCode, bool isSelected)
+        public void AddOrUpdateLearningLanguage(string languageCode, bool? isSelected, bool? isSelectedForBrowserExtension)
         {
             foreach (var item in LearningLanguages)
             {
-                item.IsSelected = false;
+                if (isSelected != null)
+                {
+                    item.IsSelected = false;
+                }
+                if (isSelectedForBrowserExtension != null)
+                {
+                    item.IsSelectedForBrowserExtension = false;
+                }
             }
             var existing = LearningLanguages.FirstOrDefault(x => x.LanguageCode == languageCode);
             if(existing == null)
@@ -79,8 +86,14 @@ namespace Lexiconner.Domain.Entitites
                 };
                 LearningLanguages.Add(existing);
             }
-            existing.IsSelected = isSelected;
-
+            if (isSelected != null)
+            {
+                existing.IsSelected = isSelected.Value;
+            }
+            if (isSelectedForBrowserExtension != null)
+            {
+                existing.IsSelectedForBrowserExtension = isSelectedForBrowserExtension.Value;
+            }
         }
 
         #endregion
@@ -90,5 +103,6 @@ namespace Lexiconner.Domain.Entitites
     {
         public string LanguageCode { get; set; }
         public bool IsSelected { get; set; }
+        public bool IsSelectedForBrowserExtension { get; set; }
     }
 }

@@ -271,8 +271,8 @@ export default new Vuex.Store({
     //#region Profile
 
     [storeTypes.PROFILE_SET](state, payload) {
-      let { data } = payload;
-      state.profile = data;
+      let { profile } = payload;
+      state.profile = profile;
     },
 
     //#endregion
@@ -757,7 +757,7 @@ export default new Vuex.Store({
 
     //#region Profile
 
-    [storeTypes.PROFILE_LOAD](context, { languageCode }) {
+    [storeTypes.PROFILE_LOAD](context) {
       let { commit, dispatch, state, getters } = context;
       commit(storeTypes.LOADING_SET, {
         target: storeTypes.PROFILE_LOAD,
@@ -765,16 +765,14 @@ export default new Vuex.Store({
       });
       return api
         .webApi()
-        .getProfile({
-          languageCode,
-        })
+        .getProfile()
         .then(({ data, ok }) => {
           commit(storeTypes.LOADING_SET, {
             target: storeTypes.PROFILE_LOAD,
             loading: false,
           });
           commit(storeTypes.PROFILE_SET, {
-            data: data,
+            profile: data,
           });
           return data;
         })
@@ -803,7 +801,7 @@ export default new Vuex.Store({
             loading: false,
           });
           commit(storeTypes.PROFILE_SET, {
-            data: data,
+            profile: data,
           });
           return data;
         })

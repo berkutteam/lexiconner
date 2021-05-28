@@ -291,7 +291,7 @@ class API {
       // profile
       getProfile() {
         return axiosAuthRequest({
-          url: buildUrl(url, `profile`, {}),
+          url: buildUrl(url, `profile/me`, {}),
           method: "get",
         })
           .then(handleApiResponse)
@@ -299,7 +299,7 @@ class API {
       },
       selectProfileLearningLanguage({ languageCode }) {
         return axiosAuthRequest({
-          url: buildUrl(url, `profile/learning_languages/${languageCode}`, {}),
+          url: buildUrl(url, `profile/learning-languages/${languageCode}`, {}),
           method: "post",
           data: {},
         })

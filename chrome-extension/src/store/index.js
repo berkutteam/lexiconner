@@ -20,6 +20,8 @@ export default new Vuex.Store({
       user: null,
       loginResult: null,
     },
+
+    profile: null,
   },
   getters: {
     /**
@@ -54,8 +56,17 @@ export default new Vuex.Store({
       state.auth.user = null;
     },
     [storeTypes.AUTH_LOGIN_SET](state, payload) {
-      let { data } = payload;
-      state.auth.loginResult = data;
+      let { loginResult } = payload;
+      state.auth.loginResult = loginResult;
+    },
+
+    //#endregion
+
+    //#region Profile
+
+    [storeTypes.PROFILE_SET](state, payload) {
+      let { profile } = payload;
+      state.profile = profile;
     },
 
     //#endregion
@@ -63,7 +74,7 @@ export default new Vuex.Store({
   actions: {
     //#region Auth
 
-    [storeTypes.AUTH_AUTH_LOGIN_REQUEST](context, { data }) {
+    [storeTypes.AUTH_LOGIN_REQUEST](context, { data }) {
       let { commit, dispatch, getters, state } = context;
       commit(storeTypes.LOADING_SET, {
         target: storeTypes.AUTH_LOGIN_REQUEST,
@@ -78,13 +89,74 @@ export default new Vuex.Store({
             loading: false,
           });
           commit(storeTypes.AUTH_LOGIN_SET, {
-            data: data,
+            loginResult: data,
           });
           return data;
         })
         .catch((err) => {
           commit(storeTypes.LOADING_SET, {
             target: storeTypes.AUTH_LOGIN_REQUEST,
+            loading: false,
+          });
+          throw err;
+        });
+    },
+
+    //#endregion
+
+    //#region Profile
+
+    [storeTypes.PROFILE_LOAD](context) {
+      let { commit, dispatch, state, getters } = context;
+      commit(storeTypes.LOADING_SET, {
+        target: storeTypes.PROFILE_LOAD,
+        loading: true,
+      });
+      return api
+        .webApi()
+        .getProfile()
+        .then(({ data, ok }) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.PROFILE_LOAD,
+            loading: false,
+          });
+          commit(storeTypes.PROFILE_SET, {
+            profile: data,
+          });
+          return data;
+        })
+        .catch((err) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.PROFILE_LOAD,
+            loading: false,
+          });
+          throw err;
+        });
+    },
+    [storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE](context, { languageCode }) {
+      let { commit, dispatch, state, getters } = context;
+      commit(storeTypes.LOADING_SET, {
+        target: storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE,
+        loading: true,
+      });
+      return api
+        .webApi()
+        .selectProfileLearningLanguage({
+          languageCode,
+        })
+        .then(({ data, ok }) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE,
+            loading: false,
+          });
+          commit(storeTypes.PROFILE_SET, {
+            profile: data,
+          });
+          return data;
+        })
+        .catch((err) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE,
             loading: false,
           });
           throw err;

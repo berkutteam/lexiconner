@@ -18,8 +18,6 @@ export default {
   components: {
     // HelloWorld,
   },
-  mounted: function () {
-    console.log(1, window.location);
-  },
+  mounted: function () {},
 };
 </script>

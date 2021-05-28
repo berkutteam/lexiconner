@@ -8,7 +8,7 @@ import ServerErrorModel from "../models/ServerErrorModel";
 import ServerUnknownErrorModel from "../models/ServerUnknownErrorModel.js";
 import ServerNotFoundErrorModel from "../models/ServerNotFoundErrorModel.js";
 
-// import authService from '@/services/authService';
+import authService from "@/services/authService";
 
 function buildUrl(
   urlTemplate,
@@ -56,29 +56,38 @@ function buildUrl(
 
 let authenticationScheme = "Bearer";
 
-// /**
-//  * Adds auth header to request before send
-//  * @param {object} axiosConfig
-//  * @return {Promise<object>} response
-//  */
-// function axiosAuthRequest(axiosConfig) {
-//     return new Promise((resolve, reject) => {
-//         authService.getUser().then((user) => {
-//             let { access_token, id_token, refresh_token } = user;
-//             axiosConfig.headers = axiosConfig.headers || {};
-//             axiosConfig.headers["Authorization"] = `${authenticationScheme} ${access_token}`;
-//             Http.axios(axiosConfig).then(response => {
-//                 let { config, data, headers, request, status, statusText } = response;
-//                 resolve(response);
-//             }).catch(err => {
-//                 let { config, isAxiosError, request, response, message, stack } = err;
-//                 reject(err); // reject with error response from server (if present)
-//             });
-//         }, (err) => {
-//             reject(err);
-//         });
-//     });
-// }
+/**
+ * Adds auth header to request before send
+ * @param {object} axiosConfig
+ * @return {Promise<object>} response
+ */
+function axiosAuthRequest(axiosConfig) {
+  return new Promise((resolve, reject) => {
+    authService.getAuthTokensAsync().then(
+      (tokens) => {
+        let { identityToken, accessToken, refreshToken } = tokens || {};
+        axiosConfig.headers = axiosConfig.headers || {};
+        axiosConfig.headers["Authorization"] = `${authenticationScheme} ${
+          accessToken || null
+        }`;
+        Http.axios(axiosConfig)
+          .then((response) => {
+            let { config, data, headers, request, status, statusText } =
+              response;
+            resolve(response);
+          })
+          .catch((err) => {
+            let { config, isAxiosError, request, response, message, stack } =
+              err;
+            reject(err); // reject with error response from server (if present)
+          });
+      },
+      (err) => {
+        reject(err);
+      }
+    );
+  });
+}
 
 /**
  * Meddleware before send
@@ -172,20 +181,32 @@ class API {
       // default IdentityServe OAuth2 endpoints
 
       // custom endpoints
-      login({ email, password, extensionVersion }) {
+      login({ email, password, clientId, extensionVersion }) {
         return axiosRequest({
           url: buildUrl(url, `account/login`, {}),
           method: "post",
-          data: { email, password, extensionVersion },
+          data: { email, password, clientId, extensionVersion },
         })
           .then(handleApiResponse)
           .catch(handleApiErrorResponse);
       },
-      refreshTokens({ identityToken, accessToken, refreshToken, clientId }) {
+      refreshTokens({
+        identityToken,
+        accessToken,
+        refreshToken,
+        clientId,
+        extensionVersion,
+      }) {
         return axiosRequest({
           url: buildUrl(url, `account/refresh-tokens`, {}),
           method: "post",
-          data: { identityToken, accessToken, refreshToken, clientId },
+          data: {
+            identityToken,
+            accessToken,
+            refreshToken,
+            clientId,
+            extensionVersion,
+          },
         })
           .then(handleApiResponse)
           .catch(handleApiErrorResponse);
@@ -196,7 +217,26 @@ class API {
   webApi() {
     let url = `${this.config.apiUrl}/api/v1/browser-extension/<endpoint>`;
 
-    return {};
+    return {
+      // profile
+      getProfile() {
+        return axiosAuthRequest({
+          url: buildUrl(url, `profile/me`, {}),
+          method: "get",
+        })
+          .then(handleApiResponse)
+          .catch(handleApiErrorResponse);
+      },
+      selectProfileLearningLanguage({ languageCode }) {
+        return axiosAuthRequest({
+          url: buildUrl(url, `profile/learning-languages/${languageCode}`, {}),
+          method: "post",
+          data: {},
+        })
+          .then(handleApiResponse)
+          .catch(handleApiErrorResponse);
+      },
+    };
   }
 }
 

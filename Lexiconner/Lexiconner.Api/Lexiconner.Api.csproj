@@ -43,7 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\V2\BrowserExtensionApi\" />
     <Folder Include="Models\" />
     <Folder Include="Secrets\" />
   </ItemGroup>

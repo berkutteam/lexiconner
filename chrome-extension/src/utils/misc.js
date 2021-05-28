@@ -1,4 +1,4 @@
-class Utils {
+class MiscUtils {
   constructor() {}
 
   waitAsync(timeout = 100) {
@@ -10,4 +10,4 @@ class Utils {
   }
 }
 
-export default new Utils();
+export default new MiscUtils();

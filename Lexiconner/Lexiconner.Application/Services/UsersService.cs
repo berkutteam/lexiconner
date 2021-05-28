@@ -63,7 +63,23 @@ namespace Lexiconner.Application.Services
             }
 
             // update
-            entity.AddOrUpdateLearningLanguage(languageCode, true);
+            entity.AddOrUpdateLearningLanguage(languageCode, isSelected: true, isSelectedForBrowserExtension: null);
+            CustomValidationHelper.Validate(entity);
+            await _identityDataRepository.UpdateAsync(entity);
+
+            return _mapper.Map<UserDto>(entity);
+        }
+
+        public async Task<UserDto> BrowserExtensionSelectLearningLanguageAsync(string userId, string languageCode)
+        {
+            var entity = await _identityDataRepository.GetOneAsync<ApplicationUserEntity>(x => x.Id == userId);
+            if (entity == null)
+            {
+                throw new AccessDeniedException("User not found!");
+            }
+
+            // update
+            entity.AddOrUpdateLearningLanguage(languageCode, isSelected: null, isSelectedForBrowserExtension: true);
             CustomValidationHelper.Validate(entity);
             await _identityDataRepository.UpdateAsync(entity);
 

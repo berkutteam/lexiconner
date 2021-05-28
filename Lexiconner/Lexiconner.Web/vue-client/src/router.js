@@ -2,6 +2,9 @@
 
 import Vue from "vue";
 import Router from "vue-router";
+import store from "@/store";
+import miscUtils from "@/utils/misc";
+
 import Home from "./views/Home.vue";
 import ErrorView from "./views/ErrorView.vue";
 import TermsOfUse from "./views/TermsOfUse.vue";
@@ -42,10 +45,6 @@ import UserProfile from "./views/UserProfile.vue";
 // import CompanyDepartment from './views/CompanyDepartment.vue';
 // import CompanyUserProfile from './views/CompanyUserProfile.vue';
 // import MyCompanyInvitations from './views/MyCompanyInvitations.vue';
-import { storeTypes } from "@/constants/index";
-
-import store from "@/store";
-import utils from "@/utils";
 
 Vue.use(Router);
 
@@ -79,7 +78,7 @@ async function waitAppInitialization({ to, from, next }) {
       console.log(
         `Waiting app initialization before processing to route ${to.name}: ${to.path}. Wait time ms: ${waitTimeMs}`
       );
-      await utils.waitAsync(waitTimeMs);
+      await miscUtils.waitAsync(waitTimeMs);
 
       if (!store.getters.isAnyLoading) {
         break;
@@ -145,7 +144,7 @@ export default new Router({
         mode: "history",
       }),
   routes: [
-    // unauthenticated landing home
+    // home is unauthenticated landing home
     {
       path: "/",
       name: "home",

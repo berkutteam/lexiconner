@@ -55,6 +55,7 @@ import authService from "@/services/authService";
 const loginModelDefault = {
   email: "johndoe@test.com",
   password: "Password_1",
+  clientId: process.env.VUE_APP_IDENTITY_CLIENT_ID,
   extensionVersion: "0.1.0",
 };
 
@@ -96,12 +97,13 @@ export default {
           // reset
           this.privateState.loginModel = _.cloneDeep(loginModelDefault);
 
+          console.log(`Redirecting to home after login...`);
           this.$router.push({
             name: "home",
           });
         })
         .catch((err) => {
-          console.error(err);
+          console.error(`Login error:`, err);
           // notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
         });
     },

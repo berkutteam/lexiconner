@@ -3,7 +3,8 @@ import App from "./App.vue";
 import router from "@/router";
 import store from "@/store";
 import api from "@/utils/api";
-import authService from "@/services/authService";
+import authService, { authEvents } from "@/services/authService";
+import { storeTypes } from "@/constants/index";
 
 // log envs
 console.log("process.env: ", process.env);
@@ -33,14 +34,31 @@ api.init({
 runApp();
 
 async function runApp() {
+  // listen to auth events
+  authService.on(
+    authEvents.isAuthenticatedChanged,
+    async ({ isAuthenticated, user }) => {
+      console.log(`isAuthenticatedChanged:`, isAuthenticated, user);
+
+      if (isAuthenticated) {
+        // store user in store
+        store.commit(storeTypes.AUTH_USER_SET, {
+          user,
+        });
+      } else {
+        // logout
+        store.commit(storeTypes.AUTH_USER_RESET);
+        await authService.logoutAsync();
+        router.push({
+          name: "home",
+        });
+      }
+    }
+  );
+
   if (await authService.checkIsAuthenticatedAsync()) {
     // load profile before rendering the app
-    // await store.dispatch(storeTypes.PROFILE_LOAD, {});
-  } else {
-    // redirect to login
-    router.push({
-      path: "/login",
-    });
+    await store.dispatch(storeTypes.PROFILE_LOAD);
   }
 
   renderApp();

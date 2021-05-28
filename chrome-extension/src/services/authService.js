@@ -10,6 +10,7 @@ import router from "@/router";
 import apiUtil from "@/utils/api";
 
 export const authEvents = {
+  isAuthenticatedChanged: "isAuthenticatedChanged",
   tokensRefreshFailed: "tokensRefreshFailed",
 };
 
@@ -30,6 +31,9 @@ class AuthService extends EventEmitter {
       ...this.config,
       ...config,
     };
+
+    // setup custom token refreshing
+    this.startAuthTokensRefresh();
   }
 
   /** Stores user auth tokens in chrome.storage */
@@ -58,7 +62,12 @@ class AuthService extends EventEmitter {
   getAuthTokensAsync() {
     return new Promise((resolve, reject) => {
       chrome.storage.local.get(["userAuthTokens"], (result) => {
-        resolve(result.userAuthTokens || null);
+        const userAuthTokens =
+          !result.userAuthTokens ||
+          Object.keys(result.userAuthTokens).length === 0
+            ? null
+            : result.userAuthTokens;
+        resolve(userAuthTokens);
       });
     });
   }
@@ -83,6 +92,8 @@ class AuthService extends EventEmitter {
       auth_time, // time when authentication occured
       idp, // Idsr identity provider
       iat, // issued at (seconds since Unix epoch)
+
+      // no custom claims, only the default ones
     } = decoded;
     return decoded;
   }
@@ -106,24 +117,44 @@ class AuthService extends EventEmitter {
       client_email,
       client_email_verified,
       client_browser_extension_version,
+      // ...
     } = decoded;
     return decoded;
   }
 
-  async loginAsync({ email, password }) {
-    // TODO
+  buildUserFromAccessTokenClaims(accessToken) {
+    const accessTokenDecoded = this.decodeIdentityToken(accessToken);
+    const user = {};
+    for (const key in accessTokenDecoded) {
+      if (Object.hasOwnProperty.call(accessTokenDecoded, key)) {
+        user[key] = accessTokenDecoded[key];
+      }
+    }
+    return user;
+  }
+
+  async loginAsync({ email, password, clientId, extensionVersion }) {
     try {
       const data = await store.dispatch(storeTypes.AUTH_LOGIN_REQUEST, {
         data: {
           email,
           password,
-          extensionVersion: null,
+          clientId,
+          extensionVersion,
         },
       });
 
       await this.storeAuthTokensAsync({ ...data });
 
-      await authService.checkIsAuthenticatedAsync();
+      const isAuthenticated = await this.checkIsAuthenticatedAsync();
+
+      // store user in store
+      const user = this.buildUserFromAccessTokenClaims(data.accessToken);
+      store.commit(storeTypes.AUTH_USER_SET, {
+        user,
+      });
+
+      console.log(this.logPrefix, `loginAsync.`, `Login successfull.`);
     } catch (err) {
       console.error(this.logPrefix, err);
       throw err;
@@ -131,7 +162,9 @@ class AuthService extends EventEmitter {
   }
 
   async logoutAsync() {
-    // TODO
+    // clear tokens
+    await this.removeAuthTokensAsync();
+    await this.stopAuthTokensRefresh();
   }
 
   /**
@@ -139,40 +172,63 @@ class AuthService extends EventEmitter {
    */
   async checkIsAuthenticatedAsync() {
     let isAuthenticated = true;
+    let user = null;
 
     // has tokens
     const tokens = await this.getAuthTokensAsync();
     if (!tokens) {
       isAuthenticated = false;
+      user = null;
+    } else {
+      user = this.buildUserFromAccessTokenClaims(tokens.accessToken);
+
+      // validate tokens are not expired
+      const identityTokenDecoded = this.decodeIdentityToken(
+        tokens.identityToken
+      );
+      const accessTokenDecoded = this.decodeIdentityToken(tokens.accessToken);
+
+      if (
+        moment.utc().isSameOrAfter(moment.unix(identityTokenDecoded.exp).utc())
+      ) {
+        console.error(
+          this.logPrefix,
+          `checkIsAuthenticatedAsync.`,
+          `identityToken is expired.`
+        );
+        isAuthenticated = false;
+        user = null;
+      }
+      if (
+        moment.utc().isSameOrAfter(moment.unix(accessTokenDecoded.exp).utc())
+      ) {
+        console.error(
+          this.logPrefix,
+          `checkIsAuthenticatedAsync.`,
+          `accessToken is expired.`
+        );
+        isAuthenticated = false;
+        user = null;
+      }
     }
 
-    // validate tokens are not expired
-    const identityTokenDecoded = this.decodeIdentityToken(tokens.identityToken);
-    const accessTokenDecoded = this.decodeIdentityToken(tokens.accessToken);
-
-    if (
-      moment.utc().isSameOrAfter(moment.unix(identityTokenDecoded.exp).utc())
-    ) {
-      console.error(`identityToken is expired.`);
-      isAuthenticated = false;
-    }
-    if (moment.utc().isSameOrAfter(moment.unix(accessTokenDecoded.exp).utc())) {
-      console.error(`accessToken is expired.`);
-      isAuthenticated = false;
-    }
-
-    console.log(`checkAuthenticatedAsync. isAuthenticated:`, isAuthenticated);
+    this.emit(authEvents.isAuthenticatedChanged, {
+      isAuthenticated,
+      user,
+    });
 
     return isAuthenticated;
   }
 
   startAuthTokensRefresh() {
     if (this.tokenRefreshTimeout === null) {
+      console.log(this.logPrefix, `startAuthTokensRefresh.`);
       this._refreshTokensAsync();
     }
   }
 
   stopAuthTokensRefresh() {
+    console.log(this.logPrefix, `stopAuthTokensRefresh.`);
     clearTimeout(this.tokenRefreshTimeout);
     this.refreshTokensRetries = 0;
   }

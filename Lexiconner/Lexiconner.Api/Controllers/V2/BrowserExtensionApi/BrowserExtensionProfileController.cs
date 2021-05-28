@@ -9,17 +9,17 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Lexiconner.Api.Controllers.V2
+namespace Lexiconner.Api.Controllers.V2.BrowserExtensionApi
 {
     [ApiController]
     [Authorize]
     [ApiVersion("2.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    public class ProfileController : ApiControllerBase
+    [Route("api/v{version:apiVersion}/browser-extension/profile")]
+    public class BrowserExtensionProfileController : ApiControllerBase
     {
         private readonly IUsersService _usersService;
 
-        public ProfileController(
+        public BrowserExtensionProfileController(
             IUsersService usersService
         )
         {
@@ -46,7 +46,7 @@ namespace Lexiconner.Api.Controllers.V2
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> SelectLearningLanguage([FromRoute] string languageCode)
         {
-            var result = await _usersService.SelectLearningLanguageAsync(GetUserId(), languageCode);
+            var result = await _usersService.BrowserExtensionSelectLearningLanguageAsync(GetUserId(), languageCode);
             return BaseResponse(result);
         }
     }

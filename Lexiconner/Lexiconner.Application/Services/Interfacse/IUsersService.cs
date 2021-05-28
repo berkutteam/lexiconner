@@ -11,5 +11,6 @@ namespace Lexiconner.Application.Services.Interfacse
     {
         Task<UserDto> GetUserAsync(string userId);
         Task<UserDto> SelectLearningLanguageAsync(string userId, string languageCode);
+        Task<UserDto> BrowserExtensionSelectLearningLanguageAsync(string userId, string languageCode);
     }
 }

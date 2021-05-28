@@ -122,7 +122,7 @@ function runApp() {
 
       if (await authService.isAuthenticated()) {
         // load profile before rendering the app
-        await store.dispatch(storeTypes.PROFILE_LOAD, {});
+        await store.dispatch(storeTypes.PROFILE_LOAD);
       }
 
       if (router.history.current.name === "error") {
