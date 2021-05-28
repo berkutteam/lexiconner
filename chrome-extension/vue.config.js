@@ -17,6 +17,16 @@ module.exports = {
   pluginOptions: {
     // https://github.com/adambullmer/vue-cli-plugin-browser-extension
     browserExtension: {
+      // The browser extension components that will be managed by this plugin.
+      components: {
+        // background: true,
+        // popup: true,
+        // options: true,
+        // contentScripts: true,
+        // override: false,
+        // standalone: false,
+        // devtools: true,
+      },
       componentOptions: {
         background: {
           entry: "src/background.js",
@@ -25,6 +35,16 @@ module.exports = {
           entries: {
             "content-script": ["src/content-scripts/content-script.js"],
           },
+        },
+      },
+
+      // See available options in webpack-extension-reloader.
+      // https://github.com/rubenspgcavalcante/webpack-extension-reloader
+      extensionReloaderOptions: {
+        // manually specify entries due to bug in https://github.com/adambullmer/vue-cli-plugin-browser-extension
+        // NB: here we extend entries, not override them
+        entries: {
+          background: "src/background.js",
         },
       },
 

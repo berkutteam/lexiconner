@@ -1,6 +1,12 @@
 <template>
   <div>
-    <h5>Dashboard</h5>
+    <div v-if="profile" class="alert alert-secondary mb-4" role="alert">
+      Welcome back, {{ profile.name }}.
+    </div>
+    <div>
+      <h6>Last added words:</h6>
+      <div>TODO x</div>
+    </div>
   </div>
 </template>
 
@@ -26,6 +32,7 @@ export default {
     // store state computed go here
     ...mapState({
       sharedState: (state) => state,
+      profile: (state) => state.profile,
     }),
 
     // store getter

@@ -52,7 +52,6 @@ const routes = [
     beforeEnter: async (to, from, next) => {
       await waitAppInitialization({ to, from, next });
 
-      console.log(1, store.state.auth.isAuthenticated);
       if (store.state.auth.isAuthenticated) {
         next({
           name: "dashboard",

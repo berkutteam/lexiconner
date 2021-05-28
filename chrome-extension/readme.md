@@ -21,7 +21,10 @@
         "activeTab",
 
         // permission to use the Scripting API's `chrome.scripting.executeScript` method
-        "scripting"
+        "scripting",
+
+        // Use the chrome.contextMenus API to add items to Google Chrome's context menu.
+        "contextMenus",
     ],
 
     // optional permissions that won't be shown during installation to user, but will be requested during work with the extension
@@ -50,6 +53,7 @@
 
     // sets icons to be displayed in Chrome Settings -> Extensions.
     "icons": {
+        // 16 is also used for contextMenus
         "16": "images/get_started16.png",
         "32": "images/get_started32.png",
         "48": "images/get_started48.png",
@@ -123,7 +127,7 @@ Resources:
 - https://github.com/adambullmer/vue-cli-plugin-browser-extension
 
 
-#### Fix error: "Service worker registration failed" when adding extension lcoally to Chrome using kocal/vue-web-extension preset
+#### Fix error: Chrome "Service worker registration failed" when adding extension locally to Chrome using kocal/vue-web-extension preset
 
 *using kocal/vue-web-extension* preset configures `background.js` this way:
 ```json
@@ -133,6 +137,8 @@ Resources:
 ```
 
 As stated here https://stackoverflow.com/questions/66114920/service-worker-registration-failed-chrome-extension it's because of the fact, that in the manifest v3: *Service worker file must be in the root path of the extension where manifest.json is.*
+
+Note: since Chrome 93 it's allowed to have `background.js` in non root path.
 
 Meanwhile, the correct manifest.json should look like this:
 ```json
@@ -144,16 +150,29 @@ Meanwhile, the correct manifest.json should look like this:
 
 Solution:
 
-Fork https://github.com/adambullmer/vue-cli-plugin-browser-extension and make fxes manually.
+Fork https://github.com/adambullmer/vue-cli-plugin-browser-extension and make fixes manually.
 
-Forked version: https://github.com/berkutteam/vue-cli-plugin-browser-extension
+Forked version: https://github.com/berkutteam/vue-cli-plugin-browser-extension (list of changes is listed here)
+
 
 Install forked package
 ```bash
 yarn remove vue-cli-plugin-browser-extension --dev
+npm uninstall vue-cli-plugin-browser-extension --save-dev
 
 yarn add git+https://github.com/berkutteam/vue-cli-plugin-browser-extension.git --dev
+npm i git+https://github.com/berkutteam/vue-cli-plugin-browser-extension.git --save-dev
 ```
+
+
+#### Fix error: Chrome "Service worker registration failed"
+
+Case 1:
+
+It might be syntax error, undefined variable, etc. Try to wrap `background.js` in try catch block.
+https://stackoverflow.com/questions/66406672/chrome-extension-mv3-modularize-service-worker-js-file/66408379#66408379
+
+
 
 #### Fix Webpack source maps and unsafe-eval issue
 
@@ -166,6 +185,7 @@ Uncaught EvalError: Refused to evaluate a string as JavaScript because 'unsafe-e
 Check the answer:
 
 https://stackoverflow.com/a/49100966/5168794
+
 
 
 ### Vue.js 3

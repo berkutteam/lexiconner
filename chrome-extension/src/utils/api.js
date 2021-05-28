@@ -215,7 +215,7 @@ class API {
   }
 
   webApi() {
-    let url = `${this.config.apiUrl}/api/v1/browser-extension/<endpoint>`;
+    let url = `${this.config.apiUrl}/api/v2/browser-extension/<endpoint>`;
 
     return {
       // profile
