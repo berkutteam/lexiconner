@@ -236,6 +236,15 @@ class API {
           .then(handleApiResponse)
           .catch(handleApiErrorResponse);
       },
+
+      getLanguages() {
+        return axiosRequest({
+          url: buildUrl(url, `languages`, {}),
+          method: "get",
+        })
+          .then(handleApiResponse)
+          .catch(handleApiErrorResponse);
+      },
     };
   }
 }

@@ -1,4 +1,4 @@
-@import './variables';
+@import '../variables';
 
 $multiselect-color: $main-color-light;
 
@@ -142,18 +142,18 @@ $multiselect-color: $main-color-light;
 
 .multiselect--languageCodeSelect {
     .multiselect__tags {
-        background: #ebeced;
+        // background: #ebeced;
 
         .multiselect__input {
-            background: #ebeced;
+            // background: #ebeced;
         }
 
         .multiselect__single {
-            background: #ebeced;
+            // background: #ebeced;
         }
 
         .multiselect__spinner {
-            background: #ebeced;
+            // background: #ebeced;
         }
     }
 }

@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
-namespace Lexiconner.Api.Controllers.V2
+namespace Lexiconner.Api.Controllers.V2.BrowserExtension
 {
     [ApiController]
     [AllowAnonymous]
     [ApiVersion("2.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    public class LanguagesController : ApiControllerBase
+    [Route("api/v{version:apiVersion}/browser-extension/languages")]
+    public class BrowserExtensionLanguagesController : ApiControllerBase
     {
         [HttpGet]
         public IActionResult GetAll()

@@ -5,6 +5,7 @@ import Vuex from "vuex";
 import _ from "lodash";
 import { storeTypes } from "@/constants/index";
 import api from "@/utils/api";
+import { updateLocale } from "moment";
 
 Vue.use(Vuex);
 
@@ -22,6 +23,9 @@ export default new Vuex.Store({
     },
 
     profile: null,
+
+    // list of language DTO
+    languages: null,
   },
   getters: {
     /**
@@ -33,6 +37,18 @@ export default new Vuex.Store({
       }, false);
       // console.log('isAnyLoading', isAnyLoading)
       return isAnyLoading;
+    },
+    selectedLearningLanguageCode(state, getters) {
+      if (!state.profile) {
+        return null;
+      }
+      return (
+        (
+          state.profile.learningLanguages.find(
+            (x) => x.isSelectedForBrowserExtension
+          ) || {}
+        ).languageCode || null
+      );
     },
   },
   mutations: {
@@ -67,6 +83,15 @@ export default new Vuex.Store({
     [storeTypes.PROFILE_SET](state, payload) {
       let { profile } = payload;
       state.profile = profile;
+    },
+
+    //#endregion
+
+    //#region Reference info
+
+    [storeTypes.LANGUAGES_SET](state, payload) {
+      let { data } = payload;
+      state.languages = data;
     },
 
     //#endregion
@@ -157,6 +182,38 @@ export default new Vuex.Store({
         .catch((err) => {
           commit(storeTypes.LOADING_SET, {
             target: storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE,
+            loading: false,
+          });
+          throw err;
+        });
+    },
+
+    //#endregion
+
+    //#region Reference info
+
+    [storeTypes.LANGUAGES_LOAD](context) {
+      let { commit, dispatch, getters } = context;
+      commit(storeTypes.LOADING_SET, {
+        target: storeTypes.LANGUAGES_LOAD,
+        loading: true,
+      });
+      return api
+        .webApi()
+        .getLanguages()
+        .then(({ data, ok }) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.LANGUAGES_LOAD,
+            loading: false,
+          });
+          commit(storeTypes.LANGUAGES_SET, {
+            data: data,
+          });
+          return data;
+        })
+        .catch((err) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.LANGUAGES_LOAD,
             loading: false,
           });
           throw err;

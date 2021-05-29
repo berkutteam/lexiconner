@@ -2,6 +2,9 @@
 // Include all of Bootstrap
 @import "../../node_modules/bootstrap/scss/bootstrap";
 
+// Lib styles overrides
+@import './libOverrides/vue-multiselect';
+
 html {
     width: 400px;
     height: auto;

@@ -1,8 +1,8 @@
 "use strict";
 
 import Vue from "vue";
-import Notifications from "vue-notification";
 import Multiselect from "vue-multiselect";
+import Notifications from "vue-notification";
 import VueModal from "vue-js-modal";
 import VueTelInput from "vue-tel-input";
 import { Datetime } from "vue-datetime";
@@ -30,7 +30,6 @@ import store from "./store";
 import { storeTypes } from "@/constants/index";
 import "./registerServiceWorker";
 import authService from "./services/authService";
-import utils from "./utils/index";
 import api from "./utils/api";
 
 Vue.config.productionTip = false;
@@ -38,18 +37,16 @@ Vue.config.productionTip = false;
 console.log("BASE_URL: ", process.env.BASE_URL);
 
 // log envs
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("DOMContentLoaded");
-  console.log("process.env: ", process.env);
-  console.log(
-    "process.env.VUE_APP_ASPNETCORE_ENVIRONMENT: ",
-    process.env.VUE_APP_ASPNETCORE_ENVIRONMENT
-  );
-});
+console.log("DOMContentLoaded");
+console.log("process.env: ", process.env);
+console.log(
+  "process.env.VUE_APP_ASPNETCORE_ENVIRONMENT: ",
+  process.env.VUE_APP_ASPNETCORE_ENVIRONMENT
+);
 
-//// register globally
-Vue.use(Notifications);
+// register globally
 Vue.component("multiselect", Multiselect);
+Vue.use(Notifications);
 Vue.use(VueModal, { componentName: "modal", dialog: true });
 Vue.use(VueTelInput);
 Vue.component("datetime", Datetime);

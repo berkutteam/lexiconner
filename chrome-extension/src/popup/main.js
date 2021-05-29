@@ -1,4 +1,7 @@
 import Vue from "vue";
+import Notifications from "vue-notification";
+import Multiselect from "vue-multiselect";
+
 import App from "./App.vue";
 import router from "@/router";
 import store from "@/store";
@@ -21,6 +24,10 @@ console.log(
   "process.env.VUE_APP_IDENTITY_CLIENT_ID: ",
   process.env.VUE_APP_IDENTITY_CLIENT_ID
 );
+
+// register globally
+Vue.component("multiselect", Multiselect);
+Vue.use(Notifications);
 
 // init
 authService.init({

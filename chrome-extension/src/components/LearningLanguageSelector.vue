@@ -47,7 +47,6 @@ export default {
       sharedState: (state) => state,
       isLoading: (state) => state.loading[storeTypes.LANGUAGES_LOAD],
       profile: (state) => state.profile,
-      userDictionary: (state) => state.userDictionary,
     }),
   },
   created: async function () {
@@ -58,9 +57,6 @@ export default {
 
     if (!this.profile) {
       this.$store.dispatch(storeTypes.PROFILE_LOAD, {});
-    }
-    if (!this.userDictionary) {
-      this.loadUserDictionary();
     }
   },
   mounted: function () {},
@@ -73,18 +69,7 @@ export default {
         .dispatch(storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE, {
           languageCode: languageCode,
         })
-        .then(() => {
-          this.loadUserDictionary();
-        })
-        .catch((err) => {
-          console.error(err);
-          notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
-        });
-    },
-    loadUserDictionary: function () {
-      return this.$store
-        .dispatch(storeTypes.USER_DICTIONARY_LOAD, {})
-        .then()
+        .then(() => {})
         .catch((err) => {
           console.error(err);
           notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);

@@ -18,7 +18,6 @@ import { mapState, mapGetters } from "vuex";
 import { storeTypes } from "@/constants/index";
 import authService from "@/services/authService";
 import notification from "@/utils/notification";
-import utils from "@/utils/index";
 import RowLoader from "@/components/loaders/RowLoader";
 import LoadingButton from "@/components/LoadingButton";
 

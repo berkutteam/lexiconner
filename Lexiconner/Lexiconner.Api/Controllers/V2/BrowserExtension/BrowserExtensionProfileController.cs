@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Lexiconner.Api.Controllers.V2.BrowserExtensionApi
+namespace Lexiconner.Api.Controllers.V2.BrowserExtension
 {
     [ApiController]
     [Authorize]

@@ -40,8 +40,8 @@ $danger: $color-danger;
 // v-tooltip
 @import '../../node_modules/v-tooltip/dist/v-tooltip.css';
 
-// Rewrites for lib styles
-@import './vue-multiselect-rewrite';
+// Lib styles overrides
+@import './libOverrides/vue-multiselect';
 
 @import './image-grid';
 @import './loaders';
