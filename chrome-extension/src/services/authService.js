@@ -164,6 +164,8 @@ class AuthService extends EventEmitter {
     // clear tokens
     await this.removeAuthTokensAsync();
     await this.stopAuthTokensRefresh();
+
+    store.commit(storeTypes.AUTH_USER_RESET);
   }
 
   /**

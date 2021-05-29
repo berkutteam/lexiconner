@@ -11,9 +11,18 @@
         >
       </div>
     </div>
-    <div>
+    <div class="mb-4">
       <h6>Last added words:</h6>
       <div>TODO x</div>
+    </div>
+    <div>
+      <button
+        type="button"
+        class="btn btn-primary"
+        v-on:click="onLogoutClick()"
+      >
+        Logout
+      </button>
     </div>
   </div>
 </template>
@@ -22,6 +31,7 @@
 import { mapState, mapGetters } from "vuex";
 import _ from "lodash";
 import { storeTypes } from "@/constants/index";
+import authService from "@/services/authService";
 import LearningLanguageSelector from "@/components/LearningLanguageSelector";
 
 export default {
@@ -52,7 +62,22 @@ export default {
   updated: function () {},
   beforeDestroy: function () {},
   destroyed: function () {},
-  methods: {},
+  methods: {
+    onLogoutClick: function () {
+      authService
+        .logoutAsync()
+        .then(() => {
+          console.log(`Redirecting to home after logout...`);
+          this.$router.push({
+            name: "home",
+          });
+        })
+        .catch((err) => {
+          console.error(`Logout error:`, err);
+          // notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+        });
+    },
+  },
 };
 </script>
 
