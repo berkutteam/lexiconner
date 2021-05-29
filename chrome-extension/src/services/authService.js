@@ -6,7 +6,6 @@ import jwtDecode from "jwt-decode";
 import moment from "moment";
 import { EventEmitter } from "events";
 import { storeTypes } from "@/constants/index";
-import router from "@/router";
 import apiUtil from "@/utils/api";
 
 export const authEvents = {
@@ -305,7 +304,7 @@ class AuthService extends EventEmitter {
 
       // refresh token
       try {
-        let data = await apiUtil.identity().refreshToken({
+        let data = await apiUtil.identity().refreshTokens({
           identityToken: identityToken,
           accessToken: accessToken,
           refreshToken: refreshToken,

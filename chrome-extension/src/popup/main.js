@@ -5,7 +5,7 @@ import Multiselect from "vue-multiselect";
 import App from "./App.vue";
 import router from "@/router";
 import store from "@/store";
-import api from "@/utils/api";
+import apiUtil from "@/utils/api";
 import authService, { authEvents } from "@/services/authService";
 import { storeTypes } from "@/constants/index";
 
@@ -33,7 +33,7 @@ Vue.use(Notifications);
 authService.init({
   clientId: process.env.VUE_APP_IDENTITY_CLIENT_ID,
 });
-api.init({
+apiUtil.init({
   identityUrl: process.env.VUE_APP_IDENTITY_URL,
   apiUrl: process.env.VUE_APP_API_URL,
 });

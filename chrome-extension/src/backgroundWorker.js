@@ -10,14 +10,26 @@
 //
 // See https://developer.chrome.com/docs/extensions/reference/events/ for additional details.
 
-// import apiUtil from "@/utils/api";
+// NB: don't import router in any file that is imported in service worker as you will get error
+
+import apiUtil from "@/utils/api";
 import wordUtil from "@/utils/word";
-// import authService from "@/services/authService";
+import authService from "@/services/authService";
 
 console.log("backgroundWorker.js");
+console.log("process.env:", process.env);
 
 const contentMenuId = "translateSelectionContextMenu";
 const maxAllowedWordsInTextSelection = 1;
+
+// init
+authService.init({
+  clientId: process.env.VUE_APP_IDENTITY_CLIENT_ID,
+});
+apiUtil.init({
+  identityUrl: process.env.VUE_APP_IDENTITY_URL,
+  apiUrl: process.env.VUE_APP_API_URL,
+});
 
 // enabled in incognto mode?
 chrome.extension.isAllowedIncognitoAccess((isAllowedAccess) => {
@@ -47,7 +59,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // listen to context menu click
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   console.log(`Context menu click:`, { info, tab });
   const { menuItemId, pageUrl, selectionText } = info;
   const { favIconUrl, title, url } = tab;
@@ -57,11 +69,27 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 
   // check user authenticated
-  // if (!(await authService.checkIsAuthenticatedAsync())) {
-  //   console.error(`User is not authenticated!`);
-  //   // TODO: show popup login
-  //   return;
-  // }
+  if (!(await authService.checkIsAuthenticatedAsync())) {
+    console.error(`User is not authenticated!`);
+
+    // show alert on the page to user
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: showAlertContentScript, // pass a COPY of the function
+    });
+    chrome.tabs.sendMessage(
+      tab.id,
+      {
+        action: "contentScriptShowAlert",
+        message: `Please login first by clicking on extension icon on the browser toolbar.`,
+      },
+      (response) => {
+        console.log("Extension response:", response);
+      }
+    );
+
+    return;
+  }
 
   // validate selected text
   const wordCountInSelection = wordUtil.countWordsInText(selectionText);
@@ -75,7 +103,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       target: { tabId: tab.id },
       function: showAlertContentScript, // pass a COPY of the function
     });
-
     chrome.tabs.sendMessage(
       tab.id,
       {
