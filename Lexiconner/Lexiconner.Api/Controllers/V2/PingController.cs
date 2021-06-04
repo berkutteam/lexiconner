@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ namespace Lexiconner.Api.Controllers.V2
 {
     [ApiController]
     [ApiVersion("2.0")]
+    [EnableCors("DefaultApi")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class PingController : ApiControllerBase
     {

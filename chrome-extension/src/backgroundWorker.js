@@ -117,7 +117,13 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     return;
   }
 
-  // inject content script programatically int othe page to get page meta
+  // inject content script programatically into the page that shows word popup
+  // chrome.scripting.executeScript({
+  //   target: { tabId: tab.id },
+  //   files: ["js/addWordPopupContentScript.js"],
+  // });
+
+  // inject content script programatically into the page to get page meta
   // NB: content script hasn't access to variables declared here, but they have accessto shared DOM
   console.log("Executing content script to get page meta...");
   chrome.scripting.executeScript({
@@ -160,6 +166,22 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
           selectionText,
         },
       };
+
+      // TODO:
+      // load translations
+      // load examples
+
+      // send to content script to show popup
+      chrome.tabs.sendMessage(
+        tab.id,
+        {
+          action: "contentScriptShowWordPopup",
+          word,
+        },
+        (response) => {
+          console.log("Extension response:", response);
+        }
+      );
     }
   });
 });

@@ -1,54 +1,55 @@
 ﻿using Lexiconner.Application.Services;
 using Lexiconner.Application.Services.Interfacse;
 using Lexiconner.Domain.Dtos;
-using Lexiconner.Domain.Dtos.Users;
+using Lexiconner.Domain.Dtos.General;
 using Lexiconner.Domain.Dtos.Words;
 using Lexiconner.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Lexiconner.Api.Controllers.V2
+namespace Lexiconner.Api.Controllers.V2.BrowserExtension
 {
     [ApiController]
     [Authorize]
-    [EnableCors("DefaultApi")]
+    [EnableCors("BrowserExtensionApi")]
     [ApiVersion("2.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    public class ProfileController : ApiControllerBase
+    [Route("api/v{version:apiVersion}/browser-extension/words")]
+    public class BrowserExtensionWordsControler : ApiControllerBase
     {
-        private readonly IUsersService _usersService;
+        private readonly IWordsService _wordsService;
 
-        public ProfileController(
-            IUsersService usersService
+        public BrowserExtensionWordsControler(
+            IWordsService wordsService
         )
         {
-            _usersService = usersService;
+            _wordsService = wordsService;
         }
 
-        [HttpGet("me")]
-        [ProducesResponseType(typeof(BaseApiResponseDto<UserDto>), (int)HttpStatusCode.OK)]
+        [HttpGet("meanings")]
+        [ProducesResponseType(typeof(BaseApiResponseDto<WordMeaningsDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetProfile()
+        public async Task<IActionResult> GetWordMeanings([FromQuery] WordMeaningsRequestDto dto)
         {
-            var result = await _usersService.GetUserAsync(GetUserId());
+            var result = await _wordsService.GetWordMeaningsAsync(dto.Word, dto.WordLanguageCode, dto.MeaningLanguageCode);
             return BaseResponse(result);
         }
 
-        [HttpPost("learning-languages/{languageCode}")]
-        [ProducesResponseType(typeof(BaseApiResponseDto<UserDto>), (int)HttpStatusCode.OK)]
+        [HttpPost]
+        [ProducesResponseType(typeof(BaseApiResponseDto<WordDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> SelectLearningLanguage([FromRoute] string languageCode)
+        public async Task<IActionResult> Create([FromBody] BrowserExtensionWordCreateDto data)
         {
-            var result = await _usersService.SelectLearningLanguageAsync(GetUserId(), languageCode);
+            var result = await _wordsService.BrowserExtensionCreateWordAsync(GetUserId(), data);
             return BaseResponse(result);
         }
     }

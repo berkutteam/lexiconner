@@ -1,6 +1,7 @@
 ﻿using Lexiconner.Api.DTOs.Misc;
 using Lexiconner.Domain.Config;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
@@ -8,6 +9,7 @@ namespace Lexiconner.Api.Controllers.V2.BrowserExtension
 {
     [ApiController]
     [AllowAnonymous]
+    [EnableCors("BrowserExtensionApi")]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/browser-extension/languages")]
     public class BrowserExtensionLanguagesController : ApiControllerBase

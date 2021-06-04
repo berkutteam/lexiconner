@@ -7,6 +7,7 @@ using Lexiconner.Domain.Dtos.Words;
 using Lexiconner.Domain.Dtos.WordSets;
 using Lexiconner.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace Lexiconner.Api.Controllers.V2
 {
     [ApiController]
     [Authorize]
+    [EnableCors("DefaultApi")]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class UserDictionaryController : ApiControllerBase

@@ -5,6 +5,7 @@ using Lexiconner.Domain.Dtos.Users;
 using Lexiconner.Domain.Dtos.Words;
 using Lexiconner.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace Lexiconner.Api.Controllers.V2.BrowserExtension
 {
     [ApiController]
     [Authorize]
+    [EnableCors("BrowserExtensionApi")]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/browser-extension/profile")]
     public class BrowserExtensionProfileController : ApiControllerBase

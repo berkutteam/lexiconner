@@ -26,10 +26,12 @@ namespace Lexiconner.Application.Services.Interfacse
         );
         Task<WordDto> GetWordAsync(string userId, string wordId);
         Task<WordDto> CreateWordAsync(string userId, WordCreateDto createDto);
+        Task<WordDto> BrowserExtensionCreateWordAsync(string userId, BrowserExtensionWordCreateDto createDto);
         Task<WordDto> UpdateWordAsync(string userId, string wordId, WordUpdateDto updateDto);
         Task DeleteWord(string userId, string sutyItemId);
         Task<PaginationResponseDto<GeneralImageDto>> FindWordImagesAsync(string userId, string wordId);
         Task<WordDto> UpdateWordImagesAsync(string userId, string wordId, UpdateWordImagesDto dto);
+        Task<WordMeaningsDto> GetWordMeaningsAsync(string word, string wordLanguageCode, string meaningLanguageCode);
         Task<WordExamplesDto> GetWordExamplesAsync(string languageCode, string word);
         Task<WordPronunciationAudioDto> GetWordPronunciationAudioAsync(string languageCode, string word);
 

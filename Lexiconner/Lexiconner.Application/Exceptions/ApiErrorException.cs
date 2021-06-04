@@ -6,7 +6,7 @@ namespace Lexiconner.Application.Exceptions
 {
     public class ApiErrorException : ApplicationBaseException
     {
-        private const string _title = "API return unsuccessfult status code.";
+        private const string _title = "API returneds unsuccessfult status code.";
 
         public ApiErrorException() : base(_title)
         {

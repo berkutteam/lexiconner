@@ -33,6 +33,7 @@ namespace Lexiconner.Application.Mapping
             // Word
             CreateMap<WordEntity, WordDto>();
             CreateMap<WordCreateDto, WordEntity>();
+            CreateMap<BrowserExtensionWordCreateDto, WordEntity>();
             CreateMap<ImageSearchResponseItemDto, GeneralImageDto>();
             CreateMap<WordTrainingInfoEntity, WordTrainingInfoDto>();
 

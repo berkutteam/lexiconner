@@ -245,6 +245,30 @@ class API {
           .then(handleApiResponse)
           .catch(handleApiErrorResponse);
       },
+
+      // words
+      getWordMeanings({ word, wordLanguageCode, meaningLanguageCode }) {
+        return axiosAuthRequest({
+          url: buildUrl(url, `words/meanings`, {
+            word,
+            wordLanguageCode,
+            meaningLanguageCode,
+          }),
+          method: "get",
+          data: {},
+        })
+          .then(handleApiResponse)
+          .catch(handleApiErrorResponse);
+      },
+      createWord({ data }) {
+        return axiosAuthRequest({
+          url: buildUrl(url, `words`, {}),
+          method: "post",
+          data: { ...data },
+        })
+          .then(handleApiResponse)
+          .catch(handleApiErrorResponse);
+      },
     };
   }
 }

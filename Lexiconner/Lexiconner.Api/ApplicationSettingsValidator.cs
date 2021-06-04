@@ -14,6 +14,7 @@ namespace Lexiconner.Api
             RuleFor(x => x.Google).SetValidator(new GoogleSettingsValidator());
             RuleFor(x => x.RapidApi).SetValidator(new RapidApiSettingsValidator());
             RuleFor(x => x.TheMovieDatabase).SetValidator(new TheMovieDatabaseApiSettingsValidator());
+            RuleFor(x => x.MicrosoftTranslator).SetValidator(new MicrosoftTranslatorSettingsValidator());
         }
     }
 

@@ -16,6 +16,7 @@ namespace Lexiconner.Api
         public GoogleSettings Google { get; set; }
         public RapidApiSettings RapidApi { get; set; }
         public TheMovieDatabaseApiSettings TheMovieDatabase { get; set; }
+        public MicrosoftTranslatorSettings MicrosoftTranslator { get; set; }
     }
 
     public class MongoDbSettings

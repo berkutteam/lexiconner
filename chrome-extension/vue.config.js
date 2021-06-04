@@ -34,6 +34,9 @@ module.exports = {
         contentScripts: {
           entries: {
             "content-script": ["src/content-scripts/content-script.js"],
+            addWordPopupContentScript: [
+              "src/content-scripts/addWordPopupContentScript/main.js",
+            ],
           },
         },
       },

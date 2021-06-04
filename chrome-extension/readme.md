@@ -73,7 +73,17 @@
 
         // This policy covers any sandboxed extension pages that your extension uses.
         "sandbox": "..."
-    }
+    },
+
+    // inject content script with static declarations that should be automatically run on a well known set of pages
+    // https://developer.chrome.com/docs/extensions/mv3/content_scripts/
+    "content_scripts": [
+        {
+            "matches": ["*://*/*"],
+            "css": [],
+            "js": ["js/addWordPopupContentScript.js"]
+        }
+    ]
 }
 ```
 

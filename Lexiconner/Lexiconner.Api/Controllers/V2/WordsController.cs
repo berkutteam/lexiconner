@@ -5,6 +5,7 @@ using Lexiconner.Domain.Dtos.General;
 using Lexiconner.Domain.Dtos.Words;
 using Lexiconner.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
@@ -14,6 +15,7 @@ namespace Lexiconner.Api.Controllers.V2
 {
     [ApiController]
     [Authorize]
+    [EnableCors("DefaultApi")]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class WordsController : ApiControllerBase

@@ -1,6 +1,7 @@
 ﻿using Lexiconner.Application.Services.Interfacse;
 using Lexiconner.Domain.Dtos.CustomCollections;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -9,6 +10,7 @@ namespace Lexiconner.Api.Controllers.V2
     // TODO: add tests
     [ApiController]
     [Authorize]
+    [EnableCors("DefaultApi")]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/customcollections")]
     public class CustomCollectionsController : ApiControllerBase

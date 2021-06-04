@@ -1,6 +1,7 @@
 ﻿using IdentityModel;
 using Lexiconner.Domain.Dtos;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Security.Claims;
@@ -9,6 +10,7 @@ namespace Lexiconner.Api.Controllers.V2
 {
     [ApiController]
     [Authorize]
+    [EnableCors("DefaultApi")]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class IdentityController : ApiControllerBase

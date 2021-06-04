@@ -57,13 +57,13 @@
               />
             </div>
             <div class="form-group">
-              <label for="wordModel__exampleText">Example text</label>
+              <label for="wordModel__exampleText">Examples</label>
               <textarea
-                v-for="(exampleText, exampleTextIndex) in privateState.wordModel
+                v-for="(exampleText, exampleIndex) in privateState.wordModel
                   .examples"
-                v-bind:key="`word-exampleText-${exampleTextIndex}`"
-                v-model="privateState.wordModel.examples[exampleTextIndex]"
-                v-bind:placeholder="`Example text ${exampleTextIndex + 1}`"
+                v-bind:key="`word-example-${exampleIndex}`"
+                v-model="privateState.wordModel.examples[exampleIndex]"
+                v-bind:placeholder="`Example ${exampleIndex + 1}`"
                 type="text"
                 class="form-control mb-1"
                 id="wordModel__exampleText"
@@ -260,8 +260,8 @@ import UserWordSetSelector from "@/components/UserWordSetSelector";
 import ProgressBar from "vue-simple-progress";
 
 const wordModelDefault = {
-  title: null,
-  description: null,
+  word: null,
+  meaning: null,
   examples: [""],
   isFavourite: false,
   wordLanguageCode: "en",

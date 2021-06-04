@@ -26,6 +26,9 @@ export default new Vuex.Store({
 
     // list of language DTO
     languages: null,
+
+    wordMeanings: null,
+    createdWord: null,
   },
   getters: {
     /**
@@ -92,6 +95,19 @@ export default new Vuex.Store({
     [storeTypes.LANGUAGES_SET](state, payload) {
       let { data } = payload;
       state.languages = data;
+    },
+
+    //#endregion
+
+    //#region Words
+
+    [storeTypes.WORD_MEANINGS_SET](state, payload) {
+      let { wordMeanings } = payload;
+      state.wordMeanings = wordMeanings;
+    },
+    [storeTypes.WORD_CREATE_SET](state, payload) {
+      let { word } = payload;
+      state.createdWord = word;
     },
 
     //#endregion
@@ -214,6 +230,68 @@ export default new Vuex.Store({
         .catch((err) => {
           commit(storeTypes.LOADING_SET, {
             target: storeTypes.LANGUAGES_LOAD,
+            loading: false,
+          });
+          throw err;
+        });
+    },
+
+    //#endregion
+
+    //#region Words
+
+    [storeTypes.WORD_MEANINGS_LOAD](
+      context,
+      { word, wordLanguageCode, meaningLanguageCode }
+    ) {
+      let { commit, dispatch, getters } = context;
+      commit(storeTypes.LOADING_SET, {
+        target: storeTypes.WORD_MEANINGS_LOAD,
+        loading: true,
+      });
+      return api
+        .webApi()
+        .getWordMeanings({ word, wordLanguageCode, meaningLanguageCode })
+        .then(({ data, ok }) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.WORD_MEANINGS_LOAD,
+            loading: false,
+          });
+          commit(storeTypes.WORD_MEANINGS_SET, {
+            wordMeanings: data,
+          });
+          return data;
+        })
+        .catch((err) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.WORD_MEANINGS_LOAD,
+            loading: false,
+          });
+          throw err;
+        });
+    },
+    [storeTypes.WORD_CREATE](context, { data }) {
+      let { commit, dispatch, getters } = context;
+      commit(storeTypes.LOADING_SET, {
+        target: storeTypes.WORD_CREATE,
+        loading: true,
+      });
+      return api
+        .webApi()
+        .createWord({ data })
+        .then(({ data, ok }) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.WORD_CREATE,
+            loading: false,
+          });
+          commit(storeTypes.WORD_CREATE_SET, {
+            word: data,
+          });
+          return data;
+        })
+        .catch((err) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.WORD_CREATE,
             loading: false,
           });
           throw err;

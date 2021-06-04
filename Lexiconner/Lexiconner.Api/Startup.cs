@@ -4,6 +4,7 @@ using FluentValidation.AspNetCore;
 using Lexiconner.Api.Attributes;
 using Lexiconner.Application.ApiClients;
 using Lexiconner.Application.ApiClients.Scrapers;
+using Lexiconner.Application.ApplicationSettings;
 using Lexiconner.Application.Extensions;
 using Lexiconner.Application.Helpers;
 using Lexiconner.Application.Mapping;
@@ -60,6 +61,7 @@ namespace Lexiconner.Api
             services.AddOptions();
             services.AddHttpClient();
             services.Configure<ApplicationSettings>(Configuration);
+            services.Configure<MicrosoftTranslatorSettings>(Configuration.GetSection("MicrosoftTranslator"));
 
             ConfigureLogger(services);
             ConfigureMongoDb(services);
@@ -93,6 +95,8 @@ namespace Lexiconner.Api
             {
                 return new TMDbClient(config.TheMovieDatabase.ApiKeyV3Auth);    
             });
+            services.AddTransient<IMicrosoftTranslatorApiClient, MicrosoftTranslatorApiClient>();
+
             services.AddTransient<IReversoContextScraper, ReversoContextScraper>();
             services.AddTransient<IOxfordLearnersDictionariesScrapper, OxfordLearnersDictionariesScrapper>();
 
@@ -228,13 +232,23 @@ namespace Lexiconner.Api
             {
                 services.AddCors(options =>
                 {
-                    options.AddPolicy("default", builder =>
+                    options.AddPolicy("DefaultApi", builder =>
                     {
                         builder
                             .WithOrigins(config.Cors.AllowedOrigins.ToArray())
                             .AllowAnyMethod()
                             .AllowAnyHeader()
                             .AllowCredentials();
+                    });
+
+                    options.AddPolicy("BrowserExtensionApi", builder =>
+                    {
+                        builder
+                            //.WithOrigins("http://*.*", "https://*.*", "*://*.*")
+                            //.SetIsOriginAllowedToAllowWildcardSubdomains()
+                            .AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
                     });
                 });
             }
@@ -293,13 +307,15 @@ namespace Lexiconner.Api
                 app.UseHttpsRedirection();
             }
 
-            if (!HostingEnvironmentHelper.IsTestingAny())
-            {
-                app.UseCors("default");
-            }
-
             // UseRouting must go before any authorization. Otherwise authorization won't work properly.
             app.UseRouting();
+
+            if (!HostingEnvironmentHelper.IsTestingAny())
+            {
+                // app.UseCors() must appear between app.UseRouting() and app.UseEndpoints(...)
+                //app.UseCors("DefaultApi");
+                app.UseCors();
+            }
 
             app.UseAuthentication();
             app.UseAuthorization();

@@ -20,10 +20,10 @@
   >
     <!-- Custom selected option (when select closed) -->
     <template slot="singleLabel" slot-scope="props">
-      <div class="d-flex align-items-center">
+      <div class="" style="display: flex; alight-items: center">
         <img
-          style="width: 24px"
-          class="mr-2"
+          style="width: 24px; margin-right: 0.5rem"
+          class=""
           v-bind:src="`http://purecatamphetamine.github.io/country-flag-icons/3x2/${props.option.countryIsoAlpha2Code.toUpperCase()}.svg`"
         />
         <span class="option__desc">
@@ -33,10 +33,10 @@
     </template>
     <!-- Custom options -->
     <template v-if="withFlags" slot="option" slot-scope="props">
-      <div class="d-flex align-items-center">
+      <div class="" style="display: flex; alight-items: center">
         <img
-          style="width: 24px"
-          class="mr-2"
+          style="width: 24px; margin-right: 0.5rem"
+          class=""
           v-bind:src="`http://purecatamphetamine.github.io/country-flag-icons/3x2/${props.option.countryIsoAlpha2Code.toUpperCase()}.svg`"
         />
         <div class="">

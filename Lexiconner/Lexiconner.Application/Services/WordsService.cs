@@ -34,6 +34,7 @@ namespace Lexiconner.Application.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IImageService _imageService;
         private readonly ITwinwordWordDictionaryApiClient _twinwordWordDictionaryApiClient;
+        private readonly IMicrosoftTranslatorApiClient _microsoftTranslatorApiClient;
         private readonly IReversoContextScraper _reversoContextScraper;
         private readonly IOxfordLearnersDictionariesScrapper _oxfordLearnersDictionariesScrapper;
         
@@ -43,6 +44,7 @@ namespace Lexiconner.Application.Services
             IHttpClientFactory httpClientFactory,
             IImageService imageService,
             ITwinwordWordDictionaryApiClient twinwordWordDictionaryApiClient,
+            IMicrosoftTranslatorApiClient microsoftTranslatorApiClient,
             IReversoContextScraper reversoContextScraper,
             IOxfordLearnersDictionariesScrapper oxfordLearnersDictionariesScrapper
         )
@@ -52,6 +54,7 @@ namespace Lexiconner.Application.Services
             _httpClientFactory = httpClientFactory;
             _imageService = imageService;
             _twinwordWordDictionaryApiClient = twinwordWordDictionaryApiClient;
+            _microsoftTranslatorApiClient = microsoftTranslatorApiClient;
             _reversoContextScraper = reversoContextScraper;
             _oxfordLearnersDictionariesScrapper = oxfordLearnersDictionariesScrapper;
         }
@@ -138,6 +141,45 @@ namespace Lexiconner.Application.Services
         {
             var dictionary = await _dataRepository.GetOneAsync<UserDictionaryEntity>(x => x.UserId == userId && x.WordsLanguageCode == createDto.WordLanguageCode);
             if(dictionary == null)
+            {
+                throw new NotFoundException($"Dictionary for {createDto.WordLanguageCode} not found.");
+            }
+
+            var entity = _mapper.Map<WordEntity>(createDto);
+            entity.UserId = userId;
+            entity.UserDictionaryId = dictionary.Id;
+            CustomValidationHelper.Validate(entity);
+
+            // set image
+            if (entity.Word.Length > 3)
+            {
+                var imagesResults = await _imageService.FindImagesAsync(sourceLanguageCode: entity.WordLanguageCode, entity.Word);
+                imagesResults = _imageService.GetSuitableImages(imagesResults);
+                var image = imagesResults.FirstOrDefault();
+                if (image != null)
+                {
+                    entity.Images.Add(new GeneralImageEntity
+                    {
+                        Url = image.Url,
+                        Height = int.Parse(image.Height),
+                        Width = int.Parse(image.Width),
+                        Thumbnail = image.Thumbnail,
+                        ThumbnailHeight = int.Parse(image.ThumbnailHeight),
+                        ThumbnailWidth = int.Parse(image.ThumbnailWidth),
+                        Base64Encoding = image.Base64Encoding,
+                    });
+                }
+            }
+
+
+            await _dataRepository.AddAsync(entity);
+            return _mapper.Map<WordDto>(entity);
+        }
+
+        public async Task<WordDto> BrowserExtensionCreateWordAsync(string userId, BrowserExtensionWordCreateDto createDto)
+        {
+            var dictionary = await _dataRepository.GetOneAsync<UserDictionaryEntity>(x => x.UserId == userId && x.WordsLanguageCode == createDto.WordLanguageCode);
+            if (dictionary == null)
             {
                 throw new NotFoundException($"Dictionary for {createDto.WordLanguageCode} not found.");
             }
@@ -295,6 +337,34 @@ namespace Lexiconner.Application.Services
             return _mapper.Map<WordDto>(entity);
         }
 
+        public async Task<WordMeaningsDto> GetWordMeaningsAsync(string word, string wordLanguageCode, string meaningLanguageCode)
+        {
+            // when word lang == meaning lang then we need to search meanings in dictionary and don't do translation
+            if(wordLanguageCode == meaningLanguageCode)
+            {
+                throw new NotImplementedException($"{wordLanguageCode} -> {meaningLanguageCode} not supported yet");
+            }
+
+            var lookupResult = await _microsoftTranslatorApiClient.DictionaryLookupAsync(
+                word,
+                wordLanguageCode,
+                meaningLanguageCode
+            );
+
+            var result = new WordMeaningsDto()
+            {
+                Word = word,
+                WordLanguageCode = wordLanguageCode,
+                MeaningLanguageCode = meaningLanguageCode,
+                Meanings = lookupResult.Translations.Select(x => new WordMeaningsItemDto()
+                {
+                    Meaning = x.DisplayTarget,
+                    PartOfSpeechTag = x.PosTag,
+                }),
+            };
+            return result;
+        }
+
         public async Task<WordExamplesDto> GetWordExamplesAsync(string languageCode, string word)
         {
             var translationResult = await _reversoContextScraper.GetWordTranslationsAsync(
@@ -305,8 +375,8 @@ namespace Lexiconner.Application.Services
 
             var result = new WordExamplesDto()
             {
-                LanguageCode = languageCode,
                 Word = word,
+                LanguageCode = languageCode,
                 Examples = translationResult.Results.Select(x => new WordExampleItemDto()
                 {
                     Example = x.SourceLanguageSentence,

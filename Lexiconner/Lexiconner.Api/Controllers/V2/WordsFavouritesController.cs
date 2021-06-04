@@ -1,5 +1,6 @@
 ﻿using Lexiconner.Application.Services.Interfacse;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Net;
@@ -9,6 +10,7 @@ namespace Lexiconner.Api.Controllers.V2
 {
     [ApiController]
     [Authorize]
+    [EnableCors("DefaultApi")]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/words")]
     public class WordsFavouritesController : ApiControllerBase

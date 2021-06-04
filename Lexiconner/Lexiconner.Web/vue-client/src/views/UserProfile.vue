@@ -240,103 +240,7 @@
         </div>
       </div>
 
-      <h5>Notifications</h5>
-      <div class="row mb-5">
-        <div class="col-5">
-          <div class="list-group">
-            <li class="list-group-item border-gray">
-              <div
-                class="d-flex w-100 justify-content-start align-items-center"
-              >
-                <div class="w-100">
-                  <form v-on:submit.prevent="updateNotifications">
-                    <div class="form-group form-check">
-                      <input
-                        v-model="privateState.notificationsModel.isAlarmEnabled"
-                        id="isAlarmEnabled"
-                        type="checkbox"
-                        class="form-check-input"
-                      />
-                      <label class="form-check-label" for="isAlarmEnabled"
-                        >Alarm enabled</label
-                      >
-                    </div>
-                    <div class="form-group form-check">
-                      <input
-                        v-model="
-                          privateState.notificationsModel.isAlarmSoundEnabled
-                        "
-                        id="isAlarmSoundEnabled"
-                        type="checkbox"
-                        class="form-check-input"
-                      />
-                      <label class="form-check-label" for="isAlarmSoundEnabled"
-                        >Alarm sound</label
-                      >
-                    </div>
-                    <div class="form-group form-check">
-                      <input
-                        v-model="
-                          privateState.notificationsModel.isDoNotDisturbEnabled
-                        "
-                        id="isDoNotDisturbEnabled"
-                        type="checkbox"
-                        class="form-check-input"
-                      />
-                      <label
-                        class="form-check-label"
-                        for="isDoNotDisturbEnabled"
-                        >Do not disturb</label
-                      >
-                    </div>
-                    <div
-                      v-if="
-                        privateState.notificationsModel.isDoNotDisturbEnabled
-                      "
-                      class="form-group"
-                    >
-                      <div class="row">
-                        <div class="col">
-                          <div class="form-group">
-                            <label for="doNotDisturbFrom">From</label>
-                            <time-input
-                              v-model="
-                                privateState.notificationsModel.doNotDisturbFrom
-                              "
-                            />
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="form-group">
-                            <label for="doNotDisturbTo">To</label>
-                            <time-input
-                              v-model="
-                                privateState.notificationsModel.doNotDisturbTo
-                              "
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <loading-button
-                      type="submit"
-                      v-bind:loading="
-                        sharedState.loading[
-                          privateState.storeTypes.USER_INFO_NOTIFICATIONS_UPDATE
-                        ]
-                      "
-                      class="btn btn-outline-success"
-                      >Save</loading-button
-                    >
-                  </form>
-                </div>
-              </div>
-            </li>
-          </div>
-        </div>
-      </div>
-
-      <h5>Security</h5>
+      <h5>Security: TODO</h5>
       <div class="row mb-5">
         <div class="col-5">
           <div class="list-group">
@@ -400,7 +304,7 @@
         </div>
       </div>
 
-      <h5>Danger Zone</h5>
+      <h5>Danger Zone: TODO</h5>
       <div class="row mb-5">
         <div class="col-5">
           <div class="list-group">
@@ -461,14 +365,6 @@ const userInfoModelDefault = {
   timeZone: null,
 };
 
-const notificationsModelDefault = {
-  isAlarmEnabled: false,
-  isAlarmSoundEnabled: false,
-  isDoNotDisturbEnabled: false,
-  doNotDisturbFrom: null,
-  doNotDisturbTo: null,
-};
-
 const passwordChangeModelDefault = {
   passwordOld: "",
   passwordNew: "",
@@ -492,9 +388,6 @@ export default {
         },
         userInfoModel: {
           ...userInfoModelDefault,
-        },
-        notificationsModel: {
-          ...notificationsModelDefault,
         },
         passwordChangeModel: {
           ...passwordChangeModelDefault,
@@ -554,11 +447,6 @@ export default {
       ...(this.sharedState.userInfo || {}),
     };
 
-    this.privateState.notificationsModel = {
-      ...notificationsModelDefault,
-      ...((this.sharedState.userInfo || {}).notificationSettings || {}),
-    };
-
     // update model on state change
     this.$store.subscribe((mutation, state) => {
       let { type, payload } = mutation;
@@ -572,11 +460,6 @@ export default {
         this.privateState.userInfoModel = {
           ...this.privateState.userInfoModel,
           ...state.userInfo,
-        };
-
-        this.privateState.notificationsModel = {
-          ...this.privateState.notificationsModel,
-          ...state.userInfo.notificationSettings,
         };
       }
     });
