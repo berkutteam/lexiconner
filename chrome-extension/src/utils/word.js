@@ -46,10 +46,12 @@ class WordUtil {
         .find((sentence) =>
           sentence.toLowerCase().includes(selectedText.toLowerCase())
         ) || "";
-    console.log(1, searchTerm);
+
+    // simple approach: search only from the second parent, don't go up further
     let resultText =
       parentParentText
         .split(".")
+        .split(";")
         .map((sentence) => sentence + ".")
         .find((sentence) =>
           sentence.toLowerCase().includes(searchTerm.toLowerCase())
