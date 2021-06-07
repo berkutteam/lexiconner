@@ -14,6 +14,7 @@
 
 import apiUtil from "@/utils/api";
 import wordUtil from "@/utils/word";
+import languageUtil from "@/utils/language";
 import authService from "@/services/authService";
 
 console.log("backgroundWorker.js");
@@ -117,12 +118,6 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     return;
   }
 
-  // inject content script programatically into the page that shows word popup
-  // chrome.scripting.executeScript({
-  //   target: { tabId: tab.id },
-  //   files: ["js/addWordPopupContentScript.js"],
-  // });
-
   // inject content script programatically into the page to get page meta
   // NB: content script hasn't access to variables declared here, but they have accessto shared DOM
   console.log("Executing content script to get page meta...");
@@ -157,9 +152,17 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
       // build word request
       const pageMeta = request.meta;
+      if (!pageMeta.lang) {
+        throw new Error(`Can't figure out page language code.`);
+      }
+      const languageCode = languageUtil.getLanguageCode(pageMeta.lang);
+      if (!languageCode) {
+        throw new Error(`${pageMeta.lang} is not valid language.`);
+      }
+
       const word = {
         word: wordUtil.cleanupText(selectionText),
-        wordLanguageCode: pageMeta.lang,
+        wordLanguageCode: languageCode,
 
         pageMeta: {
           pageUrl,

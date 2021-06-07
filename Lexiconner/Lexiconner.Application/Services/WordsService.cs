@@ -145,6 +145,12 @@ namespace Lexiconner.Application.Services
                 throw new NotFoundException($"Dictionary for {createDto.WordLanguageCode} not found.");
             }
 
+            var existingCount = await _dataRepository.CountAllAsync<WordEntity>(x => x.Word == createDto.Word && x.Meaning == createDto.Meaning);
+            if (existingCount != 0)
+            {
+                throw new BadRequestException($"You already have word \"{createDto.Word}\" with meaning \"{createDto.Meaning}\" in you dictionary.");
+            }
+
             var entity = _mapper.Map<WordEntity>(createDto);
             entity.UserId = userId;
             entity.UserDictionaryId = dictionary.Id;
@@ -182,6 +188,12 @@ namespace Lexiconner.Application.Services
             if (dictionary == null)
             {
                 throw new NotFoundException($"Dictionary for {createDto.WordLanguageCode} not found.");
+            }
+
+            var existingCount = await _dataRepository.CountAllAsync<WordEntity>(x => x.Word == createDto.Word && x.Meaning == createDto.Meaning);
+            if(existingCount != 0)
+            {
+                throw new BadRequestException($"You already have word \"{createDto.Word}\" with meaning \"{createDto.Meaning}\" in you dictionary.");
             }
 
             var entity = _mapper.Map<WordEntity>(createDto);

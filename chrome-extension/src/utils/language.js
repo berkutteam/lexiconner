@@ -4,6 +4,11 @@ class LanguageUtil {
   constructor() {}
 
   /** Returns ISO 2 letter language code */
+  getLanguageCode(language) {
+    return language.trim().split(/-|_/)[0];
+  }
+
+  /** Returns ISO 2 letter language code */
   detectBrowserLanguages() {
     // e.g.: "en", "ru-RU", "ru", "en-US", "uk"
     const browserLocales =

@@ -11,7 +11,7 @@
 
     <time-zone-auto-detect />
 
-    <!-- notifications. each group - separate puprose. -->
+    <!-- #region notifications. each group - separate puprose. -->
 
     <!-- should be notable -->
     <notifications group="error" position="top center" v-bind:duration="7000" />
@@ -25,6 +25,8 @@
       position="top center"
       v-bind:duration="5000"
     />
+
+    <!-- #endregion -->
 
     <app-fullscreen-loader defaultTitle="Loading..." defaultText="" />
   </div>

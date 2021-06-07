@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Multiselect from "vue-multiselect";
+import Notifications from "vue-notification";
 import _ from "lodash";
 
 import store from "@/store";
@@ -8,10 +9,12 @@ import wordUtil from "@/utils/word";
 
 import App from "./App.vue";
 
-console.log("wordAddPopupContentScript.js");
+const logPrefix = "wordAddPopupContentScript.js.";
+console.log(logPrefix);
 
 // register globally
 Vue.component("multiselect", Multiselect);
+Vue.use(Notifications);
 
 // init
 apiUtil.init({
@@ -36,6 +39,7 @@ chrome.runtime.onMessage.addListener(function onMessageListener(
   sender,
   sendResponse
 ) {
+  console.log(logPrefix, "onMessage:", request);
   const { action, word } = request;
 
   if (action !== "contentScriptShowWordPopup") {

@@ -3,7 +3,7 @@ class WordUtil {
 
   /** Deletes unwated chars from the text */
   cleanupText(text) {
-    const notWantedRegex = /[^a-zA-Z- ]/g;
+    const notWantedRegex = /[!@#$%^&*()_=+]/g;
     const extraSpacesRegex = / {1,}/g;
     return text.replace(notWantedRegex, "").replace(extraSpacesRegex, " ");
   }
@@ -35,8 +35,8 @@ class WordUtil {
     let parentText = selection.anchorNode.parentNode.innerText;
     let parentParentText = selection.anchorNode.parentNode.parentNode.innerText;
 
-    console.log(1, text);
-    console.log(2, parentText);
+    // console.log(1, text);
+    // console.log(2, parentText);
     // console.log(3, parentParentText);
 
     // text must contain the whole sentece where word placed

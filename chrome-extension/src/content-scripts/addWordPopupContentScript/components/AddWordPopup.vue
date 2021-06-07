@@ -1,10 +1,19 @@
 <template>
-  <div v-if="privateState.isOpen" class="modal-overlay">
-    <div class="modal-wrapper" v-bind:style="privateState.coords">
+  <div
+    ref="modalOverlay"
+    v-if="privateState.isOpen"
+    v-on:click="(e) => onOverlayClick(e)"
+    class="modal-overlay"
+  >
+    <div
+      ref="modalWrapper"
+      class="modal-wrapper"
+      v-bind:style="privateState.popupCoords"
+    >
       <div class="modal-container">
-        <div class="modal-header">
+        <!-- <div class="modal-header">
           <h5>Add word</h5>
-        </div>
+        </div> -->
 
         <form
           v-if="!privateState.showCreatedWordSummary"
@@ -17,9 +26,8 @@
             </div>
             <br />
             <div>
-              <label>Meaning</label>
               <div>
-                <div><strong>Possible options</strong></div>
+                <div><strong>Possible meanings</strong></div>
                 <div v-if="wordMeaningsLoading">Loading...</div>
                 <div
                   v-if="!wordMeaningsLoading && wordMeanings"
@@ -43,7 +51,7 @@
               </div>
               <br />
               <div>
-                <div><strong>Enter manually</strong></div>
+                <div><strong>Custom meaning</strong></div>
                 <textarea
                   v-model="privateState.wordModel.meaning"
                   type="text"
@@ -64,33 +72,34 @@
               />
             </div>
             <br />
-            <div>
-              <label>Word language</label>
-              <language-code-select
-                v-model="privateState.wordModel.wordLanguageCode"
-                placeholder="Word language"
-                v-bind:languageLabelGetter="
-                  (option) => `${option.isoLanguageName}`
-                "
-                v-bind:withFlags="true"
-                v-on:change="
-                  (languageCode) =>
-                    (privateState.wordModel.wordLanguageCode = languageCode)
-                "
-              />
-            </div>
-            <br />
-            <div>
-              <label>Meaning language</label>
-              <language-code-select
-                v-model="privateState.wordModel.meaningLanguageCode"
-                placeholder="Meaning language"
-                v-bind:languageLabelGetter="
-                  (option) => `${option.isoLanguageName}`
-                "
-                v-bind:withFlags="true"
-                v-on:change="onMeaningLanguageCodeChange"
-              />
+            <div style="display: flex">
+              <div style="flex: 1; margin-right: 0.5rem">
+                <label>Word language</label>
+                <language-code-select
+                  v-model="privateState.wordModel.wordLanguageCode"
+                  placeholder="Word language"
+                  v-bind:languageLabelGetter="
+                    (option) => `${option.isoLanguageName}`
+                  "
+                  v-bind:withFlags="true"
+                  v-on:change="
+                    (languageCode) =>
+                      (privateState.wordModel.wordLanguageCode = languageCode)
+                  "
+                />
+              </div>
+              <div style="flex: 1">
+                <label>Meaning language</label>
+                <language-code-select
+                  v-model="privateState.wordModel.meaningLanguageCode"
+                  placeholder="Meaning language"
+                  v-bind:languageLabelGetter="
+                    (option) => `${option.isoLanguageName}`
+                  "
+                  v-bind:withFlags="true"
+                  v-on:change="onMeaningLanguageCodeChange"
+                />
+              </div>
             </div>
             <br />
           </div>
@@ -126,6 +135,7 @@ import _ from "lodash";
 import { storeTypes } from "@/constants/index";
 import languageUtil from "@/utils/language";
 import wordUtil from "@/utils/word";
+import notificationUtil from "@/utils/notification";
 import LanguageCodeSelect from "@/components/LanguageCodeSelect";
 
 const wordModelDefault = {
@@ -147,7 +157,7 @@ export default {
       privateState: {
         storeTypes: storeTypes,
         isOpen: false,
-        coords: {
+        popupCoords: {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
@@ -174,6 +184,7 @@ export default {
     // store getter
     ...mapGetters([]),
   },
+  updated: function () {},
   watch: {
     // reload meanings when word is edited
     "privateState.wordModel.word": function (newVale, oldValue) {
@@ -192,41 +203,57 @@ export default {
       console.log(`AddWordPopup.open.`, selectionCoords, wordObj);
       const { word, wordLanguageCode, examples } = wordObj;
 
-      // TODO: compute properly
-      // if (selectionCoords) {
-      //   // compute coords to place popup near the selection
-      //   let { top, right, bootom, left, width, height, x, y } = selectionCoords;
-      //   const popupMinWidthPx = 300;
-      //   const popupMinHeighthPx = 200;
+      if (selectionCoords) {
+        // compute coords to place popup near the selection
+        let { top, right, bootom, left, width, height, x, y } = selectionCoords;
+        const popupWidthPx = 360;
+        const popupHeighthPx = 360;
+        const minPxFromWindowBorders = 5;
 
-      //   // place bottom left
-      //   let initialTopPx = top + height + 10;
-      //   let initialLeftPx = left;
+        // place bottom center first
+        let topPx = top + height + 10;
+        let leftPx = left; // - parseInt(popupWidthPx / 2);
+        let bottomPx = "unset";
+        let rightPx = "unset";
 
-      //   if (initialTopPx + popupMinHeighthPx >= window.innerHeight) {
-      //     // place top left (can intersect with the selection)
-      //     initialTopPx = top - height - popupMinHeighthPx;
-      //   }
-      //   if (initialLeftPx + popupMinWidthPx >= window.innerWidth) {
-      //     // place left (can intersect with the selection)
-      //     initialLeftPx = window.innerWidth - popupMinWidthPx - 20;
-      //   }
+        if (topPx + popupHeighthPx >= window.innerHeight) {
+          // place top
+          topPx = top - 10 - popupHeighthPx;
+          bottomPx = "unset";
 
-      //   this.privateState.coords = {
-      //     top: initialTopPx + "px",
-      //     left: initialLeftPx + "px",
-      //     transform: null,
-      //   };
+          if (topPx < minPxFromWindowBorders) {
+            topPx = minPxFromWindowBorders;
+            bottomPx = "unset";
+          }
+        }
 
-      //   console.log("popup coords:", this.privateState.coords);
-      // }
+        if (leftPx + popupWidthPx >= window.innerWidth) {
+          // place right
+          leftPx = "unset";
+          rightPx = minPxFromWindowBorders;
+        }
+        if (leftPx < minPxFromWindowBorders) {
+          // place left
+          leftPx = minPxFromWindowBorders;
+          rightPx = "unset";
+        }
+
+        this.privateState.popupCoords = {
+          top: topPx === "unset" ? "unset" : topPx + "px",
+          left: leftPx === "unset" ? "unset" : leftPx + "px",
+          bottom: bottomPx === "unset" ? "unset" : bottomPx + "px",
+          right: rightPx === "unset" ? "unset" : rightPx + "px",
+          transform: null,
+        };
+
+        console.log("popupCoords:", this.privateState.popupCoords);
+      }
 
       const detectedLanguages = languageUtil.detectBrowserLanguages();
       const meaningLanguageCode = detectedLanguages
         ? detectedLanguages.find((x) => x !== wordLanguageCode)
         : "";
 
-      this.privateState.isOpen = true;
       this.privateState.wordModel = {
         ...wordModelDefault,
         word,
@@ -243,6 +270,8 @@ export default {
       }
 
       this.loadWordMeanings({ word, wordLanguageCode, meaningLanguageCode });
+
+      this.privateState.isOpen = true;
     },
     close: function () {
       this.privateState.isOpen = false;
@@ -258,6 +287,12 @@ export default {
       this.reset();
       this.$emit("close");
     },
+    onOverlayClick: function (e) {
+      const isOverlayClicked = this.$refs.modalOverlay === e.target;
+      if (isOverlayClicked) {
+        this.close();
+      }
+    },
     loadWordMeanings: function ({
       word,
       wordLanguageCode,
@@ -272,7 +307,7 @@ export default {
         .then()
         .catch((err) => {
           console.error(err);
-          // notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+          notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
         });
     },
     loadWordMeaningsDebounce: _.debounce(function (params) {
@@ -304,7 +339,7 @@ export default {
         })
         .catch((err) => {
           console.error(err);
-          // notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+          notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
         });
     },
   },
@@ -313,18 +348,21 @@ export default {
 
 <style scoped lang="scss">
 .modal-overlay {
+  box-sizing: border-box;
   position: fixed;
   z-index: 9998;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  // background-color: rgba(0, 0, 0, 0.5);
+  background: transparent;
   display: table;
   transition: opacity 0.3s ease;
 }
 
 .modal-wrapper {
+  box-sizing: border-box;
   display: block;
   position: fixed;
   z-index: 9998;
@@ -339,29 +377,40 @@ export default {
 }
 
 .modal-container {
-  min-width: 300px;
-  width: 300px;
+  box-sizing: border-box;
+  min-width: 360px;
+  max-width: 360px;
+  width: 360px;
+  min-height: 360px;
+  max-height: 360px;
+  height: 360px;
   margin: 0px auto;
   padding: 1rem;
   background-color: #fff;
   border-radius: 2px;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
+  box-shadow: 0px 1px 10px 2px rgb(19 18 18 / 50%);
   transition: all 0.3s ease;
   font-family: Helvetica, Arial, sans-serif;
   overflow-y: auto;
 }
 
+.modal-header {
+  margin-bottom: 20px;
+}
+
 .modal-body {
-  margin: 20px 0;
+  margin: 0;
 }
 
 .modal-footer {
   display: flex;
+  margin-top: 20px;
 }
 
 .word-meaning-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: flex-start;
   max-height: 100px;
@@ -371,16 +420,17 @@ export default {
     margin-bottom: 0.2rem;
     padding: 0.5rem;
     background-color: #ececec;
-    width: 100%;
+    width: auto;
     box-sizing: border-box;
     cursor: pointer;
+    margin-top: 0.2rem;
 
     &:hover {
       background-color: darken(#ececec, 10%);
     }
 
     &:not(:last-child) {
-      margin-bottom: 0.2rem;
+      margin-right: 0.2rem;
     }
 
     &.selected {
