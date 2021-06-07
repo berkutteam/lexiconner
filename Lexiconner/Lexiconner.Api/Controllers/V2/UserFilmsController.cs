@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Lexiconner.Api.Controllers.V2
 {
     [ApiController]
-    [Authorize]
+    [Authorize(policy: "DefaultWebApiAuth")]
     [EnableCors("DefaultApi")]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/[controller]")]

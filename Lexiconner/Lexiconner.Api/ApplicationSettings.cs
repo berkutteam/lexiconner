@@ -32,6 +32,7 @@ namespace Lexiconner.Api
         public string Authority { get; set; }
         public string Audience { get; set; }
         public string WebApiScope { get; set; }
+        public string BrowserExtensionWebApiScope { get; set; }
     }
 
     public class UrlsSettings

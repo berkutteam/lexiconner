@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace Lexiconner.Api.Controllers.V2.BrowserExtension
 {
     [ApiController]
-    [Authorize]
+    [Authorize(policy: "BrowserExtensionWebApiAuth")]
     [EnableCors("BrowserExtensionApi")]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/browser-extension/words")]

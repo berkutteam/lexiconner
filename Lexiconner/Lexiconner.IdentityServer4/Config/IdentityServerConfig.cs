@@ -52,6 +52,7 @@ namespace Lexiconner.IdentityServer4.Config
                     //JwtClaimTypes.Email,
                     //JwtClaimTypes.WebSite,
                 }),
+                new ApiScope("browser_extension_webapi", "Lexiconner Browser Extension Web Api"),
             };
         }
 
@@ -194,7 +195,7 @@ namespace Lexiconner.IdentityServer4.Config
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OfflineAccess, // refresh token
-                        "webapi"
+                        "browser_extension_webapi"
                     },
 
                 // identity token settigs

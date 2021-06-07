@@ -176,10 +176,15 @@ namespace Lexiconner.Api
             // validate api scope claim is present (starting from IdentityServer v4)
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("DefaultWebApiScope", policy =>
+                options.AddPolicy("DefaultWebApiAuth", policy =>
                 {
                     policy.RequireAuthenticatedUser();
                     policy.RequireClaim("scope", config.JwtBearerAuth.WebApiScope);
+                });
+                options.AddPolicy("BrowserExtensionWebApiAuth", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim("scope", config.JwtBearerAuth.BrowserExtensionWebApiScope);
                 });
             });
 
@@ -322,7 +327,8 @@ namespace Lexiconner.Api
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers().RequireAuthorization("DefaultWebApiScope");
+                endpoints.MapControllers();
+                //.RequireAuthorization("DefaultWebApiAuth");
             });
 
             // Swagger

@@ -6,6 +6,7 @@ import App from "./App.vue";
 import router from "@/router";
 import store from "@/store";
 import apiUtil from "@/utils/api";
+import notificationUtil from "@/utils/notification";
 import authService, { authEvents } from "@/services/authService";
 import { storeTypes } from "@/constants/index";
 
@@ -65,7 +66,12 @@ async function runApp() {
 
   if (await authService.checkIsAuthenticatedAsync()) {
     // load profile before rendering the app
-    await store.dispatch(storeTypes.PROFILE_LOAD);
+    try {
+      await store.dispatch(storeTypes.PROFILE_LOAD);
+    } catch (err) {
+      console.error(`Can't load profile:`, err);
+      notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+    }
   }
 
   renderApp();

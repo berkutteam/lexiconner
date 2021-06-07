@@ -36,6 +36,7 @@ namespace Lexiconner.Api
             RuleFor(x => x.Authority).NotEmpty();
             RuleFor(x => x.Audience).NotEmpty();
             RuleFor(x => x.WebApiScope).NotEmpty();
+            RuleFor(x => x.BrowserExtensionWebApiScope).NotEmpty();
         }
     }
 

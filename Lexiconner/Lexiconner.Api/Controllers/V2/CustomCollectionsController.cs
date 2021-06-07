@@ -9,7 +9,7 @@ namespace Lexiconner.Api.Controllers.V2
 {
     // TODO: add tests
     [ApiController]
-    [Authorize]
+    [Authorize(policy: "DefaultWebApiAuth")]
     [EnableCors("DefaultApi")]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/customcollections")]
