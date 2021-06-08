@@ -50,4 +50,10 @@
     <ProjectReference Include="..\Lexiconner.Domain\Lexiconner.Domain.csproj" />
     <ProjectReference Include="..\Lexiconner.Persistence\Lexiconner.Persistence.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update=".env">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

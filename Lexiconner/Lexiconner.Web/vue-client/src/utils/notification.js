@@ -4,6 +4,10 @@ import Vue from "vue";
 import _ from "lodash";
 import ServerBaseErrorModel from "@/models/ServerBaseErrorModel";
 import NetworkErrorModel from "@/models/NetworkErrorModel";
+import ServerUnknownErrorModel from "@/models/ServerUnknownErrorModel.js";
+import ServerNotFoundErrorModel from "@/models/ServerNotFoundErrorModel.js";
+import ServerUnauthorizedError from "@/models/ServerUnauthorizedError.js";
+import ServerForbiddenError from "@/models/ServerForbiddenError.js";
 
 // Server error response
 // {
@@ -37,12 +41,13 @@ class Notification {
   }
 
   isServerErrorResponse(err) {
+    // for 401, 403 data can be empty string or missing at all
     if (
       err instanceof ServerBaseErrorModel &&
       err.config &&
       _.isObject(err.config) &&
-      err.data &&
-      _.isObject(err.data) &&
+      // err.data &&
+      // _.isObject(err.data) &&
       err.headers &&
       _.isObject(err.headers) &&
       err.request &&
@@ -76,30 +81,39 @@ class Notification {
   showErrorIfServerErrorResponse(err) {
     if (this.isServerErrorResponse(err)) {
       let { config, data, header, request, status, statusText } = err;
-      let { errors, title } = data;
 
-      if (!errors) {
-        return;
-      }
-
-      let ntitle = title || "Error";
+      let ntitle = "Error";
       let ntext = "Something went wrong. Please try again.";
 
-      // ignore debugStackTrace that contains debug info
-      let keys = Object.keys(errors).filter((key) => key !== "debugStackTrace");
-      if (keys.length > 0) {
-        let errorList = keys.map((key, i) => {
-          if (_.isArray(errors[key])) {
-            let subErrorList = errors[key].join("<br/>"); // uses markup
-            return `${
-              errors[key].length > 1 && i !== 0 ? "<br/>" : ""
-            }${subErrorList}`;
-          } else if (_.isString(errors[key])) {
-            return errors[key];
-          }
-          return "";
-        });
-        ntext = errorList.join("<br/>"); // uses markup
+      if (data && _.isObject(data)) {
+        let { errors, title } = data;
+
+        ntitle = title || "Error";
+
+        // ignore debugStackTrace that contains debug info
+        let keys = Object.keys(errors).filter(
+          (key) => key !== "debugStackTrace"
+        );
+        if (keys.length > 0) {
+          let errorList = keys.map((key, i) => {
+            if (_.isArray(errors[key])) {
+              let subErrorList = errors[key].join("<br/>"); // uses markup
+              return `${
+                errors[key].length > 1 && i !== 0 ? "<br/>" : ""
+              }${subErrorList}`;
+            } else if (_.isString(errors[key])) {
+              return errors[key];
+            }
+            return "";
+          });
+          ntext = errorList.join("<br/>"); // uses markup
+        }
+      } else if (err instanceof ServerUnauthorizedError) {
+        ntitle = "Unauthorized";
+        ntext = "You session expired or you are not logged in";
+      } else if (err instanceof ServerForbiddenError) {
+        ntitle = "Forbidden";
+        ntext = "You don't have enough permission to perform the action";
       }
 
       Vue.notify({

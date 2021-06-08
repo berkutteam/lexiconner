@@ -41,6 +41,7 @@ namespace Lexiconner.Api.Controllers.V2
             return BaseResponse(result);
         }
 
+        [Authorize(Roles = "RootAdminRole")]
         [HttpPost]
         [ProducesResponseType(typeof(BaseApiResponseDto<WordSetDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]

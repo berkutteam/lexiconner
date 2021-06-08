@@ -3,6 +3,7 @@
 import Vue from "vue";
 import Oidc from "oidc-client";
 import { UserInfoService } from "oidc-client/src/UserInfoService.js";
+import jwtDecode from "jwt-decode";
 import store from "@/store";
 import { storeTypes } from "@/constants/index";
 import router from "@/router";
@@ -61,6 +62,16 @@ import router from "@/router";
 //     preferred_username,
 // } = profile;
 
+const claimTypes = {
+  sub: "sub",
+  email: "email",
+  emailVerified: "email_verified",
+  emailAddress: "emailaddress",
+  name: "name",
+  preferredUsername: "preferred_username",
+  role: "role",
+};
+
 class AuthService {
   constructor() {
     this.config = null;
@@ -95,7 +106,8 @@ class AuthService {
     });
 
     // create interal Oidc UserInfoService to manually read claims from JWT
-    // NB: cam read cliams only from access_token
+    // NB: cam read claims only from access_token
+    // getClaims - queries /connect/userinfo each time
     this.userInfoService = new UserInfoService(this.userManager.settings); // don't use destruction to save getters
     // console.log("AuthService: userInfoService", this.userInfoService);
 
@@ -168,19 +180,8 @@ class AuthService {
    */
   async isAuthenticated() {
     let user = await this.userManager.getUser();
-    let isRegistrationCompleted =
-      user && user.profile && user.profile.is_pre_registration === "false";
-    return !!user; // && isRegistrationCompleted ? true : false;
+    return !!user;
   }
-
-  // /**
-  //  * Has all tokens, but not completed registration process
-  //  */
-  // async isNotFullyAuthenticated() {
-  //     let user = await this.userManager.getUser();
-  //     let isRegistrationCompleted = user && user.profile && (user.profile.is_pre_registration === 'true');
-  //     return !!user && isRegistrationCompleted ? true : false;
-  // }
 
   getUser() {
     return this.userManager
@@ -189,7 +190,10 @@ class AuthService {
         // console.log("AuthService: getUser: ", user);
         if (user) {
           console.log("AuthService: isAuthenticated: ", true);
-          // console.log("AuthService: user.access_token claims: ", await this.userInfoService.getClaims(user.access_token));
+          console.log(
+            "AuthService: user.access_token claims: ",
+            await this.userInfoService.getClaims(user.access_token)
+          );
 
           store.commit(storeTypes.AUTH_USER_SET, {
             user,
@@ -215,6 +219,83 @@ class AuthService {
           text: "Something went wrong. Can't read user info!",
         });
       });
+  }
+
+  async getUserRolesAsync() {
+    const user = store.state.auth.user || (await this.getUser());
+    const { access_token } = user;
+
+    // slow - queries server for claims
+    // const accessTokenClaims = await this.userInfoService.getClaims(
+    //   access_token
+    // );
+
+    // fast - get claims from JWT
+    const accessTokenClaims = this.decodeAccessToken(access_token);
+
+    let claimRoles = accessTokenClaims[claimTypes.role];
+
+    if (!claimRoles) {
+      console.warn(
+        `access_token doesn't contain "${claimTypes.role}" role claim.`
+      );
+      claimRoles = [];
+    }
+
+    // can be string if 1 role or aray if 1+
+    if (!Array.isArray(claimRoles)) {
+      claimRoles = [claimRoles];
+    }
+
+    console.log(`AuthService. getUserRolesAsync. claim roles:`, claimRoles);
+    return claimRoles;
+  }
+
+  decodeIdentityToken(identityToken) {
+    const decoded = jwtDecode(identityToken);
+    const {
+      // default Idsr4 claims
+      nbf, // not valid before (seconds since Unix epoch)
+      exp, // expiration (seconds since Unix epoch)
+      iss, // issued by (URI)
+      aud, // audience
+      sub, // subject (user id)
+      auth_time, // time when authentication occured
+      idp, // Idsr identity provider
+      iat, // issued at (seconds since Unix epoch)
+
+      // no custom claims, only the default ones
+    } = decoded;
+    return decoded;
+  }
+
+  decodeAccessToken(accessToken) {
+    const decoded = jwtDecode(accessToken);
+    const {
+      // default Idsr4 claims
+      nbf, // not valid before (seconds since Unix epoch)
+      exp, // expiration (seconds since Unix epoch)
+      iss, // issued by (URI)
+      aud, // audience
+      sub, // subject (user id)
+      auth_time, // time when authentication occured
+      idp, // Idsr identity provider
+      jti, // JWT token id
+      iat, // issued at (seconds since Unix epoch)
+      scope, // array of allowed scopes and resources. E.g. openid, profile, offline_access, webapi
+
+      // custom claims
+      email,
+      name,
+      role,
+
+      // custom client claims
+      client_email,
+      client_email_verified,
+      client_browser_extension_version,
+      // ...
+    } = decoded;
+    return decoded;
   }
 
   login() {

@@ -127,6 +127,12 @@ const storeTypes = {
   ERROR_PAGE_DATA_RESET: "ERROR_PAGE_DATA_RESET",
 };
 
+const roleNames = {
+  rootAdmin: "RootAdmin",
+  admin: "Admin",
+  user: "User",
+};
+
 const traingTypes = {
   FlashCards: "FlashCards",
   WordMeaning: "WordMeaning",
@@ -136,4 +142,4 @@ const traingTypes = {
   ListenWords: "ListenWords",
 };
 
-export { storeTypes, traingTypes };
+export { storeTypes, roleNames, traingTypes };

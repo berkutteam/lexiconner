@@ -7,6 +7,8 @@ import NetworkErrorModel from "../models/NetworkErrorModel";
 import ServerErrorModel from "../models/ServerErrorModel";
 import ServerUnknownErrorModel from "../models/ServerUnknownErrorModel.js";
 import ServerNotFoundErrorModel from "../models/ServerNotFoundErrorModel.js";
+import ServerUnauthorizedError from "../models/ServerUnauthorizedError.js";
+import ServerForbiddenError from "../models/ServerForbiddenError.js";
 
 import authService from "@/services/authService";
 
@@ -152,7 +154,14 @@ function handleApiErrorResponse(err) {
   if (response.status === 400) {
     // Validation error
     throw new ServerValidationErrorModel(response);
+  } else if (response.status === 401) {
+    // Unauthorized
+    throw new ServerUnauthorizedError(response);
+  } else if (response.status === 403) {
+    // Forbidden
+    throw new ServerForbiddenError(response);
   } else if (response.status === 404) {
+    // Not found
     throw new ServerNotFoundErrorModel(response);
   } else if (response.status === 500) {
     // Server error
@@ -191,65 +200,13 @@ class API {
   identity() {
     let url = `${this.config.identityUrl}/api/v1/<endpoint>`;
 
-    return {
-      // getRegistrationInfo() {
-      //     return axiosRequest({ url: buildUrl(url, `account/register/info`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // getPreRegistrationUser({ preRegistrationUserId }) {
-      //     return axiosRequest({ url: buildUrl(url, `account/register/preregistration-users/${preRegistrationUserId}`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // sendSmsTokenForRegistration({ phoneNumber, preRegistrationUserId }) {
-      //     return axiosRequest({ url: buildUrl(url, `account/register/sms/send`, {}), method: "post", data: { phoneNumber, preRegistrationUserId } }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // validateSmsTokenForRegistration({ phoneNumber, token, preRegistrationUserId }) {
-      //     return axiosRequest({ url: buildUrl(url, `account/register/sms/validate`, {}), method: "post", data: { phoneNumber, token, preRegistrationUserId } }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // register({ user }) {
-      //     return axiosRequest({ url: buildUrl(url, `account/register`, {}), method: "post", data: user }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // sendSmsPhoneNumberChangeToken({ phoneNumber }) {
-      //     return axiosAuthRequest({ url: buildUrl(url, `account/phone-change/sms/send`, {}), method: "post", data: { phoneNumber } }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // getUserAccount() {
-      //     return axiosAuthRequest({ url: buildUrl(url, `account`, {}), method: "get", data: {} }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // updateUserAccount(data) {
-      //     return axiosAuthRequest({ url: buildUrl(url, `account`, {}), method: "put", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // deleteUserAccount({ userConfirmation }) {
-      //     return axiosAuthRequest({ url: buildUrl(url, `account`, {}), method: "delete", data: { userConfirmation: userConfirmation } }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // passwordChange({ passwordOld, passwordNew, passwordNewConfirm }) {
-      //     return axiosAuthRequest({ url: buildUrl(url, `manage/password/change`, {}), method: "post", data: { passwordOld, passwordNew, passwordNewConfirm } }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // getMyPermissions({ }) {
-      //     return axiosAuthRequest({ url: buildUrl(url, `permissions/my`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // getScopedPermissions({ scopeId }) {
-      //     return axiosAuthRequest({ url: buildUrl(url, `permissions/scoped/${scopeId}`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // getUserScopedPermissions({ scopeId, userId }) {
-      //     return axiosAuthRequest({ url: buildUrl(url, `permissions/scoped/${scopeId}/${userId}`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // updateUserScopedPermissions({ scopeId, userId, permissions, roles }) {
-      //     return axiosAuthRequest({ url: buildUrl(url, `permissions/scoped/${scopeId}`, {}), method: "put", data: { userId, permissions, roles } }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-    };
+    return {};
   }
 
   webApi() {
     let url = `${this.config.apiUrl}/api/v2/<endpoint>`;
 
     return {
-      // // values (test)
-      // testUnauthorized() {
-      //     return axiosRequest({ url: buildUrl(url, `values/TestUnauthorized`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-
-      // getEnums() {
-      //     return axiosRequest({ url: buildUrl(url, `enums`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-
       getLanguages() {
         return axiosRequest({
           url: buildUrl(url, `languages`, {}),
@@ -258,35 +215,6 @@ class API {
           .then(handleApiResponse)
           .catch(handleApiErrorResponse);
       },
-
-      // getTermsOfUse() {
-      //     return axiosRequest({ url: buildUrl(url, `referenceinformation/terms-of-use`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // getCountries() {
-      //     return axiosRequest({ url: buildUrl(url, `referenceinformation/countries`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // getLanguages() {
-      //     return axiosRequest({ url: buildUrl(url, `referenceinformation/languages`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // getTimeZones() {
-      //     return axiosRequest({ url: buildUrl(url, `referenceinformation/timezones`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-
-      // getUserInfo() {
-      //     return axiosAuthRequest({ url: buildUrl(url, `userinfo`, {}), method: "get" }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // updateUserInfo(data) {
-      //     return axiosAuthRequest({ url: buildUrl(url, `userinfo`, {}), method: "put", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // updateUserInfoNotifications(data) {
-      //     return axiosAuthRequest({ url: buildUrl(url, `userinfo/notifications`, {}), method: "put", data: { ...data } }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // setUserInfoTimeZone({ timeZoneId }) {
-      //     return axiosAuthRequest({ url: buildUrl(url, `userinfo/timezone`, {}), method: "post", data: { timeZoneId } }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
-      // setCurrentUserCompany({ companyId }) {
-      //     return axiosAuthRequest({ url: buildUrl(url, `userinfo/current-company`, {}), method: "put", data: { companyId } }).then(handleApiResponse).catch(handleApiErrorResponse);
-      // },
 
       // profile
       getProfile() {

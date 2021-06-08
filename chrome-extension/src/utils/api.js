@@ -7,6 +7,8 @@ import NetworkErrorModel from "../models/NetworkErrorModel";
 import ServerErrorModel from "../models/ServerErrorModel";
 import ServerUnknownErrorModel from "../models/ServerUnknownErrorModel.js";
 import ServerNotFoundErrorModel from "../models/ServerNotFoundErrorModel.js";
+import ServerUnauthorizedError from "../models/ServerUnauthorizedError.js";
+import ServerForbiddenError from "../models/ServerForbiddenError.js";
 
 import authService from "@/services/authService";
 
@@ -152,7 +154,14 @@ function handleApiErrorResponse(err) {
   if (response.status === 400) {
     // Validation error
     throw new ServerValidationErrorModel(response);
+  } else if (response.status === 401) {
+    // Unauthorized
+    throw new ServerUnauthorizedError(response);
+  } else if (response.status === 403) {
+    // Forbidden
+    throw new ServerForbiddenError(response);
   } else if (response.status === 404) {
+    // Not found
     throw new ServerNotFoundErrorModel(response);
   } else if (response.status === 500) {
     // Server error

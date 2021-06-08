@@ -3,7 +3,9 @@
 import Vue from "vue";
 import Router from "vue-router";
 import store from "@/store";
+import { roleNames } from "@/constants/index";
 import miscUtils from "@/utils/misc";
+import authService from "@/services/authService";
 
 import Home from "./views/Home.vue";
 import ErrorView from "./views/ErrorView.vue";
@@ -51,7 +53,7 @@ function mapRouteParamsToProps(route) {
  * when page was refreshed.
  * NB: do not guarantee that all the required data will be loaded until wait time end.
  */
-async function waitAppInitialization({ to, from, next }) {
+async function waitAppInitializationAsync({ to, from, next }) {
   const waitRetries = 5;
   const waitTimeStepFactor = 0.5;
   let waitTimeMs = 500;
@@ -76,6 +78,7 @@ async function waitAppInitialization({ to, from, next }) {
   console.log(
     `App was initialized. Processing to route ${to.name}: ${to.path}.`
   );
+  next();
 }
 
 function checkAuthenticated({ to, from, next }) {
@@ -101,8 +104,14 @@ function checkAuthenticated({ to, from, next }) {
   }
 }
 
-function checkPermissions({ to, from, next, permisions, scopeId }) {
-  if (store.getters.isUserHasPermissions(permisions, scopeId)) {
+async function checkRolesAsync({ to, from, next, roles }) {
+  const userRoles = await authService.getUserRolesAsync();
+  console.log(`checkRoles. checking required roles`, roles, `in`, userRoles);
+  if (
+    !roles ||
+    roles.length === 0 ||
+    roles.every((role) => userRoles.includes(role))
+  ) {
     next();
   } else {
     console.error(
@@ -112,11 +121,36 @@ function checkPermissions({ to, from, next, permisions, scopeId }) {
     Vue.notify({
       group: "error",
       type: "error",
-      title: "Access denied!",
-      text: "Insufficient permissions!",
+      title: "Access denied for the page!",
+      text: `Insufficient permissions to proceed to the page ${to.path}`,
     });
 
     next(false); // abort the current navigation
+  }
+}
+
+/** Applies N guards sequentially. Guard might be sync or async. */
+async function guardPipelineAsync({ to, from, next, guards }) {
+  let totalSuccess = true;
+  let nextMockParams = null;
+  const nextMock = (successOrRoute) => {
+    nextMockParams = successOrRoute === false ? false : successOrRoute;
+  };
+
+  for (const guard of guards) {
+    await guard(to, from, nextMock);
+    totalSuccess = totalSuccess && nextMockParams !== false;
+
+    // if one of the guards terminates navigation then there is no need to proceed other guards
+    if (nextMockParams === false) {
+      break;
+    }
+  }
+
+  if (totalSuccess === true) {
+    next();
+  } else {
+    next(nextMockParams === false ? false : nextMockParams);
   }
 }
 
@@ -136,7 +170,7 @@ export default new Router({
       props: true,
       meta: { layout: "home" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
 
         if (store.state.auth.isAuthenticated) {
           next({
@@ -170,7 +204,7 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
         checkAuthenticated({ to, from, next });
       },
     },
@@ -181,7 +215,7 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
         checkAuthenticated({ to, from, next });
       },
     },
@@ -192,7 +226,7 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
         checkAuthenticated({ to, from, next });
       },
     },
@@ -203,7 +237,7 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
         checkAuthenticated({ to, from, next });
       },
     },
@@ -214,7 +248,7 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
         checkAuthenticated({ to, from, next });
       },
     },
@@ -225,7 +259,7 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
         checkAuthenticated({ to, from, next });
       },
     },
@@ -236,7 +270,7 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
         checkAuthenticated({ to, from, next });
       },
     },
@@ -247,7 +281,7 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
         checkAuthenticated({ to, from, next });
       },
     },
@@ -258,7 +292,7 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
         checkAuthenticated({ to, from, next });
       },
     },
@@ -269,7 +303,7 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
         checkAuthenticated({ to, from, next });
       },
     },
@@ -280,7 +314,7 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
         checkAuthenticated({ to, from, next });
       },
     },
@@ -291,8 +325,23 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
-        checkAuthenticated({ to, from, next });
+        await guardPipelineAsync({
+          to,
+          from,
+          next,
+          guards: [
+            async (to, from, next) =>
+              await waitAppInitializationAsync({ to, from, next }),
+            (to, from, next) => checkAuthenticated({ to, from, next }),
+            async (to, from, next) =>
+              await checkRolesAsync({
+                to,
+                from,
+                next,
+                roles: [roleNames.rootAdmin],
+              }),
+          ],
+        });
       },
     },
     {
@@ -302,8 +351,23 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
-        checkAuthenticated({ to, from, next });
+        await guardPipelineAsync({
+          to,
+          from,
+          next,
+          guards: [
+            async (to, from, next) =>
+              await waitAppInitializationAsync({ to, from, next }),
+            (to, from, next) => checkAuthenticated({ to, from, next }),
+            async (to, from, next) =>
+              await checkRolesAsync({
+                to,
+                from,
+                next,
+                roles: [roleNames.rootAdmin],
+              }),
+          ],
+        });
       },
     },
     {
@@ -313,7 +377,7 @@ export default new Router({
       props: true,
       meta: { layout: "default" },
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
         checkAuthenticated({ to, from, next });
       },
     },
@@ -341,7 +405,7 @@ export default new Router({
       component: UserProfile,
       props: true,
       beforeEnter: async (to, from, next) => {
-        await waitAppInitialization({ to, from, next });
+        await waitAppInitializationAsync({ to, from, next });
         checkAuthenticated({ to, from, next });
       },
     },

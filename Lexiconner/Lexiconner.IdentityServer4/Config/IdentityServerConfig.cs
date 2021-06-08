@@ -320,7 +320,7 @@ namespace Lexiconner.IdentityServer4.Config
                 {
                     Name = RoleConfig.AdminRole
                 },
-                 new ApplicationRoleEntity
+                new ApplicationRoleEntity
                 {
                     Name = RoleConfig.UserRole
                 }
@@ -432,11 +432,6 @@ namespace Lexiconner.IdentityServer4.Config
                             Value = "johndoe@test.com",
                             Issuer = null,
                         },
-                        new MongoClaim() {
-                            Type = JwtClaimTypes.EmailVerified,
-                            Value = "true",
-                            Issuer = null,
-                        },
                     },
                     IsImportInitialData = true,
                     IsUpdateExistingDataOnSeed = true,
@@ -464,11 +459,6 @@ namespace Lexiconner.IdentityServer4.Config
                         new MongoClaim() {
                             Type = JwtClaimTypes.Email,
                             Value = "bobmarley@test.com",
-                            Issuer = null,
-                        },
-                        new MongoClaim() {
-                            Type = JwtClaimTypes.EmailVerified,
-                            Value = "true",
                             Issuer = null,
                         },
                     },
@@ -502,11 +492,6 @@ namespace Lexiconner.IdentityServer4.Config
                             Value = "vadimberkut8@gmail.com",
                             Issuer = null,
                         },
-                        new MongoClaim() {
-                            Type = JwtClaimTypes.EmailVerified,
-                            Value = "true",
-                            Issuer = null,
-                        },
                     },
                     IsImportInitialData = true,
                     IsUpdateExistingDataOnSeed = true,
@@ -536,11 +521,6 @@ namespace Lexiconner.IdentityServer4.Config
                         new MongoClaim() {
                             Type = JwtClaimTypes.Email,
                             Value = "bogdanberkut9@gmail.com",
-                            Issuer = null,
-                        },
-                        new MongoClaim() {
-                            Type = JwtClaimTypes.EmailVerified,
-                            Value = "true",
                             Issuer = null,
                         },
                     },

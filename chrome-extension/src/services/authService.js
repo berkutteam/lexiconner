@@ -112,7 +112,7 @@ class AuthService extends EventEmitter {
       iat, // issued at (seconds since Unix epoch)
       scope, // array of allowed scopes and resources. E.g. openid, profile, offline_access, webapi
 
-      // custom claims
+      // custom client claims
       client_email,
       client_email_verified,
       client_browser_extension_version,
