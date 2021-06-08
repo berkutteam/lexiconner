@@ -3,7 +3,7 @@ import Multiselect from "vue-multiselect";
 import Notifications from "vue-notification";
 
 import App from "./App.vue";
-import router from "@/router";
+import router from "./router";
 import store from "@/store";
 import apiUtil from "@/utils/api";
 import notificationUtil from "@/utils/notification";

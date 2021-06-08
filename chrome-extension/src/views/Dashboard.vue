@@ -13,7 +13,14 @@
     </div>
     <div class="mb-4">
       <h6>Last added words:</h6>
-      <div>TODO x</div>
+      <div v-if="lastAddedWords">
+        <div v-if="lastAddedWords.length === 0">
+          <small>You haven't added any words yet with the extension.</small>
+        </div>
+        <div v-for="word in lastAddedWords" v-bind:key="`word-${word.id}`">
+          {{ word.word }} - {{ word.meaning }}
+        </div>
+      </div>
     </div>
     <div>
       <button
@@ -31,6 +38,7 @@
 import { mapState, mapGetters } from "vuex";
 import _ from "lodash";
 import { storeTypes } from "@/constants/index";
+import notificationUtil from "@/utils/notification";
 import authService from "@/services/authService";
 import LearningLanguageSelector from "@/components/LearningLanguageSelector";
 
@@ -53,16 +61,43 @@ export default {
     ...mapState({
       sharedState: (state) => state,
       profile: (state) => state.profile,
+      lastAddedWords: (state) => state.lastAddedWords,
     }),
 
     // store getter
-    ...mapGetters([]),
+    ...mapGetters(["selectedLearningLanguageCode"]),
   },
-  mounted: function () {},
+  mounted: function () {
+    this.loadLastAddedWords();
+  },
   updated: function () {},
   beforeDestroy: function () {},
   destroyed: function () {},
+  watch: {
+    profile: function (newValue, oldValue) {
+      this.loadLastAddedWords();
+    },
+  },
   methods: {
+    loadLastAddedWords: function () {
+      if (
+        this.lastAddedWords !== null ||
+        this.selectedLearningLanguageCode === null
+      ) {
+        return;
+      }
+
+      return this.$store
+        .dispatch(storeTypes.WORD_LAST_ADDED_LOAD, {
+          wordLanguageCode: this.selectedLearningLanguageCode,
+          limit: 5,
+        })
+        .then()
+        .catch((err) => {
+          console.error(err);
+          notificationUtil.showErrorIfServerErrorResponseOrDefaultError(err);
+        });
+    },
     onLogoutClick: function () {
       authService
         .logoutAsync()

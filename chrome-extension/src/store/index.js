@@ -27,6 +27,7 @@ export default new Vuex.Store({
     // list of language DTO
     languages: null,
 
+    lastAddedWords: null, // array
     wordMeanings: null,
     createdWord: null,
   },
@@ -101,6 +102,10 @@ export default new Vuex.Store({
 
     //#region Words
 
+    [storeTypes.WORD_LAST_ADDED_SET](state, payload) {
+      let { lastAddedWords } = payload;
+      state.lastAddedWords = lastAddedWords;
+    },
     [storeTypes.WORD_MEANINGS_SET](state, payload) {
       let { wordMeanings } = payload;
       state.wordMeanings = wordMeanings;
@@ -240,6 +245,33 @@ export default new Vuex.Store({
 
     //#region Words
 
+    [storeTypes.WORD_LAST_ADDED_LOAD](context, { wordLanguageCode, limit }) {
+      let { commit, dispatch, getters } = context;
+      commit(storeTypes.LOADING_SET, {
+        target: storeTypes.WORD_LAST_ADDED_LOAD,
+        loading: true,
+      });
+      return api
+        .webApi()
+        .getLastAddedWords({ wordLanguageCode, limit })
+        .then(({ data, ok }) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.WORD_LAST_ADDED_LOAD,
+            loading: false,
+          });
+          commit(storeTypes.WORD_LAST_ADDED_SET, {
+            lastAddedWords: data,
+          });
+          return data;
+        })
+        .catch((err) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.WORD_LAST_ADDED_LOAD,
+            loading: false,
+          });
+          throw err;
+        });
+    },
     [storeTypes.WORD_MEANINGS_LOAD](
       context,
       { word, wordLanguageCode, meaningLanguageCode }

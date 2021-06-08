@@ -131,6 +131,13 @@ namespace Lexiconner.Application.Services
             return result;
         }
 
+        public async Task<IEnumerable<WordDto>> BrowserExtensionGetLastAddedWordsAsync(string userId, string wordLanguageCode, int limit)
+        {
+            var words = await _dataRepository.GetManyAsync<WordEntity>(x => x.UserId == userId && x.WordLanguageCode == wordLanguageCode & x.IsFromBrowserExtension, 0, limit);
+            var result = _mapper.Map<IEnumerable<WordDto>>(words);
+            return result;
+        }
+
         public async Task<WordDto> GetWordAsync(string userId, string wordId)
         {
             var entity = await _dataRepository.GetOneAsync<WordEntity>(x => x.Id == wordId && x.UserId == userId);
@@ -199,6 +206,7 @@ namespace Lexiconner.Application.Services
             var entity = _mapper.Map<WordEntity>(createDto);
             entity.UserId = userId;
             entity.UserDictionaryId = dictionary.Id;
+            entity.IsFromBrowserExtension = true;
             CustomValidationHelper.Validate(entity);
 
             // set image
@@ -221,7 +229,6 @@ namespace Lexiconner.Application.Services
                     });
                 }
             }
-
 
             await _dataRepository.AddAsync(entity);
             return _mapper.Map<WordDto>(entity);

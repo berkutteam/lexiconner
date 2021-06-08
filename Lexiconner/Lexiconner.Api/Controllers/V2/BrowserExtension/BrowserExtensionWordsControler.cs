@@ -29,6 +29,18 @@ namespace Lexiconner.Api.Controllers.V2.BrowserExtension
             _wordsService = wordsService;
         }
 
+        [HttpGet("last-added")]
+        [ProducesResponseType(typeof(BaseApiResponseDto<WordMeaningsDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetLastAddedWords([FromQuery] string wordLanguageCode, [FromQuery] int? limit = 5)
+        {
+            var result = await _wordsService.BrowserExtensionGetLastAddedWordsAsync(GetUserId(), wordLanguageCode, limit.Value);
+            return BaseResponse(result);
+        }
+
         [HttpGet("meanings")]
         [ProducesResponseType(typeof(BaseApiResponseDto<WordMeaningsDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]

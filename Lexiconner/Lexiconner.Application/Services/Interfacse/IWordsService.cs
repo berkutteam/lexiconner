@@ -24,6 +24,7 @@ namespace Lexiconner.Application.Services.Interfacse
             bool? isTrained = null,
             string userWordSetId = null
         );
+        Task<IEnumerable<WordDto>> BrowserExtensionGetLastAddedWordsAsync(string userId, string wordLanguageCode, int limit);
         Task<WordDto> GetWordAsync(string userId, string wordId);
         Task<WordDto> CreateWordAsync(string userId, WordCreateDto createDto);
         Task<WordDto> BrowserExtensionCreateWordAsync(string userId, BrowserExtensionWordCreateDto createDto);

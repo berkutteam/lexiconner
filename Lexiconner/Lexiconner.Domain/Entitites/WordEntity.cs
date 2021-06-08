@@ -43,6 +43,12 @@ namespace Lexiconner.Domain.Entitites
         public string SourceWordSetWordId { get; set; }
 
         public bool IsFavourite { get; set; }
+        
+        /// <summary>
+        /// Indicates word added via browser extension
+        /// </summary>
+        public bool IsFromBrowserExtension { get; set; }
+
         public List<string> Tags { get; set; }
         public WordTrainingInfoEntity TrainingInfo { get; set; }
 

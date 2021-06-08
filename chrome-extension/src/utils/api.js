@@ -247,6 +247,18 @@ class API {
       },
 
       // words
+      getLastAddedWords({ wordLanguageCode, limit }) {
+        return axiosAuthRequest({
+          url: buildUrl(url, `words/last-added`, {
+            wordLanguageCode,
+            limit,
+          }),
+          method: "get",
+          data: {},
+        })
+          .then(handleApiResponse)
+          .catch(handleApiErrorResponse);
+      },
       getWordMeanings({ word, wordLanguageCode, meaningLanguageCode }) {
         return axiosAuthRequest({
           url: buildUrl(url, `words/meanings`, {

@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 class WordUtil {
   constructor() {}
 
@@ -49,9 +51,7 @@ class WordUtil {
 
     // simple approach: search only from the second parent, don't go up further
     let resultText =
-      parentParentText
-        .split(".")
-        .split(";")
+      _.flatten(parentParentText.split(".").map((x) => x.split(";")))
         .map((sentence) => sentence + ".")
         .find((sentence) =>
           sentence.toLowerCase().includes(searchTerm.toLowerCase())
