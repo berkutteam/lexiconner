@@ -21,39 +21,14 @@ export default new Vuex.Store({
       urls: null,
     },
 
-    // contains enums elements that is loaded from server
-    // E.g. {'measurementUnit': ['none','celsius','fahrenheit'],}
-    enums: null,
-
-    termsOfUse: null,
-    countries: null,
-
     // list of language DTO
     languages: null,
-
-    timeZones: null,
 
     auth: {
       isAuthenticated: false,
       isRegistrationCompleted: false,
       user: null,
-      registrationInfo: null,
-      preRegistrationUser: null,
-
-      myPermissions: null,
-
-      scopedPermissions: {
-        permissions: [],
-        roles: [],
-      },
-      userScopedPermissions: {
-        // <companyId>: {
-        //    <userId>: object
-        //}
-      },
     },
-    userAccount: null,
-    userInfo: null,
 
     profile: null,
 
@@ -204,11 +179,6 @@ export default new Vuex.Store({
 
     //#region Reference info
 
-    // [storeTypes.ENUMS_SET](state, payload) {
-    //     let { data } = payload;
-    //     state.enums = data;
-    // },
-
     [storeTypes.LANGUAGES_SET](state, payload) {
       let { data } = payload;
       state.languages = data;
@@ -226,44 +196,6 @@ export default new Vuex.Store({
     [storeTypes.AUTH_USER_RESET](state) {
       state.auth.isAuthenticated = false;
       state.auth.user = null;
-    },
-    [storeTypes.AUTH_REGISTRATION_INFO_SET](state, payload) {
-      let { registrationInfo } = payload;
-      state.auth.registrationInfo = registrationInfo;
-    },
-    [storeTypes.AUTH_PREREGISTRATION_USER_SET](state, payload) {
-      let { data } = payload;
-      state.auth.preRegistrationUser = data;
-    },
-    [storeTypes.AUTH_MY_PERMISSIONS_SET](state, payload) {
-      let { myPermissions } = payload;
-      state.auth.myPermissions = myPermissions;
-    },
-    [storeTypes.AUTH_SCOPED_PERMISSIONS_SET](state, payload) {
-      let { data } = payload;
-      state.auth.scopedPermissions = data;
-    },
-    [storeTypes.AUTH_USER_SCOPED_PERMISSIONS_SET](state, payload) {
-      let { scopeId, userId, data } = payload;
-      let userScopedPermissions = {
-        ...(state.auth.userScopedPermissions || {}),
-      };
-      state.auth.userScopedPermissions = {
-        ...userScopedPermissions,
-        [scopeId]: {
-          ...(userScopedPermissions[scopeId] || {}),
-          [userId]: data,
-        },
-      };
-    },
-
-    //#endregion
-
-    //#region User account
-
-    [storeTypes.AUTH_USER_ACCOUNT_SET](state, payload) {
-      let { data } = payload;
-      state.userAccount = data;
     },
 
     //#endregion
@@ -415,7 +347,7 @@ export default new Vuex.Store({
 
     //#endregion
 
-    //#regionUser dictionaries
+    //#region User dictionaries
 
     [storeTypes.USER_DICTIONARY_LOAD_SET](state, payload) {
       let { data } = payload;
@@ -552,30 +484,6 @@ export default new Vuex.Store({
     //#endregion
 
     //#region Reference info
-
-    // [storeTypes.ENUMS_LOAD](context) {
-    //     let { commit, dispatch, getters } = context;
-    //     commit(storeTypes.LOADING_SET, {
-    //         target: storeTypes.ENUMS_LOAD,
-    //         loading: true,
-    //     });
-    //     return api.accountManager().getEnums().then(({ data, ok }) => {
-    //         commit(storeTypes.LOADING_SET, {
-    //             target: storeTypes.ENUMS_LOAD,
-    //             loading: false,
-    //         });
-    //         commit(storeTypes.ENUMS_SET, {
-    //             data: data
-    //         });
-    //         return data;
-    //     }).catch(err => {
-    //         commit(storeTypes.LOADING_SET, {
-    //             target: storeTypes.ENUMS_LOAD,
-    //             loading: false,
-    //         });
-    //         throw err;
-    //     });
-    // },
 
     [storeTypes.LANGUAGES_LOAD](context) {
       let { commit, dispatch, getters } = context;
