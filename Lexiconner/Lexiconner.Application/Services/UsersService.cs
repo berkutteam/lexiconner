@@ -54,6 +54,21 @@ namespace Lexiconner.Application.Services
             return _mapper.Map<UserDto>(entity);
         }
 
+        public async Task<UserDto> UpdateProfileAsync(string userId, ProfileUpdateDto dto)
+        {
+            var userEntity = await _identityDataRepository.GetOneAsync<ApplicationUserEntity>(x => x.Id == userId);
+            if (userEntity == null)
+            {
+                throw new AccessDeniedException("User not found!");
+            }
+
+            userEntity.UpdateSelf(dto);
+            CustomValidationHelper.Validate(userEntity);
+            await _identityDataRepository.UpdateAsync(userEntity);
+
+            return _mapper.Map<UserDto>(userEntity);
+        }
+
         public async Task<UserDto> SelectLearningLanguageAsync(string userId, string languageCode)
         {
             var entity = await _identityDataRepository.GetOneAsync<ApplicationUserEntity>(x => x.Id == userId);

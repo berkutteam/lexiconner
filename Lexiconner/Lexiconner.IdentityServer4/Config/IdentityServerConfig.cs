@@ -435,6 +435,7 @@ namespace Lexiconner.IdentityServer4.Config
                     },
                     IsImportInitialData = true,
                     IsUpdateExistingDataOnSeed = true,
+                    NativeLanguageCode = LanguageConfig.EnglishLanguageCode,
                 },
                 new ApplicationUserEntity
                 {
@@ -464,6 +465,7 @@ namespace Lexiconner.IdentityServer4.Config
                     },
                     IsImportInitialData = true,
                     IsUpdateExistingDataOnSeed = true,
+                    NativeLanguageCode = LanguageConfig.EnglishLanguageCode,
                 },
                 new ApplicationUserEntity
                 {
@@ -495,6 +497,7 @@ namespace Lexiconner.IdentityServer4.Config
                     },
                     IsImportInitialData = true,
                     IsUpdateExistingDataOnSeed = true,
+                    NativeLanguageCode = LanguageConfig.EnglishLanguageCode,
                 },
                 new ApplicationUserEntity
                 {
@@ -526,6 +529,7 @@ namespace Lexiconner.IdentityServer4.Config
                     },
                     IsImportInitialData = true,
                     IsUpdateExistingDataOnSeed = true,
+                    NativeLanguageCode = LanguageConfig.EnglishLanguageCode,
                 },
             };
         }

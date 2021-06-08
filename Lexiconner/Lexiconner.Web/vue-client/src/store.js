@@ -784,6 +784,33 @@ export default new Vuex.Store({
           throw err;
         });
     },
+    [storeTypes.PROFILE_UPDATE](context, { data }) {
+      let { commit, dispatch, getters } = context;
+      commit(storeTypes.LOADING_SET, {
+        target: storeTypes.PROFILE_UPDATE,
+        loading: true,
+      });
+      return api
+        .webApi()
+        .updateProfile({ data })
+        .then(({ data, ok }) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.PROFILE_UPDATE,
+            loading: false,
+          });
+          commit(storeTypes.PROFILE_SET, {
+            profile: data,
+          });
+          return data;
+        })
+        .catch((err) => {
+          commit(storeTypes.LOADING_SET, {
+            target: storeTypes.PROFILE_UPDATE,
+            loading: false,
+          });
+          throw err;
+        });
+    },
     [storeTypes.PROFILE_SELECT_LEARNING_LANGUAGE](context, { languageCode }) {
       let { commit, dispatch, state, getters } = context;
       commit(storeTypes.LOADING_SET, {

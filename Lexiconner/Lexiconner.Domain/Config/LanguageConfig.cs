@@ -14,6 +14,7 @@ namespace Lexiconner.Domain.Config
     public static class LanguageConfig
     {
         public const string UndefinedLanguageCode = "und";
+        public const string EnglishLanguageCode = "en";
 
         public static IEnumerable<SupportedLanguageModel> SupportedLanguages = new List<SupportedLanguageModel>()
         {

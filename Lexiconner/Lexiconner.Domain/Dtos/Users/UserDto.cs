@@ -12,6 +12,7 @@ namespace Lexiconner.Domain.Dtos.Users
         public string Id { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
+        public string NativeLanguageCode { get; set; }
         public List<ApplicationUserEntityLearningLanguage> LearningLanguages { get; set; }
     }
 }

@@ -10,6 +10,7 @@ namespace Lexiconner.Application.Services.Interfacse
     public interface IUsersService
     {
         Task<UserDto> GetUserAsync(string userId);
+        Task<UserDto> UpdateProfileAsync(string userId, ProfileUpdateDto dto);
         Task<UserDto> SelectLearningLanguageAsync(string userId, string languageCode);
         Task<UserDto> BrowserExtensionSelectLearningLanguageAsync(string userId, string languageCode);
     }

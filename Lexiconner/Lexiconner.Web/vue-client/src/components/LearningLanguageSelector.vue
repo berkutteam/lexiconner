@@ -7,6 +7,14 @@
       v-bind:withFlags="true"
       v-on:change="onLanguageChange"
     />
+    <!-- <i class="fas fa-long-arrow-alt-right ml-1 mr-1"></i>
+    <language-code-select
+      v-model="selectedLearningLanguageCode"
+      placeholder="Learning language"
+      v-bind:languageLabelGetter="(option) => `${option.isoLanguageName}`"
+      v-bind:withFlags="true"
+      v-on:change="onLanguageChange"
+    /> -->
   </div>
 </template>
 
@@ -19,7 +27,7 @@ import notificationUtil from "@/utils/notification";
 import LanguageCodeSelect from "@/components/LanguageCodeSelect";
 
 export default {
-  name: "learning-language-select",
+  name: "learning-language-selector",
   props: {},
   components: {
     LanguageCodeSelect,

@@ -40,6 +40,18 @@ namespace Lexiconner.Api.Controllers.V2
             return BaseResponse(result);
         }
 
+        [HttpPut("me")]
+        [ProducesResponseType(typeof(BaseApiResponseDto<UserDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> UpdateProfile([FromBody] ProfileUpdateDto dto)
+        {
+            var result = await _usersService.UpdateProfileAsync(GetUserId(), dto);
+            return BaseResponse(result);
+        }
+
         [HttpPost("learning-languages/{languageCode}")]
         [ProducesResponseType(typeof(BaseApiResponseDto<UserDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
@@ -51,5 +63,6 @@ namespace Lexiconner.Api.Controllers.V2
             var result = await _usersService.SelectLearningLanguageAsync(GetUserId(), languageCode);
             return BaseResponse(result);
         }
+
     }
 }

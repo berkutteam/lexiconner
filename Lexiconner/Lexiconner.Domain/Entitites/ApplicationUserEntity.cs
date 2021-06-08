@@ -1,5 +1,7 @@
 ﻿using AspNetCore.Identity.MongoDbCore.Models;
+using IdentityModel;
 using Lexiconner.Domain.Config;
+using Lexiconner.Domain.Dtos.Users;
 using Lexiconner.Domain.Entitites.Base;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -12,6 +14,7 @@ using NUlid.Rng;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Lexiconner.Domain.Entitites
@@ -60,6 +63,8 @@ namespace Lexiconner.Domain.Entitites
         [BsonIgnore]
         public bool IsUpdateExistingDataOnSeed { get; set; }
 
+        public string NativeLanguageCode { get; set; }
+
         public List<ApplicationUserEntityLearningLanguage> LearningLanguages { get; set; }
 
         #region Helpers
@@ -96,12 +101,40 @@ namespace Lexiconner.Domain.Entitites
             }
         }
 
+        public void UpdateSelf(ProfileUpdateDto dto)
+        {
+            this.Name = dto.Name;
+            this.NativeLanguageCode = dto.NativeLanguageCode;
+
+            this.UpdateOrCreateClaim(JwtClaimTypes.Name, this.Name, dto.Name);
+        }
+
+        public void UpdateOrCreateClaim(string type, string oldValue, string newValue)
+        {
+            var exsiting = this.Claims.FirstOrDefault(x => x.Type == type);
+            if (exsiting != null)
+            {
+                exsiting.Value = newValue;
+            }
+            else
+            {
+                this.Claims.Add(new MongoClaim()
+                {
+                    Type = type,
+                    Value = newValue,
+                    Issuer = null,
+                });
+            }
+        }
+
         #endregion
     }
 
     public class ApplicationUserEntityLearningLanguage
     {
         public string LanguageCode { get; set; }
+        public string SourceLanguageCode { get; set; }
+        public string TargetLanguageCode { get; set; }
         public bool IsSelected { get; set; }
         public bool IsSelectedForBrowserExtension { get; set; }
     }

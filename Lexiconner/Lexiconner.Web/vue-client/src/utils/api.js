@@ -225,6 +225,15 @@ class API {
           .then(handleApiResponse)
           .catch(handleApiErrorResponse);
       },
+      updateProfile({ data }) {
+        return axiosAuthRequest({
+          url: buildUrl(url, `profile/me`, {}),
+          method: "put",
+          data: { ...data },
+        })
+          .then(handleApiResponse)
+          .catch(handleApiErrorResponse);
+      },
       selectProfileLearningLanguage({ languageCode }) {
         return axiosAuthRequest({
           url: buildUrl(url, `profile/learning-languages/${languageCode}`, {}),
