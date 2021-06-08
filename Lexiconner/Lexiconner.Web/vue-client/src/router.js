@@ -7,7 +7,6 @@ import miscUtils from "@/utils/misc";
 
 import Home from "./views/Home.vue";
 import ErrorView from "./views/ErrorView.vue";
-import TermsOfUse from "./views/TermsOfUse.vue";
 import Login from "./views/Login.vue";
 import Register from "./views/Register.vue";
 import Logout from "./views/Logout.vue";
@@ -29,22 +28,7 @@ import WordSetCreate from "./views/WordSets/WordSetCreate.vue";
 import UserFilmsBrowse from "./views/UserFilms/UserFilmsBrowse.vue";
 
 import Dashboard from "./views/Dashboard.vue";
-// import DashboardHome from './views/Dashboard/Home.vue';
-// import DashboardGateways from './views/Dashboard/Gateways.vue';
-// import DashboardSensors from './views/Dashboard/Sensors.vue';
-// import DashboardDepartments from './views/Dashboard/Departments.vue';
-// import DashboardUsers from './views/Dashboard/Users.vue';
-// import MyPermissions from './views/MyPermissions.vue';
-// import ManageCompanyPermissions from './views/ManageCompanyPermissions.vue';
-// import ManageCompanyUserPermissions from './views/ManageCompanyUserPermissions.vue';
 import UserProfile from "./views/UserProfile.vue";
-// import SensorTelemetry from './views/SensorTelemetry.vue';
-// import SensorManage from './views/SensorManage.vue';
-// import CompanyCreate from './views/CompanyCreate.vue';
-// import CompanyManage from './views/CompanyManage.vue';
-// import CompanyDepartment from './views/CompanyDepartment.vue';
-// import CompanyUserProfile from './views/CompanyUserProfile.vue';
-// import MyCompanyInvitations from './views/MyCompanyInvitations.vue';
 
 Vue.use(Router);
 
@@ -178,13 +162,6 @@ export default new Router({
       component: ErrorView,
       props: true,
       meta: { layout: "default" },
-    },
-    {
-      path: "/terms-of-use",
-      name: "terms-of-use",
-      component: TermsOfUse,
-      props: true,
-      meta: { layout: "no-sidebar" },
     },
     {
       path: "/user-dictionary",
@@ -340,103 +317,6 @@ export default new Router({
         checkAuthenticated({ to, from, next });
       },
     },
-
-    // {
-    //     path: '/dashboard',
-    //     name: 'dashboard',
-    //     component: Dashboard,
-    //     props: true,
-    //     beforeEnter: async (to, from, next) => {
-    //         await waitAppInitialization({ to, from, next });
-    //         checkAuthenticated({ to, from, next });
-    //     },
-    //     children: [
-    //         {
-    //             path: '/',
-    //             name: 'dashboard-home',
-    //             component: DashboardHome,
-    //             props: true,
-    //         },
-    //         {
-    //             path: 'companies/:companyId/gateways',
-    //             name: 'dashboard-gateways',
-    //             component: DashboardGateways,
-    //             props: true,
-    //         },
-    //         {
-    //             path: 'companies/:companyId/sensors',
-    //             name: 'dashboard-sensors',
-    //             component: DashboardSensors,
-    //             props: true,
-    //         },
-    //         {
-    //             path: 'companies/:companyId/departments',
-    //             name: 'dashboard-departments',
-    //             component: DashboardDepartments,
-    //             props: true,
-    //         },
-    //         {
-    //             path: 'companies/:companyId/users',
-    //             name: 'dashboard-users',
-    //             component: DashboardUsers,
-    //             props: true,
-    //             beforeEnter: (to, from, next) => {
-    //                 checkPermissions({ to, from, next, permisions: ['CompanyUserRead'], scopeId: to.params.companyId });
-    //             },
-    //         },
-    //     ],
-    // },
-    // {
-    //     path: '/permissions/my',
-    //     name: 'my-permissions',
-    //     component: MyPermissions,
-    //     props: true,
-    //     beforeEnter: async (to, from, next) => {
-    //         await waitAppInitialization({ to, from, next });
-    //         checkAuthenticated({ to, from, next });
-    //     },
-    // },
-    // {
-    //     path: '/permissions/:companyId/manage',
-    //     name: 'manage-company-permissions',
-    //     component: ManageCompanyPermissions,
-    //     props: true,
-    //     beforeEnter: async (to, from, next) => {
-    //         await waitAppInitialization({ to, from, next });
-    //         checkAuthenticated({ to, from, next });
-    //         checkPermissions({ to, from, next, permisions: ['ScopedPermissionManage'], scopeId: to.params.companyId });
-    //     },
-    // },
-    // {
-    //     path: '/permissions/:companyId/user/:userId/manage',
-    //     name: 'manage-company-user-permissions',
-    //     component: ManageCompanyUserPermissions,
-    //     props: true,
-    //     beforeEnter: async (to, from, next) => {
-    //         await waitAppInitialization({ to, from, next });
-    //         checkAuthenticated({ to, from, next });
-    //         checkPermissions({ to, from, next, permisions: ['ScopedPermissionManage'], scopeId: to.params.companyId });
-    //     },
-    // },
-    // {
-    //     path: '/companies/invitations',
-    //     name: 'my-company-invitations',
-    //     component: MyCompanyInvitations,
-    //     props: true,
-    //     beforeEnter: async (to, from, next) => {
-    //         await waitAppInitialization({ to, from, next });
-    //         checkAuthenticated({ to, from, next });
-    //     },
-    // },
-    // {
-    //     path: '/about',
-    //     name: 'about',
-    //     // route level code-splitting
-    //     // this generates a separate chunk (about.[hash].js) for this route
-    //     // which is lazy-loaded when the route is visited.
-    //     component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
-    //     props: true,
-    // },
     {
       path: "/login",
       name: "login",
@@ -465,69 +345,5 @@ export default new Router({
         checkAuthenticated({ to, from, next });
       },
     },
-    // {
-    //     path: '/sensors/:sensorId/telemetries',
-    //     name: 'sensor-telemetry',
-    //     component: SensorTelemetry,
-    //     props: true,
-    //     beforeEnter: async (to, from, next) => {
-    //         await waitAppInitialization({ to, from, next });
-    //         checkAuthenticated({ to, from, next });
-    //     },
-    // },
-    // {
-    //     path: '/companies/:companyId/sensors/:sensorId/manage',
-    //     name: 'sensor-manage',
-    //     component: SensorManage,
-    //     props: true,
-    //     beforeEnter: async (to, from, next) => {
-    //         await waitAppInitialization({ to, from, next });
-    //         checkAuthenticated({ to, from, next });
-    //     },
-    // },
-    // {
-    //     path: '/companies/create',
-    //     name: 'company-create',
-    //     component: CompanyCreate,
-    //     props: true,
-    //     beforeEnter: async (to, from, next) => {
-    //         await waitAppInitialization({ to, from, next });
-    //         checkAuthenticated({ to, from, next });
-    //         checkPermissions({ to, from, next, permisions: ['CompanyCreate'], scopeId: null });
-    //     },
-    // },
-    // {
-    //     path: '/companies/:companyId/manage',
-    //     name: 'company-manage',
-    //     component: CompanyManage,
-    //     props: true,
-    //     beforeEnter: async (to, from, next) => {
-    //         await waitAppInitialization({ to, from, next });
-    //         checkAuthenticated({ to, from, next });
-    //         checkPermissions({ to, from, next, permisions: ['CompanyUpdate'], scopeId: to.params.companyId });
-    //     },
-    // },
-    // {
-    //     path: '/companies/:companyId/departments/:departmentId',
-    //     name: 'company-department',
-    //     component: CompanyDepartment,
-    //     props: true,
-    //     beforeEnter: async (to, from, next) => {
-    //         await waitAppInitialization({ to, from, next });
-    //         checkAuthenticated({ to, from, next });
-    //         checkPermissions({ to, from, next, permisions: ['CompanyDepartmentManage'], scopeId: to.params.companyId });
-    //     },
-    // },
-    // {
-    //     path: '/companies/:companyId/users/:userId/profile',
-    //     name: 'company-user-profile',
-    //     component: CompanyUserProfile,
-    //     props: true,
-    //     beforeEnter: async (to, from, next) => {
-    //         await waitAppInitialization({ to, from, next });
-    //         checkAuthenticated({ to, from, next });
-    //         checkPermissions({ to, from, next, permisions: ['CompanyUserRead'], scopeId: to.params.companyId });
-    //     },
-    // },
   ],
 });

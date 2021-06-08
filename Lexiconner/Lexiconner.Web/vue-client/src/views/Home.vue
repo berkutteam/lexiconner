@@ -1,5 +1,5 @@
 <template>
-  <!-- Basedon Bootstrap example template -->
+  <!-- Based on Bootstrap example template -->
   <!-- https://getbootstrap.com/docs/4.0/examples/ -->
   <div class="home-page-wrapper">
     <div class="text-center">
