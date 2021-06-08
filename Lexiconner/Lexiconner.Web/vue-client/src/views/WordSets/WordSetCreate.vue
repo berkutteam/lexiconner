@@ -78,6 +78,8 @@
               placeholder="Meaning"
             />
           </div>
+
+          <!-- Examples -->
           <div class="col">
             <div class="d-flex">
               <div class="flex-grow-1">
@@ -116,6 +118,8 @@
               </div>
             </div>
           </div>
+
+          <!-- Other controls -->
           <div class="col">
             <button
               type="button"
@@ -124,6 +128,13 @@
               v-bind:disabled="!canSearchWordImages(word)"
             >
               <i class="far fa-images"></i>
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm custom-btn-normal ml-1"
+              v-on:click="onRemoveWordClick(wordIndex)"
+            >
+              <i class="fas fa-times"></i>
             </button>
           </div>
         </div>
@@ -301,6 +312,9 @@ export default {
           });
         },
       });
+    },
+    onRemoveWordClick: function (wordIndex) {
+      this.privateState.wordSetModel.words.splice(wordIndex, 1);
     },
     onAddWordClick: function () {
       this.privateState.wordSetModel.words.push({
