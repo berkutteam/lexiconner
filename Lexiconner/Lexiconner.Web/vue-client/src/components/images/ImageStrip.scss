@@ -1,0 +1,22 @@
+
+.image-strip {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.image-container {
+    margin-bottom: 0.2rem;
+
+    &:not(:last-child) {
+        margin-right: 0.2rem;
+    }
+
+    img {
+        border-radius: 4px;
+        max-height: 100px;
+        width: auto;
+    }
+}

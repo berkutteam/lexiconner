@@ -34,6 +34,7 @@
         >
       </div>
 
+      <!-- Images -->
       <div class="form-group">
         <label for="">Images</label>
         <button
@@ -45,12 +46,11 @@
           <i class="far fa-images"></i>
         </button>
         <div v-if="privateState.wordSetModel.images" class="">
-          <image-grid
-            ref="imageGrid1"
+          <image-strip
             v-bind:images="privateState.wordSetModel.images"
-            v-bind:columnsCount="3"
+            v-bind:imageHeightPx="100"
           >
-          </image-grid>
+          </image-strip>
         </div>
       </div>
 
@@ -119,16 +119,33 @@
             </div>
           </div>
 
-          <!-- Other controls -->
+          <!-- Images -->
           <div class="col">
-            <button
-              type="button"
-              class="btn btn-sm custom-btn-normal"
-              v-on:click="onFindWordImagesClick(wordIndex)"
-              v-bind:disabled="!canSearchWordImages(word)"
-            >
-              <i class="far fa-images"></i>
-            </button>
+            <div class="d-flex">
+              <div class="flex-grow-1">
+                <div v-if="word.images" class="">
+                  <image-strip
+                    v-bind:images="word.images"
+                    v-bind:imageHeightPx="60"
+                  >
+                  </image-strip>
+                </div>
+              </div>
+              <div class="ml-1">
+                <button
+                  type="button"
+                  class="btn btn-sm custom-btn-normal"
+                  v-on:click="onFindWordImagesClick(wordIndex)"
+                  v-bind:disabled="!canSearchWordImages(word)"
+                >
+                  <i class="far fa-images"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Other controls -->
+          <div class="col flex-grow-0">
             <button
               type="button"
               class="btn btn-sm custom-btn-normal ml-1"
@@ -138,6 +155,7 @@
             </button>
           </div>
         </div>
+
         <button
           type="button"
           class="btn btn-sm custom-btn-normal"
@@ -197,6 +215,7 @@ import LanguageCodeSelect from "@/components/LanguageCodeSelect";
 import LearningLanguageNotSelectedAlert from "@/components/LearningLanguageNotSelectedAlert";
 import FindImagesModal from "@/components/FindImagesModal";
 import ImageGrid from "@/components/ImageGrid";
+import ImageStrip from "@/components/images/ImageStrip";
 
 const wordSetModelDefault = {
   name: null,
@@ -219,7 +238,7 @@ export default {
     LoadingButton,
     LanguageCodeSelect,
     FindImagesModal,
-    ImageGrid,
+    ImageStrip,
   },
   props: {
     // route props
