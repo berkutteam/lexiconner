@@ -22,7 +22,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="d-flex justify-content-between align-items-center">
       <button
         type="button"
         class="btn btn-primary"
@@ -30,6 +30,7 @@
       >
         Logout
       </button>
+      <a v-bind:href="privateState.webAppUrl" target="_blank">Go to the app</a>
     </div>
   </div>
 </template>
@@ -51,6 +52,7 @@ export default {
     return {
       privateState: {
         storeTypes: storeTypes,
+        webAppUrl: process.env.VUE_APP_WEB_APP_URL,
       },
     };
   },

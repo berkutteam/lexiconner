@@ -25,6 +25,10 @@ console.log(
   "process.env.VUE_APP_IDENTITY_CLIENT_ID: ",
   process.env.VUE_APP_IDENTITY_CLIENT_ID
 );
+console.log(
+  "process.env.VUE_APP_WEB_APP_URL: ",
+  process.env.VUE_APP_WEB_APP_URL
+);
 
 // register globally
 Vue.component("multiselect", Multiselect);
